@@ -41,6 +41,7 @@ describe('browser-local persistence adapter', () => {
   });
   it('surfaces storage failures instead of pretending to save', async () => {
     vi.stubGlobal('localStorage', {
+      getItem: () => null,
       setItem: () => {
         throw new Error('QuotaExceededError');
       },

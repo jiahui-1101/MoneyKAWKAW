@@ -7,12 +7,13 @@ interface Props {
   onChange: (value: string) => void;
   invalid?: boolean;
   min?: string;
+  max?: string;
   calendarLabel?: string;
 }
 function isoDate(year: number, month: number, day: number) {
   return `${year}-${String(month + 1).padStart(2, '0')}-${String(day).padStart(2, '0')}`;
 }
-export function DateField({ id, value, onChange, invalid, min, calendarLabel }: Props) {
+export function DateField({ id, value, onChange, invalid, min, max, calendarLabel }: Props) {
   const parsed = /^\d{4}-\d{2}-\d{2}$/.test(value) ? new Date(`${value}T12:00:00`) : new Date();
   const today = Number.isNaN(parsed.getTime()) ? new Date() : parsed;
   const [month, setMonth] = useState(today.getMonth());
@@ -129,7 +130,7 @@ export function DateField({ id, value, onChange, invalid, min, calendarLabel }: 
                   className={iso === value ? 'selected' : ''}
                   aria-label={iso}
                   aria-pressed={iso === value}
-                  disabled={!!min && iso < min}
+                  disabled={(!!min && iso < min) || (!!max && iso > max)}
                   onClick={() => {
                     onChange(iso);
                     setOpen(false);
@@ -145,8 +146,8 @@ export function DateField({ id, value, onChange, invalid, min, calendarLabel }: 
             type="button"
             className="calendar-today"
             disabled={
-              !!min &&
-              isoDate(new Date().getFullYear(), new Date().getMonth(), new Date().getDate()) < min
+              (!!min && isoDate(new Date().getFullYear(), new Date().getMonth(), new Date().getDate()) < min) ||
+              (!!max && isoDate(new Date().getFullYear(), new Date().getMonth(), new Date().getDate()) > max)
             }
             onClick={() => {
               const d = new Date();
