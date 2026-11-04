@@ -101,6 +101,7 @@ export function upgradeSharedStore(source: Store): Store {
     });
   }
   for (const task of store.assignments.filter(t => departmentAccess[t.departmentId])) {
+    if (store.events.some(e => e.id === `sample-plan-${task.id}`)) continue;
     store.events.push({ id: `sample-plan-${task.id}`, activityId: task.activityId, departmentId: task.departmentId, assignmentId: task.id,
       action: 'Purchasing plan (sample)', actor: 'Fictional department history',
       detail: `${task.purchasing!.name} · item estimate ${(task.budget / 100).toFixed(2)} · ${task.expenseId ? `linked source ${task.expenseId}` : 'unclaimed purchasing plan'}.`,
