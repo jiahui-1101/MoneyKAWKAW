@@ -8,6 +8,7 @@ import './styles/pages.css';
 import './styles/calendar.css';
 import './styles/hod.css';
 import './styles/treasury.css';
+import './styles/member.css';
 
 createRoot(document.getElementById('root')!).render(
   <StrictMode>
