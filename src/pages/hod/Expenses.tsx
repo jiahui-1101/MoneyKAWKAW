@@ -191,7 +191,7 @@ export function HodExpenses() {
               ) : undefined
             }
           >
-            Claims appear here when they are recorded by the future member workflow. HOD purchasing
+            Claims appear here when department members submit them. HOD purchasing
             actions do not create claims.
           </Empty>
         )}

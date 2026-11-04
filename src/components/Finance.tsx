@@ -16,7 +16,7 @@ export function Metrics({ summary, count }: { summary: BudgetSummary; count?: nu
   const { money } = useFormat();
   const items = [
     {
-      label: count === undefined ? 'Overall budget' : 'Total allocated budget',
+      label: count === undefined ? 'Overall budget' : 'Total activity budget',
       value: money(summary.budget, true),
       icon: Wallet,
       note: count === undefined ? 'Activity budget ceiling' : 'Overall budgets across activities',
@@ -137,7 +137,7 @@ export function ActivityTable({
                 <td>
                   <div className="utilization-cell">
                     <span className={s.recorded > s.budget ? 'danger-text' : ''}>
-                      {s.utilization.toFixed(0)}%
+                      {s.utilization.toFixed(1)}%
                     </span>
                     <Progress
                       value={s.utilization}

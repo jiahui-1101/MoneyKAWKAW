@@ -59,7 +59,7 @@ export function TreasuryDashboard() {
       <MetricCards
         items={[
           {
-            label: 'Total allocated budget',
+            label: 'Total activity budget',
             value: money(s.budget, true),
             icon: Wallet,
             note: `${money(s.allocated, true)} allocated to departments`,

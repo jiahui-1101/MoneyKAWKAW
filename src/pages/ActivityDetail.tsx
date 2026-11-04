@@ -170,7 +170,7 @@ function DepartmentBreakdown({ store, activity }: { store: Store; activity: Acti
                     <td>
                       <div className="utilization-cell">
                         <span className={over ? 'danger-text' : ''}>
-                          {s.utilization.toFixed(0)}%
+                          {s.utilization.toFixed(1)}%
                         </span>
                         <Progress
                           value={s.utilization}

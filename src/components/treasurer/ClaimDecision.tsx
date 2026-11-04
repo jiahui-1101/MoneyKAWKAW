@@ -44,7 +44,7 @@ export function ClaimDecision({
         <p className="settings-copy">
           {decision === 'Approved'
             ? 'Confirm you reviewed the original receipt, changes, and budget impact. Approval creates an unpaid liability; it does not record a payment.'
-            : 'The member will see this reason in the future member workspace. The claim and original evidence remain in history.'}
+            : 'The member will see this reason in My Claims. The claim and original evidence remain in history.'}
         </p>
         <Field
           id="decision-reason"
