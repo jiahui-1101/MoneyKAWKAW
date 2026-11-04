@@ -4,6 +4,11 @@
 .member-shell .stack > * {
   min-width: 0;
 }
+.member-shell .badge {
+  max-width: 100%;
+  white-space: normal;
+  overflow-wrap: anywhere;
+}
 .member-two-col {
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
@@ -413,6 +418,7 @@
   background: var(--danger-soft);
   border-radius: var(--radius);
   display: grid;
+  grid-template-columns: minmax(0, 1fr);
   gap: 12px;
   overflow-wrap: anywhere;
 }
