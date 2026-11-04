@@ -4,6 +4,22 @@ import type { Expense, Store } from './models';
 import type { RiskResult, RiskRules } from './treasury';
 export { receiptLines } from './receipt';
 
+export function sameRiskContext(a: RiskResult, b: RiskResult) {
+  const values = (r: RiskResult) =>
+    JSON.stringify([
+      r.variance,
+      r.variancePercent,
+      r.departmentAvailable,
+      r.activityAvailable,
+      r.pendingOther,
+      r.rules.mediumVariance,
+      r.rules.highVariance,
+      r.rules.lowHeadroomPercent,
+      r.factors.map((f) => [f.label, f.detail, f.level]),
+    ]);
+  return values(a) === values(b);
+}
+
 export function validateRiskRules(r: RiskRules) {
   if (
     ![r.mediumVariance, r.highVariance, r.lowHeadroomPercent].every(Number.isFinite) ||

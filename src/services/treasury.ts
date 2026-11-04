@@ -1,4 +1,4 @@
-import { analyzeClaim, claimContext, validateRiskRules } from '../domain/risk';
+import { analyzeClaim, claimContext, sameRiskContext, validateRiskRules } from '../domain/risk';
 import { receiptTotal } from '../domain/receipt';
 import type { RiskRules } from '../domain/treasury';
 import { sharedRepository } from './director';
@@ -75,6 +75,14 @@ export const treasuryService = {
         summarize(store, claim.activityId).available < 0;
       if (decision === 'Approved' && overBudget && !claim.review.analysis)
         throw new Error('Analyze the over-budget claim before approval.');
+      const currentAnalysis = analyzeClaim(store, claim, actor.name);
+      if (
+        decision === 'Approved' &&
+        overBudget &&
+        claim.review.analysis &&
+        !sameRiskContext(claim.review.analysis, currentAnalysis)
+      )
+        throw new Error('Budget context changed. Run Analyze risk again before approval.');
       if (
         decision === 'Approved' &&
         claimContext(store, claim).variance > 0 &&
@@ -82,7 +90,7 @@ export const treasuryService = {
       )
         throw new Error('An over-budget claim requires the member’s justification.');
       const at = new Date().toISOString();
-      claim.review.decisionAnalysis = analyzeClaim(store, claim, actor.name);
+      claim.review.decisionAnalysis = currentAnalysis;
       claim.state = decision;
       Object.assign(claim.review, {
         reviewer: actor.userId,
