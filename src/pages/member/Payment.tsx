@@ -13,7 +13,7 @@ export function MemberPayment() {
   const {id}=useParams(),{data,busy,run}=useMember(),{money,date,time,currency}=useFormat();
   const claim=data?.expenses.find(e=>e.id===id),payment=data?.payments.find(p=>p.expenseId===id);
   const [proof,setProof]=useState<ProofFile|null>(null),[proofError,setProofError]=useState(''),[attempt,setAttempt]=useState(0),[dialog,setDialog]=useState<'confirm'|'issue'|null>(null),[amount,setAmount]=useState(''),[reason,setReason]=useState(''),[ack,setAck]=useState(false),[error,setError]=useState('');
-  useEffect(()=>{let active=true;setProof(null);setProofError('');if(payment?.manual)memberService.proof(payment.id).then(p=>{if(active)setProof(p);}).catch(e=>{if(active)setProofError(e instanceof Error?e.message:'Unable to load payment proof.');});return()=>{active=false;};},[payment?.id,attempt]);
+  useEffect(()=>{let active=true;setProof(null);setProofError('');if(payment?.manual)memberService.proof(payment.id).then(p=>{if(active)setProof(p);}).catch(e=>{if(active)setProofError(e instanceof Error?e.message:'Unable to load payment proof.');});return()=>{active=false;};},[payment?.id,payment?.manual,attempt]);
   if(!data||!claim)return <Empty title="Claim access restricted" action={<Link className="btn" to="/member/claims">My claims</Link>}>Reimbursement records are available only for your own active-department claims.</Empty>;
   const manual=payment?.manual;
   const submit=async(e:FormEvent)=>{e.preventDefault();if(!payment)return;setError('');try{

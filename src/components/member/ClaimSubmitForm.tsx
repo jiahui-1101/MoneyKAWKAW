@@ -11,7 +11,7 @@ import type { DraftChange } from './useMemberDraft';
 type Summary=Awaited<ReturnType<typeof memberClaimService.context>>;
 export function ClaimSubmitForm({draft,task,saving,change}:{draft:ClaimDraft;task:Assignment;saving:boolean;change:DraftChange}) {
   const {data,run,busy}=useMember(),{money}=useFormat(),navigate=useNavigate();const [account,setAccount]=useState(draft.accountId),[reason,setReason]=useState(draft.justification),[summary,setSummary]=useState<Summary|null>(null),[confirm,setConfirm]=useState<Summary|null>(null),[error,setError]=useState(''),[loading,setLoading]=useState(true);
-  useEffect(()=>{let active=true;setLoading(true);memberClaimService.context(draft.id).then(s=>{if(active){setSummary(s);setError('');}}).catch(e=>{if(active){setSummary(null);setError(e instanceof Error?e.message:'Unable to reconcile this draft.');}}).finally(()=>{if(active)setLoading(false);});return()=>{active=false;};},[draft.id,draft.updatedAt]);
+  useEffect(()=>{let active=true;setLoading(true);memberClaimService.context(draft.id).then(s=>{if(active)setSummary(s);}).catch(e=>{if(active){setSummary(null);setError(e instanceof Error?e.message:'Unable to reconcile this draft.');}}).finally(()=>{if(active)setLoading(false);});return()=>{active=false;};},[draft.id,draft.updatedAt]);
   if(!data)return null;
   const review=async(e:FormEvent)=>{
     e.preventDefault();setError('');try{

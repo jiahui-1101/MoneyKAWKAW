@@ -11,10 +11,11 @@ import { History, Settings } from './pages/WorkspacePages';
 import { SessionProvider } from './context/Session';
 import { useSession } from './context/session-context';
 import { DemoAccess, RoleGate } from './components/DemoAccess';
-import { HodRoutes } from './pages/hod/HodRoutes';
-import { TreasuryRoutes } from './pages/treasurer/TreasuryRoutes';
 import { roleHome } from './domain/session';
 const MemberRoutes=lazy(()=>import('./pages/member/MemberRoutes').then(m=>({default:m.MemberRoutes})));
+const HodRoutes=lazy(()=>import('./pages/hod/HodRoutes').then(m=>({default:m.HodRoutes})));
+const TreasuryRoutes=lazy(()=>import('./pages/treasurer/TreasuryRoutes').then(m=>({default:m.TreasuryRoutes})));
+const workspaceLoading=<div className="access-page"><Skeleton/></div>;
 
 class ErrorBoundary extends Component<{ children: ReactNode }, { failed: boolean }> {
   state = { failed: false };
@@ -46,12 +47,12 @@ export default function App() {
           <Routes>
             <Route path="/" element={<LandingRedirect />} />
             <Route path="/demo" element={<DemoAccess />} />
-            <Route path="/member/*" element={<RoleGate requiredRole="Member"><Suspense fallback={<div className="access-page"><Skeleton/></div>}><MemberRoutes/></Suspense></RoleGate>}/>
+            <Route path="/member/*" element={<RoleGate requiredRole="Member"><Suspense fallback={workspaceLoading}><MemberRoutes/></Suspense></RoleGate>}/>
             <Route
               path="/treasurer/*"
               element={
                 <RoleGate requiredRole="Treasurer">
-                  <TreasuryRoutes />
+                  <Suspense fallback={workspaceLoading}><TreasuryRoutes /></Suspense>
                 </RoleGate>
               }
             />
@@ -59,7 +60,7 @@ export default function App() {
               path="/hod/*"
               element={
                 <RoleGate requiredRole="HOD">
-                  <HodRoutes />
+                  <Suspense fallback={workspaceLoading}><HodRoutes /></Suspense>
                 </RoleGate>
               }
             />
