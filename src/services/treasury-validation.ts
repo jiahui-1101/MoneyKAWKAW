@@ -18,8 +18,8 @@ export function validateTreasury(store: Store) {
       throw new Error('Invalid Treasurer grant.');
   for (const receipt of t.receipts) {
     const claim = store.expenses.find((e) => e.id === receipt.expenseId);
-    if(!claim)throw new Error('Invalid receipt claim reference.');
-    validateReceiptEvidence(receipt,claim.amount);
+    if (!claim) throw new Error('Invalid receipt claim reference.');
+    validateReceiptEvidence(receipt, claim.amount);
   }
   for (const payout of t.payouts)
     if (

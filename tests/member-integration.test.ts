@@ -1,6 +1,6 @@
-import { expect,it } from 'vitest';
-import { setupMember,capturedDraft,account,proof } from './member-fixture';
-import { directorService,upsertActivity,upsertDepartment } from '../src/services/director';
+import { expect, it } from 'vitest';
+import { setupMember, capturedDraft, account, proof } from './member-fixture';
+import { directorService, upsertActivity, upsertDepartment } from '../src/services/director';
 import { configureDepartmentAccess } from '../src/services/department-access';
 import { configureTreasurer } from '../src/services/treasury-access';
 import { hodService } from '../src/services/hod';
@@ -13,54 +13,171 @@ import { reimbursementService } from '../src/services/reimbursements';
 import { selectDemoActor } from '../src/domain/session';
 import { summarize } from '../src/domain/budget';
 import { paymentState } from '../src/domain/risk';
-const {raw}=setupMember();
-it('runs Director → HOD → Member real submission → Treasurer → Member receipt acknowledgment without double counting',async()=>{
+const { raw } = setupMember();
+it('runs Director → HOD → Member real submission → Treasurer → Member receipt acknowledgment without double counting', async () => {
   selectDemoActor('director-jamie');
-  let store=upsertActivity(await directorService.load(),{name:'Member integration event',description:'Full actor workflow',type:'Large-scale event',status:'Planning',startDate:'2026-11-01',endDate:'2026-11-30',budget:1000000});
-  const activityId=store.activities[0].id;
-  store=configureTreasurer(store,activityId,true);
-  store=upsertDepartment(store,activityId,{name:'Multimedia',head:'',description:'Screens',allocation:200000});
-  const departmentId=store.activities[0].departments[0].id;
-  store=configureDepartmentAccess(store,activityId,departmentId,'hod-sarah',['member-ava','member-ryan']);await directorService.save(store);
+  let store = upsertActivity(await directorService.load(), {
+    name: 'Member integration event',
+    description: 'Full actor workflow',
+    type: 'Large-scale event',
+    status: 'Planning',
+    startDate: '2026-11-01',
+    endDate: '2026-11-30',
+    budget: 1000000,
+  });
+  const activityId = store.activities[0].id;
+  store = configureTreasurer(store, activityId, true);
+  store = upsertDepartment(store, activityId, {
+    name: 'Multimedia',
+    head: '',
+    description: 'Screens',
+    allocation: 200000,
+  });
+  const departmentId = store.activities[0].departments[0].id;
+  store = configureDepartmentAccess(store, activityId, departmentId, 'hod-sarah', [
+    'member-ava',
+    'member-ryan',
+  ]);
+  await directorService.save(store);
   selectDemoActor('hod-sarah');
-  const taskId=(await hodService.save(activityId,departmentId,{name:'HDMI cable',description:'Projector cable',assigneeId:'member-ava',budget:8000,dueDate:'2026-11-10',priority:'High'})).taskId!;
-  selectDemoActor('member-ava');let task=raw().assignments.find(t=>t.id===taskId)!;
+  const taskId = (
+    await hodService.save(activityId, departmentId, {
+      name: 'HDMI cable',
+      description: 'Projector cable',
+      assigneeId: 'member-ava',
+      budget: 8000,
+      dueDate: '2026-11-10',
+      priority: 'High',
+    })
+  ).taskId!;
+  selectDemoActor('member-ava');
+  let task = raw().assignments.find((t) => t.id === taskId)!;
   await expect(draftService.begin(taskId)).rejects.toThrow('Purchased');
-  await memberService.progress(taskId,task.purchasing!.updatedAt,'Purchased');
-  const accountId=(await accountService.save(account)).result;
-  let draft=await capturedDraft(taskId);let context=await memberClaimService.context(draft.id);
-  await expect(memberClaimService.submit(draft.id,draft.updatedAt,context.taskUpdatedAt,context.accountUpdatedAt)).rejects.toThrow('Explain');
-  await draftService.preferences(draft.id,draft.updatedAt,accountId,'Compatible cable costs RM30 more.');draft=await draftService.load(draft.id);context=await memberClaimService.context(draft.id);
-  expect(context).toMatchObject({amount:11000,variance:3000,variancePercent:37.5,needsJustification:true});
-  const claimId=(await memberClaimService.submit(draft.id,draft.updatedAt,context.taskUpdatedAt,context.accountUpdatedAt)).result;
-  await expect(memberClaimService.submit(draft.id,draft.updatedAt,context.taskUpdatedAt,context.accountUpdatedAt)).rejects.toThrow('unavailable');
-  const receipt=await memberClaimService.receipt(claimId);
+  await memberService.progress(taskId, task.purchasing!.updatedAt, 'Purchased');
+  const accountId = (await accountService.save(account)).result;
+  let draft = await capturedDraft(taskId);
+  let context = await memberClaimService.context(draft.id);
+  await expect(
+    memberClaimService.submit(
+      draft.id,
+      draft.updatedAt,
+      context.taskUpdatedAt,
+      context.accountUpdatedAt,
+    ),
+  ).rejects.toThrow('Explain');
+  await draftService.preferences(
+    draft.id,
+    draft.updatedAt,
+    accountId,
+    'Compatible cable costs RM30 more.',
+  );
+  draft = await draftService.load(draft.id);
+  context = await memberClaimService.context(draft.id);
+  expect(context).toMatchObject({
+    amount: 11000,
+    variance: 3000,
+    variancePercent: 37.5,
+    needsJustification: true,
+  });
+  const claimId = (
+    await memberClaimService.submit(
+      draft.id,
+      draft.updatedAt,
+      context.taskUpdatedAt,
+      context.accountUpdatedAt,
+    )
+  ).result;
+  await expect(
+    memberClaimService.submit(
+      draft.id,
+      draft.updatedAt,
+      context.taskUpdatedAt,
+      context.accountUpdatedAt,
+    ),
+  ).rejects.toThrow('unavailable');
+  const receipt = await memberClaimService.receipt(claimId);
   expect(receipt.originalUrl).toBe(proof.dataUrl);
-  await accountService.save({...account,identifier:'999988887777'},accountId,raw().member!.accounts[0].updatedAt);
-  expect(raw().treasury!.payouts.find(p=>p.expenseId===claimId)!.identifier).toBe(account.identifier);
+  await accountService.save(
+    { ...account, identifier: '999988887777' },
+    accountId,
+    raw().member!.accounts[0].updatedAt,
+  );
+  expect(raw().treasury!.payouts.find((p) => p.expenseId === claimId)!.identifier).toBe(
+    account.identifier,
+  );
   await expect(accountService.remove(accountId)).rejects.toThrow('referenced');
-  expect(summarize(raw(),activityId,departmentId)).toMatchObject({recorded:11000,pending:11000,available:189000});
+  expect(summarize(raw(), activityId, departmentId)).toMatchObject({
+    recorded: 11000,
+    pending: 11000,
+    available: 189000,
+  });
   selectDemoActor('treasurer-nora');
-  const revision=()=>raw().expenses.find(e=>e.id===claimId)!.review!.updatedAt;
-  await treasuryService.review(claimId,revision());await expect(treasuryService.decide(claimId,revision(),'Approved','')).rejects.toThrow('Analyze');
-  await treasuryService.analyze(claimId);expect(raw().expenses.find(e=>e.id===claimId)!.review!.analysis!.band).toBe('High');
-  await treasuryService.decide(claimId,revision(),'Approved','Evidence and price increase reviewed');
+  const revision = () => raw().expenses.find((e) => e.id === claimId)!.review!.updatedAt;
+  await treasuryService.review(claimId, revision());
+  await expect(treasuryService.decide(claimId, revision(), 'Approved', '')).rejects.toThrow(
+    'Analyze',
+  );
+  await treasuryService.analyze(claimId);
+  expect(raw().expenses.find((e) => e.id === claimId)!.review!.analysis!.band).toBe('High');
+  await treasuryService.decide(
+    claimId,
+    revision(),
+    'Approved',
+    'Evidence and price increase reviewed',
+  );
   expect((await reimbursementService.destination(claimId)).identifier).toBe(account.identifier);
-  await reimbursementService.record(claimId,{amount:11000,date:'2026-11-05',reference:'DEMO-ONLY-110',proof,confirmed:true});
-  const payment=raw().payments.find(p=>p.expenseId===claimId)!;
-  expect(paymentState(raw(),raw().expenses.find(e=>e.id===claimId)!)).toBe('Recorded · awaiting member');
-  selectDemoActor('member-ava');expect(await memberService.proof(payment.id)).toEqual(proof);
-  await expect(memberService.confirm(payment.id,10000,true)).rejects.toThrow('full recorded');
-  await memberService.discrepancy(payment.id,'Transfer not visible yet',0);
-  await expect(memberService.discrepancy(payment.id,'Duplicate issue',0)).rejects.toThrow('existing');
-  await memberService.confirm(payment.id,11000,true);
-  await expect(memberService.confirm(payment.id,11000,true)).rejects.toThrow('once');
-  await expect(memberClaimService.changeDestination(claimId,accountId,'Use new account')).rejects.toThrow('locked');
-  expect(raw().payments.find(p=>p.id===payment.id)!.manual).toMatchObject({externalVerified:false,receivedConfirmedBy:'member-ava',discrepancy:{reportedBy:'member-ava',resolvedBy:'member-ava'}});
-  expect(paymentState(raw(),raw().expenses.find(e=>e.id===claimId)!)).toBe('Received confirmed');
+  await reimbursementService.record(claimId, {
+    amount: 11000,
+    date: '2026-11-05',
+    reference: 'DEMO-ONLY-110',
+    proof,
+    confirmed: true,
+  });
+  const payment = raw().payments.find((p) => p.expenseId === claimId)!;
+  expect(
+    paymentState(
+      raw(),
+      raw().expenses.find((e) => e.id === claimId)!,
+    ),
+  ).toBe('Recorded · awaiting member');
+  selectDemoActor('member-ava');
+  expect(await memberService.proof(payment.id)).toEqual(proof);
+  await expect(memberService.confirm(payment.id, 10000, true)).rejects.toThrow('full recorded');
+  await memberService.discrepancy(payment.id, 'Transfer not visible yet', 0);
+  await expect(memberService.discrepancy(payment.id, 'Duplicate issue', 0)).rejects.toThrow(
+    'existing',
+  );
+  await memberService.confirm(payment.id, 11000, true);
+  await expect(memberService.confirm(payment.id, 11000, true)).rejects.toThrow('once');
+  await expect(
+    memberClaimService.changeDestination(claimId, accountId, 'Use new account'),
+  ).rejects.toThrow('locked');
+  expect(raw().payments.find((p) => p.id === payment.id)!.manual).toMatchObject({
+    externalVerified: false,
+    receivedConfirmedBy: 'member-ava',
+    discrepancy: { reportedBy: 'member-ava', resolvedBy: 'member-ava' },
+  });
+  expect(
+    paymentState(
+      raw(),
+      raw().expenses.find((e) => e.id === claimId)!,
+    ),
+  ).toBe('Received confirmed');
   expect(await memberClaimService.receipt(claimId)).toEqual(receipt);
-  expect(raw().assignments.find(t=>t.id===taskId)!.purchasing!.status).toBe('Completed');
-  const final=summarize(raw(),activityId,departmentId);expect(final).toMatchObject({recorded:11000,paid:11000,pending:0,available:189000,committed:0});
-  selectDemoActor('hod-sarah');expect((await hodService.department(activityId,departmentId)).expenses.find(e=>e.id===claimId)!.amount).toBe(11000);
-  selectDemoActor('director-jamie');expect(summarize(await directorService.load(),activityId,departmentId)).toEqual(final);
-},20000);
+  expect(raw().assignments.find((t) => t.id === taskId)!.purchasing!.status).toBe('Completed');
+  const final = summarize(raw(), activityId, departmentId);
+  expect(final).toMatchObject({
+    recorded: 11000,
+    paid: 11000,
+    pending: 0,
+    available: 189000,
+    committed: 0,
+  });
+  selectDemoActor('hod-sarah');
+  expect(
+    (await hodService.department(activityId, departmentId)).expenses.find((e) => e.id === claimId)!
+      .amount,
+  ).toBe(11000);
+  selectDemoActor('director-jamie');
+  expect(summarize(await directorService.load(), activityId, departmentId)).toEqual(final);
+}, 20000);

@@ -94,11 +94,12 @@ export function analyzeClaim(store: Store, claim: Expense, actor: string): RiskR
     pendingOther: other,
   };
 }
-export function paymentState(store: Pick<Store,'payments'>, claim: Expense) {
+export function paymentState(store: Pick<Store, 'payments'>, claim: Expense) {
   if (claim.state !== 'Approved') return 'Not payable';
   const payments = store.payments.filter((p) => p.expenseId === claim.id);
   if (!payments.length) return 'Payment pending';
   if (payments.some((p) => p.manual?.receivedConfirmedAt)) return 'Received confirmed';
-  if(payments.some(p=>p.manual?.discrepancy&&!p.manual.discrepancy.resolvedAt))return 'Issue reported · awaiting receipt';
+  if (payments.some((p) => p.manual?.discrepancy && !p.manual.discrepancy.resolvedAt))
+    return 'Issue reported · awaiting receipt';
   return 'Recorded · awaiting member';
 }

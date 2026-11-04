@@ -2,15 +2,27 @@ import { cp, mkdir, readdir } from 'node:fs/promises';
 import { createRequire } from 'node:module';
 import { dirname, join } from 'node:path';
 import { fileURLToPath } from 'node:url';
-const require=createRequire(import.meta.url);
-const root=dirname(dirname(fileURLToPath(import.meta.url)));
-const destination=join(root,'public','ocr');
-const packageDirectory=name=>dirname(require.resolve(`${name}/package.json`));
-await Promise.all(['core','lang'].map(name=>mkdir(join(destination,name),{recursive:true})));
-const core=packageDirectory('tesseract.js-core');
-for(const file of await readdir(core))if(file.endsWith('.wasm.js'))await cp(join(core,file),join(destination,'core',file));
-await cp(join(packageDirectory('tesseract.js'),'dist','worker.min.js'),join(destination,'worker.min.js'));
-await cp(join(packageDirectory('@tesseract.js-data/eng'),'4.0.0_best_int','eng.traineddata.gz'),join(destination,'lang','eng.traineddata.gz'));
-await cp(join(core,'LICENSE'),join(destination,'CORE-LICENSE.txt'));
-await cp(join(packageDirectory('tesseract.js'),'LICENSE.md'),join(destination,'TESSERACT-LICENSE.txt'));
+const require = createRequire(import.meta.url);
+const root = dirname(dirname(fileURLToPath(import.meta.url)));
+const destination = join(root, 'public', 'ocr');
+const packageDirectory = (name) => dirname(require.resolve(`${name}/package.json`));
+await Promise.all(
+  ['core', 'lang'].map((name) => mkdir(join(destination, name), { recursive: true })),
+);
+const core = packageDirectory('tesseract.js-core');
+for (const file of await readdir(core))
+  if (file.endsWith('.wasm.js')) await cp(join(core, file), join(destination, 'core', file));
+await cp(
+  join(packageDirectory('tesseract.js'), 'dist', 'worker.min.js'),
+  join(destination, 'worker.min.js'),
+);
+await cp(
+  join(packageDirectory('@tesseract.js-data/eng'), '4.0.0_best_int', 'eng.traineddata.gz'),
+  join(destination, 'lang', 'eng.traineddata.gz'),
+);
+await cp(join(core, 'LICENSE'), join(destination, 'CORE-LICENSE.txt'));
+await cp(
+  join(packageDirectory('tesseract.js'), 'LICENSE.md'),
+  join(destination, 'TESSERACT-LICENSE.txt'),
+);
 console.log('Prepared local OCR worker, WebAssembly variants, and English language data.');

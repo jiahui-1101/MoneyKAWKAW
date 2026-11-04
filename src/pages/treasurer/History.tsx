@@ -307,8 +307,35 @@ export function TreasuryHistory() {
                 ? `Member confirmed receipt ${time(payment.manual.receivedConfirmedAt)}.`
                 : 'Awaiting member receipt confirmation. Treasurer cannot confirm on the member’s behalf.'}
             </p>
-            {payment.manual?.receivedConfirmedBy&&<p className="settings-copy">Confirmed by claimant {data.directory?.users.find(u=>u.id===payment.manual?.receivedConfirmedBy)?.name??payment.manual.receivedConfirmedBy}.</p>}
-            {payment.manual?.discrepancy&&<div className="member-payment-issue"><Badge tone={payment.manual.discrepancy.resolvedAt?'green':'danger'}>{payment.manual.discrepancy.resolvedAt?'Prior issue resolved by member acknowledgment':'Member-reported payment discrepancy'}</Badge><p>{payment.manual.discrepancy.reason}</p>{payment.manual.discrepancy.receivedAmount!==undefined&&<p>Member reported receiving {money(payment.manual.discrepancy.receivedAmount)}.</p>}<small>Reported {time(payment.manual.discrepancy.reportedAt)}{payment.manual.discrepancy.resolvedAt?` · acknowledged ${time(payment.manual.discrepancy.resolvedAt)}`:''}</small></div>}
+            {payment.manual?.receivedConfirmedBy && (
+              <p className="settings-copy">
+                Confirmed by claimant{' '}
+                {data.directory?.users.find((u) => u.id === payment.manual?.receivedConfirmedBy)
+                  ?.name ?? payment.manual.receivedConfirmedBy}
+                .
+              </p>
+            )}
+            {payment.manual?.discrepancy && (
+              <div className="member-payment-issue">
+                <Badge tone={payment.manual.discrepancy.resolvedAt ? 'green' : 'danger'}>
+                  {payment.manual.discrepancy.resolvedAt
+                    ? 'Prior issue resolved by member acknowledgment'
+                    : 'Member-reported payment discrepancy'}
+                </Badge>
+                <p>{payment.manual.discrepancy.reason}</p>
+                {payment.manual.discrepancy.receivedAmount !== undefined && (
+                  <p>
+                    Member reported receiving {money(payment.manual.discrepancy.receivedAmount)}.
+                  </p>
+                )}
+                <small>
+                  Reported {time(payment.manual.discrepancy.reportedAt)}
+                  {payment.manual.discrepancy.resolvedAt
+                    ? ` · acknowledged ${time(payment.manual.discrepancy.resolvedAt)}`
+                    : ''}
+                </small>
+              </div>
+            )}
           </div>
         </Modal>
       )}

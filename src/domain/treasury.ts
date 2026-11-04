@@ -26,12 +26,12 @@ export interface ReceiptEvidence {
   originalLines: ReceiptLine[];
   edits: ReceiptEdit[];
   submittedAt: string;
-  file?: Omit<ProofFile,'dataUrl'>;
+  file?: Omit<ProofFile, 'dataUrl'>;
   purchaseDate?: string;
   originalTotal?: number;
   addedLines?: ReceiptLine[];
-  totalEdits?: {before:number;after:number;reason:string;actor:string;at:string}[];
-  extraction?: {method:'tesseract'|'manual';rawText:string;at:string};
+  totalEdits?: { before: number; after: number; reason: string; actor: string; at: string }[];
+  extraction?: { method: 'tesseract' | 'manual'; rawText: string; at: string };
 }
 export interface PayoutSnapshot {
   expenseId: string;
@@ -45,7 +45,7 @@ export interface PayoutSnapshot {
   accountId?: string;
   selectedAt?: string;
   selectedBy?: string;
-  history?: {accountId?:string;masked:string;at:string;actor:string;reason:string}[];
+  history?: { accountId?: string; masked: string; at: string; actor: string; reason: string }[];
 }
 export interface RiskRules {
   mediumVariance: number;
@@ -91,7 +91,14 @@ export interface ManualPayment {
   externalVerified: false;
   receivedConfirmedAt?: string;
   receivedConfirmedBy?: string;
-  discrepancy?: {reason:string;reportedAt:string;reportedBy:string;receivedAmount?:number;resolvedAt?:string;resolvedBy?:string};
+  discrepancy?: {
+    reason: string;
+    reportedAt: string;
+    reportedBy: string;
+    receivedAmount?: number;
+    resolvedAt?: string;
+    resolvedBy?: string;
+  };
 }
 export interface TreasuryData {
   grants: { userId: string; activityId: string }[];

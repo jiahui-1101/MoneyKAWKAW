@@ -1,4 +1,13 @@
-import type { Activity, Assignment, AuditEvent, ClubDirectory, Department, Expense, Payment, Settings } from './models';
+import type {
+  Activity,
+  Assignment,
+  AuditEvent,
+  ClubDirectory,
+  Department,
+  Expense,
+  Payment,
+  Settings,
+} from './models';
 import type { PayoutSnapshot, ReceiptEvidence } from './treasury';
 export interface PaymentAccount {
   id: string;
@@ -12,7 +21,7 @@ export interface PaymentAccount {
   isDefault: boolean;
   updatedAt: string;
 }
-export type AccountSummary = Omit<PaymentAccount,'identifier'> & {inUse:boolean};
+export type AccountSummary = Omit<PaymentAccount, 'identifier'> & { inUse: boolean };
 export interface ClaimDraft {
   id: string;
   ownerId: string;
@@ -25,12 +34,22 @@ export interface ClaimDraft {
 export interface MemberData {
   accounts: PaymentAccount[];
   drafts: ClaimDraft[];
-  readNotifications: {userId:string;ids:string[]}[];
-  accountHistory?: {id:string;ownerId:string;accountId:string;action:string;detail:string;at:string}[];
+  readNotifications: { userId: string; ids: string[] }[];
+  accountHistory?: {
+    id: string;
+    ownerId: string;
+    accountId: string;
+    action: string;
+    detail: string;
+    at: string;
+  }[];
 }
 export interface MemberScope {
-  activity: Pick<Activity,'id'|'name'|'description'|'type'|'status'|'startDate'|'endDate'>;
-  department: Pick<Department,'id'|'name'|'description'|'head'|'hodUserId'|'allocation'>;
+  activity: Pick<
+    Activity,
+    'id' | 'name' | 'description' | 'type' | 'status' | 'startDate' | 'endDate'
+  >;
+  department: Pick<Department, 'id' | 'name' | 'description' | 'head' | 'hodUserId' | 'allocation'>;
 }
 export interface MemberSnapshot {
   userId: string;
@@ -41,9 +60,15 @@ export interface MemberSnapshot {
   payments: Payment[];
   events: AuditEvent[];
   accounts: AccountSummary[];
-  drafts: Omit<ClaimDraft,'receipt'>[];
+  drafts: Omit<ClaimDraft, 'receipt'>[];
   readNotifications: string[];
   settings: Settings;
 }
-export type AccountInput = Pick<PaymentAccount,'label'|'kind'|'holder'|'institution'|'identifier'|'isDefault'>;
-export type SelectedDestination = Pick<PayoutSnapshot,'kind'|'label'|'masked'|'holder'|'institution'>;
+export type AccountInput = Pick<
+  PaymentAccount,
+  'label' | 'kind' | 'holder' | 'institution' | 'identifier' | 'isDefault'
+>;
+export type SelectedDestination = Pick<
+  PayoutSnapshot,
+  'kind' | 'label' | 'masked' | 'holder' | 'institution'
+>;

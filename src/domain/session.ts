@@ -10,7 +10,13 @@ export const demoProfiles = [
 ] as const;
 export type DemoActor = (typeof demoProfiles)[number];
 export const roleHome = (role: DemoActor['role']) =>
-  role === 'Director' ? '/director' : role === 'HOD' ? '/hod' : role==='Treasurer'?'/treasurer':'/member';
+  role === 'Director'
+    ? '/director'
+    : role === 'HOD'
+      ? '/hod'
+      : role === 'Treasurer'
+        ? '/treasurer'
+        : '/member';
 const key = 'moneykawkaw.demo-actor';
 function initialActor(): DemoActor {
   try {

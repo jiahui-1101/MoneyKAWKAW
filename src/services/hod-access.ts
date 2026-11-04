@@ -100,13 +100,17 @@ export function projectHod(store: Store): HodSnapshot {
     events: store.events
       .filter((e) => e.departmentId && inScope(e.activityId, e.departmentId))
       .map((e) =>
-        ['Manual reimbursement recorded','Payout destination changed','Payment discrepancy reported'].includes(e.action)
+        [
+          'Manual reimbursement recorded',
+          'Payout destination changed',
+          'Payment discrepancy reported',
+        ].includes(e.action)
           ? {
               ...e,
               detail:
-                  e.action === 'Manual reimbursement recorded'
-                    ? 'A manual payment was recorded for a department claim. Payment amounts and dates appear in expense status; references, proof, and payout instructions remain restricted.'
-                    : 'A private payment-detail event was recorded. Follow the claim status for reimbursement progress; payout instructions and discrepancy details remain restricted.',
+                e.action === 'Manual reimbursement recorded'
+                  ? 'A manual payment was recorded for a department claim. Payment amounts and dates appear in expense status; references, proof, and payout instructions remain restricted.'
+                  : 'A private payment-detail event was recorded. Follow the claim status for reimbursement progress; payout instructions and discrepancy details remain restricted.',
             }
           : e,
       ),

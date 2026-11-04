@@ -3,7 +3,15 @@ import type { ReceiptEvidence } from '../../domain/treasury';
 import { lineValue, receiptLines, receiptTotal, reviewedTotal } from '../../domain/receipt';
 import { treasuryService } from '../../services/treasury';
 import { Badge, Empty, Panel, useFormat } from '../ui';
-export function ReceiptReview({ claimId, amount, load=treasuryService.receipt }: { claimId: string; amount: number; load?:(id:string)=>Promise<ReceiptEvidence> }) {
+export function ReceiptReview({
+  claimId,
+  amount,
+  load = treasuryService.receipt,
+}: {
+  claimId: string;
+  amount: number;
+  load?: (id: string) => Promise<ReceiptEvidence>;
+}) {
   const [receipt, setReceipt] = useState<ReceiptEvidence | null>(null),
     [error, setError] = useState(''),
     [attempt, setAttempt] = useState(0);
@@ -46,27 +54,46 @@ export function ReceiptReview({ claimId, amount, load=treasuryService.receipt }:
         aria-label="Loading claim evidence"
       />
     );
-  return <ReceiptEvidenceView receipt={receipt} amount={amount}/>;
+  return <ReceiptEvidenceView receipt={receipt} amount={amount} />;
 }
-export function ReceiptEvidenceView({receipt,amount}:{receipt:ReceiptEvidence;amount:number}) {
-  const {money,time}=useFormat();
-  const lines = receiptLines(receipt),total=receiptTotal(receipt);
+export function ReceiptEvidenceView({
+  receipt,
+  amount,
+}: {
+  receipt: ReceiptEvidence;
+  amount: number;
+}) {
+  const { money, time } = useFormat();
+  const lines = receiptLines(receipt),
+    total = receiptTotal(receipt);
   return (
     <>
       <div className="treasury-two-col">
         <Panel
           title="Original receipt"
-          subtitle={receipt.extraction?'Exact uploaded image · original source is preserved':'Immutable fictional sample · no live OCR was run on this legacy fixture'}
+          subtitle={
+            receipt.extraction
+              ? 'Exact uploaded image · original source is preserved'
+              : 'Immutable fictional sample · no live OCR was run on this legacy fixture'
+          }
           action={
-            <a className="text-link" href={receipt.originalUrl} download={receipt.file?.name??`${receipt.id}.svg`}>
+            <a
+              className="text-link"
+              href={receipt.originalUrl}
+              download={receipt.file?.name ?? `${receipt.id}.svg`}
+            >
               Download original
             </a>
           }
         >
           <div className="treasury-receipt">
-            <img src={receipt.originalUrl} alt={`Unmodified receipt for ${receipt.expenseId||receipt.id}`} />
+            <img
+              src={receipt.originalUrl}
+              alt={`Unmodified receipt for ${receipt.expenseId || receipt.id}`}
+            />
             <p>
-              {receipt.merchant} · {receipt.expenseId?'submitted':'uploaded'} {time(receipt.submittedAt)}
+              {receipt.merchant} · {receipt.expenseId ? 'submitted' : 'uploaded'}{' '}
+              {time(receipt.submittedAt)}
             </p>
           </div>
         </Panel>
@@ -118,7 +145,11 @@ export function ReceiptEvidenceView({receipt,amount}:{receipt:ReceiptEvidence;am
       </div>
       <Panel
         title="Source items & final values"
-        subtitle={receipt.extraction?.method==='manual'?'Manually entered source values, retained alongside corrections':'Original OCR suggestions are retained alongside the claimant’s changes'}
+        subtitle={
+          receipt.extraction?.method === 'manual'
+            ? 'Manually entered source values, retained alongside corrections'
+            : 'Original OCR suggestions are retained alongside the claimant’s changes'
+        }
       >
         <div
           className="table-scroll"
@@ -141,7 +172,14 @@ export function ReceiptEvidenceView({receipt,amount}:{receipt:ReceiptEvidence;am
                 <tr key={l.original.id}>
                   <td>{l.original.description}</td>
                   <td className="money">{money(lineValue(l.original))}</td>
-                  <td>{l.final.description}{l.final.quantityMilli!==undefined&&<small className="cell-sub">Qty {l.final.quantityMilli/1000} × {money(l.final.unitPrice!)}</small>}</td>
+                  <td>
+                    {l.final.description}
+                    {l.final.quantityMilli !== undefined && (
+                      <small className="cell-sub">
+                        Qty {l.final.quantityMilli / 1000} × {money(l.final.unitPrice!)}
+                      </small>
+                    )}
+                  </td>
                   <td className="money">{money(lineValue(l.final))}</td>
                   <td>
                     <Badge tone={l.excluded ? 'danger' : l.edited ? 'gold' : 'green'}>
@@ -162,16 +200,28 @@ export function ReceiptEvidenceView({receipt,amount}:{receipt:ReceiptEvidence;am
           {receipt.edits.map((edit, i) => (
             <article key={`${edit.lineId}-${i}`}>
               <div className="row between wrap">
-                  <h3>{edit.excluded ? 'Item excluded' : edit.beforeExcluded?'Item included again':'Source value corrected'}</h3>
+                <h3>
+                  {edit.excluded
+                    ? 'Item excluded'
+                    : edit.beforeExcluded
+                      ? 'Item included again'
+                      : 'Source value corrected'}
+                </h3>
                 <small>
                   {time(edit.at)} · {edit.actor}
                 </small>
               </div>
               <p>
-                Before: {edit.before.description} · {money(lineValue(edit.before))}{edit.before.quantityMilli!==undefined?` · Qty ${edit.before.quantityMilli/1000} × ${money(edit.before.unitPrice!)}`:''}
+                Before: {edit.before.description} · {money(lineValue(edit.before))}
+                {edit.before.quantityMilli !== undefined
+                  ? ` · Qty ${edit.before.quantityMilli / 1000} × ${money(edit.before.unitPrice!)}`
+                  : ''}
               </p>
               <p>
-                After: {edit.after.description} · {money(lineValue(edit.after))}{edit.after.quantityMilli!==undefined?` · Qty ${edit.after.quantityMilli/1000} × ${money(edit.after.unitPrice!)}`:''}
+                After: {edit.after.description} · {money(lineValue(edit.after))}
+                {edit.after.quantityMilli !== undefined
+                  ? ` · Qty ${edit.after.quantityMilli / 1000} × ${money(edit.after.unitPrice!)}`
+                  : ''}
                 {edit.excluded ? ' · excluded from total' : ''}
               </p>
               <p className="muted">{edit.reason}</p>
@@ -180,10 +230,48 @@ export function ReceiptEvidenceView({receipt,amount}:{receipt:ReceiptEvidence;am
           {!receipt.edits.length && (
             <p className="muted">No corrections or exclusions were submitted.</p>
           )}
-          {receipt.totalEdits?.map((e,i)=><article key={`total-${i}`}><h3>Receipt total corrected</h3><p>{money(e.before)} → {money(e.after)} · {e.reason}</p><small>{e.actor} · {time(e.at)}</small></article>)}
+          {receipt.totalEdits?.map((e, i) => (
+            <article key={`total-${i}`}>
+              <h3>Receipt total corrected</h3>
+              <p>
+                {money(e.before)} → {money(e.after)} · {e.reason}
+              </p>
+              <small>
+                {e.actor} · {time(e.at)}
+              </small>
+            </article>
+          ))}
         </div>
       </Panel>
-      {receipt.extraction&&<Panel title="Retained extraction & receipt totals" subtitle={receipt.extraction.method==='tesseract'?'Tesseract on-device OCR · suggestions require human review':'Manual entry · no OCR accuracy is claimed'}><div className="treasury-evidence-history"><div className="row between wrap"><span>Original total: {money(receipt.originalTotal!)}</span><span>Reviewed total: {money(reviewedTotal(receipt))}</span><strong>Claimable: {money(total)}</strong></div><p className="field-hint">Purchase date: {receipt.purchaseDate}. Shared tax and discount allocations are explicit line corrections; no hidden proration is applied.</p><details><summary>View retained source text</summary><pre className="receipt-raw">{receipt.extraction.rawText||'Manually transcribed from the uploaded image; no machine extraction was performed.'}</pre></details></div></Panel>}
+      {receipt.extraction && (
+        <Panel
+          title="Retained extraction & receipt totals"
+          subtitle={
+            receipt.extraction.method === 'tesseract'
+              ? 'Tesseract on-device OCR · suggestions require human review'
+              : 'Manual entry · no OCR accuracy is claimed'
+          }
+        >
+          <div className="treasury-evidence-history">
+            <div className="row between wrap">
+              <span>Original total: {money(receipt.originalTotal!)}</span>
+              <span>Reviewed total: {money(reviewedTotal(receipt))}</span>
+              <strong>Claimable: {money(total)}</strong>
+            </div>
+            <p className="field-hint">
+              Purchase date: {receipt.purchaseDate}. Shared tax and discount allocations are
+              explicit line corrections; no hidden proration is applied.
+            </p>
+            <details>
+              <summary>View retained source text</summary>
+              <pre className="receipt-raw">
+                {receipt.extraction.rawText ||
+                  'Manually transcribed from the uploaded image; no machine extraction was performed.'}
+              </pre>
+            </details>
+          </div>
+        </Panel>
+      )}
     </>
   );
 }

@@ -57,7 +57,13 @@ export const reimbursementService = {
       if (!input.reference.trim() || input.reference.length > 120)
         throw new Error('Enter a transaction reference of up to 120 characters.');
       validateProof(input.proof);
-      const masked={kind:payout.kind,label:payout.label,masked:payout.masked,holder:payout.holder,institution:payout.institution};
+      const masked = {
+        kind: payout.kind,
+        label: payout.label,
+        masked: payout.masked,
+        holder: payout.holder,
+        institution: payout.institution,
+      };
       const at = new Date().toISOString();
       store.payments.push({
         id: crypto.randomUUID(),

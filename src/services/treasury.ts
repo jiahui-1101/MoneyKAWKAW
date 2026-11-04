@@ -67,11 +67,7 @@ export const treasuryService = {
       if (reason.length > 1000 || (decision === 'Declined' && !reason.trim()))
         throw new Error('A decline reason is required (up to 1,000 characters).');
       const receipt = store.treasury!.receipts.find((r) => r.expenseId === claimId);
-      if (
-        decision === 'Approved' &&
-        (!receipt ||
-          receiptTotal(receipt) !== claim.amount)
-      )
+      if (decision === 'Approved' && (!receipt || receiptTotal(receipt) !== claim.amount))
         throw new Error('Receipt lines must reconcile to the submitted amount before approval.');
       const overBudget =
         claimContext(store, claim).variance > 0 ||
