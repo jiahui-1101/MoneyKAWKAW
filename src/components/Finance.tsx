@@ -103,7 +103,7 @@ export function ActivityTable({
             <th>BUDGET</th>
             <th>EXPENSES</th>
             <th>UTILIZATION</th>
-            <th>
+                <th aria-label="Activity details">
               <span className="sr-only">Details</span>
             </th>
           </tr>

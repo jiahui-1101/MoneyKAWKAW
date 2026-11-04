@@ -1,0 +1,12 @@
+{
+  "plugins": ["typescript", "react", "jsx-a11y"],
+  "rules": {
+    "react/refs": "off",
+    "react/purity": "off",
+    "react/immutability": "off",
+    "react/set-state-in-effect": "off",
+    "jsx-a11y/prefer-tag-over-role": "off",
+    "jsx-a11y/no-noninteractive-tabindex": "off",
+    "jsx-a11y/no-autofocus": "off"
+  }
+}

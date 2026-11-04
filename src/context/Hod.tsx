@@ -3,9 +3,7 @@ import type { HodSnapshot } from '../domain/hod';
 import { hodService } from '../services/hod';
 import { HodContext } from './hod-context';
 import { FormatSettingsContext } from './format-context';
-import { useSession } from './session-context';
 export function HodProvider({ children }: { children: ReactNode }) {
-  const { actor } = useSession();
   const [data, setData] = useState<HodSnapshot | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
@@ -23,7 +21,7 @@ export function HodProvider({ children }: { children: ReactNode }) {
     } finally {
       setLoading(false);
     }
-  }, [actor.userId]);
+  }, []);
   useEffect(() => {
     void reload();
   }, [reload]);
@@ -51,8 +49,6 @@ export function HodProvider({ children }: { children: ReactNode }) {
       setData(result.data);
       setNotice(message);
       return result.taskId;
-    } catch (e) {
-      throw e;
     } finally {
       locked.current = false;
       setBusy(false);

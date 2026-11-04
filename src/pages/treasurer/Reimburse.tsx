@@ -7,7 +7,7 @@ import { reimbursementService } from '../../services/reimbursements';
 import { readProof } from '../../services/payment-proof';
 import { Field } from '../../components/Field';
 import { DateField } from '../../components/DateField';
-import { Badge, Empty, Modal, PageHeader, Panel, useFormat } from '../../components/ui';
+import { Badge, Empty, Modal, PageHeader, useFormat } from '../../components/ui';
 import { ProofPreview } from '../../components/treasurer/ProofPreview';
 
 export function TreasuryReimburse() {

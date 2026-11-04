@@ -19,7 +19,7 @@ export function TreasuryHistory() {
     let active=true;setProof(null);setError('');
     if(payment?.manual) reimbursementService.proof(payment.id).then(p=>{if(active)setProof(p);}).catch(e=>{if(active)setError(e instanceof Error?e.message:'Unable to load proof.');});
     return()=>{active=false;};
-  },[payment?.id,attempt]);
+  },[payment?.id,payment?.manual,attempt]);
   if(!data)return null;
   const records=data.payments.filter(p=>{
     const e=data.expenses.find(e=>e.id===p.expenseId)!;const c=claimContext(data,e);

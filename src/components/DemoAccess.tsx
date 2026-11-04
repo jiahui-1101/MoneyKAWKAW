@@ -27,7 +27,7 @@ export function DemoRoleSwitcher() {
     </select>
   );
 }
-export function RoleGate({ role, children }: { role: DemoActor['role']; children: ReactNode }) {
+export function RoleGate({ requiredRole: role, children }: { requiredRole: DemoActor['role']; children: ReactNode }) {
   const { actor } = useSession();
   return actor.role === role ? (
     children

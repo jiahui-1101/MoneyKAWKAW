@@ -45,11 +45,11 @@ export default function App() {
           <Routes>
             <Route path="/" element={<LandingRedirect />} />
             <Route path="/demo" element={<DemoAccess />} />
-            <Route path="/treasurer/*" element={<RoleGate role="Treasurer"><TreasuryRoutes/></RoleGate>}/>
+            <Route path="/treasurer/*" element={<RoleGate requiredRole="Treasurer"><TreasuryRoutes/></RoleGate>}/>
             <Route
               path="/hod/*"
               element={
-                <RoleGate role="HOD">
+                <RoleGate requiredRole="HOD">
                   <HodRoutes />
                 </RoleGate>
               }
@@ -57,7 +57,7 @@ export default function App() {
             <Route
               path="/director"
               element={
-                <RoleGate role="Director">
+                <RoleGate requiredRole="Director">
                   <WorkspaceProvider>
                     <Shell />
                   </WorkspaceProvider>

@@ -142,7 +142,7 @@ export const directorService: DirectorService = {
     requireRole('Director');
     const store = await sharedRepository.load();
     requireRole('Director');
-    return { ...store, payments:store.payments.map(({manual,...p})=>p), treasury:store.treasury ? {...store.treasury,receipts:[],payouts:[]} : undefined };
+    return { ...store, payments:store.payments.map(({manual: _manual,...p})=>p), treasury:store.treasury ? {...store.treasury,receipts:[],payouts:[]} : undefined };
   },
   async save(store) {
     requireRole('Director');
