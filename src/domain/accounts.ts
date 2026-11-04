@@ -1,4 +1,8 @@
 import type { AccountInput } from './member';
+import type { Store } from './models';
+export function accountInUse(store:Store,id:string) {
+  return !!store.treasury?.payouts.some(p=>p.accountId===id)||!!store.member?.drafts.some(d=>d.accountId===id&&store.assignments.some(t=>t.id===d.taskId&&!t.expenseId&&t.purchasing?.assigneeId===d.ownerId&&store.directory?.memberships.some(m=>m.active&&m.role==='Member'&&m.userId===d.ownerId&&m.activityId===t.activityId&&m.departmentId===t.departmentId)));
+}
 export const accountKinds=[{value:'Bank',label:'Bank account'},{value:'TNG',label:'Touch ’n Go eWallet'}] as const;
 export function validateAccount(input:AccountInput) {
   if(!input||![input.label,input.holder,input.institution,input.identifier].every(v=>typeof v==='string')||typeof input.isDefault!=='boolean'||

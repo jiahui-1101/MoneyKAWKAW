@@ -2,7 +2,7 @@ import type { AccountInput, PaymentAccount } from '../domain/member';
 import type { Store } from '../domain/models';
 import { requireRole } from '../domain/session';
 import { memberCommand, memberData, memberRead } from './member-core';
-import { validateAccount } from '../domain/accounts';
+import { accountInUse, validateAccount } from '../domain/accounts';
 const owned=(store:Store,id:string)=>{
   const account=store.member?.accounts.find(a=>a.id===id&&a.ownerId===requireRole('Member').userId);
   if(!account)throw new Error('Payment account unavailable for your profile.');return account;
@@ -36,7 +36,7 @@ export const accountService={
   remove(id:string) {
     return memberCommand(store=>{
       const account=owned(store,id),data=memberData(store);
-      if(store.treasury?.payouts.some(p=>p.accountId===id)||data.drafts.some(d=>d.accountId===id))throw new Error('This account is referenced by a claim or draft. Keep it for the audit trail.');
+      if(accountInUse(store,id))throw new Error('This account is referenced by a claim or active draft. Keep it for the audit trail.');
       data.accounts=data.accounts.filter(a=>a.id!==id);
       if(account.isDefault){const next=data.accounts.find(a=>a.ownerId===account.ownerId);if(next){next.isDefault=true;next.updatedAt=new Date().toISOString();}}
       audit(store,account,'Unused account removed',`${account.label} · ${account.masked}`);

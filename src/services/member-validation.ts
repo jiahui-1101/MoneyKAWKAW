@@ -16,7 +16,7 @@ export function validateMemberData(store:Store) {
     if(!store.directory?.users.some(u=>u.id===draft.ownerId)||!store.assignments.some(t=>t.id===draft.taskId)||typeof draft.accountId!=='string'||typeof draft.justification!=='string'||draft.justification.length>1000||Number.isNaN(Date.parse(draft.updatedAt)))throw new Error('Invalid claim draft.');
     if(draft.receipt)validateReceiptEvidence(draft.receipt);
   }
-  if(new Set(data.drafts.map(d=>d.taskId)).size!==data.drafts.length)throw new Error('Only one draft is allowed for a purchasing task.');
+  if(new Set(data.drafts.map(d=>`${d.ownerId}:${d.taskId}`)).size!==data.drafts.length)throw new Error('Only one draft per owner is allowed for a purchasing task.');
   for(const read of data.readNotifications)if(!store.directory?.users.some(u=>u.id===read.userId)||!Array.isArray(read.ids)||read.ids.some(id=>typeof id!=='string'))throw new Error('Invalid notification read state.');
 }
 function validateMemberPayments(store:Store) {
