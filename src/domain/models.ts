@@ -9,6 +9,7 @@ export interface Department {
   description: string;
   head: string;
   allocation: number;
+  hodUserId?: string;
 }
 export interface Activity {
   id: string;
@@ -42,6 +43,7 @@ export interface Assignment {
   departmentId: string;
   budget: number;
   expenseId?: string;
+  purchasing?: PurchasingDetails;
 }
 export interface AuditEvent {
   id: string;
@@ -50,6 +52,8 @@ export interface AuditEvent {
   detail: string;
   at: string;
   actor: string;
+  departmentId?: string;
+  assignmentId?: string;
 }
 export interface Settings {
   currency: 'MYR' | 'SGD' | 'USD';
@@ -64,7 +68,31 @@ export interface Store {
   assignments: Assignment[];
   events: AuditEvent[];
   settings: Settings;
+  directory?: ClubDirectory;
 }
+
+export const purchasingStatuses = ['Not Started', 'In Progress', 'Purchased', 'Claim Submitted', 'Completed', 'Cancelled'] as const;
+export type PurchasingStatus = typeof purchasingStatuses[number];
+export const priorities = ['Low', 'Medium', 'High'] as const;
+export interface PurchasingDetails {
+  name: string;
+  description: string;
+  assigneeId: string | null;
+  dueDate: string;
+  priority: typeof priorities[number];
+  status: PurchasingStatus;
+  createdBy: string;
+  updatedAt: string;
+}
+export interface ClubUser { id: string; name: string }
+export interface Membership {
+  userId: string;
+  activityId: string;
+  departmentId: string;
+  role: 'HOD' | 'Member';
+  active: boolean;
+}
+export interface ClubDirectory { users: ClubUser[]; memberships: Membership[] }
 export type ActivityInput = Omit<Activity, 'id' | 'departments'>;
 export type DepartmentInput = Omit<Department, 'id'>;
 export interface BudgetSummary {
