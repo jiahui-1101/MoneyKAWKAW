@@ -50,7 +50,7 @@ export function projectMember(store:Store):MemberSnapshot {
     directory:{users:store.directory!.users.filter(u=>directoryMemberships.some(m=>m.userId===u.id)),memberships:directoryMemberships},
     payments:store.payments.filter(p=>expenses.some(e=>e.id===p.expenseId)).map(p=>({...p,manual:p.manual?{...p.manual,proof:{...p.manual.proof,dataUrl:''}}:undefined})),
     events:store.events.filter(e=>allowed(e.activityId,e.departmentId??'')&&!!e.assignmentId&&ownIds.has(e.assignmentId)),
-    accounts:(data?.accounts??[]).filter(a=>a.ownerId===actor.userId).map(({identifier:_identifier,...a})=>a),
+    accounts:(data?.accounts??[]).filter(a=>a.ownerId===actor.userId).map(({identifier:_identifier,...a})=>({...a,inUse:!!store.treasury?.payouts.some(p=>p.accountId===a.id)||!!data?.drafts.some(d=>d.accountId===a.id)})),
     drafts:(data?.drafts??[]).filter(d=>d.ownerId===actor.userId&&ownIds.has(d.taskId)).map(({receipt:_receipt,...d})=>d),
     readNotifications:data?.readNotifications.find(n=>n.userId===actor.userId)?.ids??[],
   });

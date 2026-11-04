@@ -12,7 +12,7 @@ export interface PaymentAccount {
   isDefault: boolean;
   updatedAt: string;
 }
-export type AccountSummary = Omit<PaymentAccount,'identifier'>;
+export type AccountSummary = Omit<PaymentAccount,'identifier'> & {inUse:boolean};
 export interface ClaimDraft {
   id: string;
   ownerId: string;
