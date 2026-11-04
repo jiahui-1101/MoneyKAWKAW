@@ -1,6 +1,6 @@
-# MoneyKAWKAW · Director workspace
+# MoneyKAWKAW · Club budget & purchasing workspace
 
-A complete, browser-local Director frontend for club activity planning and financial oversight. React 19, TypeScript, Vite, and React Router. Other role frontends are intentionally not implemented.
+A browser-local Director and HOD frontend for club activity planning, department purchasing, and financial oversight. React 19, TypeScript, Vite, and React Router. Treasurer and Committee Member frontends are intentionally not implemented.
 
 ## Run locally
 
@@ -22,6 +22,17 @@ Open the printed localhost URL. `npm run build` checks TypeScript and creates `d
 
 Create activity → configure departments → allocate budget → open budget dashboard → edit activity. Changes persist across refreshes. Workspace settings can explicitly restore the fictional sample data.
 
+## HOD experience
+
+Use the **Demo profile** selector or open `/demo` to explicitly choose a Director or HOD identity. Sarah, Amir, and Mei each have department-specific memberships; descriptive department lead names alone do not grant access. These are local demo identities, not production authentication.
+
+- Department dashboards, activity/department switching, procurement progress, deadlines, and financial summaries.
+- Purchasing task creation, eligible-member assignment, reassignment, editing, progress tracking, and confirmed cancellation.
+- A searchable task board, member workload views, item-budget tracking, claim variances, read-only reimbursement monitoring, and department history.
+- Shared Director/HOD data and persistence, additive migration of existing records, and role/scoped service checks. Director department setup now includes explicit HOD/member access assignment; activity budget pages show shared purchasing plans read-only.
+
+Select department → create purchasing task → assign member → set budget/deadline → save → review dashboard → edit/track progress. HODs cannot change Director allocations, approve claims, or record payments. See the [complete HOD route map, financial rules, and integration notes](docs/hod/README.md).
+
 ## Routes
 
 | Route | Page |
@@ -37,6 +48,9 @@ Create activity → configure departments → allocate budget → open budget da
 | `/director/budgets` | Organization financial breakdown |
 | `/director/history` | Searchable/filterable change history |
 | `/director/settings` | Timezone, attention threshold, demo reset |
+| `/hod` | HOD workspace overview |
+| `/hod/activities/:activityId/departments/:departmentId` | Department overview and scoped purchasing pages |
+| `/demo` | Explicit local demo profile selection |
 | Unknown paths | Useful not-found view |
 
 ## Architecture and calculations
@@ -60,10 +74,10 @@ Manrope headings and DM Sans body/UI text are bundled through Fontsource, with n
 
 ## Verification and future integration
 
-See [verification evidence](docs/VERIFICATION.md), [commit history](docs/COMMITS.md), and [screenshots](docs/screenshots/overview-desktop.jpg).
+See [original Director verification](docs/VERIFICATION.md), [HOD verification and Director regression checks](docs/hod/VERIFICATION.md), [HOD commit history](docs/hod/COMMITS.md), and [HOD screenshots](docs/hod/screenshots/overview-preview.jpg).
 
 This is frontend-only: local demo identity is not authentication, browser storage is not a security boundary, and history is not durable production audit storage. Sample claims and payments are fictional, read-only records. There are no approval actions, transfers, OCR, payout identifiers, or financial risk predictions.
 
-Future Treasurer, HOD, and Member frontends can reuse the design system and linked models. Before production, introduce authenticated command APIs, server-enforced role/activity/department scope, authoritative monetary validation/calculations, concurrency control, durable append-only history, and protected file/payment data. Preserve the existing distinction between claim review and payment. No other actors' pages should be exposed until those boundaries are implemented.
+Future Treasurer and Member frontends can reuse the design system and linked models. HOD commands already enforce scoped mock-service permissions and preserve the distinction between purchasing, claim review, and payment. Before production, introduce authenticated command APIs, server-enforced role/activity/department scope, authoritative monetary validation/calculations, concurrency control, durable append-only history, and protected file/payment data. Member-specific assignment editing, receipt/OCR history, claims, and payout-method workflows still need their own permission boundaries and implementation.
 
 Local `AGENTS.md` and `REQUIREMENTS.md` are ignored and excluded from Git. Nothing has been pushed or deployed as part of this implementation.
