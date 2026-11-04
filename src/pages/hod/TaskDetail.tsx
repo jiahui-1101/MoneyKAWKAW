@@ -67,7 +67,11 @@ export function HodTaskDetail() {
       </PageHeader>
       <div className="row wrap">
         <PurchaseBadge task={task} />
-        <Badge tone={p.priority === 'High' ? 'danger' : p.priority === 'Medium' ? 'gold' : 'neutral'}>{p.priority} priority</Badge>
+        <Badge
+          tone={p.priority === 'High' ? 'danger' : p.priority === 'Medium' ? 'gold' : 'neutral'}
+        >
+          {p.priority} priority
+        </Badge>
         {overdue && <Badge tone="danger">Overdue purchase</Badge>}
         {claim && <Status value={claim.state} />}
       </div>

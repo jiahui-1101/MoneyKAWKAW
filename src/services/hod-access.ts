@@ -37,7 +37,14 @@ export function projectHod(store: Store): HodSnapshot {
           endDate: a.endDate,
           status: a.status,
         },
-        department: { id: d.id, name: d.name, description: d.description, head: d.head, allocation: d.allocation, hodUserId: d.hodUserId },
+        department: {
+          id: d.id,
+          name: d.name,
+          description: d.description,
+          head: d.head,
+          allocation: d.allocation,
+          hodUserId: d.hodUserId,
+        },
       })),
   );
   const inScope = (activityId: string, departmentId: string) =>
@@ -58,16 +65,36 @@ export function projectHod(store: Store): HodSnapshot {
   return structuredClone({
     actor,
     scopes,
-    assignments: store.assignments.filter((t) => inScope(t.activityId, t.departmentId)).map(t => ({
-      id: t.id, activityId: t.activityId, departmentId: t.departmentId, budget: t.budget, expenseId: t.expenseId,
-      purchasing: t.purchasing ? { name: t.purchasing.name, description: t.purchasing.description, assigneeId: t.purchasing.assigneeId, dueDate: t.purchasing.dueDate, priority: t.purchasing.priority, status: t.purchasing.status, createdBy: t.purchasing.createdBy, updatedAt: t.purchasing.updatedAt } : undefined,
-    })),
+    assignments: store.assignments
+      .filter((t) => inScope(t.activityId, t.departmentId))
+      .map((t) => ({
+        id: t.id,
+        activityId: t.activityId,
+        departmentId: t.departmentId,
+        budget: t.budget,
+        expenseId: t.expenseId,
+        purchasing: t.purchasing
+          ? {
+              name: t.purchasing.name,
+              description: t.purchasing.description,
+              assigneeId: t.purchasing.assigneeId,
+              dueDate: t.purchasing.dueDate,
+              priority: t.purchasing.priority,
+              status: t.purchasing.status,
+              createdBy: t.purchasing.createdBy,
+              updatedAt: t.purchasing.updatedAt,
+            }
+          : undefined,
+      })),
     expenses,
     payments: store.payments
       .filter((p) => expenses.some((e) => e.id === p.expenseId))
       .map((p) => ({ id: p.id, expenseId: p.expenseId, amount: p.amount, date: p.date })),
     directory: {
-      users: store.directory?.users.filter((u) => memberships.some((m) => m.userId === u.id)).map(u => ({ id: u.id, name: u.name })) ?? [],
+      users:
+        store.directory?.users
+          .filter((u) => memberships.some((m) => m.userId === u.id))
+          .map((u) => ({ id: u.id, name: u.name })) ?? [],
       memberships,
     },
     events: store.events.filter((e) => e.departmentId && inScope(e.activityId, e.departmentId)),

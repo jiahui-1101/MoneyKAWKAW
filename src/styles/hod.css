@@ -282,14 +282,31 @@
   border-radius: 50%;
   flex-shrink: 0;
 }
-.flow-step[class*='chart-color-'] { color: var(--muted); }
-.flow-step.chart-color-0 i { background: var(--accent); }
-.flow-step.chart-color-1 i { background: var(--teal); }
-.flow-step.chart-color-2 i { background: var(--violet); }
-.flow-step.chart-color-3 i { background: var(--gold); }
-.flow-step.chart-color-4 i { background: var(--dark); }
-.deadline-icon.danger-text { color: var(--danger); }
-select[aria-invalid='true'] { border-color: var(--danger); background-color: var(--danger-soft); }
+.flow-step[class*='chart-color-'] {
+  color: var(--muted);
+}
+.flow-step.chart-color-0 i {
+  background: var(--accent);
+}
+.flow-step.chart-color-1 i {
+  background: var(--teal);
+}
+.flow-step.chart-color-2 i {
+  background: var(--violet);
+}
+.flow-step.chart-color-3 i {
+  background: var(--gold);
+}
+.flow-step.chart-color-4 i {
+  background: var(--dark);
+}
+.deadline-icon.danger-text {
+  color: var(--danger);
+}
+select[aria-invalid='true'] {
+  border-color: var(--danger);
+  background-color: var(--danger-soft);
+}
 .procurement-flow strong {
   display: block;
   font-family: var(--font-display);

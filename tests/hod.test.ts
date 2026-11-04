@@ -53,11 +53,17 @@ describe('department scope and role boundaries', () => {
   it('does not expose payment account metadata even if storage has additional fields', () => {
     const source = structuredClone(seed);
     Object.assign(source.expenses.find((e) => e.id === 'exp-2')!, { bankAccount: 'private' });
-    Object.assign(source.directory!.users.find(u => u.id === 'member-ava')!, { payout: 'private' });
-    Object.assign(source.assignments.find(t => t.id === 'as-2')!, { receiptUrl: 'private' });
+    Object.assign(source.directory!.users.find((u) => u.id === 'member-ava')!, {
+      payout: 'private',
+    });
+    Object.assign(source.assignments.find((t) => t.id === 'as-2')!, { receiptUrl: 'private' });
     expect(projectHod(source).expenses[0]).not.toHaveProperty('bankAccount');
-    expect(projectHod(source).directory.users.find(u => u.id === 'member-ava')).not.toHaveProperty('payout');
-    expect(projectHod(source).assignments.find(t => t.id === 'as-2')).not.toHaveProperty('receiptUrl');
+    expect(
+      projectHod(source).directory.users.find((u) => u.id === 'member-ava'),
+    ).not.toHaveProperty('payout');
+    expect(projectHod(source).assignments.find((t) => t.id === 'as-2')).not.toHaveProperty(
+      'receiptUrl',
+    );
     selectDemoActor('director-jamie');
     expect(() => projectHod(seed)).toThrow('role');
   });
