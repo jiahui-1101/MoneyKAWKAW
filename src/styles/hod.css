@@ -547,6 +547,10 @@ select[aria-invalid='true'] {
 .budget-comparison .progress {
   grid-column: 1 / -1;
 }
+@media (max-width: 360px) {
+  .metrics { grid-template-columns: minmax(0, 1fr); }
+  .metric-value { font-size: 26px; }
+}
 @media (max-width: 1250px) {
   .task-counts {
     grid-template-columns: repeat(3, minmax(0, 1fr));

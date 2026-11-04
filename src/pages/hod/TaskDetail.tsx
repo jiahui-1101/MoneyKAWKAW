@@ -79,21 +79,21 @@ export function HodTaskDetail() {
         items={[
           {
             label: 'Estimated item budget',
-            value: money(task.budget),
+            value: money(task.budget, true),
             icon: Wallet,
             note: 'Reserved purchasing estimate',
             tone: 'brand',
           },
           {
             label: 'Recorded claim amount',
-            value: claim ? money(claim.amount) : 'No claim',
+            value: claim ? money(claim.amount, true) : 'No claim',
             icon: CircleDollarSign,
             note: claim ? 'Fictional shared expense record' : 'No expense has been recorded',
             tone: 'violet',
           },
           {
             label: 'Variance against estimate',
-            value: claim ? `${variance > 0 ? '+' : ''}${money(variance)}` : '—',
+            value: claim ? `${variance > 0 ? '+' : ''}${money(variance, true)}` : '—',
             icon: Clock,
             note: claim
               ? variance > 0
@@ -104,7 +104,7 @@ export function HodTaskDetail() {
           },
           {
             label: 'Reimbursement recorded',
-            value: money(paid),
+            value: money(paid, true),
             icon: CheckCircle2,
             note: paid ? 'Sample payment history' : 'Purchase completion is not payment',
             tone: 'green',
