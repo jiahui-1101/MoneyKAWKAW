@@ -28,7 +28,10 @@ export function summarize(store: Store, activityId?: string, departmentId?: stri
   const openAssignments = store.assignments
     .filter(
       (a) =>
-        ids.has(a.activityId) && (!departmentId || a.departmentId === departmentId) && !a.expenseId && a.purchasing?.status !== 'Cancelled',
+        ids.has(a.activityId) &&
+        (!departmentId || a.departmentId === departmentId) &&
+        !a.expenseId &&
+        a.purchasing?.status !== 'Cancelled',
     )
     .reduce((s, a) => s + a.budget, 0);
   const committed = Math.max(0, recorded - pending - paid) + openAssignments;

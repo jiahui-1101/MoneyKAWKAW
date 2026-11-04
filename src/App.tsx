@@ -43,8 +43,24 @@ export default function App() {
           <Routes>
             <Route path="/" element={<LandingRedirect />} />
             <Route path="/demo" element={<DemoAccess />} />
-            <Route path="/hod/*" element={<RoleGate role="HOD"><HodRoutes /></RoleGate>} />
-            <Route path="/director" element={<RoleGate role="Director"><WorkspaceProvider><Shell /></WorkspaceProvider></RoleGate>}>
+            <Route
+              path="/hod/*"
+              element={
+                <RoleGate role="HOD">
+                  <HodRoutes />
+                </RoleGate>
+              }
+            />
+            <Route
+              path="/director"
+              element={
+                <RoleGate role="Director">
+                  <WorkspaceProvider>
+                    <Shell />
+                  </WorkspaceProvider>
+                </RoleGate>
+              }
+            >
               <Route index element={<Dashboard />} />
               <Route path="activities" element={<Activities />} />
               <Route path="activities/new" element={<ActivityForm key="new" />} />
@@ -83,5 +99,10 @@ export default function App() {
 }
 function LandingRedirect({ missing = false }: { missing?: boolean }) {
   const { actor } = useSession();
-  return <Navigate to={`${actor.role === 'Director' ? '/director' : '/hod'}${missing ? '/not-found' : ''}`} replace />;
+  return (
+    <Navigate
+      to={`${actor.role === 'Director' ? '/director' : '/hod'}${missing ? '/not-found' : ''}`}
+      replace
+    />
+  );
 }

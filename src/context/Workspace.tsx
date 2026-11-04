@@ -1,10 +1,4 @@
-import {
-  useCallback,
-  useEffect,
-  useRef,
-  useState,
-  type ReactNode,
-} from 'react';
+import { useCallback, useEffect, useRef, useState, type ReactNode } from 'react';
 import type { Store } from '../domain/models';
 import { directorService } from '../services/director';
 import { WorkspaceContext } from './workspace-context';

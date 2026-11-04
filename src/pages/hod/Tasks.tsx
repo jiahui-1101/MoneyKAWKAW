@@ -7,13 +7,161 @@ import { Empty, PageHeader, Panel } from '../../components/ui';
 
 export function HodTasks() {
   const { data, scope, tasks, base } = useDepartmentScope();
-  const [params,setParams]=useSearchParams();
-  const q=params.get('q')??'', status=params.get('status')??'', member=params.get('member')??'', priority=params.get('priority')??'', attention=params.get('attention')??'';
-  const update=(key:string,value:string)=>{const next=new URLSearchParams(params);if(value)next.set(key,value);else next.delete(key);setParams(next,{replace:true});};
-  const today=departmentToday(data.settings.timezone);
-  const filtered=tasks.filter(t=>{
-    const p=t.purchasing!;
-    return `${p.name} ${p.description}`.toLowerCase().includes(q.toLowerCase())&&(!status||p.status===status)&&(!member||p.assigneeId===member)&&(!priority||p.priority===priority)&&(!attention||attention==='overdue'&&isOverdue(t,today)||attention==='unassigned'&&!p.assigneeId&&p.status!=='Cancelled'||attention==='awaiting-claim'&&p.status==='Purchased'&&!t.expenseId||attention==='pending'&&['Not Started','In Progress'].includes(p.status));
-  }).sort((a,b)=>a.purchasing!.dueDate.localeCompare(b.purchasing!.dueDate));
-  return <div className="stack"><PageHeader eyebrow={`${scope.department.name.toUpperCase()} · PURCHASING`} title="Good plans become great purchases." description="Give every item a clear owner, a thoughtful budget, and a deadline."><Link className="btn primary" to={`${base}/tasks/new`}><Plus size={16}/>Create purchasing task</Link></PageHeader><Panel title="Department task board" subtitle="Purchasing progress and claim review are tracked separately" action={<span className="count-label">{filtered.length} of {tasks.length} tasks</span>}><div className="filters"><div className="search-field"><Search size={16}/><input aria-label="Search purchasing tasks" placeholder="Search item names or descriptions…" value={q} onChange={e=>update('q',e.target.value)}/></div><div className="filter-selects"><SlidersHorizontal size={15}/><select aria-label="Purchasing status" value={status} onChange={e=>update('status',e.target.value)}><option value="">All statuses</option>{purchasingStatuses.map(s=><option key={s}>{s}</option>)}</select><select aria-label="Assigned member" value={member} onChange={e=>update('member',e.target.value)}><option value="">All members</option>{data.directory.users.filter(u=>data.directory.memberships.some(m=>m.userId===u.id&&m.activityId===scope.activity.id&&m.departmentId===scope.department.id)).map(u=><option key={u.id} value={u.id}>{u.name}</option>)}</select><select aria-label="Task priority" value={priority} onChange={e=>update('priority',e.target.value)}><option value="">All priorities</option>{priorities.map(p=><option key={p}>{p}</option>)}</select></div></div><div className="attention-filters">{[['','All purchases'],['overdue','Overdue'],['unassigned','Unassigned'],['awaiting-claim','Purchased · no claim'],['pending','Awaiting purchase']].map(([value,label])=><button key={value} className={`filter-chip ${attention===value?'selected':''}`} aria-pressed={attention===value} onClick={()=>update('attention',value)}>{label}</button>)}{params.size>0&&<button className="text-link" onClick={()=>setParams({})}>Clear filters</button>}</div>{filtered.length?<TaskTable tasks={filtered} data={data}/>:<Empty title={tasks.length?'No matching purchases':'Your team’s next purchase starts here'} action={tasks.length?<button className="btn" onClick={()=>setParams({})}>Clear filters</button>:<Link className="btn primary" to={`${base}/tasks/new`}>Create purchasing task</Link>}>{tasks.length?'Try another keyword or adjust your filters.':'Create a task, assign a department member, and set an item budget.'}</Empty>}<div className="table-footer"><span>Department-scoped purchasing plans</span><span>Amounts in {data.settings.currency}</span></div></Panel></div>;
+  const [params, setParams] = useSearchParams();
+  const q = params.get('q') ?? '',
+    status = params.get('status') ?? '',
+    member = params.get('member') ?? '',
+    priority = params.get('priority') ?? '',
+    attention = params.get('attention') ?? '';
+  const update = (key: string, value: string) => {
+    const next = new URLSearchParams(params);
+    if (value) next.set(key, value);
+    else next.delete(key);
+    setParams(next, { replace: true });
+  };
+  const today = departmentToday(data.settings.timezone);
+  const filtered = tasks
+    .filter((t) => {
+      const p = t.purchasing!;
+      return (
+        `${p.name} ${p.description}`.toLowerCase().includes(q.toLowerCase()) &&
+        (!status || p.status === status) &&
+        (!member || p.assigneeId === member) &&
+        (!priority || p.priority === priority) &&
+        (!attention ||
+          (attention === 'overdue' && isOverdue(t, today)) ||
+          (attention === 'unassigned' && !p.assigneeId && p.status !== 'Cancelled') ||
+          (attention === 'awaiting-claim' && p.status === 'Purchased' && !t.expenseId) ||
+          (attention === 'pending' && ['Not Started', 'In Progress'].includes(p.status)))
+      );
+    })
+    .sort((a, b) => a.purchasing!.dueDate.localeCompare(b.purchasing!.dueDate));
+  return (
+    <div className="stack">
+      <PageHeader
+        eyebrow={`${scope.department.name.toUpperCase()} · PURCHASING`}
+        title="Good plans become great purchases."
+        description="Give every item a clear owner, a thoughtful budget, and a deadline."
+      >
+        <Link className="btn primary" to={`${base}/tasks/new`}>
+          <Plus size={16} />
+          Create purchasing task
+        </Link>
+      </PageHeader>
+      <Panel
+        title="Department task board"
+        subtitle="Purchasing progress and claim review are tracked separately"
+        action={
+          <span className="count-label">
+            {filtered.length} of {tasks.length} tasks
+          </span>
+        }
+      >
+        <div className="filters">
+          <div className="search-field">
+            <Search size={16} />
+            <input
+              aria-label="Search purchasing tasks"
+              placeholder="Search item names or descriptions…"
+              value={q}
+              onChange={(e) => update('q', e.target.value)}
+            />
+          </div>
+          <div className="filter-selects">
+            <SlidersHorizontal size={15} />
+            <select
+              aria-label="Purchasing status"
+              value={status}
+              onChange={(e) => update('status', e.target.value)}
+            >
+              <option value="">All statuses</option>
+              {purchasingStatuses.map((s) => (
+                <option key={s}>{s}</option>
+              ))}
+            </select>
+            <select
+              aria-label="Assigned member"
+              value={member}
+              onChange={(e) => update('member', e.target.value)}
+            >
+              <option value="">All members</option>
+              {data.directory.users
+                .filter((u) =>
+                  data.directory.memberships.some(
+                    (m) =>
+                      m.userId === u.id &&
+                      m.activityId === scope.activity.id &&
+                      m.departmentId === scope.department.id,
+                  ),
+                )
+                .map((u) => (
+                  <option key={u.id} value={u.id}>
+                    {u.name}
+                  </option>
+                ))}
+            </select>
+            <select
+              aria-label="Task priority"
+              value={priority}
+              onChange={(e) => update('priority', e.target.value)}
+            >
+              <option value="">All priorities</option>
+              {priorities.map((p) => (
+                <option key={p}>{p}</option>
+              ))}
+            </select>
+          </div>
+        </div>
+        <div className="attention-filters">
+          {[
+            ['', 'All purchases'],
+            ['overdue', 'Overdue'],
+            ['unassigned', 'Unassigned'],
+            ['awaiting-claim', 'Purchased · no claim'],
+            ['pending', 'Awaiting purchase'],
+          ].map(([value, label]) => (
+            <button
+              key={value}
+              className={`filter-chip ${attention === value ? 'selected' : ''}`}
+              aria-pressed={attention === value}
+              onClick={() => update('attention', value)}
+            >
+              {label}
+            </button>
+          ))}
+          {params.size > 0 && (
+            <button className="text-link" onClick={() => setParams({})}>
+              Clear filters
+            </button>
+          )}
+        </div>
+        {filtered.length ? (
+          <TaskTable tasks={filtered} data={data} />
+        ) : (
+          <Empty
+            title={tasks.length ? 'No matching purchases' : 'Your team’s next purchase starts here'}
+            action={
+              tasks.length ? (
+                <button className="btn" onClick={() => setParams({})}>
+                  Clear filters
+                </button>
+              ) : (
+                <Link className="btn primary" to={`${base}/tasks/new`}>
+                  Create purchasing task
+                </Link>
+              )
+            }
+          >
+            {tasks.length
+              ? 'Try another keyword or adjust your filters.'
+              : 'Create a task, assign a department member, and set an item budget.'}
+          </Empty>
+        )}
+        <div className="table-footer">
+          <span>Department-scoped purchasing plans</span>
+          <span>Amounts in {data.settings.currency}</span>
+        </div>
+      </Panel>
+    </div>
+  );
 }

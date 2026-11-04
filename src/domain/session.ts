@@ -4,18 +4,25 @@ export const demoProfiles = [
   { userId: 'hod-amir', name: 'Amir Hassan', role: 'HOD' },
   { userId: 'hod-mei', name: 'Mei Wong', role: 'HOD' },
 ] as const;
-export type DemoActor = typeof demoProfiles[number];
+export type DemoActor = (typeof demoProfiles)[number];
 const key = 'moneykawkaw.demo-actor';
 function initialActor(): DemoActor {
-  try { return demoProfiles.find(p => p.userId === sessionStorage.getItem(key)) ?? demoProfiles[0]; }
-  catch { return demoProfiles[0]; }
+  try {
+    return demoProfiles.find((p) => p.userId === sessionStorage.getItem(key)) ?? demoProfiles[0];
+  } catch {
+    return demoProfiles[0];
+  }
 }
 let actor: DemoActor = initialActor();
 export const getDemoActor = () => actor;
 export function selectDemoActor(id: string) {
-  const next = demoProfiles.find(p => p.userId === id);
+  const next = demoProfiles.find((p) => p.userId === id);
   if (!next) throw new Error('Choose an available demo profile.');
-  try { sessionStorage.setItem(key, next.userId); } catch { /* Session remains usable in memory. */ }
+  try {
+    sessionStorage.setItem(key, next.userId);
+  } catch {
+    /* Session remains usable in memory. */
+  }
   actor = next;
   return next;
 }

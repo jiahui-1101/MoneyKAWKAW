@@ -135,9 +135,18 @@ export const sharedRepository: DirectorService = {
   },
 };
 export const directorService: DirectorService = {
-  async load() { requireRole('Director'); return sharedRepository.load(); },
-  async save(store) { requireRole('Director'); return sharedRepository.save(store); },
-  async reset() { requireRole('Director'); return sharedRepository.reset(); },
+  async load() {
+    requireRole('Director');
+    return sharedRepository.load();
+  },
+  async save(store) {
+    requireRole('Director');
+    return sharedRepository.save(store);
+  },
+  async reset() {
+    requireRole('Director');
+    return sharedRepository.reset();
+  },
 };
 
 function event(store: Store, activityId: string, action: string, detail: string) {
@@ -226,7 +235,10 @@ export function removeDepartment(current: Store, activityId: string, id: string)
   )
     throw new Error('Departments with expense or assignment records cannot be removed.');
   a.departments = a.departments.filter((d) => d.id !== id);
-  if (store.directory) store.directory.memberships = store.directory.memberships.filter(m => m.activityId !== activityId || m.departmentId !== id);
+  if (store.directory)
+    store.directory.memberships = store.directory.memberships.filter(
+      (m) => m.activityId !== activityId || m.departmentId !== id,
+    );
   event(
     store,
     activityId,
@@ -236,7 +248,11 @@ export function removeDepartment(current: Store, activityId: string, id: string)
   return store;
 }
 export function updateSettings(current: Store, settings: Settings): Store {
-  if (!Number.isFinite(settings.warningPercent) || settings.warningPercent < 1 || settings.warningPercent > 100)
+  if (
+    !Number.isFinite(settings.warningPercent) ||
+    settings.warningPercent < 1 ||
+    settings.warningPercent > 100
+  )
     throw new Error('Choose a utilization attention threshold between 1 and 100.');
   // Do not relabel existing amounts with another currency: currency is configured at workspace creation.
   if (settings.currency !== current.settings.currency)
