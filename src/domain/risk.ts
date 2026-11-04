@@ -99,5 +99,6 @@ export function paymentState(store: Pick<Store,'payments'>, claim: Expense) {
   const payments = store.payments.filter((p) => p.expenseId === claim.id);
   if (!payments.length) return 'Payment pending';
   if (payments.some((p) => p.manual?.receivedConfirmedAt)) return 'Received confirmed';
+  if(payments.some(p=>p.manual?.discrepancy&&!p.manual.discrepancy.resolvedAt))return 'Issue reported · awaiting receipt';
   return 'Recorded · awaiting member';
 }

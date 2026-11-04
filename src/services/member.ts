@@ -21,7 +21,7 @@ export const memberService={
     return memberCommand(store=>{
       const payment=store.payments.find(p=>p.id===paymentId);
       if(!payment)throw new Error('Payment unavailable.');const claim=ownedClaim(store,payment.expenseId),manual=payment.manual;
-      if(claim.state!=='Approved'||!manual?.proof||manual.receivedConfirmedAt)throw new Error('Only a recorded manual reimbursement can be confirmed once.');
+      if(claim.state!=='Approved'||!manual?.proof||manual.receivedConfirmedAt||payment.amount!==claim.amount)throw new Error('Only one full recorded manual reimbursement can be confirmed once.');
       if(!confirmed||amountReceived!==payment.amount)throw new Error('Confirm the full recorded amount only after receiving it. Report a discrepancy if the amount differs.');
       const at=new Date().toISOString(),actor=claim.review!.claimantId!;
       manual.receivedConfirmedAt=at;manual.receivedConfirmedBy=actor;
