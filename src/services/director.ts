@@ -144,6 +144,7 @@ export const directorService: DirectorService = {
     requireRole('Director');
     return {
       ...store,
+      member: undefined,
       payments: store.payments.map(({ manual: _manual, ...p }) => p),
       treasury: store.treasury ? { ...store.treasury, receipts: [], payouts: [] } : undefined,
     };
@@ -159,6 +160,7 @@ export const directorService: DirectorService = {
     await sharedRepository.save({
       ...store,
       events,
+      member: fresh.member,
       expenses: fresh.expenses,
       payments: fresh.payments,
       assignments: fresh.assignments,

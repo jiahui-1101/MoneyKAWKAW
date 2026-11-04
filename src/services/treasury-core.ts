@@ -34,6 +34,7 @@ export function projectTreasury(store: Store): Store {
   ]);
   return {
     ...store,
+    member: undefined,
     activities: store.activities.filter((a) => ids.has(a.id)),
     expenses,
     assignments: store.assignments.filter((t) => ids.has(t.activityId)),

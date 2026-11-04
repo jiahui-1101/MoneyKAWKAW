@@ -1,7 +1,8 @@
 import { summarize } from './budget';
 import { isPending } from './claim-balances';
 import type { Expense, Store } from './models';
-import type { ReceiptEvidence, RiskResult, RiskRules } from './treasury';
+import type { RiskResult, RiskRules } from './treasury';
+export { receiptLines } from './receipt';
 
 export function validateRiskRules(r: RiskRules) {
   if (
@@ -13,18 +14,6 @@ export function validateRiskRules(r: RiskRules) {
     r.lowHeadroomPercent > 100
   )
     throw new Error('Use increasing variance thresholds (1–1,000%) and headroom between 1–100%.');
-}
-export function receiptLines(receipt: ReceiptEvidence) {
-  return receipt.originalLines.map((original) => {
-    const edits = receipt.edits.filter((e) => e.lineId === original.id);
-    const latest = edits.at(-1);
-    return {
-      original,
-      final: latest?.after ?? original,
-      excluded: latest?.excluded ?? false,
-      edited: edits.length > 0,
-    };
-  });
 }
 export function claimContext(store: Store, claim: Expense) {
   const task = store.assignments.find((t) => t.expenseId === claim.id);
