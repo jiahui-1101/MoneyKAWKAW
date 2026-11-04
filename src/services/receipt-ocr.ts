@@ -71,6 +71,10 @@ export function parseReceiptText(rawText: string): OcrSuggestion {
   return { rawText: rawText.slice(0, 50000), merchant, purchaseDate, total, lines };
 }
 export async function readReceiptImage(file: File) {
+  if (!['image/png', 'image/jpeg'].includes(file.type) || file.size > 1_048_576 || file.size < 8)
+    throw new Error(
+      'Choose a PNG or JPEG receipt image up to 1 MB. PDF receipts are not supported.',
+    );
   const proof = await readProof(file);
   validateReceiptFile(proof);
   const bitmap = await createImageBitmap(file);

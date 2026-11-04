@@ -1,5 +1,5 @@
 import { expect, it } from 'vitest';
-import { parseReceiptText } from '../src/services/receipt-ocr';
+import { parseReceiptText, readReceiptImage } from '../src/services/receipt-ocr';
 import {
   parseQuantity,
   quantityAmount,
@@ -10,6 +10,11 @@ import { receiptEditService } from '../src/services/member-receipt-edits';
 import { draftService } from '../src/services/member-drafts';
 import { capturedDraft, setupMember } from './member-fixture';
 setupMember();
+it('gives receipt-specific feedback before decoding unsupported files', async () => {
+  await expect(
+    readReceiptImage(new File(['not a receipt'], 'invalid.txt', { type: 'text/plain' })),
+  ).rejects.toThrow('PNG or JPEG receipt image');
+});
 it('parses actual OCR text conservatively with quantity, discount, tax and total kept separate', () => {
   const source =
     'Demo Supplies\n2026-11-05\n2 x HDMI Cable 47.50 95.00\nPersonal snacks 15.00\nDiscount -5.00\nSST 6.00\nSUBTOTAL 110.00\nTOTAL 111.00\nCash 120.00\nChange 9.00';
