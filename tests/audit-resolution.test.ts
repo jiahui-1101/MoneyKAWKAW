@@ -8,6 +8,7 @@ const { raw } = setupMember();
 it('retains authorized resolution history without changing money, evidence or Member receipt acknowledgment', async () => {
   selectDemoActor('treasurer-nora');
   await reimbursementService.record('exp-2', {
+    destinationRevision: (await reimbursementService.destination('exp-2')).revision!,
     amount: 420000,
     date: '2026-11-05',
     reference: 'DEMO-ISSUE',

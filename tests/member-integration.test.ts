@@ -127,6 +127,7 @@ it('runs Director → HOD → Member real submission → Treasurer → Member re
   );
   expect((await reimbursementService.destination(claimId)).identifier).toBe(account.identifier);
   await reimbursementService.record(claimId, {
+    destinationRevision: (await reimbursementService.destination(claimId)).revision!,
     amount: 11000,
     date: '2026-11-05',
     reference: 'DEMO-ONLY-110',

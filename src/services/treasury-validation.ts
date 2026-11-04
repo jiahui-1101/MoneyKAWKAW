@@ -29,6 +29,8 @@ export function validateTreasury(store: Store) {
         (e) => e.id === payout.expenseId && e.review?.claimantId === payout.ownerId,
       ) ||
       !payout.masked ||
+      (payout.revision !== undefined &&
+        (typeof payout.revision !== 'string' || !payout.revision)) ||
       !payout.identifier
     )
       throw new Error('Invalid selected payout snapshot.');

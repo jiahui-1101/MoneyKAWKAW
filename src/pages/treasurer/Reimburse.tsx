@@ -32,6 +32,9 @@ export function TreasuryReimburse() {
     let active = true;
     setPayout(null);
     setPayoutError('');
+    setReveal(false);
+    setConfirmed(false);
+    setConfirm(false);
     if (id && claim?.state === 'Approved' && !paid)
       reimbursementService
         .destination(id)
@@ -45,7 +48,7 @@ export function TreasuryReimburse() {
     return () => {
       active = false;
     };
-  }, [id, claim?.state, paid, attempt]);
+  }, [id, claim?.state, claim?.review?.updatedAt, paid, attempt]);
   if (!data || !claim)
     return (
       <Empty title="Claim access restricted">
@@ -83,6 +86,7 @@ export function TreasuryReimburse() {
       await run(
         () =>
           reimbursementService.record(claim.id, {
+            destinationRevision: payout?.revision ?? '',
             amount: claim.amount,
             date,
             reference,

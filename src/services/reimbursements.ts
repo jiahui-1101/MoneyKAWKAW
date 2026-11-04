@@ -26,6 +26,7 @@ function payable(store: Awaited<ReturnType<typeof treasuryRead>>['store'], id: s
   return { claim, payout };
 }
 export interface PaymentInput {
+  destinationRevision: string;
   amount: number;
   date: string;
   reference: string;
@@ -64,12 +65,21 @@ export const reimbursementService = {
   },
   async destination(id: string) {
     const { store } = await treasuryRead();
-    return structuredClone(payable(store, id).payout);
+    const payout = payable(store, id).payout;
+    return structuredClone({
+      ...payout,
+      revision: payout.revision ?? `legacy-${payout.expenseId}`,
+    });
   },
   record(id: string, input: PaymentInput) {
     return treasuryWrite(async () => {
       const { store, actor } = await treasuryRead();
       const { claim, payout } = payable(store, id);
+      const destinationRevision = payout.revision ?? `legacy-${payout.expenseId}`;
+      if (input.destinationRevision !== destinationRevision)
+        throw new Error(
+          'The selected payment destination changed. Review the current instructions and confirm the transfer details again.',
+        );
       if (!input.confirmed)
         throw new Error('Confirm that you made the transfer externally before recording it.');
       if (input.amount !== claim.amount || !Number.isSafeInteger(input.amount) || input.amount <= 0)
@@ -100,6 +110,7 @@ export const reimbursementService = {
         amount: input.amount,
         date: input.date,
         manual: {
+          destinationRevision,
           reference: input.reference.trim(),
           recordedAt: at,
           recordedBy: actor.userId,

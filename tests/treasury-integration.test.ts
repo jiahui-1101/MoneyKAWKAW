@@ -96,6 +96,7 @@ it('preserves Director → HOD → fictional claim → Treasurer approval → pr
   });
   const date = raw().expenses.find((e) => e.id === claimId)!.date;
   await reimbursementService.record(claimId, {
+    destinationRevision: (await reimbursementService.destination(claimId)).revision!,
     amount: 19000,
     date,
     reference: 'DEMO-ONLY-190',

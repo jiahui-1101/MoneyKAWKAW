@@ -9,6 +9,7 @@ import type { PaymentAccount } from '../domain/member';
 import type { PayoutSnapshot } from '../domain/treasury';
 export function destinationSnapshot(account: PaymentAccount, expenseId: string): PayoutSnapshot {
   return {
+    revision: crypto.randomUUID(),
     expenseId,
     ownerId: account.ownerId,
     accountId: account.id,

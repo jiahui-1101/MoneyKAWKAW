@@ -34,6 +34,7 @@ export interface ReceiptEvidence {
   extraction?: { method: 'tesseract' | 'manual'; rawText: string; at: string };
 }
 export interface PayoutSnapshot {
+  revision?: string;
   expenseId: string;
   ownerId: string;
   label: string;
@@ -83,6 +84,7 @@ export interface ProofFile {
   size: number;
 }
 export interface ManualPayment {
+  destinationRevision?: string;
   reference: string;
   recordedAt: string;
   recordedBy: string;

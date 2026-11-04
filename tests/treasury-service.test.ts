@@ -9,6 +9,7 @@ import { seed } from '../src/services/seed';
 import type { Store } from '../src/domain/models';
 import type { PaymentInput } from '../src/services/reimbursements';
 const input: PaymentInput = {
+  destinationRevision: 'legacy-exp-5',
   amount: 185000,
   date: '2026-11-05',
   reference: 'DEMO-TRANSFER-5',
@@ -165,6 +166,7 @@ describe('manual reimbursement records', () => {
   it('rejects missing confirmation, mismatched amounts, future dates, missing references and spoofed proof', async () => {
     await approve();
     for (const invalid of [
+      { ...input, destinationRevision: '' },
       { ...input, confirmed: false },
       { ...input, amount: 1 },
       { ...input, date: '2099-01-01' },
