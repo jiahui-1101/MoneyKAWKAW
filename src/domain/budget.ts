@@ -6,12 +6,13 @@ import {
   type DepartmentInput,
   type Store,
 } from './models';
+import { isPending, isRecorded, isReservation } from './claim-balances';
 
 export function summarize(store: Store, activityId?: string, departmentId?: string): BudgetSummary {
   const activities = store.activities.filter((a) => !activityId || a.id === activityId);
   const ids = new Set(activities.map((a) => a.id));
   const expenses = store.expenses.filter(
-    (e) => ids.has(e.activityId) && (!departmentId || e.departmentId === departmentId),
+    (e) => isRecorded(e) && ids.has(e.activityId) && (!departmentId || e.departmentId === departmentId),
   );
   const departments = activities
     .flatMap((a) => a.departments)
@@ -23,15 +24,14 @@ export function summarize(store: Store, activityId?: string, departmentId?: stri
     .filter((p) => expenses.some((e) => e.id === p.expenseId))
     .reduce((s, p) => s + p.amount, 0);
   const pending = expenses
-    .filter((e) => e.state === 'Pending review')
+    .filter(isPending)
     .reduce((s, e) => s + e.amount, 0);
   const openAssignments = store.assignments
     .filter(
       (a) =>
         ids.has(a.activityId) &&
         (!departmentId || a.departmentId === departmentId) &&
-        !a.expenseId &&
-        a.purchasing?.status !== 'Cancelled',
+        isReservation(a, store.expenses),
     )
     .reduce((s, a) => s + a.budget, 0);
   const committed = Math.max(0, recorded - pending - paid) + openAssignments;

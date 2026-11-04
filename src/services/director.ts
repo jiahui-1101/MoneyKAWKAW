@@ -145,7 +145,8 @@ export const directorService: DirectorService = {
   async save(store) {
     requireRole('Director');
     const fresh=await sharedRepository.load(); requireRole('Director');
-    await sharedRepository.save({...store,expenses:fresh.expenses,payments:fresh.payments,assignments:fresh.assignments,treasury:fresh.treasury ? {...fresh.treasury,grants:store.treasury?.grants??fresh.treasury.grants} : undefined});
+    const events = [...store.events.filter(e=>!fresh.events.some(f=>f.id===e.id)),...fresh.events];
+    await sharedRepository.save({...store,events,expenses:fresh.expenses,payments:fresh.payments,assignments:fresh.assignments,treasury:fresh.treasury ? {...fresh.treasury,grants:store.treasury?.grants??fresh.treasury.grants} : undefined});
     return directorService.load();
   },
   async reset() {

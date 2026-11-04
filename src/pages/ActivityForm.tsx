@@ -8,6 +8,7 @@ import { upsertActivity } from '../services/director';
 import { Empty, Modal, PageHeader, useFormat } from '../components/ui';
 import { DateField } from '../components/DateField';
 import { Field } from '../components/Field';
+import { configureTreasurer } from '../services/treasury-access';
 
 export function ActivityForm() {
   const { id } = useParams();
@@ -28,13 +29,15 @@ export function ActivityForm() {
   const [error, setError] = useState('');
   const [invalid, setInvalid] = useState<string[]>([]);
   const [discard, setDiscard] = useState(false);
+  const initiallyGranted = !!store?.treasury?.grants.some(g=>g.activityId===id && g.userId==='treasurer-nora');
+  const [treasurer, setTreasurer] = useState(initiallyGranted);
   const back = id ? `/director/activities/${id}` : '/director/activities';
   const update = (key: keyof typeof form, value: string) => {
     setForm((f) => ({ ...f, [key]: value }));
     setInvalid((fields) => fields.filter((f) => f !== key));
     setError('');
   };
-  const dirty = JSON.stringify(form) !== JSON.stringify(initial);
+  const dirty = JSON.stringify(form) !== JSON.stringify(initial) || treasurer !== initiallyGranted;
   useEffect(() => {
     if (!dirty) return;
     const warn = (e: BeforeUnloadEvent) => {
@@ -74,7 +77,7 @@ export function ActivityForm() {
         budget: parseMoney(form.budget),
       };
       const saved = await mutate(
-        (s) => upsertActivity(s, input, id),
+        (s) => { const next=upsertActivity(s,input,id); return configureTreasurer(next,id??next.activities[0].id,treasurer); },
         id
           ? 'Activity updated successfully.'
           : 'Activity created. Next, configure your departments.',
@@ -226,6 +229,12 @@ export function ActivityForm() {
               {existing &&
                 ` Currently allocated: ${money(existing.departments.reduce((s, d) => s + d.allocation, 0))}.`}
             </p>
+            <Field label="Treasurer oversight" id="treasurer-access">
+              <select id="treasurer-access" value={treasurer?'yes':'no'} onChange={e=>setTreasurer(e.target.value==='yes')}>
+                <option value="no">No Treasurer assigned</option>
+                <option value="yes">Nora Lim · Treasurer demo</option>
+              </select>
+            </Field>
           </div>
           {error && (
             <div className="form-error" role="alert">
