@@ -65,6 +65,7 @@ export function validateStore(value: unknown): asserts value is Store {
     if (
       !linked(e) ||
       !amount(e.amount) ||
+      e.amount === 0 ||
       !['Pending review', 'In review', 'Approved', 'Declined'].includes(e.state) ||
       typeof e.description !== 'string' ||
       Number.isNaN(Date.parse(e.date))

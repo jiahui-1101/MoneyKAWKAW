@@ -8,6 +8,8 @@ export function validateTreasury(store: Store) {
   if (![t.grants, t.receipts, t.payouts].every(Array.isArray))
     throw new Error('Invalid treasury records.');
   validateRiskRules(t.rules);
+  if (new Set(t.grants.map((g) => `${g.userId}:${g.activityId}`)).size !== t.grants.length)
+    throw new Error('Duplicate Treasurer grant.');
   if (
     new Set(t.receipts.map((r) => r.expenseId)).size !== t.receipts.length ||
     new Set(t.payouts.map((p) => p.expenseId)).size !== t.payouts.length

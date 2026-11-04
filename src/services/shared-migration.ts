@@ -138,8 +138,20 @@ export function validatePurchasingData(store: Store) {
     )
       throw new Error('Invalid scoped membership.');
   }
+  if (
+    new Set(
+      directory.memberships.map((m) => `${m.userId}:${m.activityId}:${m.departmentId}:${m.role}`),
+    ).size !== directory.memberships.length
+  )
+    throw new Error('Duplicate scoped membership.');
+  const linkedClaims = store.assignments.flatMap((t) => (t.expenseId ? [t.expenseId] : []));
+  if (new Set(linkedClaims).size !== linkedClaims.length)
+    throw new Error('A claim must be linked to only one purchasing task.');
   for (const task of store.assignments) {
     const p: PurchasingDetails | undefined = task.purchasing;
+    const claim = store.expenses.find((e) => e.id === task.expenseId);
+    if (claim?.review?.claimantId && claim.review.claimantId !== p?.assigneeId)
+      throw new Error('The linked claimant must match the task assignee.');
     if (
       !p ||
       typeof p.createdBy !== 'string' ||
@@ -177,7 +189,7 @@ export function validatePurchasingData(store: Store) {
       throw new Error('A task assignee must belong to its department.');
     if (
       (p.status === 'Claim Submitted' && !task.expenseId) ||
-      (p.status === 'Cancelled' && task.expenseId)
+      (!!task.expenseId && !['Claim Submitted', 'Completed'].includes(p.status))
     )
       throw new Error('Purchasing status conflicts with its claim record.');
   }
