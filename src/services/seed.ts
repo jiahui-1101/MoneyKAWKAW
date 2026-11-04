@@ -1,0 +1,59 @@
+import type { Activity, Store } from '../domain/models';
+
+const activities: Activity[] = [
+  { id: 'innovation-summit', name: 'Innovation Summit 2026', description: 'Our flagship gathering of student founders, builders, and industry mentors. Two days of talks, showcases, and new connections.', type: 'Large-scale event', status: 'Active', startDate: '2026-11-20', endDate: '2026-11-21', budget: 4_000_000, departments: [
+    { id: 'summit-logistics', name: 'Logistics', description: 'Venue, staging, and event equipment.', head: 'Amir Hassan', allocation: 1_600_000 },
+    { id: 'summit-programme', name: 'Programme', description: 'Speakers, workshops, and attendee experience.', head: 'Sarah Tan', allocation: 1_200_000 },
+    { id: 'summit-marketing', name: 'Marketing', description: 'Campaigns, creative production, and event materials.', head: 'Priya Nair', allocation: 700_000 },
+    { id: 'summit-hospitality', name: 'Hospitality', description: 'Meals and guest welcome.', head: 'Daniel Lim', allocation: 300_000 },
+  ] },
+  { id: 'design-workshop', name: 'Design Thinking Workshop', description: 'A hands-on introduction to human-centred design for new club members.', type: 'Workshop', status: 'Planning', startDate: '2026-11-14', endDate: '2026-11-14', budget: 800_000, departments: [
+    { id: 'design-programme', name: 'Programme', description: 'Facilitation and workshop resources.', head: 'Mei Wong', allocation: 500_000 },
+    { id: 'design-logistics', name: 'Logistics', description: 'Room setup and participant kits.', head: 'Amir Hassan', allocation: 250_000 },
+  ] },
+  { id: 'community-day', name: 'Community Impact Day', description: 'A day of local volunteering and community-led projects.', type: 'Community', status: 'Active', startDate: '2026-11-07', endDate: '2026-11-07', budget: 1_500_000, departments: [
+    { id: 'community-outreach', name: 'Outreach', description: 'Community partners and volunteers.', head: 'Aisha Rahman', allocation: 900_000 },
+    { id: 'community-logistics', name: 'Logistics', description: 'Transport and supplies.', head: 'Jason Lee', allocation: 600_000 },
+  ] },
+  { id: 'annual-dinner', name: 'Annual Appreciation Dinner', description: 'Celebrating the people behind a year of club achievements.', type: 'Large-scale event', status: 'Planning', startDate: '2026-12-12', endDate: '2026-12-12', budget: 2_500_000, departments: [
+    { id: 'dinner-hospitality', name: 'Hospitality', description: 'Venue and dinner service.', head: 'Daniel Lim', allocation: 1_800_000 },
+    { id: 'dinner-programme', name: 'Programme', description: 'Awards and evening programme.', head: 'Sarah Tan', allocation: 500_000 },
+  ] },
+  { id: 'leadership-retreat', name: 'Leadership Retreat', description: 'Team planning and leadership development for the incoming committee.', type: 'Other', status: 'Completed', startDate: '2026-10-17', endDate: '2026-10-18', budget: 1_000_000, departments: [
+    { id: 'retreat-operations', name: 'Operations', description: 'Accommodation, travel, and facilitation.', head: 'Mei Wong', allocation: 1_000_000 },
+  ] },
+];
+
+// Fictional read-only records demonstrate financial states, never real approvals or transfers.
+export const seed: Store = {
+  version: 1, activities,
+  expenses: [
+    { id: 'exp-1', activityId: 'innovation-summit', departmentId: 'summit-logistics', description: 'Venue deposit and staging', amount: 880_000, date: '2026-11-02', state: 'Approved' },
+    { id: 'exp-2', activityId: 'innovation-summit', departmentId: 'summit-programme', description: 'Speaker travel and workshop kits', amount: 420_000, date: '2026-11-03', state: 'Approved' },
+    { id: 'exp-3', activityId: 'innovation-summit', departmentId: 'summit-marketing', description: 'Print and creative production', amount: 265_000, date: '2026-11-04', state: 'Pending review' },
+    { id: 'exp-4', activityId: 'innovation-summit', departmentId: 'summit-hospitality', description: 'Catering reservation', amount: 120_000, date: '2026-11-01', state: 'Approved' },
+    { id: 'exp-5', activityId: 'design-workshop', departmentId: 'design-programme', description: 'Facilitator and learning materials', amount: 185_000, date: '2026-11-02', state: 'Pending review' },
+    { id: 'exp-6', activityId: 'community-day', departmentId: 'community-outreach', description: 'Community project supplies', amount: 620_000, date: '2026-11-01', state: 'Approved' },
+    { id: 'exp-7', activityId: 'community-day', departmentId: 'community-logistics', description: 'Volunteer buses and equipment', amount: 655_000, date: '2026-11-03', state: 'Pending review' },
+    { id: 'exp-8', activityId: 'annual-dinner', departmentId: 'dinner-hospitality', description: 'Dinner venue reservation', amount: 500_000, date: '2026-10-29', state: 'Approved' },
+    { id: 'exp-9', activityId: 'leadership-retreat', departmentId: 'retreat-operations', description: 'Retreat accommodation and travel', amount: 920_000, date: '2026-10-18', state: 'Approved' },
+  ],
+  payments: [
+    { id: 'pay-1', expenseId: 'exp-1', amount: 880_000, date: '2026-11-03' },
+    { id: 'pay-2', expenseId: 'exp-4', amount: 120_000, date: '2026-11-02' },
+    { id: 'pay-3', expenseId: 'exp-6', amount: 620_000, date: '2026-11-02' },
+    { id: 'pay-4', expenseId: 'exp-8', amount: 500_000, date: '2026-10-30' },
+    { id: 'pay-5', expenseId: 'exp-9', amount: 920_000, date: '2026-10-20' },
+  ],
+  assignments: [
+    { id: 'as-1', activityId: 'innovation-summit', departmentId: 'summit-logistics', budget: 900_000, expenseId: 'exp-1' },
+    { id: 'as-2', activityId: 'innovation-summit', departmentId: 'summit-programme', budget: 300_000 },
+    { id: 'as-3', activityId: 'annual-dinner', departmentId: 'dinner-programme', budget: 100_000 },
+  ],
+  events: [
+    { id: 'ev-1', activityId: 'innovation-summit', action: 'Budget allocation updated', detail: 'Marketing · allocation set to 7,000.00', at: '2026-11-04T08:30:00+08:00', actor: 'Director · demo' },
+    { id: 'ev-2', activityId: 'community-day', action: 'Expense recorded', detail: 'Logistics · volunteer buses and equipment', at: '2026-11-03T15:20:00+08:00', actor: 'Mock history' },
+    { id: 'ev-3', activityId: 'design-workshop', action: 'Activity created', detail: 'Workshop · overall budget established', at: '2026-11-02T09:00:00+08:00', actor: 'Director · demo' },
+  ],
+  settings: { currency: 'MYR', timezone: 'Asia/Kuala_Lumpur', warningPercent: 85 },
+};
