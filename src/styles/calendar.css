@@ -1,19 +1,102 @@
-.date-field { position: relative; }
-.date-input { display: flex; align-items: center; border: 1px solid var(--line-strong); border-radius: var(--radius-sm); background: var(--surface); padding-right: 5px; }
-.date-input:focus-within { border-color: var(--focus); box-shadow: 0 0 0 3px var(--green-soft); }
-.date-input input { border: 0; background: transparent; border-radius: var(--radius-sm); }
-.date-input input:focus { box-shadow: none; }
-.date-input:has([aria-invalid=true]) { border-color: var(--danger); background: var(--danger-soft); }
-.calendar { position: absolute; top: calc(100% + 8px); left: 0; width: 280px; max-width: calc(100vw - 75px); z-index: 15; padding: 12px; background: var(--surface); border: 1px solid var(--line-strong); border-radius: var(--radius); box-shadow: var(--shadow-popover); }
-.calendar strong { font-size: 12px; font-family: var(--font-display); }
-.calendar-grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 3px; margin-top: 9px; }
-.calendar-grid > span, .calendar-grid > button { height: 30px; display: grid; place-items: center; font-size: 11px; }
-.calendar-grid > .calendar-weekday { color: var(--muted); font-size: 10px; }
-.calendar-grid > button { border: 0; border-radius: 5px; color: var(--ink); background: var(--surface); }
-.calendar-grid > button:hover:not(:disabled) { background: var(--brand-soft); color: var(--brand); }
-.calendar-grid > button.selected { background: var(--brand); color: var(--surface); }
-.calendar-today { display: block; width: 100%; border: 0; border-top: 1px solid var(--line); border-radius: 0; margin-top: 10px; padding: 11px 0 1px; color: var(--brand); font-size: 11px; font-weight: 600; }
-.calendar-today:hover:not(:disabled) { color: var(--brand-hover); }
-.activity-form { overflow: visible; }
-.activity-form > .form-actions { border-radius: 0 0 var(--radius) var(--radius); }
-@media (min-width: 761px) { .form-grid > .field:last-child .calendar { left: auto; right: 0; } }
+.date-field {
+  position: relative;
+}
+.date-input {
+  display: flex;
+  align-items: center;
+  border: 1px solid var(--line-strong);
+  border-radius: var(--radius-sm);
+  background: var(--surface);
+  padding-right: 5px;
+}
+.date-input:focus-within {
+  border-color: var(--focus);
+  box-shadow: 0 0 0 3px var(--green-soft);
+}
+.date-input input {
+  border: 0;
+  background: transparent;
+  border-radius: var(--radius-sm);
+}
+.date-input input:focus {
+  box-shadow: none;
+}
+.date-input:has([aria-invalid='true']) {
+  border-color: var(--danger);
+  background: var(--danger-soft);
+}
+.calendar {
+  position: absolute;
+  top: calc(100% + 8px);
+  left: 0;
+  width: 280px;
+  max-width: calc(100vw - 75px);
+  z-index: 15;
+  padding: 12px;
+  background: var(--surface);
+  border: 1px solid var(--line-strong);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow-popover);
+}
+.calendar strong {
+  font-size: 12px;
+  font-family: var(--font-display);
+}
+.calendar-grid {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: 3px;
+  margin-top: 9px;
+}
+.calendar-grid > span,
+.calendar-grid > button {
+  height: 30px;
+  display: grid;
+  place-items: center;
+  font-size: 11px;
+}
+.calendar-grid > .calendar-weekday {
+  color: var(--muted);
+  font-size: 10px;
+}
+.calendar-grid > button {
+  border: 0;
+  border-radius: 5px;
+  color: var(--ink);
+  background: var(--surface);
+}
+.calendar-grid > button:hover:not(:disabled) {
+  background: var(--brand-soft);
+  color: var(--brand);
+}
+.calendar-grid > button.selected {
+  background: var(--brand);
+  color: var(--surface);
+}
+.calendar-today {
+  display: block;
+  width: 100%;
+  border: 0;
+  border-top: 1px solid var(--line);
+  border-radius: 0;
+  margin-top: 10px;
+  padding: 11px 0 1px;
+  color: var(--brand);
+  font-size: 11px;
+  font-weight: 600;
+}
+.calendar-today:hover:not(:disabled) {
+  color: var(--brand-hover);
+}
+.activity-form {
+  overflow: visible;
+}
+.activity-form > .form-actions {
+  border-radius: 0 0 var(--radius) var(--radius);
+}
+@media (min-width: 761px) {
+  .form-grid > .field:last-child .calendar {
+    left: auto;
+    right: 0;
+  }
+}

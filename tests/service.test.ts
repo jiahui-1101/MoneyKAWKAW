@@ -8,11 +8,17 @@ describe('browser-local persistence adapter', () => {
     values = new Map();
     vi.stubGlobal('localStorage', {
       getItem: (key: string) => values.get(key) ?? null,
-      setItem: (key: string, value: string) => { values.set(key, value); },
-      removeItem: (key: string) => { values.delete(key); },
+      setItem: (key: string, value: string) => {
+        values.set(key, value);
+      },
+      removeItem: (key: string) => {
+        values.delete(key);
+      },
     });
   });
-  afterEach(() => { vi.unstubAllGlobals(); });
+  afterEach(() => {
+    vi.unstubAllGlobals();
+  });
   it('loads isolated sample records and persists valid records across reloads', async () => {
     const loaded = await directorService.load();
     loaded.activities[0].name = 'Changed locally';
@@ -28,12 +34,17 @@ describe('browser-local persistence adapter', () => {
     expect(values.has(STORAGE_KEY)).toBe(false);
   });
   it('rejects invalid records before writing', async () => {
-    const bad = structuredClone(seed); bad.activities[0].budget = -1;
+    const bad = structuredClone(seed);
+    bad.activities[0].budget = -1;
     await expect(directorService.save(bad)).rejects.toThrow();
     expect(values.size).toBe(0);
   });
   it('surfaces storage failures instead of pretending to save', async () => {
-    vi.stubGlobal('localStorage', { setItem: () => { throw new Error('QuotaExceededError'); } });
+    vi.stubGlobal('localStorage', {
+      setItem: () => {
+        throw new Error('QuotaExceededError');
+      },
+    });
     await expect(directorService.save(seed)).rejects.toThrow('could not be saved');
   });
 });
