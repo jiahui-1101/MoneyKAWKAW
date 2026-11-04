@@ -1,4 +1,4 @@
-import { useEffect, useState, type FormEvent } from 'react';
+import { useEffect, useRef, useState, type FormEvent } from 'react';
 import { Link, useNavigate, useParams } from 'react-router-dom';
 import { useTreasury } from '../../context/treasury-context';
 import type { PayoutSnapshot, ProofFile } from '../../domain/treasury';
@@ -15,6 +15,7 @@ export function TreasuryReimburse() {
   const { data, busy, run } = useTreasury();
   const { money, currency } = useFormat();
   const navigate = useNavigate();
+  const reviewedDestination = useRef('');
   const claim = data?.expenses.find((e) => e.id === id);
   const paid = data?.payments.some((p) => p.expenseId === id);
   const [payout, setPayout] = useState<PayoutSnapshot | null>(null),
@@ -39,7 +40,14 @@ export function TreasuryReimburse() {
       reimbursementService
         .destination(id)
         .then((p) => {
-          if (active) setPayout(p);
+          if (active) {
+            if (reviewedDestination.current && reviewedDestination.current !== p.revision)
+              setError(
+                'The selected payment destination changed. Review the current instructions and reconfirm the transfer details.',
+              );
+            reviewedDestination.current = p.revision;
+            setPayout(p);
+          }
         })
         .catch((e) => {
           if (active)
