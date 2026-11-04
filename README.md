@@ -1,6 +1,6 @@
 # MoneyKAWKAW · Club budget & purchasing workspace
 
-A browser-local Director, HOD, and Treasurer frontend for club activity planning, purchasing, claim review, and reimbursement records. React 19, TypeScript, Vite, and React Router. The Committee Member frontend remains a future phase.
+A browser-local Director, HOD, Treasurer, and Committee Member frontend for club activity planning, purchasing, receipt-backed claims, and reimbursement tracking. React 19, TypeScript, Vite, and React Router.
 
 ## Run locally
 
@@ -44,7 +44,20 @@ Select **Nora Lim · Treasurer demo**. Activity oversight must be explicitly gra
 - Approved-only payout instructions, masked by default; manual reimbursement recording with file validation, confirmation, preserved proof, and duplicate prevention.
 - Centralized payment history, proof viewing, and separate member receipt status. No Treasurer action confirms receipt for a member.
 
-Review → analyze → approve/decline → record an external manual payment with proof → await member confirmation. **Load demo claim** explicitly adds fictional evidence against an existing assigned HOD task; it does not implement member submission. All supplied payout snapshots are fictional and non-payable. See [Treasurer architecture, routes, and demo steps](docs/treasurer/README.md) and [verification evidence](docs/treasurer/VERIFICATION.md).
+Review → analyze → approve/decline → record an external manual payment with proof → await member confirmation. The optional **Load demo claim** tool adds clearly fictional fixtures; Members now submit their own uploaded receipt evidence through their separate workspace. Use fictional payout details throughout this local demo. See [Treasurer architecture and routes](docs/treasurer/README.md) and the [current four-role verification](docs/member/VERIFICATION.md).
+
+## Committee Member experience
+
+Select **Ava Chen**, **Ryan Lee**, or **Grace Lim · Member demo**. Active department membership and task ownership determine access.
+
+- Personal dashboard, assigned activities/departments, searchable purchasing tasks, department coordination, and owned purchase progress.
+- Bank/TNG destination CRUD with masking, default selection, protected removal, per-claim snapshots, and separately audited unpaid destination changes.
+- Persisted receipt drafts, original PNG/JPEG upload or camera input, actual on-device English OCR, and explicit manual fallback.
+- Retained source image/text, quantity/price corrections, missing lines, tax/discount treatment, exclusions with reasons, comparison views, and reconciled derived claim amounts.
+- Over-budget justification, confirmed submission, shared Treasurer review status, decisions, proof viewing, payment discrepancies, and one-time receipt acknowledgment.
+- Event-derived notifications with persistent read state, responsive navigation, keyboard focus, loading, error/retry, and empty states.
+
+Director setup → HOD assignment → Member purchase/receipt/submission → Treasurer review/payment proof → Member confirmation. See the [Member route map, architecture, OCR assets, and API readiness](docs/member/README.md).
 
 ## Routes
 
@@ -72,6 +85,17 @@ Review → analyze → approve/decline → record an external manual payment wit
 | `/treasurer/claims/:id/reimburse` | Approved-only manual payment step |
 | `/treasurer/reimbursements` | Approved, unpaid claims |
 | `/treasurer/history` | Payment history and proof |
+| `/member` | Personal overview |
+| `/member/activities` | Assigned activity/department workspaces |
+| `/member/activities/:activityId/departments/:departmentId` | Scoped roster and public purchasing plans |
+| `/member/tasks` | Own tasks and department coordination |
+| `/member/tasks/:id` | Owned purchase progress or read-only coordination |
+| `/member/drafts/:id` | Receipt, items, comparison, and submission wizard |
+| `/member/claims` | Own drafts and submitted claims |
+| `/member/claims/:id` | Own evidence, review, destination, and timeline |
+| `/member/claims/:id/payment` | Own proof, discrepancy, and receipt acknowledgment |
+| `/member/accounts` | Own saved Bank/TNG instructions |
+| `/member/notifications` | Event-derived personal notifications |
 | `/demo` | Explicit local demo profile selection |
 | Unknown paths | Useful not-found view |
 
@@ -81,7 +105,7 @@ Review → analyze → approve/decline → record an external manual payment wit
 - `src/services`: fictional seed records and a versioned localStorage adapter. Mutations validate input and append setup history; storage failures are surfaced before UI state changes.
 - `src/context`: shared context identity and async workspace provider. This boundary supports replacing local persistence with API-backed operations while keeping view components.
 - `src/components`: `Shell`, `Field`, `DateField`, `Modal`, `Panel`, `Badge`, `Progress`, metrics, charts, financial tables, history, and department workflows.
-- `src/pages`: Director routes and isolated HOD/Treasurer route groups.
+- `src/pages`: Director routes and isolated, lazily loaded HOD/Treasurer/Member route groups.
 - `src/styles/tokens.css`: intentional font families, palette, spacing scale, radii, focus color, and shadows. Component, shell, calendar, and responsive page styles use these tokens.
 
 Amounts are integer minor units. Recorded expenses include pending, in-review, and approved claims; declined claims remain in history but leave recorded totals. Remaining = budget − recorded. Committed = open task reservations + approved unpaid amounts. Available = budget − paid − pending − committed. Pending includes in-review claims. A submitted claim replaces its task estimate, preventing double counting; declining it restores the original task reservation. Department allocations cannot exceed the activity ceiling; lowering an activity budget below current allocations is rejected. Reducing an allocation below historical expenses preserves records and visibly flags the resulting overrun.
@@ -98,8 +122,8 @@ Manrope headings and DM Sans body/UI text are bundled through Fontsource, with n
 
 See [original Director verification](docs/VERIFICATION.md), [HOD verification and Director regression checks](docs/hod/VERIFICATION.md), [HOD commit history](docs/hod/COMMITS.md), and [HOD screenshots](docs/hod/screenshots/overview-preview.jpg).
 
-This is frontend-only: local demo identity is not authentication, browser storage is not a security boundary, and history is not durable production audit storage. Claims, destinations, receipts, and payments are fictional. Treasurer decisions and manual payment records persist locally; there are no money transfers, live OCR, or trained financial predictions. Historical sample payments lack proof/reference metadata and are labeled accordingly.
+This is frontend-only: local demo identity is not authentication, browser storage is not a security boundary, and history is not durable production audit storage. Use fictional financial information. Treasurer decisions, manual payment records, and Member acknowledgments persist locally. There are no money transfers, external transfer verification, or trained financial predictions. English receipt OCR runs in the browser using locally served Tesseract assets and needs human review. Historical sample payments lack proof/reference metadata and are labeled accordingly.
 
-The future Member frontend can reuse linked tasks/claims, receipt originals and corrections, payout snapshots, review/payment status, and audit events. Its submission, saved payout methods, receipt confirmation, and discrepancy workflows still need their own ownership checks. Before production, replace mock adapters with authenticated APIs, server-enforced scope, authoritative validation/calculations, transaction-level concurrency, durable append-only history, encrypted payout storage, and protected receipt/proof downloads.
+The four frontends share linked tasks/claims, immutable submitted receipts, corrections, payout snapshots, review/payment status, and audit events. Before production, replace mock adapters with authenticated APIs, server-enforced ownership/scope, authoritative validation/calculations, transaction-level concurrency, durable append-only history, encrypted payout storage, and protected receipt/proof downloads. OCR assets are prepared automatically before dev/build from locked dependencies; see the Member notes for footprint and limitations.
 
 Local `AGENTS.md` and `REQUIREMENTS.md` are ignored and excluded from Git. Nothing has been pushed or deployed as part of this implementation.
