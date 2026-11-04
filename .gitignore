@@ -8,3 +8,5 @@ playwright-report/
 .env*
 !.env.example
 .local/
+# Generated from locked OCR dependencies; rebuilt before dev/build
+/public/ocr/
