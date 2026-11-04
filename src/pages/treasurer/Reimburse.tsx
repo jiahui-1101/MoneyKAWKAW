@@ -111,9 +111,9 @@ export function TreasuryReimburse() {
       <div className="treasury-justification">
         <Badge tone="gold">External transfer · locally recorded</Badge>
         <p>
-          This application does not transfer money or verify bank transactions. All current payout
-          snapshots are explicitly fictional and not payable. Use sample proof to demonstrate
-          recording.
+          This application does not transfer money or verify bank transactions. Use fictional
+          destination details and sample proof in this local demo. The selected snapshot comes from
+          the submitted claim; recording it does not establish external delivery.
         </p>
       </div>
       <div className="form-layout">

@@ -2,6 +2,7 @@ import type { Store } from '../domain/models';
 import { validateAccount } from '../domain/accounts';
 import { validateReceiptEvidence } from './receipt-validation';
 export function validateMemberData(store:Store) {
+  validateMemberPayments(store);
   const data=store.member;if(!data)return;
   if(![data.accounts,data.drafts,data.readNotifications].every(Array.isArray))throw new Error('Invalid Member workspace data.');
   const unique=(records:{id:string}[])=>records.every(r=>typeof r.id==='string'&&r.id.length>0)&&new Set(records.map(r=>r.id)).size===records.length;
@@ -17,10 +18,13 @@ export function validateMemberData(store:Store) {
   }
   if(new Set(data.drafts.map(d=>d.taskId)).size!==data.drafts.length)throw new Error('Only one draft is allowed for a purchasing task.');
   for(const read of data.readNotifications)if(!store.directory?.users.some(u=>u.id===read.userId)||!Array.isArray(read.ids)||read.ids.some(id=>typeof id!=='string'))throw new Error('Invalid notification read state.');
+}
+function validateMemberPayments(store:Store) {
   for(const p of store.payments){
     const m=p.manual;if(!m)continue;
     const claim=store.expenses.find(e=>e.id===p.expenseId)!;
     if(m.receivedConfirmedAt&&(m.receivedConfirmedBy!==claim.review?.claimantId||Number.isNaN(Date.parse(m.receivedConfirmedAt))))throw new Error('Receipt confirmation must belong to the claimant.');
+    if(m.discrepancy?.resolvedAt&&(!m.receivedConfirmedAt||m.discrepancy.resolvedBy!==claim.review?.claimantId))throw new Error('A discrepancy resolution requires the claimant’s receipt acknowledgment.');
     if(m.discrepancy&&(m.discrepancy.reportedBy!==claim.review?.claimantId||!m.discrepancy.reason.trim()||Number.isNaN(Date.parse(m.discrepancy.reportedAt))||
       (m.discrepancy.receivedAmount!==undefined&&(!Number.isSafeInteger(m.discrepancy.receivedAmount)||m.discrepancy.receivedAmount<0))))throw new Error('Invalid payment discrepancy record.');
   }

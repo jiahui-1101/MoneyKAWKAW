@@ -4,6 +4,7 @@ import { validateLine } from '../domain/receipt';
 import { memberCommand, memberData, memberRead, ownedTask } from './member-core';
 import type { Store } from '../domain/models';
 import { validateProof } from './payment-proof';
+import { departmentToday } from '../domain/hod';
 export function draftRecord(store:Store,id:string,expected?:string) {
   const draft=store.member?.drafts.find(d=>d.id===id&&d.ownerId===requireRole('Member').userId);
   if(!draft)throw new Error('Claim draft unavailable for your profile.');
@@ -38,7 +39,7 @@ export const draftService={
     return memberCommand(store=>{
       const {draft}=draftRecord(store,id,expected),receipt=draft.receipt;
       if(!receipt||receipt.extraction)throw new Error('Upload an image first. An existing extraction cannot be overwritten; retain edits or replace the unsubmitted source.');
-      if(!input.merchant.trim()||input.merchant.length>150||!/^\d{4}-\d{2}-\d{2}$/.test(input.purchaseDate)||Number.isNaN(Date.parse(input.purchaseDate))||new Date(input.purchaseDate).toISOString().slice(0,10)!==input.purchaseDate)
+      if(!input.merchant.trim()||input.merchant.length>150||!/^\d{4}-\d{2}-\d{2}$/.test(input.purchaseDate)||Number.isNaN(Date.parse(input.purchaseDate))||new Date(input.purchaseDate).toISOString().slice(0,10)!==input.purchaseDate||input.purchaseDate>departmentToday(store.settings.timezone))
         throw new Error('Enter the merchant and a valid purchase date from the receipt.');
       if(!['tesseract','manual'].includes(input.method)||input.rawText.length>50000||!Number.isSafeInteger(input.originalTotal)||input.originalTotal<0||input.originalTotal>100_000_000_000||!input.lines.length||input.lines.length>100||new Set(input.lines.map(l=>l.id)).size!==input.lines.length)throw new Error('Add a valid receipt total and between 1–100 source lines.');
       input.lines.forEach(validateLine);const at=new Date().toISOString();
