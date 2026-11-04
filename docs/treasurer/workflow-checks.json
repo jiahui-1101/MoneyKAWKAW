@@ -1,0 +1,19 @@
+{
+  "activityId": "269692bf-ecca-458c-854c-e2f3f9e35230",
+  "claimId": "demo-9470fe2c-8564-45ef-85aa-a6b1fee706b1",
+  "workflow": "Director RM10000 → Multimedia RM2000 → HOD RM150 → explicit fictional RM190 claim → review → risk → approval → manual payment with PNG proof",
+  "variance": 4000,
+  "variancePercent": 26.666666666666668,
+  "departmentAvailable": 181000,
+  "paid": 19000,
+  "memberConfirmation": "Awaiting member; no Treasurer confirmation action",
+  "originalReceiptUnchanged": true,
+  "reloadPersistence": true,
+  "invalidProofRejected": true,
+  "duplicateRouteBlocked": true,
+  "declineReasonPersisted": true,
+  "thresholdValidationAndBandChanges": true,
+  "productionPreview": true,
+  "downloadDelivery": "Not verified: embedded browser policy rejected data-URL file download.",
+  "consoleErrors": 0
+}

@@ -1,0 +1,37 @@
+[
+  {
+    "path": "/treasurer/activities/leadership-retreat",
+    "title": "Activity access restricted",
+    "restricted": true
+  },
+  {
+    "path": "/treasurer/claims/exp-9",
+    "title": "Claim access restricted",
+    "restricted": true
+  },
+  {
+    "path": "/treasurer/claims/exp-9/risk",
+    "title": "Claim access restricted",
+    "restricted": true
+  },
+  {
+    "path": "/treasurer/claims/exp-9/reimburse",
+    "title": "Claim access restricted",
+    "restricted": true
+  },
+  {
+    "path": "/director",
+    "title": "Director access required",
+    "restricted": true
+  },
+  {
+    "path": "/hod",
+    "title": "HOD access required",
+    "restricted": true
+  },
+  {
+    "path": "/treasurer/not-found",
+    "title": "This page isn’t in your financial workspace",
+    "restricted": false
+  }
+]
