@@ -103,7 +103,7 @@ export function ActivityTable({
             <th>BUDGET</th>
             <th>EXPENSES</th>
             <th>UTILIZATION</th>
-                <th aria-label="Activity details">
+            <th aria-label="Activity details">
               <span className="sr-only">Details</span>
             </th>
           </tr>
@@ -114,7 +114,7 @@ export function ActivityTable({
             const warning = s.utilization >= store.settings.warningPercent;
             return (
               <tr key={a.id}>
-                <td>
+                <td aria-label={a.name}>
                   <div className="row">
                     <span className={`activity-icon chart-color-${i % 5}`}>
                       <CalendarDays size={17} />

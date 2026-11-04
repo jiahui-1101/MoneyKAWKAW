@@ -202,7 +202,7 @@ export function Modal({
         e.preventDefault();
         onClose();
       }}
-      onClick={(e) => {
+      onPointerDown={(e) => {
         if (e.target === e.currentTarget) onClose();
       }}
       aria-labelledby="modal-title"
