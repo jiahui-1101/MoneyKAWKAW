@@ -33,7 +33,7 @@ export function MemberClaimDetail() {
   const state = paymentState(data, claim);
   const stage =
     claim.state === 'Declined'
-      ? 1
+      ? 2
       : payments.some((p) => p.manual?.receivedConfirmedAt)
         ? 4
         : payments.length
@@ -72,14 +72,24 @@ export function MemberClaimDetail() {
         </Badge>
       </div>
       <ol className="member-state-steps" aria-label="Claim lifecycle">
-        {['Submitted', 'Treasurer review', 'Approved / unpaid', 'Payment recorded', 'Received'].map(
-          (label, i) => (
-            <li key={label} className={i === stage ? 'current' : i < stage ? 'done' : ''}>
-              <span>{i + 1}</span>
-              {label}
-            </li>
-          ),
-        )}
+        {(claim.state === 'Declined'
+          ? ['Submitted', 'Treasurer review', 'Declined']
+          : ['Submitted', 'Treasurer review', 'Approved / unpaid', 'Payment recorded', 'Received']
+        ).map((label, i) => (
+          <li
+            key={label}
+            className={
+              i === stage
+                ? `current${claim.state === 'Declined' ? ' declined' : ''}`
+                : i < stage
+                  ? 'done'
+                  : ''
+            }
+          >
+            <span>{i + 1}</span>
+            {label}
+          </li>
+        ))}
       </ol>
       <Panel
         title="Your submitted claim"

@@ -1,6 +1,11 @@
 .member-shell .stack {
   grid-template-columns: minmax(0, 1fr);
 }
+.member-state-steps .current.declined {
+  color: var(--danger);
+  border-color: var(--danger);
+  background: var(--danger-soft);
+}
 .member-shell .stack > * {
   min-width: 0;
 }
