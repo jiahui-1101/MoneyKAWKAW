@@ -94,3 +94,62 @@
 .budget-comparison > div { display: grid; grid-template-columns: 1fr auto; gap: 12px; color: var(--muted); font-size: 11px; }
 .budget-comparison strong { font-size: 12px; color: var(--ink); font-weight: 650; }
 .budget-comparison .progress { grid-column: 1 / -1; }
+@media (max-width: 1250px) {
+  .task-counts { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+  .task-counts span { min-height: 17px; }
+  .hod-two-columns { grid-template-columns: 1fr; }
+  .capacity-row { gap: 18px; }
+  .capacity-row strong { font-size: 18px; }
+}
+@media (max-width: 1000px) {
+  .assigned-activities { grid-template-columns: 1fr 1fr; }
+  .assigned-count { grid-column: 1 / -1; flex-direction: row; align-items: center; gap: 20px; padding: 15px 20px; }
+  .assigned-count strong { margin: 0; font-size: 29px; order: -1; }
+  .assigned-count span { margin-left: auto; max-width: 120px; }
+  .procurement-flow { gap: 15px; }
+  .flow-step { font-size: 9px; }
+  .hod-member-grid { grid-template-columns: 1fr; }
+  .claim-facts { grid-template-columns: 1fr 1fr; }
+  .capacity-row { grid-template-columns: 1fr; gap: 20px; }
+  .budget-comparison { grid-template-columns: 1fr; gap: 23px; }
+}
+@media (max-width: 760px) {
+  .topbar:has(.demo-profile) { flex-wrap: wrap; height: auto; min-height: 70px; padding-top: 13px; padding-bottom: 13px; gap: 10px; }
+  .topbar:has(.demo-profile) > .row:last-child { margin-left: auto; }
+  .topbar:has(.demo-profile) .demo-pill { display: none; }
+  .demo-profile { max-width: 190px; font-size: 10px; }
+  .access-page { padding: 30px 18px; }
+  .profile-grid { grid-template-columns: 1fr; padding: 0 17px 17px; }
+  .profile-card { padding: 21px; }
+  .membership-list { grid-template-columns: 1fr; }
+  .hod-scope-bar { align-items: flex-start; flex-direction: column; gap: 15px; margin-bottom: 23px; padding-bottom: 20px; }
+  .hod-scope-select { width: 100%; }
+  .hod-scope-select select { width: 100%; max-width: none; font-size: 10px; }
+  .assigned-activities { grid-template-columns: 1fr; gap: 12px; }
+  .assigned-count { gap: 12px; padding: 16px; }
+  .assigned-count small { max-width: 90px; font-size: 8px; }
+  .assigned-count span { font-size: 8px; max-width: 110px; line-height: 1.8; }
+  .scope-tile { padding: 16px 18px; gap: 7px; }
+  .scope-tile strong { font-size: 14px; }
+  .task-counts { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; }
+  .task-counts a { padding: 15px 13px; }
+  .task-counts span { font-size: 9px; min-height: 29px; }
+  .procurement-flow { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 22px; padding: 0 17px 22px; }
+  .flow-step { font-size: 10px; min-height: 18px; }
+  .procurement-flow strong { font-size: 24px; margin-top: 7px; }
+  .expense-overview { padding-left: 17px; padding-right: 17px; }
+  .expense-overview .row { font-size: 10px; flex-wrap: wrap; }
+  .expense-overview strong { font-size: 11px; }
+  .deadline-list { padding: 0 17px 8px; }
+  .deadline-row { gap: 9px; }
+  .deadline-row > span:last-child { font-size: 8px; }
+  .deadline-row strong { font-size: 10px; }
+  .deadline-row small { font-size: 9px; }
+  .attention-filters { padding: 0 17px 19px; gap: 7px; }
+  .filter-chip { font-size: 9px; padding: 7px 9px; }
+  .hod-member-grid { padding: 0 17px 17px; }
+  .hod-member-card { padding: 18px; }
+  .task-facts { gap: 19px; }
+  .task-facts dd { font-size: 12px; }
+  .capacity-row strong { font-size: 22px; }
+}
