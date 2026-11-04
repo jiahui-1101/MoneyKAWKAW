@@ -127,6 +127,8 @@ export function validatePurchasingData(store: Store) {
     const p: PurchasingDetails | undefined = task.purchasing;
     if (
       !p ||
+      typeof p.createdBy !== 'string' || !p.createdBy ||
+      typeof p.updatedAt !== 'string' || Number.isNaN(Date.parse(p.updatedAt)) ||
       !p.name.trim() ||
       p.name.length > 120 ||
       !p.description.trim() ||
