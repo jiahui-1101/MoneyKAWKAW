@@ -1,6 +1,8 @@
 import type { ActivityInput, DepartmentInput, Settings, Store } from '../domain/models';
 import { validateActivity, validateDepartment } from '../domain/budget';
 import { seed } from './seed';
+import { upgradeSharedStore, validatePurchasingData } from './shared-migration';
+import { requireRole } from '../domain/session';
 
 export const STORAGE_KEY = 'moneykawkaw.director.v1';
 const copy = <T>(value: T): T => structuredClone(value);
@@ -92,6 +94,7 @@ export function validateStore(value: unknown): asserts value is Store {
       Number.isNaN(Date.parse(e.at))
     )
       throw new Error('Invalid activity history.');
+  if (s.directory) validatePurchasingData(s);
 }
 
 // Replace this adapter with authenticated APIs later. No authentication is simulated.
@@ -100,13 +103,14 @@ export interface DirectorService {
   save(store: Store): Promise<Store>;
   reset(): Promise<Store>;
 }
-export const directorService: DirectorService = {
+// Storage adapter is internal infrastructure. Role-facing services enforce access before using it.
+export const sharedRepository: DirectorService = {
   async load() {
     await new Promise((resolve) => setTimeout(resolve, 180));
     const raw = localStorage.getItem(STORAGE_KEY);
     if (!raw) return copy(seed);
     try {
-      const data: unknown = JSON.parse(raw);
+      const data: unknown = upgradeSharedStore(JSON.parse(raw));
       validateStore(data);
       return data;
     } catch {
@@ -116,18 +120,24 @@ export const directorService: DirectorService = {
     }
   },
   async save(store) {
-    validateStore(store);
+    const ready = upgradeSharedStore(store);
+    validateStore(ready);
     try {
-      localStorage.setItem(STORAGE_KEY, JSON.stringify(store));
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(ready));
     } catch {
       throw new Error('Changes could not be saved. Browser storage may be full or unavailable.');
     }
-    return copy(store);
+    return copy(ready);
   },
   async reset() {
     localStorage.removeItem(STORAGE_KEY);
     return copy(seed);
   },
+};
+export const directorService: DirectorService = {
+  async load() { requireRole('Director'); return sharedRepository.load(); },
+  async save(store) { requireRole('Director'); return sharedRepository.save(store); },
+  async reset() { requireRole('Director'); return sharedRepository.reset(); },
 };
 
 function event(store: Store, activityId: string, action: string, detail: string) {
@@ -216,6 +226,7 @@ export function removeDepartment(current: Store, activityId: string, id: string)
   )
     throw new Error('Departments with expense or assignment records cannot be removed.');
   a.departments = a.departments.filter((d) => d.id !== id);
+  if (store.directory) store.directory.memberships = store.directory.memberships.filter(m => m.activityId !== activityId || m.departmentId !== id);
   event(
     store,
     activityId,

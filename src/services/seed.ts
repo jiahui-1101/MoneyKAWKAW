@@ -1,4 +1,5 @@
 import type { Activity, Store } from '../domain/models';
+import { upgradeSharedStore } from './shared-migration';
 
 const activities: Activity[] = [
   {
@@ -142,7 +143,7 @@ const activities: Activity[] = [
 ];
 
 // Fictional read-only records demonstrate financial states, never real approvals or transfers.
-export const seed: Store = {
+const baseSeed: Store = {
   version: 1,
   activities,
   expenses: [
@@ -279,3 +280,4 @@ export const seed: Store = {
   ],
   settings: { currency: 'MYR', timezone: 'Asia/Kuala_Lumpur', warningPercent: 85 },
 };
+export const seed = upgradeSharedStore(baseSeed);
