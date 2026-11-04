@@ -1,5 +1,5 @@
 import { Activity, ArrowUpRight, CircleHelp, FolderKanban, LayoutDashboard, Menu, PiggyBank, Search, Settings2, ShieldCheck, Wallet, X } from 'lucide-react';
-import { useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { Link, NavLink, Outlet, useLocation, useNavigate } from 'react-router-dom';
 import { useWorkspace } from '../context/Workspace';
 import { Modal, Skeleton, Toast } from './ui';
@@ -17,13 +17,31 @@ export function Shell() {
   const [confirmReset, setConfirmReset] = useState(false);
   const [resetError, setResetError] = useState('');
   const [search, setSearch] = useState('');
+  const sidebar = useRef<HTMLElement>(null);
+  useEffect(() => {
+    if (!open) return;
+    const previous = document.activeElement as HTMLElement;
+    const overflow = document.body.style.overflow;
+    document.body.style.overflow = 'hidden';
+    const items = () => [...(sidebar.current?.querySelectorAll<HTMLElement>('a, button') ?? [])].filter(e => e.getClientRects().length > 0);
+    items()[0]?.focus();
+    const keys = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') setOpen(false);
+      if (e.key !== 'Tab') return;
+      const elements = items();
+      if (e.shiftKey && document.activeElement === elements[0]) { e.preventDefault(); elements.at(-1)?.focus(); }
+      if (!e.shiftKey && document.activeElement === elements.at(-1)) { e.preventDefault(); elements[0]?.focus(); }
+    };
+    document.addEventListener('keydown', keys);
+    return () => { document.removeEventListener('keydown', keys); document.body.style.overflow = overflow; previous?.focus(); };
+  }, [open]);
   const navigate = useNavigate();
   const location = useLocation();
   const section = location.pathname.includes('/activities') ? 'Activities' : location.pathname.includes('/budgets') ? 'Budget overview' : location.pathname.includes('/history') ? 'Activity log' : location.pathname.includes('/settings') ? 'Workspace settings' : 'Overview';
   return <div className="app-shell">
     <a className="skip-link" href="#main">Skip to content</a>
     {open && <button className="nav-scrim" aria-label="Close navigation" onClick={() => setOpen(false)} />}
-    <aside className={`sidebar ${open ? 'is-open' : ''}`} aria-label="Director navigation">
+    <aside ref={sidebar} className={`sidebar ${open ? 'is-open' : ''}`} aria-label="Director navigation">
       <Link to="/director" className="brand" onClick={() => setOpen(false)}><span className="brand-mark"><Wallet size={21} /></span><span>Money<span className="brand-accent">KAWKAW</span><small>CLUB FINANCE, MADE CLEAR.</small></span></Link>
       <button className="icon-btn mobile-close" aria-label="Close navigation" onClick={() => setOpen(false)}><X size={18} /></button>
       <div className="workspace-card"><span className="club-mark">C</span><div><strong>Campus Collective</strong><small>Director workspace</small></div><ShieldCheck size={15} /></div>
@@ -35,7 +53,7 @@ export function Shell() {
         <div className="user-card"><span className="avatar">JL</span><div><strong>Jamie Lee</strong><small>Club Director · Demo</small></div><span className="online-dot" /></div>
       </div>
     </aside>
-    <div className="main-shell"><header className="topbar"><div className="row"><button className="icon-btn mobile-menu" aria-label="Open navigation" aria-expanded={open} onClick={() => setOpen(true)}><Menu size={20} /></button><span className="breadcrumb">Workspace <span>/</span> <strong>{section}</strong></span></div><div className="row"><form className="global-search" onSubmit={e => { e.preventDefault(); navigate(`/director/activities?q=${encodeURIComponent(search)}`); }}><Search size={16} /><input aria-label="Search activities globally" placeholder="Search activities…" value={search} onChange={e => setSearch(e.target.value)} /></form><span className="demo-pill"><span />Local demo</span><button className="avatar avatar-button" aria-label="View workspace settings" onClick={() => navigate('/director/settings')}>JL</button></div></header>
+    <div className="main-shell" inert={open}><header className="topbar"><div className="row"><button className="icon-btn mobile-menu" aria-label="Open navigation" aria-expanded={open} onClick={() => setOpen(true)}><Menu size={20} /></button><span className="breadcrumb">Workspace <span>/</span> <strong>{section}</strong></span></div><div className="row"><form className="global-search" onSubmit={e => { e.preventDefault(); navigate(`/director/activities?q=${encodeURIComponent(search)}`); }}><Search size={16} /><input aria-label="Search activities globally" placeholder="Search activities…" value={search} onChange={e => setSearch(e.target.value)} /></form><span className="demo-pill"><span />Local demo</span><button className="avatar avatar-button" aria-label="View workspace settings" onClick={() => navigate('/director/settings')}>JL</button></div></header>
       <main id="main" tabIndex={-1} key={location.pathname}>
         {loading ? <Skeleton /> : error ? <div className="empty error-panel" role="alert"><h1>Let’s get your workspace back</h1><p>{error}</p><div className="row"><button className="btn primary" onClick={() => void reload()}>Retry loading</button><button className="btn" onClick={() => setConfirmReset(true)}>Reset demo data</button></div></div> : <Outlet />}
       </main>
