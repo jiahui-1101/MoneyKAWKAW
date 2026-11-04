@@ -147,6 +147,19 @@ export const directorService: DirectorService = {
     return {
       ...store,
       member: undefined,
+      events: store.events.map((e) =>
+        [
+          'Manual reimbursement recorded',
+          'Payout destination changed',
+          'Payment discrepancy reported',
+        ].includes(e.action)
+          ? {
+              ...e,
+              detail:
+                'A private payment-detail event was recorded. Financial amounts and status remain visible; payment references, destination instructions, and discrepancy details are restricted to the claimant and authorized Treasurer.',
+            }
+          : e,
+      ),
       payments: store.payments.map(({ manual: _manual, ...p }) => p),
       treasury: store.treasury ? { ...store.treasury, receipts: [], payouts: [] } : undefined,
     };

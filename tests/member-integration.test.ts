@@ -179,5 +179,10 @@ it('runs Director → HOD → Member real submission → Treasurer → Member re
       .amount,
   ).toBe(11000);
   selectDemoActor('director-jamie');
-  expect(summarize(await directorService.load(), activityId, departmentId)).toEqual(final);
+  const director = await directorService.load();
+  expect(summarize(director, activityId, departmentId)).toEqual(final);
+  expect(JSON.stringify(director)).not.toContain('DEMO-ONLY-110');
+  expect(JSON.stringify(director)).not.toContain('Transfer not visible yet');
+  await directorService.save(director);
+  expect(raw().events.some((e) => e.detail.includes('DEMO-ONLY-110'))).toBe(true);
 }, 20000);
