@@ -40,7 +40,7 @@ Select **Nora Lim · Treasurer demo**. Activity oversight must be explicitly gra
 - Financial dashboard, budget/spending charts, claim status distribution, activity and department breakdowns, and over-budget alerts.
 - Searchable claim queues with status tabs, amount/date sorting, and activity/department/member/date filters.
 - Immutable original receipt, annotated claim lines, retained OCR suggestions and edit/exclusion history, justifications, and claim audit history.
-- Explicit review start, confirmed approval/decline, mandatory decline reasons, configurable deterministic advisory risk bands, and retained decision snapshots.
+- Explicit review start, confirmed approval/decline, mandatory decline reasons, configurable deterministic advisory risk bands, and retained decision snapshots. Over-budget approval requires renewed analysis if financial context changes after review.
 - Approved-only payout instructions, masked by default; manual reimbursement recording with file validation, confirmation, preserved proof, and duplicate prevention.
 - Centralized payment history, proof viewing, append-only discrepancy resolution notes, and separate member receipt status. No Treasurer action confirms receipt for a member.
 
