@@ -225,6 +225,8 @@ export function removeDepartment(current: Store, activityId: string, id: string)
   return store;
 }
 export function updateSettings(current: Store, settings: Settings): Store {
+  if (!Number.isFinite(settings.warningPercent) || settings.warningPercent < 1 || settings.warningPercent > 100)
+    throw new Error('Choose a utilization attention threshold between 1 and 100.');
   // Do not relabel existing amounts with another currency: currency is configured at workspace creation.
   if (settings.currency !== current.settings.currency)
     throw new Error('Currency conversion requires a future API migration.');

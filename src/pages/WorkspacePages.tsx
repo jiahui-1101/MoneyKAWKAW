@@ -91,7 +91,7 @@ export function Settings() {
               <input
                 id="currency"
                 disabled
-                value={`${store.settings.currency} · Malaysian ringgit`}
+                value={`${store.settings.currency} · ${{ MYR: 'Malaysian ringgit', SGD: 'Singapore dollar', USD: 'US dollar' }[store.settings.currency]}`}
               />
             </Field>
             <p className="field-hint">

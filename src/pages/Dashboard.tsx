@@ -117,6 +117,7 @@ export function Dashboard({ budgets = false }: { budgets?: boolean }) {
         <BudgetComparison activities={activities} store={store} />
         <Distribution activities={activities} />
       </div>
+      {!budgets && <BudgetLifecycle summary={summary} />}
       <Panel
         title="Activities overview"
         subtitle="From first idea to final expense"
