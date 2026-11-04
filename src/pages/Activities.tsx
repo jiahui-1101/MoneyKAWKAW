@@ -1,6 +1,6 @@
 import { ArrowUpRight, Plus, Search, SlidersHorizontal } from 'lucide-react';
 import { Link, useSearchParams } from 'react-router-dom';
-import { useWorkspace } from '../context/Workspace';
+import { useWorkspace } from '../context/workspace-context';
 import { activityStatuses, activityTypes } from '../domain/models';
 import { ActivityTable } from '../components/Finance';
 import { Empty, PageHeader, Panel } from '../components/ui';

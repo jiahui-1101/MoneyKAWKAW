@@ -1,7 +1,7 @@
 import { ArrowUpRight, CalendarDays, Plus, ShieldCheck } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { useState } from 'react';
-import { useWorkspace } from '../context/Workspace';
+import { useWorkspace } from '../context/workspace-context';
 import { activityStatuses } from '../domain/models';
 import { summarize } from '../domain/budget';
 import {

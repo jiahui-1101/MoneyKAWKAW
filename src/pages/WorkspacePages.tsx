@@ -1,6 +1,6 @@
 import { AlertCircle, RotateCcw, Save, ShieldCheck } from 'lucide-react';
 import { useState, type FormEvent } from 'react';
-import { useWorkspace } from '../context/Workspace';
+import { useWorkspace } from '../context/workspace-context';
 import { RecentActivity } from '../components/Finance';
 import { Modal, PageHeader, Panel } from '../components/ui';
 import { Field } from '../components/Field';

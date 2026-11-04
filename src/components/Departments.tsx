@@ -1,6 +1,6 @@
 import { Pencil, Plus, Trash2, Users } from 'lucide-react';
 import { useState, type FormEvent } from 'react';
-import { useWorkspace } from '../context/Workspace';
+import { useWorkspace } from '../context/workspace-context';
 import type { Activity, Department } from '../domain/models';
 import { parseMoney, summarize } from '../domain/budget';
 import { removeDepartment, upsertDepartment } from '../services/director';

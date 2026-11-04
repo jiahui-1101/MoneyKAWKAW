@@ -1,7 +1,7 @@
 import { ArrowLeft, ArrowUpRight, CalendarDays, Pencil, Users } from 'lucide-react';
 import { useState } from 'react';
 import { Link, NavLink, useParams } from 'react-router-dom';
-import { useWorkspace } from '../context/Workspace';
+import { useWorkspace } from '../context/workspace-context';
 import { summarize } from '../domain/budget';
 import type { Activity, Store } from '../domain/models';
 import { BudgetLifecycle, Metrics, Overspending, RecentActivity } from '../components/Finance';

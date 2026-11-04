@@ -1,7 +1,5 @@
 import {
-  createContext,
   useCallback,
-  useContext,
   useEffect,
   useRef,
   useState,
@@ -9,19 +7,7 @@ import {
 } from 'react';
 import type { Store } from '../domain/models';
 import { directorService } from '../services/director';
-
-interface WorkspaceValue {
-  store: Store | null;
-  loading: boolean;
-  error: string;
-  busy: boolean;
-  notice: string;
-  reload: () => Promise<void>;
-  reset: () => Promise<void>;
-  mutate: (change: (store: Store) => Store, message: string) => Promise<Store>;
-  dismiss: () => void;
-}
-const Context = createContext<WorkspaceValue | null>(null);
+import { WorkspaceContext } from './workspace-context';
 export function WorkspaceProvider({ children }: { children: ReactNode }) {
   const [store, setStore] = useState<Store | null>(null);
   const current = useRef<Store | null>(null);
@@ -81,7 +67,7 @@ export function WorkspaceProvider({ children }: { children: ReactNode }) {
     setNotice('Sample workspace restored.');
   };
   return (
-    <Context.Provider
+    <WorkspaceContext.Provider
       value={{
         store,
         loading,
@@ -95,11 +81,6 @@ export function WorkspaceProvider({ children }: { children: ReactNode }) {
       }}
     >
       {children}
-    </Context.Provider>
+    </WorkspaceContext.Provider>
   );
-}
-export function useWorkspace() {
-  const value = useContext(Context);
-  if (!value) throw new Error('WorkspaceProvider is required.');
-  return value;
 }

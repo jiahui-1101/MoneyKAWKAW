@@ -1,7 +1,7 @@
 import { ArrowUpRight, Check, Inbox, X } from 'lucide-react';
 import { useEffect, useRef, type ReactNode } from 'react';
 import { Link } from 'react-router-dom';
-import { useWorkspace } from '../context/Workspace';
+import { useWorkspace } from '../context/workspace-context';
 
 export function useFormat() {
   const { store } = useWorkspace();

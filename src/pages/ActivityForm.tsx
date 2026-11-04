@@ -1,7 +1,7 @@
 import { ArrowLeft, ArrowRight, Check, Info, Save } from 'lucide-react';
 import { useEffect, useState, type FormEvent } from 'react';
 import { Link, useNavigate, useParams } from 'react-router-dom';
-import { useWorkspace } from '../context/Workspace';
+import { useWorkspace } from '../context/workspace-context';
 import { activityStatuses, activityTypes, type ActivityInput } from '../domain/models';
 import { parseMoney } from '../domain/budget';
 import { upsertActivity } from '../services/director';
