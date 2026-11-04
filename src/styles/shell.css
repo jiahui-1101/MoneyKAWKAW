@@ -235,7 +235,7 @@
 .breadcrumb {
   color: var(--muted);
   font-size: 11px;
-  white-space: nowrap;
+  white-space: normal;
 }
 .breadcrumb span {
   margin: 0 12px;
