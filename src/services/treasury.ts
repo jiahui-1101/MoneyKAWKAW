@@ -1,6 +1,7 @@
 import { analyzeClaim, claimContext, receiptLines, validateRiskRules } from '../domain/risk';
 import type { RiskRules } from '../domain/treasury';
 import { sharedRepository } from './director';
+import { summarize } from '../domain/budget';
 import { projectTreasury, scopedClaim, treasuryEvent, treasuryRead, treasuryWrite } from './treasury-core';
 
 export const treasuryService = {
@@ -39,8 +40,11 @@ export const treasuryService = {
       const receipt=store.treasury!.receipts.find(r=>r.expenseId===claimId);
       if(decision==='Approved' && (!receipt || receiptLines(receipt).filter(l=>!l.excluded).reduce((s,l)=>s+l.final.amount,0)!==claim.amount))
         throw new Error('Receipt lines must reconcile to the submitted amount before approval.');
-      if(decision==='Approved' && claimContext(store,claim).variance>0 && !claim.review.analysis)
+      const overBudget=claimContext(store,claim).variance>0 || summarize(store,claim.activityId,claim.departmentId).available<0 || summarize(store,claim.activityId).available<0;
+      if(decision==='Approved' && overBudget && !claim.review.analysis)
         throw new Error('Analyze the over-budget claim before approval.');
+      if(decision==='Approved' && claimContext(store,claim).variance>0 && !claim.review.justification.trim())
+        throw new Error('An over-budget claim requires the member’s justification.');
       const at=new Date().toISOString();
       claim.review.decisionAnalysis=analyzeClaim(store,claim,actor.name);
       claim.state=decision;

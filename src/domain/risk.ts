@@ -30,11 +30,12 @@ export function analyzeClaim(store: Store, claim: Expense, actor: string): RiskR
   const dep=summarize(store,claim.activityId,claim.departmentId);
   const activity=summarize(store,claim.activityId);
   const other=store.expenses.filter(e=>e.id!==claim.id && e.activityId===claim.activityId && isPending(e)).reduce((s,e)=>s+e.amount,0);
+  const amount=(n:number)=>`${store.settings.currency} ${(n/100).toFixed(2)}`;
   const factors: RiskResult['factors']=[
     {label:'Item budget variance',detail:`${variancePercent.toFixed(2)}% variance. Medium ≥ ${rules.mediumVariance}%; high ≥ ${rules.highVariance}%.`,level:variancePercent>=rules.highVariance?'High':variancePercent>=rules.mediumVariance?'Medium':'Low'},
-    {label:'Department headroom',detail:`${dep.available/100} after recorded claims and open task reservations.`,level:dep.available<0?'High':dep.available<=department.allocation*rules.lowHeadroomPercent/100?'Medium':'Low'},
-    {label:'Activity headroom',detail:`${activity.available/100} after all recorded claims and open reservations.`,level:activity.available<0?'High':activity.available<=activity.budget*rules.lowHeadroomPercent/100?'Medium':'Low'},
-    {label:'Existing commitments',detail:`Other pending claims: ${other/100}; approved unpaid and open tasks: ${activity.committed/100}. Included once in balances.`,level:activity.available<0?'High':'Low'},
+    {label:'Department headroom',detail:`${amount(dep.available)} after recorded claims and open task reservations.`,level:dep.available<0?'High':dep.available<=department.allocation*rules.lowHeadroomPercent/100?'Medium':'Low'},
+    {label:'Activity headroom',detail:`${amount(activity.available)} after all recorded claims and open reservations.`,level:activity.available<0?'High':activity.available<=activity.budget*rules.lowHeadroomPercent/100?'Medium':'Low'},
+    {label:'Existing commitments',detail:`Other pending claims: ${amount(other)}; approved unpaid and open tasks: ${amount(activity.committed)}. Included once in balances.`,level:activity.available<0?'High':'Low'},
   ];
   const band=factors.some(f=>f.level==='High')?'High':factors.some(f=>f.level==='Medium')?'Medium':'Low';
   return {id:crypto.randomUUID(),at:new Date().toISOString(),actor,band,factors,rules:structuredClone(rules),variance,variancePercent,departmentAvailable:dep.available,activityAvailable:activity.available,pendingOther:other};

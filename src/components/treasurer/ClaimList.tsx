@@ -38,8 +38,8 @@ export function ClaimList({activityId,reimbursements=false}:{activityId?:string;
       {!activityId&&<Field id="claim-activity" label="Activity"><select id="claim-activity" value={activity} onChange={e=>{setActivity(e.target.value);setDepartment('');}}><option value="">All activities</option>{activities.map(a=><option key={a.id} value={a.id}>{a.name}</option>)}</select></Field>}
       <Field id="claim-department" label="Department"><select id="claim-department" value={department} onChange={e=>setDepartment(e.target.value)}><option value="">All departments</option>{departments.map(d=><option key={d.id} value={d.id}>{d.name} · {d.activityName}</option>)}</select></Field>
       <Field id="claim-member" label="Member"><select id="claim-member" value={member} onChange={e=>setMember(e.target.value)}><option value="">All members</option>{data.directory?.users.map(u=><option key={u.id} value={u.id}>{u.name}</option>)}</select></Field>
-      <Field id="claim-from" label="Submitted from"><DateField id="claim-from" value={from} onChange={setFrom}/></Field>
-      <Field id="claim-until" label="Submitted until"><DateField id="claim-until" min={from} value={until} onChange={setUntil}/></Field>
+      <Field id="claim-from" label="Submitted from"><DateField id="claim-from" calendarLabel="Choose submission start date" value={from} onChange={setFrom}/></Field>
+      <Field id="claim-until" label="Submitted until"><DateField id="claim-until" calendarLabel="Choose submission end date" min={from} value={until} onChange={setUntil}/></Field>
       <button className="btn" onClick={clear}>Clear filters</button>
     </div>
     {error&&<p className="form-error" role="alert">{error}</p>}

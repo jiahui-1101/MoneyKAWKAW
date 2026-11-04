@@ -44,7 +44,7 @@ export function TreasuryReimburse() {
       </div>
       <div className="form-section"><h2>External transfer record</h2>
         <Field id="paid-amount" label={`Amount paid (${currency})`}><input id="paid-amount" readOnly value={(claim.amount/100).toFixed(2)}/></Field>
-        <Field id="payment-date" label="Payment date" required><DateField id="payment-date" min={claim.date} max={departmentToday(data.settings.timezone)} value={date} onChange={setDate}/></Field>
+        <Field id="payment-date" label="Payment date" required><DateField id="payment-date" calendarLabel="Choose payment date" min={claim.date} max={departmentToday(data.settings.timezone)} value={date} onChange={setDate}/></Field>
         <Field id="payment-reference" label="Transaction reference" required><input id="payment-reference" maxLength={120} value={reference} onChange={e=>setReference(e.target.value)} placeholder="External transfer reference or DEMO-…"/></Field>
         <Field id="payment-proof" label="Payment proof" required><input id="payment-proof" type="file" accept="image/png,image/jpeg,application/pdf" disabled={reading||busy} onChange={async e=>{setProof(null);setError('');const file=e.target.files?.[0];if(!file)return;setReading(true);try{setProof(await readProof(file));}catch(e){setError(e instanceof Error?e.message:'Unable to read proof.');}finally{setReading(false);}}}/></Field>
         <p className="field-hint">PNG, JPEG, or PDF · up to 1 MB · the uploaded file is preserved.</p>

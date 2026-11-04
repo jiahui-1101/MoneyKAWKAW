@@ -231,7 +231,9 @@ function ExpenseRecords({ store, activity }: { store: Store; activity: Activity 
         >
           <option value="">All review states</option>
           <option>Pending review</option>
+          <option>In review</option>
           <option>Approved</option>
+          <option>Declined</option>
         </select>
       }
     >
