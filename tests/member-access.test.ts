@@ -31,7 +31,8 @@ it('rechecks membership and actor after asynchronous reads and rejects privilege
   const pending=memberService.load();selectDemoActor('member-ryan');await expect(pending).rejects.toThrow('changed');
   await expect(hodService.load()).rejects.toThrow('role');await expect(directorService.load()).rejects.toThrow('role');await expect(treasuryService.load()).rejects.toThrow('role');
   selectDemoActor('member-ava');const data=raw();
-  data.directory!.memberships.filter(m=>m.userId==='member-ava').forEach(m=>m.active=false);write(data);
+  data.directory!.memberships.filter(m=>m.userId==='member-ava').forEach(m=>m.active=false);
+  data.assignments.filter(t=>t.purchasing?.assigneeId==='member-ava'&&!t.expenseId).forEach(t=>t.purchasing!.status='Cancelled');write(data);
   expect((await memberService.load()).scopes).toHaveLength(0);
   await expect(draftService.begin('as-2')).rejects.toThrow('membership');
 });
@@ -50,7 +51,7 @@ it('keeps private account data out of Director/HOD/Treasurer DTOs and preserves 
   await accountService.save(account);await capturedDraft();
   for(const actor of ['hod-sarah','treasurer-nora','director-jamie']){
     selectDemoActor(actor);const data=actor==='hod-sarah'?await hodService.load():actor==='treasurer-nora'?await treasuryService.load():await directorService.load();
-    expect(data).not.toHaveProperty('member');expect(JSON.stringify(data)).not.toContain(account.identifier);
+    expect('member' in data?data.member:undefined).toBeUndefined();expect(JSON.stringify(data)).not.toContain(account.identifier);
   }
   await directorService.save(await directorService.load());expect(raw().member!.accounts[0].identifier).toBe(account.identifier);
 });

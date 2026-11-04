@@ -48,7 +48,7 @@ it('runs Director → HOD → Member real submission → Treasurer → Member re
   expect((await reimbursementService.destination(claimId)).identifier).toBe(account.identifier);
   await reimbursementService.record(claimId,{amount:11000,date:'2026-11-05',reference:'DEMO-ONLY-110',proof,confirmed:true});
   const payment=raw().payments.find(p=>p.expenseId===claimId)!;
-  expect(paymentState(raw(),raw().expenses.find(e=>e.id===claimId)!)).toContain('awaiting receipt');
+  expect(paymentState(raw(),raw().expenses.find(e=>e.id===claimId)!)).toBe('Recorded · awaiting member');
   selectDemoActor('member-ava');expect(await memberService.proof(payment.id)).toEqual(proof);
   await expect(memberService.confirm(payment.id,10000,true)).rejects.toThrow('full recorded');
   await memberService.discrepancy(payment.id,'Transfer not visible yet',0);
@@ -57,7 +57,7 @@ it('runs Director → HOD → Member real submission → Treasurer → Member re
   await expect(memberService.confirm(payment.id,11000,true)).rejects.toThrow('once');
   await expect(memberClaimService.changeDestination(claimId,accountId,'Use new account')).rejects.toThrow('locked');
   expect(raw().payments.find(p=>p.id===payment.id)!.manual).toMatchObject({externalVerified:false,receivedConfirmedBy:'member-ava',discrepancy:{reportedBy:'member-ava',resolvedBy:'member-ava'}});
-  expect(paymentState(raw(),raw().expenses.find(e=>e.id===claimId)!)).toBe('Received');
+  expect(paymentState(raw(),raw().expenses.find(e=>e.id===claimId)!)).toBe('Received confirmed');
   expect(await memberClaimService.receipt(claimId)).toEqual(receipt);
   expect(raw().assignments.find(t=>t.id===taskId)!.purchasing!.status).toBe('Completed');
   const final=summarize(raw(),activityId,departmentId);expect(final).toMatchObject({recorded:11000,paid:11000,pending:0,available:189000,committed:0});
