@@ -1,0 +1,1622 @@
+[
+  {
+    "appearance": [
+      "none"
+    ],
+    "backgrounds": [
+      "rgba(0, 0, 0, 0)",
+      "rgb(183, 76, 28)",
+      "rgb(255, 240, 230)",
+      "rgb(198, 206, 202)",
+      "rgb(242, 239, 248)",
+      "rgb(255, 246, 223)",
+      "rgb(237, 246, 240)",
+      "rgb(38, 120, 91)",
+      "rgb(250, 250, 249)",
+      "rgb(255, 255, 255)",
+      "rgb(247, 248, 250)"
+    ],
+    "borders": [
+      "rgb(32, 38, 38)",
+      "rgb(104, 113, 111)",
+      "rgb(183, 76, 28)",
+      "rgb(100, 111, 105)",
+      "rgb(112, 94, 150)",
+      "rgb(147, 101, 28)",
+      "rgb(38, 120, 91)",
+      "rgb(229, 233, 231)"
+    ],
+    "defaultBlue": false,
+    "fonts": [
+      "\"Manrope Variable\", \"Segoe UI\", sans-serif",
+      "\"DM Sans Variable\", \"Segoe UI\", sans-serif"
+    ],
+    "heading": "Ava, here’s your part of the plan.",
+    "path": "/member",
+    "scrollWidth": 305,
+    "textColors": [
+      "rgb(32, 38, 38)",
+      "rgb(104, 113, 111)",
+      "rgb(255, 255, 255)",
+      "rgb(183, 76, 28)",
+      "rgb(100, 111, 105)",
+      "rgb(112, 94, 150)",
+      "rgb(147, 101, 28)",
+      "rgb(38, 120, 91)"
+    ],
+    "width": 320
+  },
+  {
+    "appearance": [
+      "none"
+    ],
+    "backgrounds": [
+      "rgba(0, 0, 0, 0)",
+      "rgb(237, 246, 240)",
+      "rgb(38, 120, 91)",
+      "rgb(255, 255, 255)"
+    ],
+    "borders": [
+      "rgb(32, 38, 38)",
+      "rgb(104, 113, 111)",
+      "rgb(38, 120, 91)",
+      "rgb(229, 233, 231)"
+    ],
+    "defaultBlue": false,
+    "fonts": [
+      "\"Manrope Variable\", \"Segoe UI\", sans-serif",
+      "\"DM Sans Variable\", \"Segoe UI\", sans-serif"
+    ],
+    "heading": "A shared purpose. Your own place in it.",
+    "path": "/member/activities",
+    "scrollWidth": 305,
+    "textColors": [
+      "rgb(32, 38, 38)",
+      "rgb(104, 113, 111)",
+      "rgb(38, 120, 91)"
+    ],
+    "width": 320
+  },
+  {
+    "appearance": [
+      "none"
+    ],
+    "backgrounds": [
+      "rgba(0, 0, 0, 0)",
+      "rgb(247, 248, 250)",
+      "rgb(104, 113, 111)",
+      "rgb(255, 240, 230)",
+      "rgb(250, 250, 249)",
+      "rgb(237, 246, 240)",
+      "rgb(38, 120, 91)"
+    ],
+    "borders": [
+      "rgb(104, 113, 111)",
+      "rgb(32, 38, 38)",
+      "rgb(229, 233, 231)",
+      "rgb(38, 120, 91)"
+    ],
+    "defaultBlue": false,
+    "fonts": [
+      "\"DM Sans Variable\", \"Segoe UI\", sans-serif",
+      "\"Manrope Variable\", \"Segoe UI\", sans-serif"
+    ],
+    "heading": "Multimedia",
+    "path": "/member/activities/ac56201f-fd7b-4fd5-a14b-bf514a3d51e0/departments/42cfd1ca-3ff3-4557-aa42-abe7741bad94",
+    "scrollWidth": 305,
+    "textColors": [
+      "rgb(104, 113, 111)",
+      "rgb(32, 38, 38)",
+      "rgb(183, 76, 28)",
+      "rgb(38, 120, 91)"
+    ],
+    "width": 320
+  },
+  {
+    "appearance": [
+      "none"
+    ],
+    "backgrounds": [
+      "rgba(0, 0, 0, 0)",
+      "rgb(255, 240, 230)",
+      "rgb(250, 250, 249)",
+      "rgb(255, 255, 255)",
+      "rgb(247, 248, 250)",
+      "rgb(104, 113, 111)",
+      "rgb(255, 246, 223)",
+      "rgb(147, 101, 28)",
+      "rgb(237, 246, 240)",
+      "rgb(38, 120, 91)",
+      "rgb(242, 239, 248)",
+      "rgb(112, 94, 150)"
+    ],
+    "borders": [
+      "rgb(32, 38, 38)",
+      "rgb(104, 113, 111)",
+      "rgb(183, 76, 28)",
+      "rgb(229, 233, 231)",
+      "rgb(147, 101, 28)",
+      "rgb(38, 120, 91)",
+      "rgb(112, 94, 150)"
+    ],
+    "defaultBlue": false,
+    "fonts": [
+      "\"Manrope Variable\", \"Segoe UI\", sans-serif",
+      "\"DM Sans Variable\", \"Segoe UI\", sans-serif"
+    ],
+    "heading": "Your next purchase, clearly planned.",
+    "path": "/member/tasks",
+    "scrollWidth": 305,
+    "textColors": [
+      "rgb(32, 38, 38)",
+      "rgb(104, 113, 111)",
+      "rgb(183, 76, 28)",
+      "rgb(147, 101, 28)",
+      "rgb(38, 120, 91)",
+      "rgb(112, 94, 150)"
+    ],
+    "width": 320
+  },
+  {
+    "appearance": [
+      "none"
+    ],
+    "backgrounds": [
+      "rgba(0, 0, 0, 0)",
+      "rgb(183, 76, 28)",
+      "rgb(237, 246, 240)",
+      "rgb(38, 120, 91)",
+      "rgb(255, 255, 255)"
+    ],
+    "borders": [
+      "rgb(104, 113, 111)",
+      "rgb(32, 38, 38)",
+      "rgb(183, 76, 28)",
+      "rgb(38, 120, 91)",
+      "rgb(229, 233, 231)"
+    ],
+    "defaultBlue": false,
+    "fonts": [
+      "\"DM Sans Variable\", \"Segoe UI\", sans-serif",
+      "\"Manrope Variable\", \"Segoe UI\", sans-serif"
+    ],
+    "heading": "HDMI Cable · Member OCR",
+    "path": "/member/tasks/0e50e773-21b4-4506-839e-8fc6a0373e10",
+    "scrollWidth": 305,
+    "textColors": [
+      "rgb(104, 113, 111)",
+      "rgb(32, 38, 38)",
+      "rgb(255, 255, 255)",
+      "rgb(38, 120, 91)"
+    ],
+    "width": 320
+  },
+  {
+    "appearance": [
+      "none"
+    ],
+    "backgrounds": [
+      "rgba(0, 0, 0, 0)",
+      "rgb(255, 255, 255)",
+      "rgb(255, 240, 230)",
+      "rgb(250, 250, 249)",
+      "rgb(247, 248, 250)",
+      "rgb(104, 113, 111)",
+      "rgb(237, 246, 240)",
+      "rgb(38, 120, 91)"
+    ],
+    "borders": [
+      "rgb(32, 38, 38)",
+      "rgb(104, 113, 111)",
+      "rgb(229, 233, 231)",
+      "rgb(183, 76, 28)",
+      "rgb(38, 120, 91)"
+    ],
+    "defaultBlue": false,
+    "fonts": [
+      "\"Manrope Variable\", \"Segoe UI\", sans-serif",
+      "\"DM Sans Variable\", \"Segoe UI\", sans-serif"
+    ],
+    "heading": "From submitted to received, in one place.",
+    "path": "/member/claims",
+    "scrollWidth": 305,
+    "textColors": [
+      "rgb(32, 38, 38)",
+      "rgb(104, 113, 111)",
+      "rgb(183, 76, 28)",
+      "rgb(38, 120, 91)"
+    ],
+    "width": 320
+  },
+  {
+    "appearance": [
+      "none"
+    ],
+    "backgrounds": [
+      "rgba(0, 0, 0, 0)",
+      "rgb(183, 76, 28)",
+      "rgb(237, 246, 240)",
+      "rgb(38, 120, 91)",
+      "rgb(247, 248, 250)"
+    ],
+    "borders": [
+      "rgb(104, 113, 111)",
+      "rgb(32, 38, 38)",
+      "rgb(183, 76, 28)",
+      "rgb(38, 120, 91)"
+    ],
+    "defaultBlue": false,
+    "fonts": [
+      "\"DM Sans Variable\", \"Segoe UI\", sans-serif",
+      "\"Manrope Variable\", \"Segoe UI\", sans-serif"
+    ],
+    "heading": "HDMI Cable · Member OCR",
+    "path": "/member/claims/claim-3eecc828-5f05-485a-9478-9db3c4585d20",
+    "scrollWidth": 305,
+    "textColors": [
+      "rgb(104, 113, 111)",
+      "rgb(32, 38, 38)",
+      "rgb(255, 255, 255)",
+      "rgb(38, 120, 91)",
+      "rgb(183, 76, 28)"
+    ],
+    "width": 320
+  },
+  {
+    "appearance": [
+      "none"
+    ],
+    "backgrounds": [
+      "rgba(0, 0, 0, 0)",
+      "rgb(237, 246, 240)",
+      "rgb(38, 120, 91)",
+      "rgb(247, 248, 250)",
+      "rgb(104, 113, 111)"
+    ],
+    "borders": [
+      "rgb(104, 113, 111)",
+      "rgb(32, 38, 38)",
+      "rgb(38, 120, 91)"
+    ],
+    "defaultBlue": false,
+    "fonts": [
+      "\"DM Sans Variable\", \"Segoe UI\", sans-serif",
+      "\"Manrope Variable\", \"Segoe UI\", sans-serif"
+    ],
+    "heading": "Evidence of payment. Your acknowledgment.",
+    "path": "/member/claims/claim-3eecc828-5f05-485a-9478-9db3c4585d20/payment",
+    "scrollWidth": 305,
+    "textColors": [
+      "rgb(104, 113, 111)",
+      "rgb(32, 38, 38)",
+      "rgb(38, 120, 91)"
+    ],
+    "width": 320
+  },
+  {
+    "appearance": [
+      "none"
+    ],
+    "backgrounds": [
+      "rgba(0, 0, 0, 0)",
+      "rgb(183, 76, 28)",
+      "rgb(237, 246, 240)",
+      "rgb(38, 120, 91)",
+      "rgb(255, 255, 255)",
+      "rgb(181, 57, 54)"
+    ],
+    "borders": [
+      "rgb(32, 38, 38)",
+      "rgb(104, 113, 111)",
+      "rgb(183, 76, 28)",
+      "rgb(38, 120, 91)",
+      "rgb(229, 233, 231)",
+      "rgb(181, 57, 54)"
+    ],
+    "defaultBlue": false,
+    "fonts": [
+      "\"Manrope Variable\", \"Segoe UI\", sans-serif",
+      "\"DM Sans Variable\", \"Segoe UI\", sans-serif"
+    ],
+    "heading": "The right destination, chosen by you.",
+    "path": "/member/accounts",
+    "scrollWidth": 305,
+    "textColors": [
+      "rgb(32, 38, 38)",
+      "rgb(104, 113, 111)",
+      "rgb(255, 255, 255)",
+      "rgb(38, 120, 91)"
+    ],
+    "width": 320
+  },
+  {
+    "appearance": [
+      "none"
+    ],
+    "backgrounds": [
+      "rgba(0, 0, 0, 0)",
+      "rgb(255, 255, 255)",
+      "rgb(255, 240, 230)",
+      "rgb(250, 250, 249)",
+      "rgb(247, 248, 250)"
+    ],
+    "borders": [
+      "rgb(32, 38, 38)",
+      "rgb(104, 113, 111)",
+      "rgb(229, 233, 231)",
+      "rgb(183, 76, 28)"
+    ],
+    "defaultBlue": false,
+    "fonts": [
+      "\"Manrope Variable\", \"Segoe UI\", sans-serif",
+      "\"DM Sans Variable\", \"Segoe UI\", sans-serif"
+    ],
+    "heading": "The updates that move your work forward.",
+    "path": "/member/notifications",
+    "scrollWidth": 305,
+    "textColors": [
+      "rgb(32, 38, 38)",
+      "rgb(104, 113, 111)",
+      "rgb(183, 76, 28)"
+    ],
+    "width": 320
+  },
+  {
+    "appearance": [
+      "none"
+    ],
+    "backgrounds": [
+      "rgba(0, 0, 0, 0)",
+      "rgb(255, 255, 255)",
+      "rgb(247, 248, 250)",
+      "rgb(255, 240, 230)",
+      "rgb(183, 76, 28)",
+      "rgb(250, 250, 249)",
+      "rgb(255, 246, 223)",
+      "rgb(147, 101, 28)",
+      "rgb(237, 246, 240)",
+      "rgb(38, 120, 91)"
+    ],
+    "borders": [
+      "rgb(104, 113, 111)",
+      "rgb(32, 38, 38)",
+      "rgb(229, 233, 231)",
+      "rgb(183, 76, 28)",
+      "rgb(255, 255, 255)",
+      "rgb(147, 101, 28)",
+      "rgb(38, 120, 91)"
+    ],
+    "defaultBlue": false,
+    "fonts": [
+      "\"DM Sans Variable\", \"Segoe UI\", sans-serif",
+      "\"Manrope Variable\", \"Segoe UI\", sans-serif"
+    ],
+    "heading": "Workshop AV rental",
+    "path": "/member/drafts/14817db9-0853-4883-8a7e-939054557d90?step=items",
+    "scrollWidth": 305,
+    "textColors": [
+      "rgb(104, 113, 111)",
+      "rgb(32, 38, 38)",
+      "rgb(183, 76, 28)",
+      "rgb(255, 255, 255)",
+      "rgb(147, 101, 28)",
+      "rgb(38, 120, 91)"
+    ],
+    "width": 320
+  },
+  {
+    "appearance": [
+      "none"
+    ],
+    "backgrounds": [
+      "rgba(0, 0, 0, 0)",
+      "rgb(183, 76, 28)",
+      "rgb(255, 240, 230)",
+      "rgb(198, 206, 202)",
+      "rgb(242, 239, 248)",
+      "rgb(255, 246, 223)",
+      "rgb(237, 246, 240)",
+      "rgb(38, 120, 91)",
+      "rgb(250, 250, 249)",
+      "rgb(255, 255, 255)",
+      "rgb(247, 248, 250)"
+    ],
+    "borders": [
+      "rgb(32, 38, 38)",
+      "rgb(104, 113, 111)",
+      "rgb(183, 76, 28)",
+      "rgb(100, 111, 105)",
+      "rgb(112, 94, 150)",
+      "rgb(147, 101, 28)",
+      "rgb(38, 120, 91)",
+      "rgb(229, 233, 231)"
+    ],
+    "defaultBlue": false,
+    "fonts": [
+      "\"Manrope Variable\", \"Segoe UI\", sans-serif",
+      "\"DM Sans Variable\", \"Segoe UI\", sans-serif"
+    ],
+    "heading": "Ava, here’s your part of the plan.",
+    "path": "/member",
+    "scrollWidth": 375,
+    "textColors": [
+      "rgb(32, 38, 38)",
+      "rgb(104, 113, 111)",
+      "rgb(255, 255, 255)",
+      "rgb(183, 76, 28)",
+      "rgb(100, 111, 105)",
+      "rgb(112, 94, 150)",
+      "rgb(147, 101, 28)",
+      "rgb(38, 120, 91)"
+    ],
+    "width": 390
+  },
+  {
+    "appearance": [
+      "none"
+    ],
+    "backgrounds": [
+      "rgba(0, 0, 0, 0)",
+      "rgb(237, 246, 240)",
+      "rgb(38, 120, 91)",
+      "rgb(255, 255, 255)"
+    ],
+    "borders": [
+      "rgb(32, 38, 38)",
+      "rgb(104, 113, 111)",
+      "rgb(38, 120, 91)",
+      "rgb(229, 233, 231)"
+    ],
+    "defaultBlue": false,
+    "fonts": [
+      "\"Manrope Variable\", \"Segoe UI\", sans-serif",
+      "\"DM Sans Variable\", \"Segoe UI\", sans-serif"
+    ],
+    "heading": "A shared purpose. Your own place in it.",
+    "path": "/member/activities",
+    "scrollWidth": 375,
+    "textColors": [
+      "rgb(32, 38, 38)",
+      "rgb(104, 113, 111)",
+      "rgb(38, 120, 91)"
+    ],
+    "width": 390
+  },
+  {
+    "appearance": [
+      "none"
+    ],
+    "backgrounds": [
+      "rgba(0, 0, 0, 0)",
+      "rgb(247, 248, 250)",
+      "rgb(104, 113, 111)",
+      "rgb(255, 240, 230)",
+      "rgb(250, 250, 249)",
+      "rgb(237, 246, 240)",
+      "rgb(38, 120, 91)"
+    ],
+    "borders": [
+      "rgb(104, 113, 111)",
+      "rgb(32, 38, 38)",
+      "rgb(229, 233, 231)",
+      "rgb(38, 120, 91)"
+    ],
+    "defaultBlue": false,
+    "fonts": [
+      "\"DM Sans Variable\", \"Segoe UI\", sans-serif",
+      "\"Manrope Variable\", \"Segoe UI\", sans-serif"
+    ],
+    "heading": "Multimedia",
+    "path": "/member/activities/ac56201f-fd7b-4fd5-a14b-bf514a3d51e0/departments/42cfd1ca-3ff3-4557-aa42-abe7741bad94",
+    "scrollWidth": 375,
+    "textColors": [
+      "rgb(104, 113, 111)",
+      "rgb(32, 38, 38)",
+      "rgb(183, 76, 28)",
+      "rgb(38, 120, 91)"
+    ],
+    "width": 390
+  },
+  {
+    "appearance": [
+      "none"
+    ],
+    "backgrounds": [
+      "rgba(0, 0, 0, 0)",
+      "rgb(255, 240, 230)",
+      "rgb(250, 250, 249)",
+      "rgb(255, 255, 255)",
+      "rgb(247, 248, 250)",
+      "rgb(104, 113, 111)",
+      "rgb(255, 246, 223)",
+      "rgb(147, 101, 28)",
+      "rgb(237, 246, 240)",
+      "rgb(38, 120, 91)",
+      "rgb(242, 239, 248)",
+      "rgb(112, 94, 150)"
+    ],
+    "borders": [
+      "rgb(32, 38, 38)",
+      "rgb(104, 113, 111)",
+      "rgb(183, 76, 28)",
+      "rgb(229, 233, 231)",
+      "rgb(147, 101, 28)",
+      "rgb(38, 120, 91)",
+      "rgb(112, 94, 150)"
+    ],
+    "defaultBlue": false,
+    "fonts": [
+      "\"Manrope Variable\", \"Segoe UI\", sans-serif",
+      "\"DM Sans Variable\", \"Segoe UI\", sans-serif"
+    ],
+    "heading": "Your next purchase, clearly planned.",
+    "path": "/member/tasks",
+    "scrollWidth": 375,
+    "textColors": [
+      "rgb(32, 38, 38)",
+      "rgb(104, 113, 111)",
+      "rgb(183, 76, 28)",
+      "rgb(147, 101, 28)",
+      "rgb(38, 120, 91)",
+      "rgb(112, 94, 150)"
+    ],
+    "width": 390
+  },
+  {
+    "appearance": [
+      "none"
+    ],
+    "backgrounds": [
+      "rgba(0, 0, 0, 0)",
+      "rgb(183, 76, 28)",
+      "rgb(237, 246, 240)",
+      "rgb(38, 120, 91)",
+      "rgb(255, 255, 255)"
+    ],
+    "borders": [
+      "rgb(104, 113, 111)",
+      "rgb(32, 38, 38)",
+      "rgb(183, 76, 28)",
+      "rgb(38, 120, 91)",
+      "rgb(229, 233, 231)"
+    ],
+    "defaultBlue": false,
+    "fonts": [
+      "\"DM Sans Variable\", \"Segoe UI\", sans-serif",
+      "\"Manrope Variable\", \"Segoe UI\", sans-serif"
+    ],
+    "heading": "HDMI Cable · Member OCR",
+    "path": "/member/tasks/0e50e773-21b4-4506-839e-8fc6a0373e10",
+    "scrollWidth": 375,
+    "textColors": [
+      "rgb(104, 113, 111)",
+      "rgb(32, 38, 38)",
+      "rgb(255, 255, 255)",
+      "rgb(38, 120, 91)"
+    ],
+    "width": 390
+  },
+  {
+    "appearance": [
+      "none"
+    ],
+    "backgrounds": [
+      "rgba(0, 0, 0, 0)",
+      "rgb(255, 255, 255)",
+      "rgb(255, 240, 230)",
+      "rgb(250, 250, 249)",
+      "rgb(247, 248, 250)",
+      "rgb(104, 113, 111)",
+      "rgb(237, 246, 240)",
+      "rgb(38, 120, 91)"
+    ],
+    "borders": [
+      "rgb(32, 38, 38)",
+      "rgb(104, 113, 111)",
+      "rgb(229, 233, 231)",
+      "rgb(183, 76, 28)",
+      "rgb(38, 120, 91)"
+    ],
+    "defaultBlue": false,
+    "fonts": [
+      "\"Manrope Variable\", \"Segoe UI\", sans-serif",
+      "\"DM Sans Variable\", \"Segoe UI\", sans-serif"
+    ],
+    "heading": "From submitted to received, in one place.",
+    "path": "/member/claims",
+    "scrollWidth": 375,
+    "textColors": [
+      "rgb(32, 38, 38)",
+      "rgb(104, 113, 111)",
+      "rgb(183, 76, 28)",
+      "rgb(38, 120, 91)"
+    ],
+    "width": 390
+  },
+  {
+    "appearance": [
+      "none"
+    ],
+    "backgrounds": [
+      "rgba(0, 0, 0, 0)",
+      "rgb(183, 76, 28)",
+      "rgb(237, 246, 240)",
+      "rgb(38, 120, 91)",
+      "rgb(247, 248, 250)"
+    ],
+    "borders": [
+      "rgb(104, 113, 111)",
+      "rgb(32, 38, 38)",
+      "rgb(183, 76, 28)",
+      "rgb(38, 120, 91)"
+    ],
+    "defaultBlue": false,
+    "fonts": [
+      "\"DM Sans Variable\", \"Segoe UI\", sans-serif",
+      "\"Manrope Variable\", \"Segoe UI\", sans-serif"
+    ],
+    "heading": "HDMI Cable · Member OCR",
+    "path": "/member/claims/claim-3eecc828-5f05-485a-9478-9db3c4585d20",
+    "scrollWidth": 375,
+    "textColors": [
+      "rgb(104, 113, 111)",
+      "rgb(32, 38, 38)",
+      "rgb(255, 255, 255)",
+      "rgb(38, 120, 91)",
+      "rgb(183, 76, 28)"
+    ],
+    "width": 390
+  },
+  {
+    "appearance": [
+      "none"
+    ],
+    "backgrounds": [
+      "rgba(0, 0, 0, 0)",
+      "rgb(237, 246, 240)",
+      "rgb(38, 120, 91)",
+      "rgb(247, 248, 250)",
+      "rgb(104, 113, 111)"
+    ],
+    "borders": [
+      "rgb(104, 113, 111)",
+      "rgb(32, 38, 38)",
+      "rgb(38, 120, 91)"
+    ],
+    "defaultBlue": false,
+    "fonts": [
+      "\"DM Sans Variable\", \"Segoe UI\", sans-serif",
+      "\"Manrope Variable\", \"Segoe UI\", sans-serif"
+    ],
+    "heading": "Evidence of payment. Your acknowledgment.",
+    "path": "/member/claims/claim-3eecc828-5f05-485a-9478-9db3c4585d20/payment",
+    "scrollWidth": 375,
+    "textColors": [
+      "rgb(104, 113, 111)",
+      "rgb(32, 38, 38)",
+      "rgb(38, 120, 91)"
+    ],
+    "width": 390
+  },
+  {
+    "appearance": [
+      "none"
+    ],
+    "backgrounds": [
+      "rgba(0, 0, 0, 0)",
+      "rgb(183, 76, 28)",
+      "rgb(237, 246, 240)",
+      "rgb(38, 120, 91)",
+      "rgb(255, 255, 255)",
+      "rgb(181, 57, 54)"
+    ],
+    "borders": [
+      "rgb(32, 38, 38)",
+      "rgb(104, 113, 111)",
+      "rgb(183, 76, 28)",
+      "rgb(38, 120, 91)",
+      "rgb(229, 233, 231)",
+      "rgb(181, 57, 54)"
+    ],
+    "defaultBlue": false,
+    "fonts": [
+      "\"Manrope Variable\", \"Segoe UI\", sans-serif",
+      "\"DM Sans Variable\", \"Segoe UI\", sans-serif"
+    ],
+    "heading": "The right destination, chosen by you.",
+    "path": "/member/accounts",
+    "scrollWidth": 375,
+    "textColors": [
+      "rgb(32, 38, 38)",
+      "rgb(104, 113, 111)",
+      "rgb(255, 255, 255)",
+      "rgb(38, 120, 91)"
+    ],
+    "width": 390
+  },
+  {
+    "appearance": [
+      "none"
+    ],
+    "backgrounds": [
+      "rgba(0, 0, 0, 0)",
+      "rgb(255, 255, 255)",
+      "rgb(255, 240, 230)",
+      "rgb(250, 250, 249)",
+      "rgb(247, 248, 250)"
+    ],
+    "borders": [
+      "rgb(32, 38, 38)",
+      "rgb(104, 113, 111)",
+      "rgb(229, 233, 231)",
+      "rgb(183, 76, 28)"
+    ],
+    "defaultBlue": false,
+    "fonts": [
+      "\"Manrope Variable\", \"Segoe UI\", sans-serif",
+      "\"DM Sans Variable\", \"Segoe UI\", sans-serif"
+    ],
+    "heading": "The updates that move your work forward.",
+    "path": "/member/notifications",
+    "scrollWidth": 375,
+    "textColors": [
+      "rgb(32, 38, 38)",
+      "rgb(104, 113, 111)",
+      "rgb(183, 76, 28)"
+    ],
+    "width": 390
+  },
+  {
+    "appearance": [
+      "none"
+    ],
+    "backgrounds": [
+      "rgba(0, 0, 0, 0)",
+      "rgb(255, 255, 255)",
+      "rgb(247, 248, 250)",
+      "rgb(255, 240, 230)",
+      "rgb(183, 76, 28)",
+      "rgb(250, 250, 249)",
+      "rgb(255, 246, 223)",
+      "rgb(147, 101, 28)",
+      "rgb(237, 246, 240)",
+      "rgb(38, 120, 91)"
+    ],
+    "borders": [
+      "rgb(104, 113, 111)",
+      "rgb(32, 38, 38)",
+      "rgb(229, 233, 231)",
+      "rgb(183, 76, 28)",
+      "rgb(255, 255, 255)",
+      "rgb(147, 101, 28)",
+      "rgb(38, 120, 91)"
+    ],
+    "defaultBlue": false,
+    "fonts": [
+      "\"DM Sans Variable\", \"Segoe UI\", sans-serif",
+      "\"Manrope Variable\", \"Segoe UI\", sans-serif"
+    ],
+    "heading": "Workshop AV rental",
+    "path": "/member/drafts/14817db9-0853-4883-8a7e-939054557d90?step=items",
+    "scrollWidth": 375,
+    "textColors": [
+      "rgb(104, 113, 111)",
+      "rgb(32, 38, 38)",
+      "rgb(183, 76, 28)",
+      "rgb(255, 255, 255)",
+      "rgb(147, 101, 28)",
+      "rgb(38, 120, 91)"
+    ],
+    "width": 390
+  },
+  {
+    "appearance": [
+      "none"
+    ],
+    "backgrounds": [
+      "rgba(0, 0, 0, 0)",
+      "rgb(183, 76, 28)",
+      "rgb(255, 240, 230)",
+      "rgb(198, 206, 202)",
+      "rgb(242, 239, 248)",
+      "rgb(255, 246, 223)",
+      "rgb(237, 246, 240)",
+      "rgb(38, 120, 91)",
+      "rgb(250, 250, 249)",
+      "rgb(255, 255, 255)",
+      "rgb(247, 248, 250)"
+    ],
+    "borders": [
+      "rgb(32, 38, 38)",
+      "rgb(104, 113, 111)",
+      "rgb(183, 76, 28)",
+      "rgb(100, 111, 105)",
+      "rgb(112, 94, 150)",
+      "rgb(147, 101, 28)",
+      "rgb(38, 120, 91)",
+      "rgb(229, 233, 231)"
+    ],
+    "defaultBlue": false,
+    "fonts": [
+      "\"Manrope Variable\", \"Segoe UI\", sans-serif",
+      "\"DM Sans Variable\", \"Segoe UI\", sans-serif"
+    ],
+    "heading": "Ava, here’s your part of the plan.",
+    "path": "/member",
+    "scrollWidth": 805,
+    "textColors": [
+      "rgb(32, 38, 38)",
+      "rgb(104, 113, 111)",
+      "rgb(255, 255, 255)",
+      "rgb(183, 76, 28)",
+      "rgb(100, 111, 105)",
+      "rgb(112, 94, 150)",
+      "rgb(147, 101, 28)",
+      "rgb(38, 120, 91)"
+    ],
+    "width": 820
+  },
+  {
+    "appearance": [
+      "none"
+    ],
+    "backgrounds": [
+      "rgba(0, 0, 0, 0)",
+      "rgb(237, 246, 240)",
+      "rgb(38, 120, 91)",
+      "rgb(255, 255, 255)"
+    ],
+    "borders": [
+      "rgb(32, 38, 38)",
+      "rgb(104, 113, 111)",
+      "rgb(38, 120, 91)",
+      "rgb(229, 233, 231)"
+    ],
+    "defaultBlue": false,
+    "fonts": [
+      "\"Manrope Variable\", \"Segoe UI\", sans-serif",
+      "\"DM Sans Variable\", \"Segoe UI\", sans-serif"
+    ],
+    "heading": "A shared purpose. Your own place in it.",
+    "path": "/member/activities",
+    "scrollWidth": 805,
+    "textColors": [
+      "rgb(32, 38, 38)",
+      "rgb(104, 113, 111)",
+      "rgb(38, 120, 91)"
+    ],
+    "width": 820
+  },
+  {
+    "appearance": [
+      "none"
+    ],
+    "backgrounds": [
+      "rgba(0, 0, 0, 0)",
+      "rgb(247, 248, 250)",
+      "rgb(104, 113, 111)",
+      "rgb(255, 240, 230)",
+      "rgb(250, 250, 249)",
+      "rgb(237, 246, 240)",
+      "rgb(38, 120, 91)"
+    ],
+    "borders": [
+      "rgb(104, 113, 111)",
+      "rgb(32, 38, 38)",
+      "rgb(229, 233, 231)",
+      "rgb(38, 120, 91)"
+    ],
+    "defaultBlue": false,
+    "fonts": [
+      "\"DM Sans Variable\", \"Segoe UI\", sans-serif",
+      "\"Manrope Variable\", \"Segoe UI\", sans-serif"
+    ],
+    "heading": "Multimedia",
+    "path": "/member/activities/ac56201f-fd7b-4fd5-a14b-bf514a3d51e0/departments/42cfd1ca-3ff3-4557-aa42-abe7741bad94",
+    "scrollWidth": 805,
+    "textColors": [
+      "rgb(104, 113, 111)",
+      "rgb(32, 38, 38)",
+      "rgb(183, 76, 28)",
+      "rgb(38, 120, 91)"
+    ],
+    "width": 820
+  },
+  {
+    "appearance": [
+      "none"
+    ],
+    "backgrounds": [
+      "rgba(0, 0, 0, 0)",
+      "rgb(255, 240, 230)",
+      "rgb(250, 250, 249)",
+      "rgb(255, 255, 255)",
+      "rgb(247, 248, 250)",
+      "rgb(104, 113, 111)",
+      "rgb(255, 246, 223)",
+      "rgb(147, 101, 28)",
+      "rgb(237, 246, 240)",
+      "rgb(38, 120, 91)",
+      "rgb(242, 239, 248)",
+      "rgb(112, 94, 150)"
+    ],
+    "borders": [
+      "rgb(32, 38, 38)",
+      "rgb(104, 113, 111)",
+      "rgb(183, 76, 28)",
+      "rgb(229, 233, 231)",
+      "rgb(147, 101, 28)",
+      "rgb(38, 120, 91)",
+      "rgb(112, 94, 150)"
+    ],
+    "defaultBlue": false,
+    "fonts": [
+      "\"Manrope Variable\", \"Segoe UI\", sans-serif",
+      "\"DM Sans Variable\", \"Segoe UI\", sans-serif"
+    ],
+    "heading": "Your next purchase, clearly planned.",
+    "path": "/member/tasks",
+    "scrollWidth": 805,
+    "textColors": [
+      "rgb(32, 38, 38)",
+      "rgb(104, 113, 111)",
+      "rgb(183, 76, 28)",
+      "rgb(147, 101, 28)",
+      "rgb(38, 120, 91)",
+      "rgb(112, 94, 150)"
+    ],
+    "width": 820
+  },
+  {
+    "appearance": [
+      "none"
+    ],
+    "backgrounds": [
+      "rgba(0, 0, 0, 0)",
+      "rgb(183, 76, 28)",
+      "rgb(237, 246, 240)",
+      "rgb(38, 120, 91)",
+      "rgb(255, 255, 255)"
+    ],
+    "borders": [
+      "rgb(104, 113, 111)",
+      "rgb(32, 38, 38)",
+      "rgb(183, 76, 28)",
+      "rgb(38, 120, 91)",
+      "rgb(229, 233, 231)"
+    ],
+    "defaultBlue": false,
+    "fonts": [
+      "\"DM Sans Variable\", \"Segoe UI\", sans-serif",
+      "\"Manrope Variable\", \"Segoe UI\", sans-serif"
+    ],
+    "heading": "HDMI Cable · Member OCR",
+    "path": "/member/tasks/0e50e773-21b4-4506-839e-8fc6a0373e10",
+    "scrollWidth": 805,
+    "textColors": [
+      "rgb(104, 113, 111)",
+      "rgb(32, 38, 38)",
+      "rgb(255, 255, 255)",
+      "rgb(38, 120, 91)"
+    ],
+    "width": 820
+  },
+  {
+    "appearance": [
+      "none"
+    ],
+    "backgrounds": [
+      "rgba(0, 0, 0, 0)",
+      "rgb(255, 255, 255)",
+      "rgb(255, 240, 230)",
+      "rgb(250, 250, 249)",
+      "rgb(247, 248, 250)",
+      "rgb(104, 113, 111)",
+      "rgb(237, 246, 240)",
+      "rgb(38, 120, 91)"
+    ],
+    "borders": [
+      "rgb(32, 38, 38)",
+      "rgb(104, 113, 111)",
+      "rgb(229, 233, 231)",
+      "rgb(183, 76, 28)",
+      "rgb(38, 120, 91)"
+    ],
+    "defaultBlue": false,
+    "fonts": [
+      "\"Manrope Variable\", \"Segoe UI\", sans-serif",
+      "\"DM Sans Variable\", \"Segoe UI\", sans-serif"
+    ],
+    "heading": "From submitted to received, in one place.",
+    "path": "/member/claims",
+    "scrollWidth": 805,
+    "textColors": [
+      "rgb(32, 38, 38)",
+      "rgb(104, 113, 111)",
+      "rgb(183, 76, 28)",
+      "rgb(38, 120, 91)"
+    ],
+    "width": 820
+  },
+  {
+    "appearance": [
+      "none"
+    ],
+    "backgrounds": [
+      "rgba(0, 0, 0, 0)",
+      "rgb(183, 76, 28)",
+      "rgb(237, 246, 240)",
+      "rgb(38, 120, 91)",
+      "rgb(247, 248, 250)"
+    ],
+    "borders": [
+      "rgb(104, 113, 111)",
+      "rgb(32, 38, 38)",
+      "rgb(183, 76, 28)",
+      "rgb(38, 120, 91)"
+    ],
+    "defaultBlue": false,
+    "fonts": [
+      "\"DM Sans Variable\", \"Segoe UI\", sans-serif",
+      "\"Manrope Variable\", \"Segoe UI\", sans-serif"
+    ],
+    "heading": "HDMI Cable · Member OCR",
+    "path": "/member/claims/claim-3eecc828-5f05-485a-9478-9db3c4585d20",
+    "scrollWidth": 805,
+    "textColors": [
+      "rgb(104, 113, 111)",
+      "rgb(32, 38, 38)",
+      "rgb(255, 255, 255)",
+      "rgb(38, 120, 91)",
+      "rgb(183, 76, 28)"
+    ],
+    "width": 820
+  },
+  {
+    "appearance": [
+      "none"
+    ],
+    "backgrounds": [
+      "rgba(0, 0, 0, 0)",
+      "rgb(237, 246, 240)",
+      "rgb(38, 120, 91)",
+      "rgb(247, 248, 250)",
+      "rgb(104, 113, 111)"
+    ],
+    "borders": [
+      "rgb(104, 113, 111)",
+      "rgb(32, 38, 38)",
+      "rgb(38, 120, 91)"
+    ],
+    "defaultBlue": false,
+    "fonts": [
+      "\"DM Sans Variable\", \"Segoe UI\", sans-serif",
+      "\"Manrope Variable\", \"Segoe UI\", sans-serif"
+    ],
+    "heading": "Evidence of payment. Your acknowledgment.",
+    "path": "/member/claims/claim-3eecc828-5f05-485a-9478-9db3c4585d20/payment",
+    "scrollWidth": 805,
+    "textColors": [
+      "rgb(104, 113, 111)",
+      "rgb(32, 38, 38)",
+      "rgb(38, 120, 91)"
+    ],
+    "width": 820
+  },
+  {
+    "appearance": [
+      "none"
+    ],
+    "backgrounds": [
+      "rgba(0, 0, 0, 0)",
+      "rgb(183, 76, 28)",
+      "rgb(237, 246, 240)",
+      "rgb(38, 120, 91)",
+      "rgb(255, 255, 255)",
+      "rgb(181, 57, 54)"
+    ],
+    "borders": [
+      "rgb(32, 38, 38)",
+      "rgb(104, 113, 111)",
+      "rgb(183, 76, 28)",
+      "rgb(38, 120, 91)",
+      "rgb(229, 233, 231)",
+      "rgb(181, 57, 54)"
+    ],
+    "defaultBlue": false,
+    "fonts": [
+      "\"Manrope Variable\", \"Segoe UI\", sans-serif",
+      "\"DM Sans Variable\", \"Segoe UI\", sans-serif"
+    ],
+    "heading": "The right destination, chosen by you.",
+    "path": "/member/accounts",
+    "scrollWidth": 805,
+    "textColors": [
+      "rgb(32, 38, 38)",
+      "rgb(104, 113, 111)",
+      "rgb(255, 255, 255)",
+      "rgb(38, 120, 91)"
+    ],
+    "width": 820
+  },
+  {
+    "appearance": [
+      "none"
+    ],
+    "backgrounds": [
+      "rgba(0, 0, 0, 0)",
+      "rgb(255, 255, 255)",
+      "rgb(255, 240, 230)",
+      "rgb(250, 250, 249)",
+      "rgb(247, 248, 250)"
+    ],
+    "borders": [
+      "rgb(32, 38, 38)",
+      "rgb(104, 113, 111)",
+      "rgb(229, 233, 231)",
+      "rgb(183, 76, 28)"
+    ],
+    "defaultBlue": false,
+    "fonts": [
+      "\"Manrope Variable\", \"Segoe UI\", sans-serif",
+      "\"DM Sans Variable\", \"Segoe UI\", sans-serif"
+    ],
+    "heading": "The updates that move your work forward.",
+    "path": "/member/notifications",
+    "scrollWidth": 805,
+    "textColors": [
+      "rgb(32, 38, 38)",
+      "rgb(104, 113, 111)",
+      "rgb(183, 76, 28)"
+    ],
+    "width": 820
+  },
+  {
+    "appearance": [
+      "none"
+    ],
+    "backgrounds": [
+      "rgba(0, 0, 0, 0)",
+      "rgb(255, 255, 255)",
+      "rgb(247, 248, 250)",
+      "rgb(255, 240, 230)",
+      "rgb(183, 76, 28)",
+      "rgb(250, 250, 249)",
+      "rgb(255, 246, 223)",
+      "rgb(147, 101, 28)",
+      "rgb(237, 246, 240)",
+      "rgb(38, 120, 91)"
+    ],
+    "borders": [
+      "rgb(104, 113, 111)",
+      "rgb(32, 38, 38)",
+      "rgb(229, 233, 231)",
+      "rgb(183, 76, 28)",
+      "rgb(255, 255, 255)",
+      "rgb(147, 101, 28)",
+      "rgb(38, 120, 91)"
+    ],
+    "defaultBlue": false,
+    "fonts": [
+      "\"DM Sans Variable\", \"Segoe UI\", sans-serif",
+      "\"Manrope Variable\", \"Segoe UI\", sans-serif"
+    ],
+    "heading": "Workshop AV rental",
+    "path": "/member/drafts/14817db9-0853-4883-8a7e-939054557d90?step=items",
+    "scrollWidth": 805,
+    "textColors": [
+      "rgb(104, 113, 111)",
+      "rgb(32, 38, 38)",
+      "rgb(183, 76, 28)",
+      "rgb(255, 255, 255)",
+      "rgb(147, 101, 28)",
+      "rgb(38, 120, 91)"
+    ],
+    "width": 820
+  },
+  {
+    "appearance": [
+      "none"
+    ],
+    "backgrounds": [
+      "rgba(0, 0, 0, 0)",
+      "rgb(183, 76, 28)",
+      "rgb(255, 240, 230)",
+      "rgb(198, 206, 202)",
+      "rgb(242, 239, 248)",
+      "rgb(255, 246, 223)",
+      "rgb(237, 246, 240)",
+      "rgb(38, 120, 91)",
+      "rgb(250, 250, 249)",
+      "rgb(255, 255, 255)",
+      "rgb(247, 248, 250)"
+    ],
+    "borders": [
+      "rgb(32, 38, 38)",
+      "rgb(104, 113, 111)",
+      "rgb(183, 76, 28)",
+      "rgb(100, 111, 105)",
+      "rgb(112, 94, 150)",
+      "rgb(147, 101, 28)",
+      "rgb(38, 120, 91)",
+      "rgb(229, 233, 231)"
+    ],
+    "defaultBlue": false,
+    "fonts": [
+      "\"Manrope Variable\", \"Segoe UI\", sans-serif",
+      "\"DM Sans Variable\", \"Segoe UI\", sans-serif"
+    ],
+    "heading": "Ava, here’s your part of the plan.",
+    "path": "/member",
+    "scrollWidth": 1425,
+    "textColors": [
+      "rgb(32, 38, 38)",
+      "rgb(104, 113, 111)",
+      "rgb(255, 255, 255)",
+      "rgb(183, 76, 28)",
+      "rgb(100, 111, 105)",
+      "rgb(112, 94, 150)",
+      "rgb(147, 101, 28)",
+      "rgb(38, 120, 91)"
+    ],
+    "width": 1440
+  },
+  {
+    "appearance": [
+      "none"
+    ],
+    "backgrounds": [
+      "rgba(0, 0, 0, 0)",
+      "rgb(237, 246, 240)",
+      "rgb(38, 120, 91)",
+      "rgb(255, 255, 255)"
+    ],
+    "borders": [
+      "rgb(32, 38, 38)",
+      "rgb(104, 113, 111)",
+      "rgb(38, 120, 91)",
+      "rgb(229, 233, 231)"
+    ],
+    "defaultBlue": false,
+    "fonts": [
+      "\"Manrope Variable\", \"Segoe UI\", sans-serif",
+      "\"DM Sans Variable\", \"Segoe UI\", sans-serif"
+    ],
+    "heading": "A shared purpose. Your own place in it.",
+    "path": "/member/activities",
+    "scrollWidth": 1425,
+    "textColors": [
+      "rgb(32, 38, 38)",
+      "rgb(104, 113, 111)",
+      "rgb(38, 120, 91)"
+    ],
+    "width": 1440
+  },
+  {
+    "appearance": [
+      "none"
+    ],
+    "backgrounds": [
+      "rgba(0, 0, 0, 0)",
+      "rgb(247, 248, 250)",
+      "rgb(104, 113, 111)",
+      "rgb(255, 240, 230)",
+      "rgb(250, 250, 249)",
+      "rgb(237, 246, 240)",
+      "rgb(38, 120, 91)"
+    ],
+    "borders": [
+      "rgb(104, 113, 111)",
+      "rgb(32, 38, 38)",
+      "rgb(229, 233, 231)",
+      "rgb(38, 120, 91)"
+    ],
+    "defaultBlue": false,
+    "fonts": [
+      "\"DM Sans Variable\", \"Segoe UI\", sans-serif",
+      "\"Manrope Variable\", \"Segoe UI\", sans-serif"
+    ],
+    "heading": "Multimedia",
+    "path": "/member/activities/ac56201f-fd7b-4fd5-a14b-bf514a3d51e0/departments/42cfd1ca-3ff3-4557-aa42-abe7741bad94",
+    "scrollWidth": 1440,
+    "textColors": [
+      "rgb(104, 113, 111)",
+      "rgb(32, 38, 38)",
+      "rgb(183, 76, 28)",
+      "rgb(38, 120, 91)"
+    ],
+    "width": 1440
+  },
+  {
+    "appearance": [
+      "none"
+    ],
+    "backgrounds": [
+      "rgba(0, 0, 0, 0)",
+      "rgb(255, 240, 230)",
+      "rgb(250, 250, 249)",
+      "rgb(255, 255, 255)",
+      "rgb(247, 248, 250)",
+      "rgb(104, 113, 111)",
+      "rgb(255, 246, 223)",
+      "rgb(147, 101, 28)",
+      "rgb(237, 246, 240)",
+      "rgb(38, 120, 91)",
+      "rgb(242, 239, 248)",
+      "rgb(112, 94, 150)"
+    ],
+    "borders": [
+      "rgb(32, 38, 38)",
+      "rgb(104, 113, 111)",
+      "rgb(183, 76, 28)",
+      "rgb(229, 233, 231)",
+      "rgb(147, 101, 28)",
+      "rgb(38, 120, 91)",
+      "rgb(112, 94, 150)"
+    ],
+    "defaultBlue": false,
+    "fonts": [
+      "\"Manrope Variable\", \"Segoe UI\", sans-serif",
+      "\"DM Sans Variable\", \"Segoe UI\", sans-serif"
+    ],
+    "heading": "Your next purchase, clearly planned.",
+    "path": "/member/tasks",
+    "scrollWidth": 1440,
+    "textColors": [
+      "rgb(32, 38, 38)",
+      "rgb(104, 113, 111)",
+      "rgb(183, 76, 28)",
+      "rgb(147, 101, 28)",
+      "rgb(38, 120, 91)",
+      "rgb(112, 94, 150)"
+    ],
+    "width": 1440
+  },
+  {
+    "appearance": [
+      "none"
+    ],
+    "backgrounds": [
+      "rgba(0, 0, 0, 0)",
+      "rgb(183, 76, 28)",
+      "rgb(237, 246, 240)",
+      "rgb(38, 120, 91)",
+      "rgb(255, 255, 255)"
+    ],
+    "borders": [
+      "rgb(104, 113, 111)",
+      "rgb(32, 38, 38)",
+      "rgb(183, 76, 28)",
+      "rgb(38, 120, 91)",
+      "rgb(229, 233, 231)"
+    ],
+    "defaultBlue": false,
+    "fonts": [
+      "\"DM Sans Variable\", \"Segoe UI\", sans-serif",
+      "\"Manrope Variable\", \"Segoe UI\", sans-serif"
+    ],
+    "heading": "HDMI Cable · Member OCR",
+    "path": "/member/tasks/0e50e773-21b4-4506-839e-8fc6a0373e10",
+    "scrollWidth": 1440,
+    "textColors": [
+      "rgb(104, 113, 111)",
+      "rgb(32, 38, 38)",
+      "rgb(255, 255, 255)",
+      "rgb(38, 120, 91)"
+    ],
+    "width": 1440
+  },
+  {
+    "appearance": [
+      "none"
+    ],
+    "backgrounds": [
+      "rgba(0, 0, 0, 0)",
+      "rgb(255, 255, 255)",
+      "rgb(255, 240, 230)",
+      "rgb(250, 250, 249)",
+      "rgb(247, 248, 250)",
+      "rgb(104, 113, 111)",
+      "rgb(237, 246, 240)",
+      "rgb(38, 120, 91)"
+    ],
+    "borders": [
+      "rgb(32, 38, 38)",
+      "rgb(104, 113, 111)",
+      "rgb(229, 233, 231)",
+      "rgb(183, 76, 28)",
+      "rgb(38, 120, 91)"
+    ],
+    "defaultBlue": false,
+    "fonts": [
+      "\"Manrope Variable\", \"Segoe UI\", sans-serif",
+      "\"DM Sans Variable\", \"Segoe UI\", sans-serif"
+    ],
+    "heading": "From submitted to received, in one place.",
+    "path": "/member/claims",
+    "scrollWidth": 1425,
+    "textColors": [
+      "rgb(32, 38, 38)",
+      "rgb(104, 113, 111)",
+      "rgb(183, 76, 28)",
+      "rgb(38, 120, 91)"
+    ],
+    "width": 1440
+  },
+  {
+    "appearance": [
+      "none"
+    ],
+    "backgrounds": [
+      "rgba(0, 0, 0, 0)",
+      "rgb(183, 76, 28)",
+      "rgb(237, 246, 240)",
+      "rgb(38, 120, 91)",
+      "rgb(247, 248, 250)"
+    ],
+    "borders": [
+      "rgb(104, 113, 111)",
+      "rgb(32, 38, 38)",
+      "rgb(183, 76, 28)",
+      "rgb(38, 120, 91)"
+    ],
+    "defaultBlue": false,
+    "fonts": [
+      "\"DM Sans Variable\", \"Segoe UI\", sans-serif",
+      "\"Manrope Variable\", \"Segoe UI\", sans-serif"
+    ],
+    "heading": "HDMI Cable · Member OCR",
+    "path": "/member/claims/claim-3eecc828-5f05-485a-9478-9db3c4585d20",
+    "scrollWidth": 1425,
+    "textColors": [
+      "rgb(104, 113, 111)",
+      "rgb(32, 38, 38)",
+      "rgb(255, 255, 255)",
+      "rgb(38, 120, 91)",
+      "rgb(183, 76, 28)"
+    ],
+    "width": 1440
+  },
+  {
+    "appearance": [
+      "none"
+    ],
+    "backgrounds": [
+      "rgba(0, 0, 0, 0)",
+      "rgb(237, 246, 240)",
+      "rgb(38, 120, 91)",
+      "rgb(247, 248, 250)",
+      "rgb(104, 113, 111)"
+    ],
+    "borders": [
+      "rgb(104, 113, 111)",
+      "rgb(32, 38, 38)",
+      "rgb(38, 120, 91)"
+    ],
+    "defaultBlue": false,
+    "fonts": [
+      "\"DM Sans Variable\", \"Segoe UI\", sans-serif",
+      "\"Manrope Variable\", \"Segoe UI\", sans-serif"
+    ],
+    "heading": "Evidence of payment. Your acknowledgment.",
+    "path": "/member/claims/claim-3eecc828-5f05-485a-9478-9db3c4585d20/payment",
+    "scrollWidth": 1425,
+    "textColors": [
+      "rgb(104, 113, 111)",
+      "rgb(32, 38, 38)",
+      "rgb(38, 120, 91)"
+    ],
+    "width": 1440
+  },
+  {
+    "appearance": [
+      "none"
+    ],
+    "backgrounds": [
+      "rgba(0, 0, 0, 0)",
+      "rgb(183, 76, 28)",
+      "rgb(237, 246, 240)",
+      "rgb(38, 120, 91)",
+      "rgb(255, 255, 255)",
+      "rgb(181, 57, 54)"
+    ],
+    "borders": [
+      "rgb(32, 38, 38)",
+      "rgb(104, 113, 111)",
+      "rgb(183, 76, 28)",
+      "rgb(38, 120, 91)",
+      "rgb(229, 233, 231)",
+      "rgb(181, 57, 54)"
+    ],
+    "defaultBlue": false,
+    "fonts": [
+      "\"Manrope Variable\", \"Segoe UI\", sans-serif",
+      "\"DM Sans Variable\", \"Segoe UI\", sans-serif"
+    ],
+    "heading": "The right destination, chosen by you.",
+    "path": "/member/accounts",
+    "scrollWidth": 1425,
+    "textColors": [
+      "rgb(32, 38, 38)",
+      "rgb(104, 113, 111)",
+      "rgb(255, 255, 255)",
+      "rgb(38, 120, 91)"
+    ],
+    "width": 1440
+  },
+  {
+    "appearance": [
+      "none"
+    ],
+    "backgrounds": [
+      "rgba(0, 0, 0, 0)",
+      "rgb(255, 255, 255)",
+      "rgb(255, 240, 230)",
+      "rgb(250, 250, 249)",
+      "rgb(247, 248, 250)"
+    ],
+    "borders": [
+      "rgb(32, 38, 38)",
+      "rgb(104, 113, 111)",
+      "rgb(229, 233, 231)",
+      "rgb(183, 76, 28)"
+    ],
+    "defaultBlue": false,
+    "fonts": [
+      "\"Manrope Variable\", \"Segoe UI\", sans-serif",
+      "\"DM Sans Variable\", \"Segoe UI\", sans-serif"
+    ],
+    "heading": "The updates that move your work forward.",
+    "path": "/member/notifications",
+    "scrollWidth": 1425,
+    "textColors": [
+      "rgb(32, 38, 38)",
+      "rgb(104, 113, 111)",
+      "rgb(183, 76, 28)"
+    ],
+    "width": 1440
+  },
+  {
+    "appearance": [
+      "none"
+    ],
+    "backgrounds": [
+      "rgba(0, 0, 0, 0)",
+      "rgb(255, 255, 255)",
+      "rgb(247, 248, 250)",
+      "rgb(255, 240, 230)",
+      "rgb(183, 76, 28)",
+      "rgb(250, 250, 249)",
+      "rgb(255, 246, 223)",
+      "rgb(147, 101, 28)",
+      "rgb(237, 246, 240)",
+      "rgb(38, 120, 91)"
+    ],
+    "borders": [
+      "rgb(104, 113, 111)",
+      "rgb(32, 38, 38)",
+      "rgb(229, 233, 231)",
+      "rgb(183, 76, 28)",
+      "rgb(255, 255, 255)",
+      "rgb(147, 101, 28)",
+      "rgb(38, 120, 91)"
+    ],
+    "defaultBlue": false,
+    "fonts": [
+      "\"DM Sans Variable\", \"Segoe UI\", sans-serif",
+      "\"Manrope Variable\", \"Segoe UI\", sans-serif"
+    ],
+    "heading": "Workshop AV rental",
+    "path": "/member/drafts/14817db9-0853-4883-8a7e-939054557d90?step=items",
+    "scrollWidth": 1425,
+    "textColors": [
+      "rgb(104, 113, 111)",
+      "rgb(32, 38, 38)",
+      "rgb(183, 76, 28)",
+      "rgb(255, 255, 255)",
+      "rgb(147, 101, 28)",
+      "rgb(38, 120, 91)"
+    ],
+    "width": 1440
+  }
+]
