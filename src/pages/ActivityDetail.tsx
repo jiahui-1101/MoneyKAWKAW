@@ -6,6 +6,7 @@ import { summarize } from '../domain/budget';
 import type { Activity, Store } from '../domain/models';
 import { BudgetLifecycle, Metrics, Overspending, RecentActivity } from '../components/Finance';
 import { Departments } from '../components/Departments';
+import { SharedPurchasingPlans } from '../components/SharedPurchasingPlans';
 import { Empty, Panel, Progress, Status, TextLink, useFormat } from '../components/ui';
 
 export function ActivityDetail({
@@ -102,6 +103,7 @@ export function ActivityDetail({
           )}
           <BudgetLifecycle summary={summary} />
           <DepartmentBreakdown store={store} activity={a} />
+          {tab === 'budget' && <SharedPurchasingPlans store={store} activity={a} />}
           <ExpenseRecords store={store} activity={a} />
           {tab === 'overview' && <RecentActivity store={store} activityId={a.id} />}
         </>
