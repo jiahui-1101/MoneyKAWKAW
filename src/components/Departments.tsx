@@ -6,6 +6,8 @@ import { parseMoney, summarize } from '../domain/budget';
 import { removeDepartment, upsertDepartment } from '../services/director';
 import { Badge, Empty, Modal, Panel, Progress, useFormat } from './ui';
 import { Field } from './Field';
+import { DepartmentAccessFields } from './DepartmentAccessFields';
+import { configureDepartmentAccess } from '../services/department-access';
 
 export function Departments({ activity }: { activity: Activity }) {
   const { store, mutate, busy } = useWorkspace();
@@ -225,7 +227,7 @@ function DepartmentForm({
   department?: Department;
   onClose: () => void;
 }) {
-  const { mutate, busy } = useWorkspace();
+  const { store, mutate, busy } = useWorkspace();
   const { money, currency } = useFormat();
   const [name, setName] = useState(department?.name ?? '');
   const [description, setDescription] = useState(department?.description ?? '');
@@ -235,6 +237,8 @@ function DepartmentForm({
   );
   const [error, setError] = useState('');
   const [attempted, setAttempted] = useState(false);
+  const [hodId, setHodId] = useState(department?.hodUserId ?? '');
+  const [memberIds, setMemberIds] = useState(() => store?.directory?.memberships.filter(m => m.active && m.role === 'Member' && m.activityId === activity.id && m.departmentId === department?.id).map(m => m.userId) ?? []);
   const available =
     activity.budget -
     activity.departments
@@ -245,13 +249,16 @@ function DepartmentForm({
     setAttempted(true);
     try {
       await mutate(
-        (s) =>
-          upsertDepartment(
+        (s) => {
+          const next = upsertDepartment(
             s,
             activity.id,
             { name, description, head, allocation: parseMoney(allocation) },
             department?.id,
-          ),
+          );
+          const target = department?.id ?? next.activities.find(a => a.id === activity.id)!.departments.at(-1)!.id;
+          return configureDepartmentAccess(next, activity.id, target, hodId, memberIds);
+        },
         department
           ? 'Department and allocation updated.'
           : 'Department created and budget allocated.',
@@ -319,6 +326,7 @@ function DepartmentForm({
           Start at zero if the allocation is still being planned. Naming a lead here is descriptive;
           it does not grant role access.
         </p>
+        {store?.directory && <DepartmentAccessFields directory={store.directory} hodId={hodId} members={memberIds} setHodId={id => { setHodId(id); if (id) setHead(store.directory!.users.find(u => u.id === id)!.name); }} setMembers={setMemberIds} />}
         {error && (
           <div className="form-error" role="alert">
             {error}
