@@ -16,6 +16,7 @@ export interface ReceiptEdit {
   reason: string;
   actor: string;
   at: string;
+  beforeExcluded?: boolean;
 }
 export interface ReceiptEvidence {
   id: string;
@@ -42,6 +43,9 @@ export interface PayoutSnapshot {
   identifier: string;
   masked: string;
   accountId?: string;
+  selectedAt?: string;
+  selectedBy?: string;
+  history?: {accountId?:string;masked:string;at:string;actor:string;reason:string}[];
 }
 export interface RiskRules {
   mediumVariance: number;
@@ -87,7 +91,7 @@ export interface ManualPayment {
   externalVerified: false;
   receivedConfirmedAt?: string;
   receivedConfirmedBy?: string;
-  discrepancy?: {reason:string;reportedAt:string;reportedBy:string};
+  discrepancy?: {reason:string;reportedAt:string;reportedBy:string;receivedAmount?:number;resolvedAt?:string;resolvedBy?:string};
 }
 export interface TreasuryData {
   grants: { userId: string; activityId: string }[];
