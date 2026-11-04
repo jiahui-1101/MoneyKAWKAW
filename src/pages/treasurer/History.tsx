@@ -6,6 +6,8 @@ import { claimContext, paymentState } from '../../domain/risk';
 import { demoProfiles } from '../../domain/session';
 import { reimbursementService } from '../../services/reimbursements';
 import { Field } from '../../components/Field';
+import { PaymentIssueResolutions } from '../../components/PaymentIssueResolutions';
+import { DiscrepancyResolution } from '../../components/treasurer/DiscrepancyResolution';
 import { DateField } from '../../components/DateField';
 import { ProofPreview } from '../../components/treasurer/ProofPreview';
 import { Badge, Empty, Modal, PageHeader, Panel, useFormat } from '../../components/ui';
@@ -334,6 +336,8 @@ export function TreasuryHistory() {
                     ? ` · acknowledged ${time(payment.manual.discrepancy.resolvedAt)}`
                     : ''}
                 </small>
+                <PaymentIssueResolutions issue={payment.manual.discrepancy} />
+                <DiscrepancyResolution payment={payment} />
               </div>
             )}
           </div>

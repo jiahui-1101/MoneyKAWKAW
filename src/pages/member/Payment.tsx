@@ -8,6 +8,7 @@ import { demoProfiles } from '../../domain/session';
 import type { ProofFile } from '../../domain/treasury';
 import { ProofPreview } from '../../components/treasurer/ProofPreview';
 import { Field } from '../../components/Field';
+import { PaymentIssueResolutions } from '../../components/PaymentIssueResolutions';
 import { Badge, Empty, Modal, PageHeader, Panel, useFormat } from '../../components/ui';
 export function MemberPayment() {
   const { id } = useParams(),
@@ -188,6 +189,7 @@ export function MemberPayment() {
                 <p>Amount reported received: {money(manual.discrepancy.receivedAmount)}</p>
               )}
               <small>Reported {time(manual.discrepancy.reportedAt)}</small>
+              <PaymentIssueResolutions issue={manual.discrepancy} />
             </div>
           )}
           {!manual.receivedConfirmedAt ? (
