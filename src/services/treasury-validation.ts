@@ -1,6 +1,7 @@
 import type { Store } from '../domain/models';
-import { receiptLines, validateRiskRules } from '../domain/risk';
+import { validateRiskRules } from '../domain/risk';
 import { validateProof } from './payment-proof';
+import { validateReceiptEvidence } from './receipt-validation';
 export function validateTreasury(store: Store) {
   const t = store.treasury;
   if (!t) return;
@@ -17,29 +18,8 @@ export function validateTreasury(store: Store) {
       throw new Error('Invalid Treasurer grant.');
   for (const receipt of t.receipts) {
     const claim = store.expenses.find((e) => e.id === receipt.expenseId);
-    if (
-      !claim ||
-      !receipt.originalUrl.startsWith('data:image/') ||
-      !Array.isArray(receipt.originalLines) ||
-      !Array.isArray(receipt.edits)
-    )
-      throw new Error('Invalid receipt evidence.');
-    if (
-      receipt.originalLines.some((l) => !Number.isSafeInteger(l.amount) || l.amount < 0) ||
-      receipt.edits.some(
-        (e) =>
-          !Number.isSafeInteger(e.after.amount) ||
-          e.after.amount < 0 ||
-          !receipt.originalLines.some((l) => l.id === e.lineId),
-      )
-    )
-      throw new Error('Invalid receipt line history.');
-    if (
-      receiptLines(receipt)
-        .filter((l) => !l.excluded)
-        .reduce((s, l) => s + l.final.amount, 0) !== claim.amount
-    )
-      throw new Error('Receipt total does not reconcile to the submitted claim.');
+    if(!claim)throw new Error('Invalid receipt claim reference.');
+    validateReceiptEvidence(receipt,claim.amount);
   }
   for (const payout of t.payouts)
     if (

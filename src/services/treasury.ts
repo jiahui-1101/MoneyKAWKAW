@@ -1,4 +1,5 @@
-import { analyzeClaim, claimContext, receiptLines, validateRiskRules } from '../domain/risk';
+import { analyzeClaim, claimContext, validateRiskRules } from '../domain/risk';
+import { receiptTotal } from '../domain/receipt';
 import type { RiskRules } from '../domain/treasury';
 import { sharedRepository } from './director';
 import { summarize } from '../domain/budget';
@@ -69,9 +70,7 @@ export const treasuryService = {
       if (
         decision === 'Approved' &&
         (!receipt ||
-          receiptLines(receipt)
-            .filter((l) => !l.excluded)
-            .reduce((s, l) => s + l.final.amount, 0) !== claim.amount)
+          receiptTotal(receipt) !== claim.amount)
       )
         throw new Error('Receipt lines must reconcile to the submitted amount before approval.');
       const overBudget =
