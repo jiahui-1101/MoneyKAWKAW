@@ -3,6 +3,7 @@ export const demoProfiles = [
   { userId: 'hod-sarah', name: 'Sarah Tan', role: 'HOD' },
   { userId: 'hod-amir', name: 'Amir Hassan', role: 'HOD' },
   { userId: 'hod-mei', name: 'Mei Wong', role: 'HOD' },
+  { userId: 'treasurer-nora', name: 'Nora Lim', role: 'Treasurer' },
 ] as const;
 export type DemoActor = (typeof demoProfiles)[number];
 const key = 'moneykawkaw.demo-actor';

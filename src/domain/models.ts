@@ -1,3 +1,4 @@
+import type { ClaimReview, ManualPayment, TreasuryData } from './treasury';
 export const activityTypes = ['Workshop', 'Large-scale event', 'Community', 'Other'] as const;
 export const activityStatuses = ['Planning', 'Active', 'Completed'] as const;
 export type ActivityType = (typeof activityTypes)[number];
@@ -29,13 +30,15 @@ export interface Expense {
   description: string;
   amount: number;
   date: string;
-  state: 'Pending review' | 'Approved';
+  state: 'Pending review' | 'In review' | 'Approved' | 'Declined';
+  review?: ClaimReview;
 }
 export interface Payment {
   id: string;
   expenseId: string;
   amount: number;
   date: string;
+  manual?: ManualPayment;
 }
 export interface Assignment {
   id: string;
@@ -69,6 +72,7 @@ export interface Store {
   events: AuditEvent[];
   settings: Settings;
   directory?: ClubDirectory;
+  treasury?: TreasuryData;
 }
 
 export const purchasingStatuses = [
