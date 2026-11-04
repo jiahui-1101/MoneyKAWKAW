@@ -21,7 +21,7 @@ function payable(store: Awaited<ReturnType<typeof treasuryRead>>['store'], id: s
   );
   if (!payout)
     throw new Error(
-      'No selected payout snapshot exists. Request verified instructions through the future member workflow.',
+      'No selected payout snapshot exists. Ask the member to select saved payment instructions for this claim.',
     );
   return { claim, payout };
 }

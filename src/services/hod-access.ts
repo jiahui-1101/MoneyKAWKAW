@@ -104,7 +104,9 @@ export function projectHod(store: Store): HodSnapshot {
           ? {
               ...e,
               detail:
-                'A manual payment was recorded for a department claim. Payment amounts and dates appear in expense status; references, proof, and payout instructions remain restricted.',
+                  e.action === 'Manual reimbursement recorded'
+                    ? 'A manual payment was recorded for a department claim. Payment amounts and dates appear in expense status; references, proof, and payout instructions remain restricted.'
+                    : 'A private payment-detail event was recorded. Follow the claim status for reimbursement progress; payout instructions and discrepancy details remain restricted.',
             }
           : e,
       ),
