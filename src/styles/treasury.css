@@ -368,6 +368,11 @@
 .treasury-shell input[type='file'] {
   white-space: normal;
 }
+.treasury-shell input[type='number']::-webkit-inner-spin-button,
+.treasury-shell input[type='number']::-webkit-outer-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
 .treasury-shell input[type='file']::file-selector-button {
   font: inherit;
   color: var(--brand);
