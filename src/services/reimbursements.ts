@@ -33,6 +33,35 @@ export interface PaymentInput {
   confirmed: boolean;
 }
 export const reimbursementService = {
+  resolveIssue(paymentId: string, note: string) {
+    return treasuryWrite(async () => {
+      const { store, actor } = await treasuryRead();
+      const payment = store.payments.find((p) => p.id === paymentId);
+      if (!payment) throw new Error('Payment unavailable.');
+      scopedClaim(store, payment.expenseId);
+      const issue = payment.manual?.discrepancy;
+      if (!issue || payment.manual?.receivedConfirmedAt)
+        throw new Error('Only an open member-reported payment issue can receive a resolution.');
+      const value = note.trim();
+      if (value.length < 3 || value.length > 1000)
+        throw new Error('Describe the resolution in 3–1,000 characters.');
+      if (issue.resolutions?.at(-1)?.note === value)
+        throw new Error('This resolution is already recorded.');
+      (issue.resolutions ??= []).push({
+        note: value,
+        at: new Date().toISOString(),
+        by: actor.userId,
+      });
+      treasuryEvent(
+        store,
+        payment.expenseId,
+        'Payment discrepancy resolution recorded',
+        `${payment.expenseId} · ${value}. Member receipt acknowledgment remains separate.`,
+      );
+      await sharedRepository.save(store);
+      return projectTreasury(store);
+    });
+  },
   async destination(id: string) {
     const { store } = await treasuryRead();
     return structuredClone(payable(store, id).payout);

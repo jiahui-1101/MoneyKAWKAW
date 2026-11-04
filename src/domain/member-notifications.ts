@@ -51,6 +51,7 @@ export function memberNotifications(data: MemberSnapshot): MemberNotification[] 
     'Manual reimbursement recorded',
     'Receipt confirmed',
     'Payment discrepancy reported',
+    'Payment discrepancy resolution recorded',
     'Payout destination changed',
   ];
   for (const event of data.events.filter((e) => actions.includes(e.action))) {

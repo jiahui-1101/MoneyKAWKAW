@@ -53,6 +53,19 @@ function validateMemberPayments(store: Store) {
     if (!m) continue;
     const claim = store.expenses.find((e) => e.id === p.expenseId)!;
     if (
+      m.discrepancy?.resolutions &&
+      (!Array.isArray(m.discrepancy.resolutions) ||
+        m.discrepancy.resolutions.some(
+          (r) =>
+            r.by !== 'treasurer-nora' ||
+            typeof r.note !== 'string' ||
+            r.note.trim().length < 3 ||
+            r.note.length > 1000 ||
+            Number.isNaN(Date.parse(r.at)),
+        ))
+    )
+      throw new Error('Invalid Treasurer discrepancy resolution history.');
+    if (
       m.receivedConfirmedAt &&
       (m.receivedConfirmedBy !== claim.review?.claimantId ||
         Number.isNaN(Date.parse(m.receivedConfirmedAt)))

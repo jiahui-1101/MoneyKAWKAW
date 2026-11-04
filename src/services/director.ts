@@ -159,6 +159,7 @@ export const directorService: DirectorService = {
           'Manual reimbursement recorded',
           'Payout destination changed',
           'Payment discrepancy reported',
+          'Payment discrepancy resolution recorded',
         ].includes(e.action)
           ? {
               ...e,

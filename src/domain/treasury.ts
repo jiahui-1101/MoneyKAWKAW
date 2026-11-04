@@ -98,6 +98,7 @@ export interface ManualPayment {
     receivedAmount?: number;
     resolvedAt?: string;
     resolvedBy?: string;
+    resolutions?: { note: string; at: string; by: string }[];
   };
 }
 export interface TreasuryData {
