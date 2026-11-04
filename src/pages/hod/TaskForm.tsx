@@ -23,7 +23,7 @@ export function HodTaskForm() {
   const cancel=()=>dirty?setDiscard(true):navigate(back);
   const update=(key:keyof typeof form,value:string)=>{setForm(f=>({...f,[key]:value}));setError('');setInvalid(i=>i.filter(v=>v!==key));};
   if(taskId&&!task)return <Empty title="Purchasing task unavailable" action={<Link className="btn" to={`${base}/tasks`}>Back to my tasks</Link>}>This task is not part of your authorized department.</Empty>;
-  if(task?.expenseId||p?.status==='Cancelled')return <Empty title={task.expenseId?'Submitted purchases are protected':'This plan has been cancelled'} action={<Link className="btn primary" to={back}>View purchasing details</Link>}>Claim-linked and cancelled tasks cannot be edited. Claim decisions and reimbursement actions remain with the Treasurer.</Empty>;
+  if(task?.expenseId||p?.status==='Cancelled')return <Empty title={task?.expenseId?'Submitted purchases are protected':'This plan has been cancelled'} action={<Link className="btn primary" to={back}>View purchasing details</Link>}>Claim-linked and cancelled tasks cannot be edited. Claim decisions and reimbursement actions remain with the Treasurer.</Empty>;
   const save=async(e:FormEvent)=>{
     e.preventDefault();const required=['name','description','assigneeId','budget','dueDate']as const;const missing=required.filter(k=>!form[k].trim());
     if(missing.length){setInvalid([...missing]);setError('Complete the highlighted fields before saving this purchase.');return;}

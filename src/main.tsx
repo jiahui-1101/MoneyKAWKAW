@@ -6,6 +6,7 @@ import './styles/shell.css';
 import './styles/components.css';
 import './styles/pages.css';
 import './styles/calendar.css';
+import './styles/hod.css';
 
 createRoot(document.getElementById('root')!).render(
   <StrictMode>
