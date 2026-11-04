@@ -18,7 +18,8 @@ function context(store:Store,id:string) {
   const activityExceeded=summarize(store,task.activityId).available+task.budget-amount<0;
   const account=memberData(store).accounts.find(a=>a.id===draft.accountId&&a.ownerId===draft.ownerId);
   const variance=amount-task.budget;
-  return {amount,variance,variancePercent:variance/task.budget*100,departmentExceeded,activityExceeded,needsJustification:variance>0||departmentExceeded||activityExceeded,taskUpdatedAt:task.purchasing!.updatedAt,accountUpdatedAt:account?.updatedAt??''};
+  return {amount,variance,variancePercent:variance/task.budget*100,departmentExceeded,activityExceeded,needsJustification:variance>0||departmentExceeded||activityExceeded,taskUpdatedAt:task.purchasing!.updatedAt,accountUpdatedAt:account?.updatedAt??'',draftUpdatedAt:draft.updatedAt,
+    destination:account?{id:account.id,label:account.label,kind:account.kind,holder:account.holder,institution:account.institution,masked:account.masked}:undefined};
 }
 export const memberClaimService={
   async context(id:string) {const {store}=await memberRead();return context(store,id);},
