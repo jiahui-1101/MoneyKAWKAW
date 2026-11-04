@@ -19,6 +19,7 @@
 .sidebar-bottom { margin-top: auto; padding-top: 35px; }
 .sidebar-tip { margin: 0 4px 22px; padding: 17px 15px; border: 1px solid var(--line); border-radius: var(--radius); background: var(--surface-soft); position: relative; overflow: hidden; }
 .sidebar-tip::after { content: ''; position: absolute; width: 90px; height: 90px; border: 18px solid var(--brand-soft); border-radius: 50%; right: -52px; top: 20px; pointer-events: none; }
+.sidebar-tip > * { position: relative; z-index: 1; }
 .sidebar-tip .eyebrow { font-size: 8px; color: var(--brand); }
 .sidebar-tip h3 { margin: 10px 0 8px; font-size: 16px; line-height: 1.45; }
 .sidebar-tip p { font-size: 10px; color: var(--muted); max-width: 140px; line-height: 1.7; }
