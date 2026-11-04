@@ -1,8 +1,8 @@
-import { Component, type ErrorInfo, type ReactNode } from 'react';
+import { Component, Suspense, lazy, type ErrorInfo, type ReactNode } from 'react';
 import { BrowserRouter, Link, Navigate, Route, Routes } from 'react-router-dom';
 import { WorkspaceProvider } from './context/Workspace';
 import { Shell } from './components/Shell';
-import { Empty } from './components/ui';
+import { Empty, Skeleton } from './components/ui';
 import { Dashboard } from './pages/Dashboard';
 import { Activities } from './pages/Activities';
 import { ActivityForm } from './pages/ActivityForm';
@@ -14,6 +14,7 @@ import { DemoAccess, RoleGate } from './components/DemoAccess';
 import { HodRoutes } from './pages/hod/HodRoutes';
 import { TreasuryRoutes } from './pages/treasurer/TreasuryRoutes';
 import { roleHome } from './domain/session';
+const MemberRoutes=lazy(()=>import('./pages/member/MemberRoutes').then(m=>({default:m.MemberRoutes})));
 
 class ErrorBoundary extends Component<{ children: ReactNode }, { failed: boolean }> {
   state = { failed: false };
@@ -45,6 +46,7 @@ export default function App() {
           <Routes>
             <Route path="/" element={<LandingRedirect />} />
             <Route path="/demo" element={<DemoAccess />} />
+            <Route path="/member/*" element={<RoleGate requiredRole="Member"><Suspense fallback={<div className="access-page"><Skeleton/></div>}><MemberRoutes/></Suspense></RoleGate>}/>
             <Route
               path="/treasurer/*"
               element={

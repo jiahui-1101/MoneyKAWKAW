@@ -97,7 +97,7 @@ export function DemoAccess() {
                   ? 'Activity setup & club financial oversight'
                   : profile.role === 'Treasurer'
                     ? 'Claim review & reimbursement oversight'
-                    : 'Assigned department purchasing & team oversight'}
+                    : profile.role==='Member'?'My purchases, receipt-backed claims & reimbursement tracking':'Assigned department purchasing & team oversight'}
               </p>
               <span className="text-link">
                 Open {profile.role} workspace <ArrowRight size={15} />
@@ -107,8 +107,7 @@ export function DemoAccess() {
         </div>
       </Panel>
       <p className="data-note">
-        HOD memberships and Treasurer activity grants are explicit. Member submission and receipt
-        confirmation are reserved for a future phase.
+        All four role workspaces share one local ledger. HOD/Member department memberships and Treasurer activity grants are explicit; demo profiles are not production authentication.
       </p>
     </main>
   );
