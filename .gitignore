@@ -1,0 +1,10 @@
+# Local-only project guidance and requirements; do not publish
+/AGENTS.md
+/REQUIREMENTS.md
+node_modules/
+dist/
+test-results/
+playwright-report/
+.env*
+!.env.example
+.local/
