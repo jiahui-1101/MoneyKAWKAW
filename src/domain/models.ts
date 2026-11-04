@@ -66,6 +66,7 @@ export interface Settings {
 }
 export interface Store {
   version: 1;
+  setupRevision?: number;
   activities: Activity[];
   expenses: Expense[];
   payments: Payment[];

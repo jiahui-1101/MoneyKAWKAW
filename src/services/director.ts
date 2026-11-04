@@ -21,6 +21,11 @@ export function validateStore(value: unknown): asserts value is Store {
   )
     throw new Error('Unrecognized local data format.');
   if (
+    s.setupRevision !== undefined &&
+    (!Number.isSafeInteger(s.setupRevision) || s.setupRevision < 0)
+  )
+    throw new Error('Invalid setup revision.');
+  if (
     !s.settings ||
     !['MYR', 'SGD', 'USD'].includes(s.settings.currency) ||
     !Number.isFinite(s.settings.warningPercent) ||
@@ -146,6 +151,7 @@ export const directorService: DirectorService = {
     requireRole('Director');
     return {
       ...store,
+      setupRevision: store.setupRevision ?? 0,
       member: undefined,
       events: store.events.map((e) =>
         [
@@ -168,12 +174,17 @@ export const directorService: DirectorService = {
     requireRole('Director');
     const fresh = await sharedRepository.load();
     requireRole('Director');
+    if ((store.setupRevision ?? 0) !== (fresh.setupRevision ?? 0))
+      throw new Error(
+        'Activity setup changed in another view. Reload the workspace before applying your changes.',
+      );
     const events = [
       ...store.events.filter((e) => !fresh.events.some((f) => f.id === e.id)),
       ...fresh.events,
     ];
     await sharedRepository.save({
       ...store,
+      setupRevision: (fresh.setupRevision ?? 0) + 1,
       events,
       member: fresh.member,
       expenses: fresh.expenses,
