@@ -16,6 +16,7 @@ import { useEffect, useRef, useState } from 'react';
 import { Link, NavLink, Outlet, useLocation, useNavigate } from 'react-router-dom';
 import { useWorkspace } from '../context/workspace-context';
 import { Modal, Skeleton, Toast } from './ui';
+import { DemoRoleSwitcher } from './DemoAccess';
 
 const navigation = [
   { to: '/director', label: 'Overview', icon: LayoutDashboard, end: true },
@@ -214,6 +215,7 @@ export function Shell() {
                 onChange={(e) => setSearch(e.target.value)}
               />
             </form>
+            <DemoRoleSwitcher />
             <span className="demo-pill">
               <span />
               Local demo

@@ -29,7 +29,7 @@ export function HodProvider({ children }: { children: ReactNode }) {
     if (locked.current) throw new Error('A change is being saved. Please try again.');
     locked.current = true; setBusy(true);
     try { const result = await operation(); setData(result.data); setNotice(message); return result.taskId; }
-    catch (e) { void reload(); throw e; }
+    catch (e) { throw e; }
     finally { locked.current = false; setBusy(false); }
   };
   return <HodContext.Provider value={{ data, loading, error, busy, notice, reload, run, dismiss: () => setNotice('') }}><FormatSettingsContext.Provider value={data?.settings ?? null}>{children}</FormatSettingsContext.Provider></HodContext.Provider>;
