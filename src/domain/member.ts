@@ -26,6 +26,7 @@ export interface MemberData {
   accounts: PaymentAccount[];
   drafts: ClaimDraft[];
   readNotifications: {userId:string;ids:string[]}[];
+  accountHistory?: {id:string;ownerId:string;accountId:string;action:string;detail:string;at:string}[];
 }
 export interface MemberScope {
   activity: Pick<Activity,'id'|'name'|'description'|'type'|'status'|'startDate'|'endDate'>;
