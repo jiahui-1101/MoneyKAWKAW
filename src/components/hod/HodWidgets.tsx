@@ -301,7 +301,7 @@ export function UpcomingPurchases({
   const { date } = useFormat();
   const today = departmentToday(data.settings.timezone);
   const due = tasks
-    .filter((t) => ['Not Started', 'In Progress', 'Purchased'].includes(t.purchasing!.status))
+    .filter((t) => ['Not Started', 'In Progress'].includes(t.purchasing!.status))
     .sort((a, b) => a.purchasing!.dueDate.localeCompare(b.purchasing!.dueDate))
     .slice(0, 4);
   return (

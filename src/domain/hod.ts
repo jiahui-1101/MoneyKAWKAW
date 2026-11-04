@@ -80,7 +80,7 @@ export function departmentToday(timezone: string, now = new Date()) {
 export function isOverdue(task: Assignment, today: string) {
   return (
     !!task.purchasing &&
-    ['Not Started', 'In Progress', 'Purchased'].includes(task.purchasing.status) &&
+    ['Not Started', 'In Progress'].includes(task.purchasing.status) &&
     task.purchasing.dueDate < today
   );
 }

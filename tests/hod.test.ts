@@ -138,7 +138,8 @@ describe('purchasing budgets and progress', () => {
     expect(departmentBudget(projectHod(store), a, d).available).toBe(480000);
     expect(summarize(store, a, d).available).toBe(480000);
     expect(isOverdue(store.assignments[0], '2026-12-01')).toBe(false);
-    expect(isOverdue(seed.assignments.find((t) => t.id === 'as-2')!, '2026-11-04')).toBe(true);
+    expect(isOverdue(seed.assignments.find((t) => t.id === 'as-2')!, '2026-11-04')).toBe(false);
+    expect(isOverdue(seed.assignments.find((t) => t.id === 'as-3')!, '2026-11-04')).toBe(true);
   });
 });
 describe('Director integration and migration', () => {

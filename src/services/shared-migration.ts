@@ -60,7 +60,7 @@ export function upgradeSharedStore(source: Store): Store {
         ? 'Fictional purchase linked to the shared sample expense record.'
         : 'Coordinate suppliers and purchase the required event materials.',
       assigneeId: task.id === 'as-3' ? null : (access?.members[0] ?? null),
-      dueDate: task.id === 'as-2' ? '2026-11-02' : activity.endDate,
+      dueDate: task.id === 'as-2' ? '2026-11-02' : task.id === 'as-3' ? '2026-11-03' : activity.endDate,
       priority: 'Medium',
       status: claim
         ? paid >= claim.amount
@@ -100,6 +100,13 @@ export function upgradeSharedStore(source: Store): Store {
       },
     });
   }
+  for (const task of store.assignments.filter(t => departmentAccess[t.departmentId])) {
+    store.events.push({ id: `sample-plan-${task.id}`, activityId: task.activityId, departmentId: task.departmentId, assignmentId: task.id,
+      action: 'Purchasing plan (sample)', actor: 'Fictional department history',
+      detail: `${task.purchasing!.name} · item estimate ${(task.budget / 100).toFixed(2)} · ${task.expenseId ? `linked source ${task.expenseId}` : 'unclaimed purchasing plan'}.`,
+      at: task.purchasing!.updatedAt });
+  }
+  store.events.sort((a,b) => b.at.localeCompare(a.at));
   return store;
 }
 
