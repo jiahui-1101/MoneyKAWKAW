@@ -17,6 +17,18 @@ export const demoProof: ProofFile = {
     'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mP8/x8AAusB9Wl6tK0AAAAASUVORK5CYII=',
 };
 describe('shared claim financial rules', () => {
+  it('releases only the variance on decline while keeping the original task estimate reserved', () => {
+    const store = structuredClone(seed);
+    const claim = store.expenses.find((e) => e.id === 'exp-5')!;
+    store.assignments.find((t) => t.expenseId === claim.id)!.budget = 15000;
+    claim.amount = 19000;
+    const submitted = summarize(store, claim.activityId, claim.departmentId);
+    claim.state = 'Declined';
+    const declined = summarize(store, claim.activityId, claim.departmentId);
+    expect(declined.available).toBe(submitted.available + 4000);
+    expect(declined.recorded).toBe(0);
+    expect(declined.committed).toBe(15000);
+  });
   it('upgrades old records idempotently without changing financial amounts', () => {
     const old = structuredClone(seed);
     delete old.treasury;
