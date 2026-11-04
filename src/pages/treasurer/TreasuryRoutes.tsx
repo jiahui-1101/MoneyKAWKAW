@@ -27,7 +27,7 @@ export function TreasuryRoutes() {
             path="*"
             element={
               <Empty
-                title="Financial workspace"
+                title="This page isn’t in your financial workspace"
                 action={
                   <Link className="btn" to="/treasurer">
                     Return to overview

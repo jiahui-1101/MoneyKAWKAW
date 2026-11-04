@@ -184,9 +184,10 @@ export function TreasuryRisk() {
         </Panel>
       ) : (
         <Panel title="Ready for a considered review">
-          <Empty title="No analysis recorded yet">
-            Select Analyze risk to calculate transparent factors from current shared records.
-            Approval of an over-budget claim requires an analysis first.
+          <Empty title={final ? 'No historical analysis retained' : 'No analysis recorded yet'}>
+            {final
+              ? 'This legacy decision predates advisory snapshots. The current balances above provide context; no historical analysis is invented.'
+              : 'Select Analyze risk to calculate transparent factors from current shared records. Approval of an over-budget claim requires an analysis first.'}
           </Empty>
         </Panel>
       )}
