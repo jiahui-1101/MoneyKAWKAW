@@ -7,6 +7,7 @@ import {
   useDepartmentScope,
 } from '../../components/hod/HodWidgets';
 import { Empty, PageHeader, Panel, Progress, useFormat } from '../../components/ui';
+import { isReservation } from '../../domain/claim-balances';
 
 export function HodBudget() {
   const { data, scope, tasks, base, summary } = useDepartmentScope();
@@ -113,7 +114,7 @@ export function HodBudget() {
                 <tr>
                   <th>PURCHASING ITEM</th>
                   <th>PLANNED ESTIMATE</th>
-                  <th>RECORDED CLAIM</th>
+                  <th>SUBMITTED CLAIM</th>
                   <th>VARIANCE</th>
                   <th>UNCLAIMED RESERVATION</th>
                   <th>
@@ -134,13 +135,24 @@ export function HodBudget() {
                         <small className="cell-sub">{task.purchasing!.status}</small>
                       </td>
                       <td className="money">{money(task.budget)}</td>
-                      <td className="money">{claim ? money(claim.amount) : 'No claim'}</td>
+                      <td className="money">
+                        {claim ? (
+                          <>
+                            {money(claim.amount)}
+                            <small className="cell-sub">{claim.state}</small>
+                          </>
+                        ) : (
+                          'No claim'
+                        )}
+                      </td>
                       <td
                         className={`money ${variance !== null && variance > 0 ? 'danger-text' : 'muted'}`}
                       >
                         {variance === null ? '—' : `${variance > 0 ? '+' : ''}${money(variance)}`}
                       </td>
-                      <td className="money">{task.expenseId ? '—' : money(task.budget)}</td>
+                      <td className="money">
+                        {isReservation(task, data.expenses) ? money(task.budget) : '—'}
+                      </td>
                       <td>
                         <Link
                           className="table-arrow"

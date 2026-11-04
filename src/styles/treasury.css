@@ -33,6 +33,10 @@
 .treasury-counts strong {
   font: 750 25px var(--font-display);
 }
+.treasury-counts small {
+  font-size: 9px;
+  padding-right: 20px;
+}
 .treasury-counts svg {
   position: absolute;
   right: 16px;

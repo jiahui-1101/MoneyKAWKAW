@@ -92,6 +92,11 @@ export function TreasuryDashboard() {
           <Link key={c.label} to={c.to}>
             <span>{c.label}</span>
             <strong>{c.value.toString().padStart(2, '0')}</strong>
+            {c.to === '/treasurer/history' && (
+              <small>
+                {data.payments.filter((p) => !p.manual?.receivedConfirmedAt).length} awaiting member
+              </small>
+            )}
             <ArrowUpRight size={14} />
           </Link>
         ))}
@@ -122,7 +127,10 @@ export function TreasuryDashboard() {
                 <p>
                   {e.actor} · {data.activities.find((a) => a.id === e.activityId)?.name}
                 </p>
-                <p className="audit-detail">{e.detail}</p>
+                <details>
+                  <summary>View event details</summary>
+                  <p className="audit-detail">{e.detail}</p>
+                </details>
               </div>
               <time dateTime={e.at}>{time(e.at)}</time>
             </div>

@@ -1,5 +1,6 @@
 import type { Activity, Store } from '../domain/models';
 import { Badge, Empty, Panel, useFormat } from './ui';
+import { isReservation } from '../domain/claim-balances';
 
 export function SharedPurchasingPlans({ store, activity }: { store: Store; activity: Activity }) {
   const { money, date } = useFormat();
@@ -64,7 +65,7 @@ export function SharedPurchasingPlans({ store, activity }: { store: Store; activ
                     </td>
                     <td>{p ? date(p.dueDate) : '—'}</td>
                     <td className="money">
-                      {money(task.expenseId || p?.status === 'Cancelled' ? 0 : task.budget)}
+                      {money(isReservation(task, store.expenses) ? task.budget : 0)}
                     </td>
                   </tr>
                 );
@@ -75,7 +76,8 @@ export function SharedPurchasingPlans({ store, activity }: { store: Store; activ
       )}
       <p className="data-note panel-note">
         Purchasing completion does not approve a claim or record payment. Cancelled estimates are
-        excluded from commitments; completed purchases without claims remain reserved.
+        excluded from commitments; purchases without accepted claims retain their estimate as a
+        reservation.
       </p>
     </Panel>
   );
