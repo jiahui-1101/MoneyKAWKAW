@@ -164,7 +164,7 @@ export function ActivityTable({
   );
 }
 
-export function BudgetComparison({ activities, store }: { activities: Activity[]; store: Store }) {
+export function BudgetComparison({ activities, store, root='/director' }: { activities: Activity[]; store: Store; root?: string }) {
   const { money } = useFormat();
   const max = Math.max(
     ...activities.map((a) => Math.max(a.budget, summarize(store, a.id).recorded)),
@@ -201,7 +201,7 @@ export function BudgetComparison({ activities, store }: { activities: Activity[]
             const recorded = summarize(store, a.id).recorded;
             return (
               <div className="comparison-row" key={a.id}>
-                <Link to={`/director/activities/${a.id}`}>{a.name}</Link>
+                <Link to={`${root}/activities/${a.id}`}>{a.name}</Link>
                 <div className="comparison-bars">
                   <div
                     className="comparison-budget"
