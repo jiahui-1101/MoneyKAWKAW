@@ -51,6 +51,11 @@
 .treasury-justification p,.treasury-decision p {font-size:13px;line-height:1.8;white-space:pre-wrap;}
 .treasury-decision {background:var(--green-soft);}
 .treasury-decision.is-declined {background:var(--danger-soft);border-color:var(--danger);}
+.treasury-impact,.treasury-risk-result {padding:0 22px 24px;display:grid;gap:16px;}
+.treasury-impact p,.treasury-risk-result p {font-size:12px;color:var(--muted);line-height:1.8;}
+.treasury-risk-result>.badge {justify-self:start;}
+.treasury-risk-result .treasury-facts {padding:14px 0;}
+.treasury-risk-result article {padding:16px;border:1px solid var(--line);border-radius:var(--radius-sm);display:grid;gap:10px;}
 @media(max-width:760px){.treasury-facts{grid-template-columns:repeat(2,minmax(0,1fr));padding:0 17px 22px;}}
 @media(max-width:600px){.treasury-filters{grid-template-columns:1fr;padding:0 17px 20px;}.treasury-tabs{padding:0 17px 20px;}.treasury-result{padding-left:17px;}}
 @media(max-width:1000px){.treasury-counts{grid-template-columns:repeat(3,minmax(0,1fr));}.treasury-counts a{border-bottom:1px solid var(--line);}.treasury-two-col{grid-template-columns:1fr;}}
