@@ -13,6 +13,13 @@ const navigation = [
 export function Shell() {
   const { store, loading, error, reload, reset } = useWorkspace();
   const [open, setOpen] = useState(false);
+  const [mobile, setMobile] = useState(() => window.matchMedia('(max-width: 760px)').matches);
+  useEffect(() => {
+    const media = window.matchMedia('(max-width: 760px)');
+    const change = () => { setMobile(media.matches); if (!media.matches) setOpen(false); };
+    media.addEventListener('change', change);
+    return () => media.removeEventListener('change', change);
+  }, []);
   const [help, setHelp] = useState(false);
   const [confirmReset, setConfirmReset] = useState(false);
   const [resetError, setResetError] = useState('');
@@ -41,7 +48,7 @@ export function Shell() {
   return <div className="app-shell">
     <a className="skip-link" href="#main">Skip to content</a>
     {open && <button className="nav-scrim" aria-label="Close navigation" onClick={() => setOpen(false)} />}
-    <aside ref={sidebar} className={`sidebar ${open ? 'is-open' : ''}`} aria-label="Director navigation">
+    <aside ref={sidebar} inert={mobile && !open} className={`sidebar ${open ? 'is-open' : ''}`} aria-label="Director navigation">
       <Link to="/director" className="brand" onClick={() => setOpen(false)}><span className="brand-mark"><Wallet size={21} /></span><span>Money<span className="brand-accent">KAWKAW</span><small>CLUB FINANCE, MADE CLEAR.</small></span></Link>
       <button className="icon-btn mobile-close" aria-label="Close navigation" onClick={() => setOpen(false)}><X size={18} /></button>
       <div className="workspace-card"><span className="club-mark">C</span><div><strong>Campus Collective</strong><small>Director workspace</small></div><ShieldCheck size={15} /></div>
