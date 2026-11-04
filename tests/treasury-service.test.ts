@@ -66,7 +66,7 @@ describe('review decisions and append-only evidence',()=>{
   it('requires analysis for a departmental deficit, even when the item is within budget',async()=>{
     const expected=raw().expenses.find(e=>e.id==='exp-7')!.review!.updatedAt;
     await treasuryService.review('exp-7',expected);
-    await expect(treasuryService.decide('exp-7',expected,'Approved','')).rejects.toThrow('Analyze');
+    await expect(treasuryService.decide('exp-7',raw().expenses.find(e=>e.id==='exp-7')!.review!.updatedAt,'Approved','')).rejects.toThrow('Analyze');
     await treasuryService.analyze('exp-7');
     const claim=raw().expenses.find(e=>e.id==='exp-7')!;
     await treasuryService.decide('exp-7',claim.review!.updatedAt,'Approved','Deficit reviewed.');
