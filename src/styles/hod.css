@@ -147,6 +147,10 @@
 .hod-shell h1 {
   overflow-wrap: anywhere;
 }
+.hod-shell .eyebrow, .hod-shell .page-heading p, .hod-member-card > p, .scope-tile strong { overflow-wrap: anywhere; }
+.hod-shell .budget-pulse > .row { min-width: 0; max-width: 100%; }
+.hod-shell .budget-pulse > .row > div { min-width: 0; }
+.hod-shell .budget-pulse h2, .hod-shell .budget-pulse p { overflow-wrap: anywhere; }
 .assigned-activities {
   display: grid;
   grid-template-columns: 0.7fr 1fr 1fr;
