@@ -94,7 +94,7 @@ export function analyzeClaim(store: Store, claim: Expense, actor: string): RiskR
     pendingOther: other,
   };
 }
-export function paymentState(store: Store, claim: Expense) {
+export function paymentState(store: Pick<Store,'payments'>, claim: Expense) {
   if (claim.state !== 'Approved') return 'Not payable';
   const payments = store.payments.filter((p) => p.expenseId === claim.id);
   if (!payments.length) return 'Payment pending';
