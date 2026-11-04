@@ -8,6 +8,10 @@ import { Activities } from './pages/Activities';
 import { ActivityForm } from './pages/ActivityForm';
 import { ActivityDetail } from './pages/ActivityDetail';
 import { History, Settings } from './pages/WorkspacePages';
+import { SessionProvider } from './context/Session';
+import { useSession } from './context/session-context';
+import { DemoAccess, RoleGate } from './components/DemoAccess';
+import { HodRoutes } from './pages/hod/HodRoutes';
 
 class ErrorBoundary extends Component<{ children: ReactNode }, { failed: boolean }> {
   state = { failed: false };
@@ -15,7 +19,7 @@ class ErrorBoundary extends Component<{ children: ReactNode }, { failed: boolean
     return { failed: true };
   }
   componentDidCatch(error: Error, info: ErrorInfo) {
-    console.error('Director workspace render failed', error, info.componentStack);
+    console.error('Club workspace render failed', error, info.componentStack);
   }
   render() {
     return this.state.failed ? (
@@ -35,10 +39,12 @@ export default function App() {
   return (
     <ErrorBoundary>
       <BrowserRouter>
-        <WorkspaceProvider>
+        <SessionProvider>
           <Routes>
-            <Route path="/" element={<Navigate to="/director" replace />} />
-            <Route path="/director" element={<Shell />}>
+            <Route path="/" element={<LandingRedirect />} />
+            <Route path="/demo" element={<DemoAccess />} />
+            <Route path="/hod/*" element={<RoleGate role="HOD"><HodRoutes /></RoleGate>} />
+            <Route path="/director" element={<RoleGate role="Director"><WorkspaceProvider><Shell /></WorkspaceProvider></RoleGate>}>
               <Route index element={<Dashboard />} />
               <Route path="activities" element={<Activities />} />
               <Route path="activities/new" element={<ActivityForm key="new" />} />
@@ -68,10 +74,14 @@ export default function App() {
                 }
               />
             </Route>
-            <Route path="*" element={<Navigate to="/director/not-found" replace />} />
+            <Route path="*" element={<LandingRedirect missing />} />
           </Routes>
-        </WorkspaceProvider>
+        </SessionProvider>
       </BrowserRouter>
     </ErrorBoundary>
   );
+}
+function LandingRedirect({ missing = false }: { missing?: boolean }) {
+  const { actor } = useSession();
+  return <Navigate to={`${actor.role === 'Director' ? '/director' : '/hod'}${missing ? '/not-found' : ''}`} replace />;
 }
