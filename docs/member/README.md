@@ -39,7 +39,7 @@ Draft stages use `?step=upload|items|review|submit`; later stages require a capt
 - `member-accounts.ts`: allowlisted fields, masking, one default per owner, unused removal, and private masked change history. Editing/default changes never rewrite submitted snapshots.
 - `member-drafts.ts` and `member-receipt-edits.ts`: persisted private source work, immutable captured baseline, append-only before/after corrections, missing items, exclusions/reinclusions, and reviewed-total changes with reasons.
 - `member-claims.ts`: derives amounts from included receipt lines, checks draft/task/account revisions, atomically links one claim to an owned purchase, stores evidence and destination snapshots, and audits explicit unpaid destination changes.
-- `member.ts`: constrained purchase transitions, own proof retrieval, discrepancy reporting, and one full receipt acknowledgment. Reports remain in history after resolution by acknowledgment.
+- `member.ts`: constrained purchase transitions, own proof retrieval, discrepancy reporting, and one full receipt acknowledgment. Treasurer resolution notes and the original report remain in history after acknowledgment; a Treasurer response never confirms receipt for a Member.
 - `member-validation.ts` and `receipt-validation.ts`: persisted record/reference/history validation. All commands re-read the shared ledger; Member and Treasurer mutations share a local queue/Web Lock.
 - Director/HOD ordinary DTOs omit private payment evidence/instructions. Their history redacts private transfer references and discrepancy detail. Treasurer loads exclude Members' saved account collections and private drafts.
 
@@ -58,6 +58,8 @@ Receipts support PNG/JPEG up to 1 MB and 20 megapixels, without silent resizing.
 Amounts use integer minor units; quantity multiplication uses BigInt and rounds to the nearest minor unit. Tax adds; discounts subtract. All final lines, including exclusions, must reconcile to the reviewed gross receipt total. Included lines determine the claim; it must be positive and cannot exceed that gross total. Shared tax/discount treatment requires explicit lines/reasons, with no hidden proration.
 
 An unsubmitted source can be removed/replaced only after confirmation; the dialog explicitly clears that working extraction/history. Submitted source evidence and amounts have no Member edit endpoint. Default changes never redirect a claim; unpaid destination changes require an owned account, reason, and retained prior masked destination. Payment locks that snapshot.
+
+Each selected destination carries an opaque revision. The Treasurer must submit the revision they reviewed when recording payment; a changed snapshot is rejected rather than silently recording against different instructions. Existing legacy snapshots receive a stable compatibility revision at the service boundary. Background refresh preserves working state and immediately hides a draft if its task ownership changes.
 
 ## Production integration and limits
 

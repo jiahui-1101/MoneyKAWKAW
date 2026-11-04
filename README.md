@@ -42,7 +42,7 @@ Select **Nora Lim · Treasurer demo**. Activity oversight must be explicitly gra
 - Immutable original receipt, annotated claim lines, retained OCR suggestions and edit/exclusion history, justifications, and claim audit history.
 - Explicit review start, confirmed approval/decline, mandatory decline reasons, configurable deterministic advisory risk bands, and retained decision snapshots.
 - Approved-only payout instructions, masked by default; manual reimbursement recording with file validation, confirmation, preserved proof, and duplicate prevention.
-- Centralized payment history, proof viewing, and separate member receipt status. No Treasurer action confirms receipt for a member.
+- Centralized payment history, proof viewing, append-only discrepancy resolution notes, and separate member receipt status. No Treasurer action confirms receipt for a member.
 
 Review → analyze → approve/decline → record an external manual payment with proof → await member confirmation. The optional **Load demo claim** tool adds clearly fictional fixtures; Members now submit their own uploaded receipt evidence through their separate workspace. Use fictional payout details throughout this local demo. See [Treasurer architecture and routes](docs/treasurer/README.md) and the [current four-role verification](docs/member/VERIFICATION.md).
 
@@ -109,6 +109,8 @@ Director setup → HOD assignment → Member purchase/receipt/submission → Tre
 - `src/styles/tokens.css`: intentional font families, palette, spacing scale, radii, focus color, and shadows. Component, shell, calendar, and responsive page styles use these tokens.
 
 Amounts are integer minor units. Recorded expenses include pending, in-review, and approved claims; declined claims remain in history but leave recorded totals. Remaining = budget − recorded. Committed = open task reservations + approved unpaid amounts. Available = budget − paid − pending − committed. Pending includes in-review claims. A submitted claim replaces its task estimate, preventing double counting; declining it restores the original task reservation. Department allocations cannot exceed the activity ceiling; lowering an activity budget below current allocations is rejected. Reducing an allocation below historical expenses preserves records and visibly flags the resulting overrun.
+
+Setup saves use a revision check to reject stale Director snapshots. Background storage updates preserve filters and in-progress forms; setup forms retain their opening revision and require reload if another setup edit intervenes. Reimbursement recording requires the reviewed destination revision. A Member destination change closes an old payment confirmation and requires the Treasurer to review/reconfirm current instructions; it does not redirect an existing payment.
 
 Currency is configured in `src/services/seed.ts` (MYR by default; MYR/SGD/USD supported). Reset the demo after changing seed configuration. Currency conversion is deliberately unavailable. Timezone and the utilization attention threshold are editable in workspace settings.
 
