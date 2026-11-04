@@ -4,6 +4,9 @@ export interface ReceiptLine {
   id: string;
   description: string;
   amount: number;
+  kind?: 'item' | 'tax' | 'discount';
+  quantityMilli?: number;
+  unitPrice?: number;
 }
 export interface ReceiptEdit {
   lineId: string;
@@ -22,6 +25,12 @@ export interface ReceiptEvidence {
   originalLines: ReceiptLine[];
   edits: ReceiptEdit[];
   submittedAt: string;
+  file?: Omit<ProofFile,'dataUrl'>;
+  purchaseDate?: string;
+  originalTotal?: number;
+  addedLines?: ReceiptLine[];
+  totalEdits?: {before:number;after:number;reason:string;actor:string;at:string}[];
+  extraction?: {method:'tesseract'|'manual';rawText:string;at:string};
 }
 export interface PayoutSnapshot {
   expenseId: string;
@@ -32,6 +41,7 @@ export interface PayoutSnapshot {
   institution: string;
   identifier: string;
   masked: string;
+  accountId?: string;
 }
 export interface RiskRules {
   mediumVariance: number;
@@ -76,6 +86,8 @@ export interface ManualPayment {
   proof: ProofFile;
   externalVerified: false;
   receivedConfirmedAt?: string;
+  receivedConfirmedBy?: string;
+  discrepancy?: {reason:string;reportedAt:string;reportedBy:string};
 }
 export interface TreasuryData {
   grants: { userId: string; activityId: string }[];

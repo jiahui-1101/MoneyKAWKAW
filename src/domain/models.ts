@@ -1,4 +1,5 @@
 import type { ClaimReview, ManualPayment, TreasuryData } from './treasury';
+import type { MemberData } from './member';
 export const activityTypes = ['Workshop', 'Large-scale event', 'Community', 'Other'] as const;
 export const activityStatuses = ['Planning', 'Active', 'Completed'] as const;
 export type ActivityType = (typeof activityTypes)[number];
@@ -73,6 +74,7 @@ export interface Store {
   settings: Settings;
   directory?: ClubDirectory;
   treasury?: TreasuryData;
+  member?: MemberData;
 }
 
 export const purchasingStatuses = [

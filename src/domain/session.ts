@@ -4,10 +4,13 @@ export const demoProfiles = [
   { userId: 'hod-amir', name: 'Amir Hassan', role: 'HOD' },
   { userId: 'hod-mei', name: 'Mei Wong', role: 'HOD' },
   { userId: 'treasurer-nora', name: 'Nora Lim', role: 'Treasurer' },
+  { userId: 'member-ava', name: 'Ava Chen', role: 'Member' },
+  { userId: 'member-ryan', name: 'Ryan Lee', role: 'Member' },
+  { userId: 'member-grace', name: 'Grace Lim', role: 'Member' },
 ] as const;
 export type DemoActor = (typeof demoProfiles)[number];
 export const roleHome = (role: DemoActor['role']) =>
-  role === 'Director' ? '/director' : role === 'HOD' ? '/hod' : '/treasurer';
+  role === 'Director' ? '/director' : role === 'HOD' ? '/hod' : role==='Treasurer'?'/treasurer':'/member';
 const key = 'moneykawkaw.demo-actor';
 function initialActor(): DemoActor {
   try {
