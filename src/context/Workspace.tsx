@@ -10,8 +10,8 @@ export function WorkspaceProvider({ children }: { children: ReactNode }) {
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState('');
   const [notice, setNotice] = useState('');
-  const reload = useCallback(async () => {
-    setLoading(true);
+  const reload = useCallback(async (background = false) => {
+    if (!background) setLoading(true);
     setError('');
     try {
       const s = await directorService.load();
@@ -28,7 +28,7 @@ export function WorkspaceProvider({ children }: { children: ReactNode }) {
   }, [reload]);
   useEffect(() => {
     const sync = (e: StorageEvent) => {
-      if (e.key?.startsWith('moneykawkaw.')) void reload();
+      if (e.key?.startsWith('moneykawkaw.')) void reload(true);
     };
     window.addEventListener('storage', sync);
     return () => window.removeEventListener('storage', sync);

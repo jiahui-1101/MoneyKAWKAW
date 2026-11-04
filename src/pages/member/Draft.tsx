@@ -39,7 +39,7 @@ export function MemberDraft() {
       </Empty>
     );
   const task = data.assignments.find((t) => t.id === draft.taskId);
-  if (!task)
+  if (!task || task.purchasing?.assigneeId !== data.userId)
     return (
       <Empty title="Task access restricted">
         Your active department membership or task ownership has changed.

@@ -26,6 +26,7 @@ export function ActivityForm() {
     budget: existing ? (existing.budget / 100).toFixed(2) : '',
   };
   const [form, setForm] = useState(initial);
+  const [setupRevision] = useState(store?.setupRevision ?? 0);
   const [error, setError] = useState('');
   const [invalid, setInvalid] = useState<string[]>([]);
   const [discard, setDiscard] = useState(false);
@@ -80,6 +81,10 @@ export function ActivityForm() {
       };
       const saved = await mutate(
         (s) => {
+          if ((s.setupRevision ?? 0) !== setupRevision)
+            throw new Error(
+              'Activity setup changed in another view. Reload before saving this form.',
+            );
           const next = upsertActivity(s, input, id);
           return configureTreasurer(next, id ?? next.activities[0].id, treasurer);
         },

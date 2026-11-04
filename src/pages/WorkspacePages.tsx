@@ -59,6 +59,7 @@ export function Settings() {
   const { store, mutate, busy, reset } = useWorkspace();
   const [timezone, setTimezone] = useState(store?.settings.timezone ?? 'Asia/Kuala_Lumpur');
   const [threshold, setThreshold] = useState(String(store?.settings.warningPercent ?? 85));
+  const [setupRevision, setSetupRevision] = useState(store?.setupRevision ?? 0);
   const [error, setError] = useState('');
   const [confirm, setConfirm] = useState(false);
   if (!store) return null;
@@ -66,10 +67,14 @@ export function Settings() {
     e.preventDefault();
     setError('');
     try {
-      await mutate(
-        (s) => updateSettings(s, { ...s.settings, timezone, warningPercent: Number(threshold) }),
-        'Workspace preferences saved.',
-      );
+      const saved = await mutate((s) => {
+        if ((s.setupRevision ?? 0) !== setupRevision)
+          throw new Error(
+            'Workspace setup changed in another view. Reload before saving preferences.',
+          );
+        return updateSettings(s, { ...s.settings, timezone, warningPercent: Number(threshold) });
+      }, 'Workspace preferences saved.');
+      setSetupRevision(saved.setupRevision ?? 0);
     } catch (e) {
       setError(e instanceof Error ? e.message : 'Unable to save settings.');
     }
@@ -184,6 +189,7 @@ export function Settings() {
                   await reset();
                   setTimezone('Asia/Kuala_Lumpur');
                   setThreshold('85');
+                  setSetupRevision(0);
                   setConfirm(false);
                 } catch {
                   setError('Storage is unavailable. Enable browser storage and retry.');

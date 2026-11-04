@@ -228,6 +228,7 @@ function DepartmentForm({
   onClose: () => void;
 }) {
   const { store, mutate, busy } = useWorkspace();
+  const [setupRevision] = useState(store?.setupRevision ?? 0);
   const { money, currency } = useFormat();
   const [name, setName] = useState(department?.name ?? '');
   const [description, setDescription] = useState(department?.description ?? '');
@@ -261,6 +262,10 @@ function DepartmentForm({
     try {
       await mutate(
         (s) => {
+          if ((s.setupRevision ?? 0) !== setupRevision)
+            throw new Error(
+              'Department setup changed in another view. Reopen this form before saving.',
+            );
           const next = upsertDepartment(
             s,
             activity.id,

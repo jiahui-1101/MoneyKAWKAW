@@ -10,8 +10,8 @@ export function HodProvider({ children }: { children: ReactNode }) {
   const [busy, setBusy] = useState(false);
   const [notice, setNotice] = useState('');
   const locked = useRef(false);
-  const reload = useCallback(async () => {
-    setLoading(true);
+  const reload = useCallback(async (background = false) => {
+    if (!background) setLoading(true);
     setError('');
     try {
       setData(await hodService.load());
@@ -27,7 +27,7 @@ export function HodProvider({ children }: { children: ReactNode }) {
   }, [reload]);
   useEffect(() => {
     const sync = (e: StorageEvent) => {
-      if (e.key?.startsWith('moneykawkaw.')) void reload();
+      if (e.key?.startsWith('moneykawkaw.')) void reload(true);
     };
     window.addEventListener('storage', sync);
     return () => window.removeEventListener('storage', sync);
