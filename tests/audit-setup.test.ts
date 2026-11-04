@@ -13,6 +13,21 @@ const input = {
   endDate: '2026-11-30',
   budget: 100000,
 };
+it('blocks historical currency relabeling at the Director service boundary', async () => {
+  selectDemoActor('director-jamie');
+  const snapshot = await directorService.load();
+  let failure = '';
+  try {
+    await directorService.save({
+      ...snapshot,
+      settings: { ...snapshot.settings, currency: 'USD' },
+    });
+  } catch (e) {
+    failure = (e as Error).message;
+  }
+  expect(failure).toContain('Currency');
+  expect(raw().settings.currency).toBe('MYR');
+});
 it('rejects a stale Director setup snapshot rather than discarding a different tab’s activity edit', async () => {
   selectDemoActor('director-jamie');
   const first = await directorService.load(),

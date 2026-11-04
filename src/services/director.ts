@@ -175,6 +175,10 @@ export const directorService: DirectorService = {
     requireRole('Director');
     const fresh = await sharedRepository.load();
     requireRole('Director');
+    if (store.settings.currency !== fresh.settings.currency)
+      throw new Error(
+        'Currency conversion requires a migration; existing financial history cannot be relabeled.',
+      );
     if ((store.setupRevision ?? 0) !== (fresh.setupRevision ?? 0))
       throw new Error(
         'Activity setup changed in another view. Reload the workspace before applying your changes.',
