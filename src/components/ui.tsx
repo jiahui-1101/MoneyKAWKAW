@@ -1,12 +1,14 @@
 import { ArrowUpRight, Check, Inbox, X } from 'lucide-react';
-import { useEffect, useRef, type ReactNode } from 'react';
+import { useContext, useEffect, useRef, type ReactNode } from 'react';
 import { Link } from 'react-router-dom';
-import { useWorkspace } from '../context/workspace-context';
+import { WorkspaceContext, useWorkspace } from '../context/workspace-context';
+import { FormatSettingsContext } from '../context/format-context';
 
 export function useFormat() {
-  const { store } = useWorkspace();
-  const currency = store?.settings.currency ?? 'MYR';
-  const timezone = store?.settings.timezone ?? 'Asia/Kuala_Lumpur';
+  const workspace = useContext(WorkspaceContext);
+  const settings = useContext(FormatSettingsContext) ?? workspace?.store?.settings;
+  const currency = settings?.currency ?? 'MYR';
+  const timezone = settings?.timezone ?? 'Asia/Kuala_Lumpur';
   return {
     money: (n: number, compact = false) =>
       new Intl.NumberFormat('en-MY', {
@@ -218,6 +220,9 @@ export function Modal({
 }
 export function Toast() {
   const { notice, dismiss } = useWorkspace();
+  return <ToastMessage notice={notice} dismiss={dismiss} />;
+}
+export function ToastMessage({ notice, dismiss }: { notice: string; dismiss: () => void }) {
   return notice ? (
     <div className="toast" role="status">
       <Check size={18} />
