@@ -1,5 +1,5 @@
 import { ArrowLeft, ArrowRight, Check, Info, Save } from 'lucide-react';
-import { useState, type FormEvent } from 'react';
+import { useEffect, useState, type FormEvent } from 'react';
 import { Link, useNavigate, useParams } from 'react-router-dom';
 import { useWorkspace } from '../context/Workspace';
 import { activityStatuses, activityTypes, type ActivityInput } from '../domain/models';
@@ -7,6 +7,7 @@ import { parseMoney } from '../domain/budget';
 import { upsertActivity } from '../services/director';
 import { Empty, Modal, PageHeader, useFormat } from '../components/ui';
 import { DateField } from '../components/DateField';
+import { Field } from '../components/Field';
 
 export function ActivityForm() {
   const { id } = useParams();
@@ -26,6 +27,12 @@ export function ActivityForm() {
   const back = id ? `/director/activities/${id}` : '/director/activities';
   const update = (key: keyof typeof form, value: string) => { setForm(f => ({ ...f, [key]: value })); setInvalid(fields => fields.filter(f => f !== key)); setError(''); };
   const dirty = JSON.stringify(form) !== JSON.stringify(initial);
+  useEffect(() => {
+    if (!dirty) return;
+    const warn = (e: BeforeUnloadEvent) => { e.preventDefault(); };
+    window.addEventListener('beforeunload', warn);
+    return () => window.removeEventListener('beforeunload', warn);
+  }, [dirty]);
   if (id && !existing) return <Empty title="Activity not found" action={<Link className="btn" to="/director/activities">Back to activities</Link>}>Choose an activity from your workspace.</Empty>;
   const cancel = () => dirty ? setDiscard(true) : navigate(back);
   const submit = async (e: FormEvent) => {
@@ -58,7 +65,3 @@ export function ActivityForm() {
   </div>;
 }
 
-import type { ReactNode } from 'react';
-export function Field({ label, id, required, error, children }: { label: string; id: string; required?: boolean; error?: boolean; children: ReactNode }) {
-  return <div className="field"><label htmlFor={id}>{label}{required && <span className="required-mark"> *</span>}</label>{children}{error && <span className="field-error">This field is required.</span>}</div>;
-}

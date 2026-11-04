@@ -8,7 +8,7 @@ export function useFormat() {
   const currency = store?.settings.currency ?? 'MYR';
   const timezone = store?.settings.timezone ?? 'Asia/Kuala_Lumpur';
   return {
-    money: (n: number, compact = false) => new Intl.NumberFormat('en-MY', { style: 'currency', currency, currencyDisplay: 'narrowSymbol', maximumFractionDigits: compact ? 0 : 2 }).format(n / 100),
+    money: (n: number, compact = false) => new Intl.NumberFormat('en-MY', { style: 'currency', currency, currencyDisplay: 'narrowSymbol', notation: compact && Math.abs(n) >= 100_000_000 ? 'compact' : 'standard', minimumFractionDigits: compact && n % 100 === 0 ? 0 : 2, maximumFractionDigits: 2 }).format(n / 100),
     date: (s: string) => new Intl.DateTimeFormat('en-GB', { day: 'numeric', month: 'short', year: 'numeric', timeZone: timezone }).format(new Date(s.length === 10 ? `${s}T12:00:00Z` : s)),
     time: (s: string) => new Intl.DateTimeFormat('en-GB', { day: 'numeric', month: 'short', hour: '2-digit', minute: '2-digit', timeZone: timezone }).format(new Date(s)),
     currency,

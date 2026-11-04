@@ -5,7 +5,7 @@ import type { Activity, Department } from '../domain/models';
 import { parseMoney, summarize } from '../domain/budget';
 import { removeDepartment, upsertDepartment } from '../services/director';
 import { Badge, Empty, Modal, Panel, Progress, useFormat } from './ui';
-import { Field } from '../pages/ActivityForm';
+import { Field } from './Field';
 
 export function Departments({ activity }: { activity: Activity }) {
   const { store, mutate, busy } = useWorkspace();
