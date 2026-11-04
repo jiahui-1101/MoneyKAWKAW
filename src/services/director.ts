@@ -142,18 +142,36 @@ export const directorService: DirectorService = {
     requireRole('Director');
     const store = await sharedRepository.load();
     requireRole('Director');
-    return { ...store, payments:store.payments.map(({manual: _manual,...p})=>p), treasury:store.treasury ? {...store.treasury,receipts:[],payouts:[]} : undefined };
+    return {
+      ...store,
+      payments: store.payments.map(({ manual: _manual, ...p }) => p),
+      treasury: store.treasury ? { ...store.treasury, receipts: [], payouts: [] } : undefined,
+    };
   },
   async save(store) {
     requireRole('Director');
-    const fresh=await sharedRepository.load(); requireRole('Director');
-    const events = [...store.events.filter(e=>!fresh.events.some(f=>f.id===e.id)),...fresh.events];
-    await sharedRepository.save({...store,events,expenses:fresh.expenses,payments:fresh.payments,assignments:fresh.assignments,treasury:fresh.treasury ? {...fresh.treasury,grants:store.treasury?.grants??fresh.treasury.grants} : undefined});
+    const fresh = await sharedRepository.load();
+    requireRole('Director');
+    const events = [
+      ...store.events.filter((e) => !fresh.events.some((f) => f.id === e.id)),
+      ...fresh.events,
+    ];
+    await sharedRepository.save({
+      ...store,
+      events,
+      expenses: fresh.expenses,
+      payments: fresh.payments,
+      assignments: fresh.assignments,
+      treasury: fresh.treasury
+        ? { ...fresh.treasury, grants: store.treasury?.grants ?? fresh.treasury.grants }
+        : undefined,
+    });
     return directorService.load();
   },
   async reset() {
     requireRole('Director');
-    await sharedRepository.reset(); return directorService.load();
+    await sharedRepository.reset();
+    return directorService.load();
   },
 };
 

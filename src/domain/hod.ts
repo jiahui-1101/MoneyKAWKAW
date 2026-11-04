@@ -47,14 +47,14 @@ export function departmentBudget(data: HodSnapshot, activityId: string, departme
     (e) => isRecorded(e) && e.activityId === activityId && e.departmentId === departmentId,
   );
   const planned = tasks.reduce((sum, t) => sum + t.budget, 0);
-  const open = tasks.filter((t) => isReservation(t, data.expenses)).reduce((sum, t) => sum + t.budget, 0);
+  const open = tasks
+    .filter((t) => isReservation(t, data.expenses))
+    .reduce((sum, t) => sum + t.budget, 0);
   const recorded = expenses.reduce((sum, e) => sum + e.amount, 0);
   const paid = data.payments
     .filter((p) => expenses.some((e) => e.id === p.expenseId))
     .reduce((sum, p) => sum + p.amount, 0);
-  const pending = expenses
-    .filter(isPending)
-    .reduce((sum, e) => sum + e.amount, 0);
+  const pending = expenses.filter(isPending).reduce((sum, e) => sum + e.amount, 0);
   const budget = scope.department.allocation;
   return {
     budget,

@@ -27,7 +27,13 @@ export function DemoRoleSwitcher() {
     </select>
   );
 }
-export function RoleGate({ requiredRole: role, children }: { requiredRole: DemoActor['role']; children: ReactNode }) {
+export function RoleGate({
+  requiredRole: role,
+  children,
+}: {
+  requiredRole: DemoActor['role'];
+  children: ReactNode;
+}) {
   const { actor } = useSession();
   return actor.role === role ? (
     children
@@ -89,7 +95,9 @@ export function DemoAccess() {
               <p>
                 {profile.role === 'Director'
                   ? 'Activity setup & club financial oversight'
-                  : profile.role==='Treasurer'?'Claim review & reimbursement oversight':'Assigned department purchasing & team oversight'}
+                  : profile.role === 'Treasurer'
+                    ? 'Claim review & reimbursement oversight'
+                    : 'Assigned department purchasing & team oversight'}
               </p>
               <span className="text-link">
                 Open {profile.role} workspace <ArrowRight size={15} />
@@ -99,7 +107,8 @@ export function DemoAccess() {
         </div>
       </Panel>
       <p className="data-note">
-        HOD memberships and Treasurer activity grants are explicit. Member submission and receipt confirmation are reserved for a future phase.
+        HOD memberships and Treasurer activity grants are explicit. Member submission and receipt
+        confirmation are reserved for a future phase.
       </p>
     </main>
   );

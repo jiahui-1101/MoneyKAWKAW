@@ -12,7 +12,8 @@ export function summarize(store: Store, activityId?: string, departmentId?: stri
   const activities = store.activities.filter((a) => !activityId || a.id === activityId);
   const ids = new Set(activities.map((a) => a.id));
   const expenses = store.expenses.filter(
-    (e) => isRecorded(e) && ids.has(e.activityId) && (!departmentId || e.departmentId === departmentId),
+    (e) =>
+      isRecorded(e) && ids.has(e.activityId) && (!departmentId || e.departmentId === departmentId),
   );
   const departments = activities
     .flatMap((a) => a.departments)
@@ -23,9 +24,7 @@ export function summarize(store: Store, activityId?: string, departmentId?: stri
   const paid = store.payments
     .filter((p) => expenses.some((e) => e.id === p.expenseId))
     .reduce((s, p) => s + p.amount, 0);
-  const pending = expenses
-    .filter(isPending)
-    .reduce((s, e) => s + e.amount, 0);
+  const pending = expenses.filter(isPending).reduce((s, e) => s + e.amount, 0);
   const openAssignments = store.assignments
     .filter(
       (a) =>

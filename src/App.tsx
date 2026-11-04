@@ -45,7 +45,14 @@ export default function App() {
           <Routes>
             <Route path="/" element={<LandingRedirect />} />
             <Route path="/demo" element={<DemoAccess />} />
-            <Route path="/treasurer/*" element={<RoleGate requiredRole="Treasurer"><TreasuryRoutes/></RoleGate>}/>
+            <Route
+              path="/treasurer/*"
+              element={
+                <RoleGate requiredRole="Treasurer">
+                  <TreasuryRoutes />
+                </RoleGate>
+              }
+            />
             <Route
               path="/hod/*"
               element={
@@ -102,10 +109,5 @@ export default function App() {
 }
 function LandingRedirect({ missing = false }: { missing?: boolean }) {
   const { actor } = useSession();
-  return (
-    <Navigate
-      to={`${roleHome(actor.role)}${missing ? '/not-found' : ''}`}
-      replace
-    />
-  );
+  return <Navigate to={`${roleHome(actor.role)}${missing ? '/not-found' : ''}`} replace />;
 }

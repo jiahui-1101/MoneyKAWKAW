@@ -29,7 +29,9 @@ export function ActivityForm() {
   const [error, setError] = useState('');
   const [invalid, setInvalid] = useState<string[]>([]);
   const [discard, setDiscard] = useState(false);
-  const initiallyGranted = !!store?.treasury?.grants.some(g=>g.activityId===id && g.userId==='treasurer-nora');
+  const initiallyGranted = !!store?.treasury?.grants.some(
+    (g) => g.activityId === id && g.userId === 'treasurer-nora',
+  );
   const [treasurer, setTreasurer] = useState(initiallyGranted);
   const back = id ? `/director/activities/${id}` : '/director/activities';
   const update = (key: keyof typeof form, value: string) => {
@@ -77,7 +79,10 @@ export function ActivityForm() {
         budget: parseMoney(form.budget),
       };
       const saved = await mutate(
-        (s) => { const next=upsertActivity(s,input,id); return configureTreasurer(next,id??next.activities[0].id,treasurer); },
+        (s) => {
+          const next = upsertActivity(s, input, id);
+          return configureTreasurer(next, id ?? next.activities[0].id, treasurer);
+        },
         id
           ? 'Activity updated successfully.'
           : 'Activity created. Next, configure your departments.',
@@ -230,7 +235,11 @@ export function ActivityForm() {
                 ` Currently allocated: ${money(existing.departments.reduce((s, d) => s + d.allocation, 0))}.`}
             </p>
             <Field label="Treasurer oversight" id="treasurer-access">
-              <select id="treasurer-access" value={treasurer?'yes':'no'} onChange={e=>setTreasurer(e.target.value==='yes')}>
+              <select
+                id="treasurer-access"
+                value={treasurer ? 'yes' : 'no'}
+                onChange={(e) => setTreasurer(e.target.value === 'yes')}
+              >
                 <option value="no">No Treasurer assigned</option>
                 <option value="yes">Nora Lim · Treasurer demo</option>
               </select>

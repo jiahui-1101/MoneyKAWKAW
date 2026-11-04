@@ -10,16 +10,36 @@ import { TreasuryRisk } from './Risk';
 import { TreasuryReimburse } from './Reimburse';
 import { TreasuryHistory } from './History';
 export function TreasuryRoutes() {
-  return <TreasuryProvider><Routes><Route element={<TreasuryShell/>}>
-    <Route index element={<TreasuryDashboard/>}/>
-    <Route path="activities" element={<TreasuryActivities/>}/>
-    <Route path="activities/:id" element={<TreasuryActivityDetail/>}/>
-    <Route path="claims" element={<TreasuryClaims/>}/>
-    <Route path="claims/:id" element={<TreasuryClaimDetail/>}/>
-    <Route path="claims/:id/risk" element={<TreasuryRisk/>}/>
-    <Route path="claims/:id/reimburse" element={<TreasuryReimburse/>}/>
-    <Route path="history" element={<TreasuryHistory/>}/>
-    <Route path="reimbursements" element={<TreasuryClaims reimbursements/>}/>
-    <Route path="*" element={<Empty title="Financial workspace" action={<Link className="btn" to="/treasurer">Return to overview</Link>}>Choose a financial record from your navigation.</Empty>}/>
-  </Route></Routes></TreasuryProvider>;
+  return (
+    <TreasuryProvider>
+      <Routes>
+        <Route element={<TreasuryShell />}>
+          <Route index element={<TreasuryDashboard />} />
+          <Route path="activities" element={<TreasuryActivities />} />
+          <Route path="activities/:id" element={<TreasuryActivityDetail />} />
+          <Route path="claims" element={<TreasuryClaims />} />
+          <Route path="claims/:id" element={<TreasuryClaimDetail />} />
+          <Route path="claims/:id/risk" element={<TreasuryRisk />} />
+          <Route path="claims/:id/reimburse" element={<TreasuryReimburse />} />
+          <Route path="history" element={<TreasuryHistory />} />
+          <Route path="reimbursements" element={<TreasuryClaims reimbursements />} />
+          <Route
+            path="*"
+            element={
+              <Empty
+                title="Financial workspace"
+                action={
+                  <Link className="btn" to="/treasurer">
+                    Return to overview
+                  </Link>
+                }
+              >
+                Choose a financial record from your navigation.
+              </Empty>
+            }
+          />
+        </Route>
+      </Routes>
+    </TreasuryProvider>
+  );
 }

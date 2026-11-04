@@ -7,8 +7,8 @@
     "dev": "vite --host 127.0.0.1",
     "build": "tsc --noEmit && vite build",
     "preview": "vite preview --host 127.0.0.1",
-    "test": "vitest run"
-    ,"lint": "oxlint --react-plugin --jsx-a11y-plugin --deny-warnings src tests",
+    "test": "vitest run",
+    "lint": "oxlint --react-plugin --jsx-a11y-plugin --deny-warnings src tests",
     "typecheck": "tsc --noEmit"
   },
   "dependencies": {

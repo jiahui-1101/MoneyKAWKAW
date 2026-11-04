@@ -146,8 +146,12 @@ export function DateField({ id, value, onChange, invalid, min, max, calendarLabe
             type="button"
             className="calendar-today"
             disabled={
-              (!!min && isoDate(new Date().getFullYear(), new Date().getMonth(), new Date().getDate()) < min) ||
-              (!!max && isoDate(new Date().getFullYear(), new Date().getMonth(), new Date().getDate()) > max)
+              (!!min &&
+                isoDate(new Date().getFullYear(), new Date().getMonth(), new Date().getDate()) <
+                  min) ||
+              (!!max &&
+                isoDate(new Date().getFullYear(), new Date().getMonth(), new Date().getDate()) >
+                  max)
             }
             onClick={() => {
               const d = new Date();

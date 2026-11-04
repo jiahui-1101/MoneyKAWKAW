@@ -6,7 +6,8 @@ export const demoProfiles = [
   { userId: 'treasurer-nora', name: 'Nora Lim', role: 'Treasurer' },
 ] as const;
 export type DemoActor = (typeof demoProfiles)[number];
-export const roleHome = (role: DemoActor['role']) => role==='Director'?'/director':role==='HOD'?'/hod':'/treasurer';
+export const roleHome = (role: DemoActor['role']) =>
+  role === 'Director' ? '/director' : role === 'HOD' ? '/hod' : '/treasurer';
 const key = 'moneykawkaw.demo-actor';
 function initialActor(): DemoActor {
   try {

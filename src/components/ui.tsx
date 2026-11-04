@@ -51,10 +51,13 @@ export function Status({ value }: { value: string }) {
       tone={
         value === 'Active' || value === 'Approved'
           ? 'green'
-          : value === 'Declined' ? 'danger' : value === 'In review' ? 'violet'
-          : value === 'Planning' || value === 'Pending review'
-            ? 'gold'
-            : 'neutral'
+          : value === 'Declined'
+            ? 'danger'
+            : value === 'In review'
+              ? 'violet'
+              : value === 'Planning' || value === 'Pending review'
+                ? 'gold'
+                : 'neutral'
       }
     >
       {value}
