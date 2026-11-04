@@ -4,7 +4,8 @@ import { STORAGE_KEY } from '../src/services/director';
 import { selectDemoActor } from '../src/domain/session';
 import type { Store } from '../src/domain/models';
 import { draftService } from '../src/services/member-drafts';
-export const proof = {
+import type { ProofFile } from '../src/domain/treasury';
+export const proof: ProofFile = {
   name: 'receipt.png',
   mime: 'image/png',
   size: 68,
