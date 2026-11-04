@@ -153,6 +153,7 @@ describe('manual reimbursement records', () => {
     await expect(reimbursementService.destination('exp-5')).rejects.toThrow('already');
     selectDemoActor('hod-mei');
     const hod = await hodService.load();
+    expect(JSON.stringify(hod)).not.toContain(input.reference);
     expect(hod.payments.find((p) => p.id === payment.id)?.manual).toBeUndefined();
     await expect(reimbursementService.proof(payment.id)).rejects.toThrow('role');
     selectDemoActor('director-jamie');

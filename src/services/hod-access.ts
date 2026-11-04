@@ -97,7 +97,17 @@ export function projectHod(store: Store): HodSnapshot {
           .map((u) => ({ id: u.id, name: u.name })) ?? [],
       memberships,
     },
-    events: store.events.filter((e) => e.departmentId && inScope(e.activityId, e.departmentId)),
+    events: store.events
+      .filter((e) => e.departmentId && inScope(e.activityId, e.departmentId))
+      .map((e) =>
+        e.action === 'Manual reimbursement recorded'
+          ? {
+              ...e,
+              detail:
+                'A manual payment was recorded for a department claim. Payment amounts and dates appear in expense status; references, proof, and payout instructions remain restricted.',
+            }
+          : e,
+      ),
     settings: store.settings,
   });
 }
