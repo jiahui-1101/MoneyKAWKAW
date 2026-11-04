@@ -100,7 +100,7 @@ export function projectHod(store: Store): HodSnapshot {
     events: store.events
       .filter((e) => e.departmentId && inScope(e.activityId, e.departmentId))
       .map((e) =>
-        e.action === 'Manual reimbursement recorded'
+        ['Manual reimbursement recorded','Payout destination changed','Payment discrepancy reported'].includes(e.action)
           ? {
               ...e,
               detail:
