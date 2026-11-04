@@ -1,0 +1,858 @@
+[
+  {
+    "bodyColor": "rgb(32, 38, 38)",
+    "borders": [
+      "rgba(0, 0, 0, 0)",
+      "rgb(229, 233, 231)"
+    ],
+    "canvas": "rgb(247, 248, 250)",
+    "clientWidth": 305,
+    "defaultBlue": 0,
+    "fontFamilies": [
+      "\"DM Sans Variable\", \"Segoe UI\", sans-serif",
+      "\"Manrope Variable\", \"Segoe UI\", sans-serif"
+    ],
+    "metricOverflow": [],
+    "overflow": false,
+    "path": "/hod",
+    "scrollWidth": 305,
+    "unstyled": 0,
+    "width": 320
+  },
+  {
+    "bodyColor": "rgb(32, 38, 38)",
+    "borders": [
+      "rgba(0, 0, 0, 0)",
+      "rgb(229, 233, 231)"
+    ],
+    "canvas": "rgb(247, 248, 250)",
+    "clientWidth": 305,
+    "defaultBlue": 0,
+    "fontFamilies": [
+      "\"DM Sans Variable\", \"Segoe UI\", sans-serif",
+      "\"Manrope Variable\", \"Segoe UI\", sans-serif"
+    ],
+    "metricOverflow": [],
+    "overflow": false,
+    "path": "/hod/activities/innovation-summit/departments/summit-programme",
+    "scrollWidth": 305,
+    "unstyled": 0,
+    "width": 320
+  },
+  {
+    "bodyColor": "rgb(32, 38, 38)",
+    "borders": [
+      "rgba(0, 0, 0, 0)",
+      "rgb(229, 233, 231)",
+      "rgb(104, 113, 111)",
+      "rgb(183, 76, 28)"
+    ],
+    "canvas": "rgb(247, 248, 250)",
+    "clientWidth": 305,
+    "defaultBlue": 0,
+    "fontFamilies": [
+      "\"DM Sans Variable\", \"Segoe UI\", sans-serif",
+      "\"Manrope Variable\", \"Segoe UI\", sans-serif"
+    ],
+    "metricOverflow": [],
+    "overflow": false,
+    "path": "/hod/activities/innovation-summit/departments/summit-programme/tasks",
+    "scrollWidth": 305,
+    "unstyled": 0,
+    "width": 320
+  },
+  {
+    "bodyColor": "rgb(32, 38, 38)",
+    "borders": [
+      "rgba(0, 0, 0, 0)",
+      "rgb(229, 233, 231)",
+      "rgb(104, 113, 111)",
+      "rgb(198, 206, 202)",
+      "rgb(32, 38, 38)",
+      "rgb(183, 76, 28)"
+    ],
+    "canvas": "rgb(247, 248, 250)",
+    "clientWidth": 305,
+    "defaultBlue": 0,
+    "fontFamilies": [
+      "\"DM Sans Variable\", \"Segoe UI\", sans-serif",
+      "\"Manrope Variable\", \"Segoe UI\", sans-serif"
+    ],
+    "metricOverflow": [],
+    "overflow": false,
+    "path": "/hod/activities/innovation-summit/departments/summit-programme/tasks/new",
+    "scrollWidth": 305,
+    "unstyled": 0,
+    "width": 320
+  },
+  {
+    "bodyColor": "rgb(32, 38, 38)",
+    "borders": [
+      "rgba(0, 0, 0, 0)",
+      "rgb(229, 233, 231)",
+      "rgb(183, 76, 28)"
+    ],
+    "canvas": "rgb(247, 248, 250)",
+    "clientWidth": 305,
+    "defaultBlue": 0,
+    "fontFamilies": [
+      "\"DM Sans Variable\", \"Segoe UI\", sans-serif",
+      "\"Manrope Variable\", \"Segoe UI\", sans-serif"
+    ],
+    "metricOverflow": [],
+    "overflow": false,
+    "path": "/hod/activities/innovation-summit/departments/summit-programme/tasks/as-2",
+    "scrollWidth": 305,
+    "unstyled": 0,
+    "width": 320
+  },
+  {
+    "bodyColor": "rgb(32, 38, 38)",
+    "borders": [
+      "rgba(0, 0, 0, 0)",
+      "rgb(229, 233, 231)",
+      "rgb(104, 113, 111)",
+      "rgb(198, 206, 202)",
+      "rgb(32, 38, 38)",
+      "rgb(183, 76, 28)"
+    ],
+    "canvas": "rgb(247, 248, 250)",
+    "clientWidth": 305,
+    "defaultBlue": 0,
+    "fontFamilies": [
+      "\"DM Sans Variable\", \"Segoe UI\", sans-serif",
+      "\"Manrope Variable\", \"Segoe UI\", sans-serif"
+    ],
+    "metricOverflow": [],
+    "overflow": false,
+    "path": "/hod/activities/innovation-summit/departments/summit-programme/tasks/as-2/edit",
+    "scrollWidth": 305,
+    "unstyled": 0,
+    "width": 320
+  },
+  {
+    "bodyColor": "rgb(32, 38, 38)",
+    "borders": [
+      "rgba(0, 0, 0, 0)",
+      "rgb(229, 233, 231)",
+      "rgb(104, 113, 111)"
+    ],
+    "canvas": "rgb(247, 248, 250)",
+    "clientWidth": 305,
+    "defaultBlue": 0,
+    "fontFamilies": [
+      "\"DM Sans Variable\", \"Segoe UI\", sans-serif",
+      "\"Manrope Variable\", \"Segoe UI\", sans-serif"
+    ],
+    "metricOverflow": [],
+    "overflow": false,
+    "path": "/hod/activities/innovation-summit/departments/summit-programme/members",
+    "scrollWidth": 305,
+    "unstyled": 0,
+    "width": 320
+  },
+  {
+    "bodyColor": "rgb(32, 38, 38)",
+    "borders": [
+      "rgba(0, 0, 0, 0)",
+      "rgb(229, 233, 231)"
+    ],
+    "canvas": "rgb(247, 248, 250)",
+    "clientWidth": 305,
+    "defaultBlue": 0,
+    "fontFamilies": [
+      "\"DM Sans Variable\", \"Segoe UI\", sans-serif",
+      "\"Manrope Variable\", \"Segoe UI\", sans-serif"
+    ],
+    "metricOverflow": [],
+    "overflow": false,
+    "path": "/hod/activities/innovation-summit/departments/summit-programme/budget",
+    "scrollWidth": 305,
+    "unstyled": 0,
+    "width": 320
+  },
+  {
+    "bodyColor": "rgb(32, 38, 38)",
+    "borders": [
+      "rgba(0, 0, 0, 0)",
+      "rgb(229, 233, 231)",
+      "rgb(104, 113, 111)"
+    ],
+    "canvas": "rgb(247, 248, 250)",
+    "clientWidth": 305,
+    "defaultBlue": 0,
+    "fontFamilies": [
+      "\"DM Sans Variable\", \"Segoe UI\", sans-serif",
+      "\"Manrope Variable\", \"Segoe UI\", sans-serif"
+    ],
+    "metricOverflow": [],
+    "overflow": false,
+    "path": "/hod/activities/innovation-summit/departments/summit-programme/expenses",
+    "scrollWidth": 305,
+    "unstyled": 0,
+    "width": 320
+  },
+  {
+    "bodyColor": "rgb(32, 38, 38)",
+    "borders": [
+      "rgba(0, 0, 0, 0)",
+      "rgb(229, 233, 231)",
+      "rgb(198, 206, 202)"
+    ],
+    "canvas": "rgb(247, 248, 250)",
+    "clientWidth": 305,
+    "defaultBlue": 0,
+    "fontFamilies": [
+      "\"DM Sans Variable\", \"Segoe UI\", sans-serif",
+      "\"Manrope Variable\", \"Segoe UI\", sans-serif"
+    ],
+    "metricOverflow": [],
+    "overflow": false,
+    "path": "/hod/activities/innovation-summit/departments/summit-programme/history",
+    "scrollWidth": 305,
+    "unstyled": 0,
+    "width": 320
+  },
+  {
+    "bodyColor": "rgb(32, 38, 38)",
+    "borders": [
+      "rgba(0, 0, 0, 0)",
+      "rgb(229, 233, 231)"
+    ],
+    "canvas": "rgb(247, 248, 250)",
+    "clientWidth": 375,
+    "defaultBlue": 0,
+    "fontFamilies": [
+      "\"DM Sans Variable\", \"Segoe UI\", sans-serif",
+      "\"Manrope Variable\", \"Segoe UI\", sans-serif"
+    ],
+    "metricOverflow": [],
+    "overflow": false,
+    "path": "/hod",
+    "scrollWidth": 375,
+    "unstyled": 0,
+    "width": 390
+  },
+  {
+    "bodyColor": "rgb(32, 38, 38)",
+    "borders": [
+      "rgba(0, 0, 0, 0)",
+      "rgb(229, 233, 231)"
+    ],
+    "canvas": "rgb(247, 248, 250)",
+    "clientWidth": 375,
+    "defaultBlue": 0,
+    "fontFamilies": [
+      "\"DM Sans Variable\", \"Segoe UI\", sans-serif",
+      "\"Manrope Variable\", \"Segoe UI\", sans-serif"
+    ],
+    "metricOverflow": [],
+    "overflow": false,
+    "path": "/hod/activities/innovation-summit/departments/summit-programme",
+    "scrollWidth": 375,
+    "unstyled": 0,
+    "width": 390
+  },
+  {
+    "bodyColor": "rgb(32, 38, 38)",
+    "borders": [
+      "rgba(0, 0, 0, 0)",
+      "rgb(229, 233, 231)",
+      "rgb(104, 113, 111)",
+      "rgb(183, 76, 28)"
+    ],
+    "canvas": "rgb(247, 248, 250)",
+    "clientWidth": 375,
+    "defaultBlue": 0,
+    "fontFamilies": [
+      "\"DM Sans Variable\", \"Segoe UI\", sans-serif",
+      "\"Manrope Variable\", \"Segoe UI\", sans-serif"
+    ],
+    "metricOverflow": [],
+    "overflow": false,
+    "path": "/hod/activities/innovation-summit/departments/summit-programme/tasks",
+    "scrollWidth": 375,
+    "unstyled": 0,
+    "width": 390
+  },
+  {
+    "bodyColor": "rgb(32, 38, 38)",
+    "borders": [
+      "rgba(0, 0, 0, 0)",
+      "rgb(229, 233, 231)",
+      "rgb(104, 113, 111)",
+      "rgb(198, 206, 202)",
+      "rgb(32, 38, 38)",
+      "rgb(183, 76, 28)"
+    ],
+    "canvas": "rgb(247, 248, 250)",
+    "clientWidth": 375,
+    "defaultBlue": 0,
+    "fontFamilies": [
+      "\"DM Sans Variable\", \"Segoe UI\", sans-serif",
+      "\"Manrope Variable\", \"Segoe UI\", sans-serif"
+    ],
+    "metricOverflow": [],
+    "overflow": false,
+    "path": "/hod/activities/innovation-summit/departments/summit-programme/tasks/new",
+    "scrollWidth": 375,
+    "unstyled": 0,
+    "width": 390
+  },
+  {
+    "bodyColor": "rgb(32, 38, 38)",
+    "borders": [
+      "rgba(0, 0, 0, 0)",
+      "rgb(229, 233, 231)",
+      "rgb(183, 76, 28)"
+    ],
+    "canvas": "rgb(247, 248, 250)",
+    "clientWidth": 375,
+    "defaultBlue": 0,
+    "fontFamilies": [
+      "\"DM Sans Variable\", \"Segoe UI\", sans-serif",
+      "\"Manrope Variable\", \"Segoe UI\", sans-serif"
+    ],
+    "metricOverflow": [],
+    "overflow": false,
+    "path": "/hod/activities/innovation-summit/departments/summit-programme/tasks/as-2",
+    "scrollWidth": 375,
+    "unstyled": 0,
+    "width": 390
+  },
+  {
+    "bodyColor": "rgb(32, 38, 38)",
+    "borders": [
+      "rgba(0, 0, 0, 0)",
+      "rgb(229, 233, 231)",
+      "rgb(104, 113, 111)",
+      "rgb(198, 206, 202)",
+      "rgb(32, 38, 38)",
+      "rgb(183, 76, 28)"
+    ],
+    "canvas": "rgb(247, 248, 250)",
+    "clientWidth": 375,
+    "defaultBlue": 0,
+    "fontFamilies": [
+      "\"DM Sans Variable\", \"Segoe UI\", sans-serif",
+      "\"Manrope Variable\", \"Segoe UI\", sans-serif"
+    ],
+    "metricOverflow": [],
+    "overflow": false,
+    "path": "/hod/activities/innovation-summit/departments/summit-programme/tasks/as-2/edit",
+    "scrollWidth": 375,
+    "unstyled": 0,
+    "width": 390
+  },
+  {
+    "bodyColor": "rgb(32, 38, 38)",
+    "borders": [
+      "rgba(0, 0, 0, 0)",
+      "rgb(229, 233, 231)",
+      "rgb(104, 113, 111)"
+    ],
+    "canvas": "rgb(247, 248, 250)",
+    "clientWidth": 375,
+    "defaultBlue": 0,
+    "fontFamilies": [
+      "\"DM Sans Variable\", \"Segoe UI\", sans-serif",
+      "\"Manrope Variable\", \"Segoe UI\", sans-serif"
+    ],
+    "metricOverflow": [],
+    "overflow": false,
+    "path": "/hod/activities/innovation-summit/departments/summit-programme/members",
+    "scrollWidth": 375,
+    "unstyled": 0,
+    "width": 390
+  },
+  {
+    "bodyColor": "rgb(32, 38, 38)",
+    "borders": [
+      "rgba(0, 0, 0, 0)",
+      "rgb(229, 233, 231)"
+    ],
+    "canvas": "rgb(247, 248, 250)",
+    "clientWidth": 375,
+    "defaultBlue": 0,
+    "fontFamilies": [
+      "\"DM Sans Variable\", \"Segoe UI\", sans-serif",
+      "\"Manrope Variable\", \"Segoe UI\", sans-serif"
+    ],
+    "metricOverflow": [],
+    "overflow": false,
+    "path": "/hod/activities/innovation-summit/departments/summit-programme/budget",
+    "scrollWidth": 375,
+    "unstyled": 0,
+    "width": 390
+  },
+  {
+    "bodyColor": "rgb(32, 38, 38)",
+    "borders": [
+      "rgba(0, 0, 0, 0)",
+      "rgb(229, 233, 231)",
+      "rgb(104, 113, 111)"
+    ],
+    "canvas": "rgb(247, 248, 250)",
+    "clientWidth": 375,
+    "defaultBlue": 0,
+    "fontFamilies": [
+      "\"DM Sans Variable\", \"Segoe UI\", sans-serif",
+      "\"Manrope Variable\", \"Segoe UI\", sans-serif"
+    ],
+    "metricOverflow": [],
+    "overflow": false,
+    "path": "/hod/activities/innovation-summit/departments/summit-programme/expenses",
+    "scrollWidth": 375,
+    "unstyled": 0,
+    "width": 390
+  },
+  {
+    "bodyColor": "rgb(32, 38, 38)",
+    "borders": [
+      "rgba(0, 0, 0, 0)",
+      "rgb(229, 233, 231)",
+      "rgb(198, 206, 202)"
+    ],
+    "canvas": "rgb(247, 248, 250)",
+    "clientWidth": 375,
+    "defaultBlue": 0,
+    "fontFamilies": [
+      "\"DM Sans Variable\", \"Segoe UI\", sans-serif",
+      "\"Manrope Variable\", \"Segoe UI\", sans-serif"
+    ],
+    "metricOverflow": [],
+    "overflow": false,
+    "path": "/hod/activities/innovation-summit/departments/summit-programme/history",
+    "scrollWidth": 375,
+    "unstyled": 0,
+    "width": 390
+  },
+  {
+    "bodyColor": "rgb(32, 38, 38)",
+    "borders": [
+      "rgba(0, 0, 0, 0)",
+      "rgb(229, 233, 231)"
+    ],
+    "canvas": "rgb(247, 248, 250)",
+    "clientWidth": 805,
+    "defaultBlue": 0,
+    "fontFamilies": [
+      "\"DM Sans Variable\", \"Segoe UI\", sans-serif",
+      "\"Manrope Variable\", \"Segoe UI\", sans-serif"
+    ],
+    "metricOverflow": [],
+    "overflow": false,
+    "path": "/hod",
+    "scrollWidth": 805,
+    "unstyled": 0,
+    "width": 820
+  },
+  {
+    "bodyColor": "rgb(32, 38, 38)",
+    "borders": [
+      "rgba(0, 0, 0, 0)",
+      "rgb(229, 233, 231)"
+    ],
+    "canvas": "rgb(247, 248, 250)",
+    "clientWidth": 805,
+    "defaultBlue": 0,
+    "fontFamilies": [
+      "\"DM Sans Variable\", \"Segoe UI\", sans-serif",
+      "\"Manrope Variable\", \"Segoe UI\", sans-serif"
+    ],
+    "metricOverflow": [],
+    "overflow": false,
+    "path": "/hod/activities/innovation-summit/departments/summit-programme",
+    "scrollWidth": 805,
+    "unstyled": 0,
+    "width": 820
+  },
+  {
+    "bodyColor": "rgb(32, 38, 38)",
+    "borders": [
+      "rgba(0, 0, 0, 0)",
+      "rgb(229, 233, 231)",
+      "rgb(104, 113, 111)",
+      "rgb(183, 76, 28)"
+    ],
+    "canvas": "rgb(247, 248, 250)",
+    "clientWidth": 820,
+    "defaultBlue": 0,
+    "fontFamilies": [
+      "\"DM Sans Variable\", \"Segoe UI\", sans-serif",
+      "\"Manrope Variable\", \"Segoe UI\", sans-serif"
+    ],
+    "metricOverflow": [],
+    "overflow": false,
+    "path": "/hod/activities/innovation-summit/departments/summit-programme/tasks",
+    "scrollWidth": 820,
+    "unstyled": 0,
+    "width": 820
+  },
+  {
+    "bodyColor": "rgb(32, 38, 38)",
+    "borders": [
+      "rgba(0, 0, 0, 0)",
+      "rgb(229, 233, 231)",
+      "rgb(104, 113, 111)",
+      "rgb(198, 206, 202)",
+      "rgb(32, 38, 38)",
+      "rgb(183, 76, 28)"
+    ],
+    "canvas": "rgb(247, 248, 250)",
+    "clientWidth": 805,
+    "defaultBlue": 0,
+    "fontFamilies": [
+      "\"DM Sans Variable\", \"Segoe UI\", sans-serif",
+      "\"Manrope Variable\", \"Segoe UI\", sans-serif"
+    ],
+    "metricOverflow": [],
+    "overflow": false,
+    "path": "/hod/activities/innovation-summit/departments/summit-programme/tasks/new",
+    "scrollWidth": 805,
+    "unstyled": 0,
+    "width": 820
+  },
+  {
+    "bodyColor": "rgb(32, 38, 38)",
+    "borders": [
+      "rgba(0, 0, 0, 0)",
+      "rgb(229, 233, 231)",
+      "rgb(183, 76, 28)"
+    ],
+    "canvas": "rgb(247, 248, 250)",
+    "clientWidth": 805,
+    "defaultBlue": 0,
+    "fontFamilies": [
+      "\"DM Sans Variable\", \"Segoe UI\", sans-serif",
+      "\"Manrope Variable\", \"Segoe UI\", sans-serif"
+    ],
+    "metricOverflow": [],
+    "overflow": false,
+    "path": "/hod/activities/innovation-summit/departments/summit-programme/tasks/as-2",
+    "scrollWidth": 805,
+    "unstyled": 0,
+    "width": 820
+  },
+  {
+    "bodyColor": "rgb(32, 38, 38)",
+    "borders": [
+      "rgba(0, 0, 0, 0)",
+      "rgb(229, 233, 231)",
+      "rgb(104, 113, 111)",
+      "rgb(198, 206, 202)",
+      "rgb(32, 38, 38)",
+      "rgb(183, 76, 28)"
+    ],
+    "canvas": "rgb(247, 248, 250)",
+    "clientWidth": 805,
+    "defaultBlue": 0,
+    "fontFamilies": [
+      "\"DM Sans Variable\", \"Segoe UI\", sans-serif",
+      "\"Manrope Variable\", \"Segoe UI\", sans-serif"
+    ],
+    "metricOverflow": [],
+    "overflow": false,
+    "path": "/hod/activities/innovation-summit/departments/summit-programme/tasks/as-2/edit",
+    "scrollWidth": 805,
+    "unstyled": 0,
+    "width": 820
+  },
+  {
+    "bodyColor": "rgb(32, 38, 38)",
+    "borders": [
+      "rgba(0, 0, 0, 0)",
+      "rgb(229, 233, 231)",
+      "rgb(104, 113, 111)"
+    ],
+    "canvas": "rgb(247, 248, 250)",
+    "clientWidth": 805,
+    "defaultBlue": 0,
+    "fontFamilies": [
+      "\"DM Sans Variable\", \"Segoe UI\", sans-serif",
+      "\"Manrope Variable\", \"Segoe UI\", sans-serif"
+    ],
+    "metricOverflow": [],
+    "overflow": false,
+    "path": "/hod/activities/innovation-summit/departments/summit-programme/members",
+    "scrollWidth": 805,
+    "unstyled": 0,
+    "width": 820
+  },
+  {
+    "bodyColor": "rgb(32, 38, 38)",
+    "borders": [
+      "rgba(0, 0, 0, 0)",
+      "rgb(229, 233, 231)"
+    ],
+    "canvas": "rgb(247, 248, 250)",
+    "clientWidth": 805,
+    "defaultBlue": 0,
+    "fontFamilies": [
+      "\"DM Sans Variable\", \"Segoe UI\", sans-serif",
+      "\"Manrope Variable\", \"Segoe UI\", sans-serif"
+    ],
+    "metricOverflow": [],
+    "overflow": false,
+    "path": "/hod/activities/innovation-summit/departments/summit-programme/budget",
+    "scrollWidth": 805,
+    "unstyled": 0,
+    "width": 820
+  },
+  {
+    "bodyColor": "rgb(32, 38, 38)",
+    "borders": [
+      "rgba(0, 0, 0, 0)",
+      "rgb(229, 233, 231)",
+      "rgb(104, 113, 111)"
+    ],
+    "canvas": "rgb(247, 248, 250)",
+    "clientWidth": 805,
+    "defaultBlue": 0,
+    "fontFamilies": [
+      "\"DM Sans Variable\", \"Segoe UI\", sans-serif",
+      "\"Manrope Variable\", \"Segoe UI\", sans-serif"
+    ],
+    "metricOverflow": [],
+    "overflow": false,
+    "path": "/hod/activities/innovation-summit/departments/summit-programme/expenses",
+    "scrollWidth": 805,
+    "unstyled": 0,
+    "width": 820
+  },
+  {
+    "bodyColor": "rgb(32, 38, 38)",
+    "borders": [
+      "rgba(0, 0, 0, 0)",
+      "rgb(229, 233, 231)",
+      "rgb(198, 206, 202)"
+    ],
+    "canvas": "rgb(247, 248, 250)",
+    "clientWidth": 820,
+    "defaultBlue": 0,
+    "fontFamilies": [
+      "\"DM Sans Variable\", \"Segoe UI\", sans-serif",
+      "\"Manrope Variable\", \"Segoe UI\", sans-serif"
+    ],
+    "metricOverflow": [],
+    "overflow": false,
+    "path": "/hod/activities/innovation-summit/departments/summit-programme/history",
+    "scrollWidth": 820,
+    "unstyled": 0,
+    "width": 820
+  },
+  {
+    "bodyColor": "rgb(32, 38, 38)",
+    "borders": [
+      "rgba(0, 0, 0, 0)",
+      "rgb(229, 233, 231)"
+    ],
+    "canvas": "rgb(247, 248, 250)",
+    "clientWidth": 1425,
+    "defaultBlue": 0,
+    "fontFamilies": [
+      "\"DM Sans Variable\", \"Segoe UI\", sans-serif",
+      "\"Manrope Variable\", \"Segoe UI\", sans-serif"
+    ],
+    "metricOverflow": [],
+    "overflow": false,
+    "path": "/hod",
+    "scrollWidth": 1425,
+    "unstyled": 0,
+    "width": 1440
+  },
+  {
+    "bodyColor": "rgb(32, 38, 38)",
+    "borders": [
+      "rgba(0, 0, 0, 0)",
+      "rgb(229, 233, 231)"
+    ],
+    "canvas": "rgb(247, 248, 250)",
+    "clientWidth": 1425,
+    "defaultBlue": 0,
+    "fontFamilies": [
+      "\"DM Sans Variable\", \"Segoe UI\", sans-serif",
+      "\"Manrope Variable\", \"Segoe UI\", sans-serif"
+    ],
+    "metricOverflow": [],
+    "overflow": false,
+    "path": "/hod/activities/innovation-summit/departments/summit-programme",
+    "scrollWidth": 1425,
+    "unstyled": 0,
+    "width": 1440
+  },
+  {
+    "bodyColor": "rgb(32, 38, 38)",
+    "borders": [
+      "rgba(0, 0, 0, 0)",
+      "rgb(229, 233, 231)",
+      "rgb(104, 113, 111)",
+      "rgb(183, 76, 28)"
+    ],
+    "canvas": "rgb(247, 248, 250)",
+    "clientWidth": 1440,
+    "defaultBlue": 0,
+    "fontFamilies": [
+      "\"DM Sans Variable\", \"Segoe UI\", sans-serif",
+      "\"Manrope Variable\", \"Segoe UI\", sans-serif"
+    ],
+    "metricOverflow": [],
+    "overflow": false,
+    "path": "/hod/activities/innovation-summit/departments/summit-programme/tasks",
+    "scrollWidth": 1440,
+    "unstyled": 0,
+    "width": 1440
+  },
+  {
+    "bodyColor": "rgb(32, 38, 38)",
+    "borders": [
+      "rgba(0, 0, 0, 0)",
+      "rgb(229, 233, 231)",
+      "rgb(104, 113, 111)",
+      "rgb(198, 206, 202)",
+      "rgb(32, 38, 38)",
+      "rgb(183, 76, 28)"
+    ],
+    "canvas": "rgb(247, 248, 250)",
+    "clientWidth": 1425,
+    "defaultBlue": 0,
+    "fontFamilies": [
+      "\"DM Sans Variable\", \"Segoe UI\", sans-serif",
+      "\"Manrope Variable\", \"Segoe UI\", sans-serif"
+    ],
+    "metricOverflow": [],
+    "overflow": false,
+    "path": "/hod/activities/innovation-summit/departments/summit-programme/tasks/new",
+    "scrollWidth": 1425,
+    "unstyled": 0,
+    "width": 1440
+  },
+  {
+    "bodyColor": "rgb(32, 38, 38)",
+    "borders": [
+      "rgba(0, 0, 0, 0)",
+      "rgb(229, 233, 231)",
+      "rgb(183, 76, 28)"
+    ],
+    "canvas": "rgb(247, 248, 250)",
+    "clientWidth": 1425,
+    "defaultBlue": 0,
+    "fontFamilies": [
+      "\"DM Sans Variable\", \"Segoe UI\", sans-serif",
+      "\"Manrope Variable\", \"Segoe UI\", sans-serif"
+    ],
+    "metricOverflow": [],
+    "overflow": false,
+    "path": "/hod/activities/innovation-summit/departments/summit-programme/tasks/as-2",
+    "scrollWidth": 1425,
+    "unstyled": 0,
+    "width": 1440
+  },
+  {
+    "bodyColor": "rgb(32, 38, 38)",
+    "borders": [
+      "rgba(0, 0, 0, 0)",
+      "rgb(229, 233, 231)",
+      "rgb(104, 113, 111)",
+      "rgb(198, 206, 202)",
+      "rgb(32, 38, 38)",
+      "rgb(183, 76, 28)"
+    ],
+    "canvas": "rgb(247, 248, 250)",
+    "clientWidth": 1425,
+    "defaultBlue": 0,
+    "fontFamilies": [
+      "\"DM Sans Variable\", \"Segoe UI\", sans-serif",
+      "\"Manrope Variable\", \"Segoe UI\", sans-serif"
+    ],
+    "metricOverflow": [],
+    "overflow": false,
+    "path": "/hod/activities/innovation-summit/departments/summit-programme/tasks/as-2/edit",
+    "scrollWidth": 1425,
+    "unstyled": 0,
+    "width": 1440
+  },
+  {
+    "bodyColor": "rgb(32, 38, 38)",
+    "borders": [
+      "rgba(0, 0, 0, 0)",
+      "rgb(229, 233, 231)",
+      "rgb(104, 113, 111)"
+    ],
+    "canvas": "rgb(247, 248, 250)",
+    "clientWidth": 1425,
+    "defaultBlue": 0,
+    "fontFamilies": [
+      "\"DM Sans Variable\", \"Segoe UI\", sans-serif",
+      "\"Manrope Variable\", \"Segoe UI\", sans-serif"
+    ],
+    "metricOverflow": [],
+    "overflow": false,
+    "path": "/hod/activities/innovation-summit/departments/summit-programme/members",
+    "scrollWidth": 1425,
+    "unstyled": 0,
+    "width": 1440
+  },
+  {
+    "bodyColor": "rgb(32, 38, 38)",
+    "borders": [
+      "rgba(0, 0, 0, 0)",
+      "rgb(229, 233, 231)"
+    ],
+    "canvas": "rgb(247, 248, 250)",
+    "clientWidth": 1425,
+    "defaultBlue": 0,
+    "fontFamilies": [
+      "\"DM Sans Variable\", \"Segoe UI\", sans-serif",
+      "\"Manrope Variable\", \"Segoe UI\", sans-serif"
+    ],
+    "metricOverflow": [],
+    "overflow": false,
+    "path": "/hod/activities/innovation-summit/departments/summit-programme/budget",
+    "scrollWidth": 1425,
+    "unstyled": 0,
+    "width": 1440
+  },
+  {
+    "bodyColor": "rgb(32, 38, 38)",
+    "borders": [
+      "rgba(0, 0, 0, 0)",
+      "rgb(229, 233, 231)",
+      "rgb(104, 113, 111)"
+    ],
+    "canvas": "rgb(247, 248, 250)",
+    "clientWidth": 1425,
+    "defaultBlue": 0,
+    "fontFamilies": [
+      "\"DM Sans Variable\", \"Segoe UI\", sans-serif",
+      "\"Manrope Variable\", \"Segoe UI\", sans-serif"
+    ],
+    "metricOverflow": [],
+    "overflow": false,
+    "path": "/hod/activities/innovation-summit/departments/summit-programme/expenses",
+    "scrollWidth": 1425,
+    "unstyled": 0,
+    "width": 1440
+  },
+  {
+    "bodyColor": "rgb(32, 38, 38)",
+    "borders": [
+      "rgba(0, 0, 0, 0)",
+      "rgb(229, 233, 231)",
+      "rgb(198, 206, 202)"
+    ],
+    "canvas": "rgb(247, 248, 250)",
+    "clientWidth": 1440,
+    "defaultBlue": 0,
+    "fontFamilies": [
+      "\"DM Sans Variable\", \"Segoe UI\", sans-serif",
+      "\"Manrope Variable\", \"Segoe UI\", sans-serif"
+    ],
+    "metricOverflow": [],
+    "overflow": false,
+    "path": "/hod/activities/innovation-summit/departments/summit-programme/history",
+    "scrollWidth": 1440,
+    "unstyled": 0,
+    "width": 1440
+  }
+]

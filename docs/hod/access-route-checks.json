@@ -1,0 +1,32 @@
+[
+  {
+    "route": "/hod/activities/innovation-summit/departments/summit-logistics/tasks",
+    "expected": "Department access restricted",
+    "verified": true
+  },
+  {
+    "route": "/hod/activities/annual-dinner/departments/summit-programme/tasks",
+    "expected": "Department access restricted",
+    "verified": true
+  },
+  {
+    "route": "/hod/activities/innovation-summit/departments/summit-programme/tasks/as-1",
+    "expected": "Purchasing task unavailable",
+    "verified": true
+  },
+  {
+    "route": "/hod/activities/innovation-summit/departments/summit-programme/tasks/purchase-exp-2/edit",
+    "expected": "Submitted purchases are protected",
+    "verified": true
+  },
+  {
+    "route": "/director",
+    "expected": "Director access required",
+    "verified": true
+  },
+  {
+    "route": "/hod/no-such-page",
+    "expected": "This page isn’t in your department workspace",
+    "verified": true
+  }
+]

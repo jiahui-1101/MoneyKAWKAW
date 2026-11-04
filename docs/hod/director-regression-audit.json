@@ -1,0 +1,402 @@
+[
+  {
+    "fontFamilies": [
+      "\"Manrope Variable\", \"Segoe UI\", sans-serif",
+      "\"DM Sans Variable\", \"Segoe UI\", sans-serif"
+    ],
+    "metricOverflow": [],
+    "overflow": false,
+    "path": "/director",
+    "width": 320
+  },
+  {
+    "fontFamilies": [
+      "\"Manrope Variable\", \"Segoe UI\", sans-serif",
+      "\"DM Sans Variable\", \"Segoe UI\", sans-serif"
+    ],
+    "metricOverflow": [],
+    "overflow": false,
+    "path": "/director/activities",
+    "width": 320
+  },
+  {
+    "fontFamilies": [
+      "\"DM Sans Variable\", \"Segoe UI\", sans-serif",
+      "\"Manrope Variable\", \"Segoe UI\", sans-serif"
+    ],
+    "metricOverflow": [],
+    "overflow": false,
+    "path": "/director/activities/new",
+    "width": 320
+  },
+  {
+    "fontFamilies": [
+      "\"Manrope Variable\", \"Segoe UI\", sans-serif",
+      "\"DM Sans Variable\", \"Segoe UI\", sans-serif"
+    ],
+    "metricOverflow": [],
+    "overflow": false,
+    "path": "/director/activities/innovation-summit",
+    "width": 320
+  },
+  {
+    "fontFamilies": [
+      "\"DM Sans Variable\", \"Segoe UI\", sans-serif",
+      "\"Manrope Variable\", \"Segoe UI\", sans-serif"
+    ],
+    "metricOverflow": [],
+    "overflow": false,
+    "path": "/director/activities/innovation-summit/edit",
+    "width": 320
+  },
+  {
+    "fontFamilies": [
+      "\"Manrope Variable\", \"Segoe UI\", sans-serif",
+      "\"DM Sans Variable\", \"Segoe UI\", sans-serif"
+    ],
+    "metricOverflow": [],
+    "overflow": false,
+    "path": "/director/activities/innovation-summit/departments",
+    "width": 320
+  },
+  {
+    "fontFamilies": [
+      "\"Manrope Variable\", \"Segoe UI\", sans-serif",
+      "\"DM Sans Variable\", \"Segoe UI\", sans-serif"
+    ],
+    "metricOverflow": [],
+    "overflow": false,
+    "path": "/director/activities/innovation-summit/budget",
+    "width": 320
+  },
+  {
+    "fontFamilies": [
+      "\"Manrope Variable\", \"Segoe UI\", sans-serif",
+      "\"DM Sans Variable\", \"Segoe UI\", sans-serif"
+    ],
+    "metricOverflow": [],
+    "overflow": false,
+    "path": "/director/budgets",
+    "width": 320
+  },
+  {
+    "fontFamilies": [
+      "\"Manrope Variable\", \"Segoe UI\", sans-serif",
+      "\"DM Sans Variable\", \"Segoe UI\", sans-serif"
+    ],
+    "metricOverflow": [],
+    "overflow": false,
+    "path": "/director/history",
+    "width": 320
+  },
+  {
+    "fontFamilies": [
+      "\"Manrope Variable\", \"Segoe UI\", sans-serif",
+      "\"DM Sans Variable\", \"Segoe UI\", sans-serif"
+    ],
+    "metricOverflow": [],
+    "overflow": false,
+    "path": "/director/settings",
+    "width": 320
+  },
+  {
+    "fontFamilies": [
+      "\"Manrope Variable\", \"Segoe UI\", sans-serif",
+      "\"DM Sans Variable\", \"Segoe UI\", sans-serif"
+    ],
+    "metricOverflow": [],
+    "overflow": false,
+    "path": "/director",
+    "width": 390
+  },
+  {
+    "fontFamilies": [
+      "\"Manrope Variable\", \"Segoe UI\", sans-serif",
+      "\"DM Sans Variable\", \"Segoe UI\", sans-serif"
+    ],
+    "metricOverflow": [],
+    "overflow": false,
+    "path": "/director/activities",
+    "width": 390
+  },
+  {
+    "fontFamilies": [
+      "\"DM Sans Variable\", \"Segoe UI\", sans-serif",
+      "\"Manrope Variable\", \"Segoe UI\", sans-serif"
+    ],
+    "metricOverflow": [],
+    "overflow": false,
+    "path": "/director/activities/new",
+    "width": 390
+  },
+  {
+    "fontFamilies": [
+      "\"Manrope Variable\", \"Segoe UI\", sans-serif",
+      "\"DM Sans Variable\", \"Segoe UI\", sans-serif"
+    ],
+    "metricOverflow": [],
+    "overflow": false,
+    "path": "/director/activities/innovation-summit",
+    "width": 390
+  },
+  {
+    "fontFamilies": [
+      "\"DM Sans Variable\", \"Segoe UI\", sans-serif",
+      "\"Manrope Variable\", \"Segoe UI\", sans-serif"
+    ],
+    "metricOverflow": [],
+    "overflow": false,
+    "path": "/director/activities/innovation-summit/edit",
+    "width": 390
+  },
+  {
+    "fontFamilies": [
+      "\"Manrope Variable\", \"Segoe UI\", sans-serif",
+      "\"DM Sans Variable\", \"Segoe UI\", sans-serif"
+    ],
+    "metricOverflow": [],
+    "overflow": false,
+    "path": "/director/activities/innovation-summit/departments",
+    "width": 390
+  },
+  {
+    "fontFamilies": [
+      "\"Manrope Variable\", \"Segoe UI\", sans-serif",
+      "\"DM Sans Variable\", \"Segoe UI\", sans-serif"
+    ],
+    "metricOverflow": [],
+    "overflow": false,
+    "path": "/director/activities/innovation-summit/budget",
+    "width": 390
+  },
+  {
+    "fontFamilies": [
+      "\"Manrope Variable\", \"Segoe UI\", sans-serif",
+      "\"DM Sans Variable\", \"Segoe UI\", sans-serif"
+    ],
+    "metricOverflow": [],
+    "overflow": false,
+    "path": "/director/budgets",
+    "width": 390
+  },
+  {
+    "fontFamilies": [
+      "\"Manrope Variable\", \"Segoe UI\", sans-serif",
+      "\"DM Sans Variable\", \"Segoe UI\", sans-serif"
+    ],
+    "metricOverflow": [],
+    "overflow": false,
+    "path": "/director/history",
+    "width": 390
+  },
+  {
+    "fontFamilies": [
+      "\"Manrope Variable\", \"Segoe UI\", sans-serif",
+      "\"DM Sans Variable\", \"Segoe UI\", sans-serif"
+    ],
+    "metricOverflow": [],
+    "overflow": false,
+    "path": "/director/settings",
+    "width": 390
+  },
+  {
+    "fontFamilies": [
+      "\"Manrope Variable\", \"Segoe UI\", sans-serif",
+      "\"DM Sans Variable\", \"Segoe UI\", sans-serif"
+    ],
+    "metricOverflow": [],
+    "overflow": false,
+    "path": "/director",
+    "width": 820
+  },
+  {
+    "fontFamilies": [
+      "\"Manrope Variable\", \"Segoe UI\", sans-serif",
+      "\"DM Sans Variable\", \"Segoe UI\", sans-serif"
+    ],
+    "metricOverflow": [],
+    "overflow": false,
+    "path": "/director/activities",
+    "width": 820
+  },
+  {
+    "fontFamilies": [
+      "\"DM Sans Variable\", \"Segoe UI\", sans-serif",
+      "\"Manrope Variable\", \"Segoe UI\", sans-serif"
+    ],
+    "metricOverflow": [],
+    "overflow": false,
+    "path": "/director/activities/new",
+    "width": 820
+  },
+  {
+    "fontFamilies": [
+      "\"Manrope Variable\", \"Segoe UI\", sans-serif",
+      "\"DM Sans Variable\", \"Segoe UI\", sans-serif"
+    ],
+    "metricOverflow": [],
+    "overflow": false,
+    "path": "/director/activities/innovation-summit",
+    "width": 820
+  },
+  {
+    "fontFamilies": [
+      "\"DM Sans Variable\", \"Segoe UI\", sans-serif",
+      "\"Manrope Variable\", \"Segoe UI\", sans-serif"
+    ],
+    "metricOverflow": [],
+    "overflow": false,
+    "path": "/director/activities/innovation-summit/edit",
+    "width": 820
+  },
+  {
+    "fontFamilies": [
+      "\"Manrope Variable\", \"Segoe UI\", sans-serif",
+      "\"DM Sans Variable\", \"Segoe UI\", sans-serif"
+    ],
+    "metricOverflow": [],
+    "overflow": false,
+    "path": "/director/activities/innovation-summit/departments",
+    "width": 820
+  },
+  {
+    "fontFamilies": [
+      "\"Manrope Variable\", \"Segoe UI\", sans-serif",
+      "\"DM Sans Variable\", \"Segoe UI\", sans-serif"
+    ],
+    "metricOverflow": [],
+    "overflow": false,
+    "path": "/director/activities/innovation-summit/budget",
+    "width": 820
+  },
+  {
+    "fontFamilies": [
+      "\"Manrope Variable\", \"Segoe UI\", sans-serif",
+      "\"DM Sans Variable\", \"Segoe UI\", sans-serif"
+    ],
+    "metricOverflow": [],
+    "overflow": false,
+    "path": "/director/budgets",
+    "width": 820
+  },
+  {
+    "fontFamilies": [
+      "\"Manrope Variable\", \"Segoe UI\", sans-serif",
+      "\"DM Sans Variable\", \"Segoe UI\", sans-serif"
+    ],
+    "metricOverflow": [],
+    "overflow": false,
+    "path": "/director/history",
+    "width": 820
+  },
+  {
+    "fontFamilies": [
+      "\"Manrope Variable\", \"Segoe UI\", sans-serif",
+      "\"DM Sans Variable\", \"Segoe UI\", sans-serif"
+    ],
+    "metricOverflow": [],
+    "overflow": false,
+    "path": "/director/settings",
+    "width": 820
+  },
+  {
+    "fontFamilies": [
+      "\"Manrope Variable\", \"Segoe UI\", sans-serif",
+      "\"DM Sans Variable\", \"Segoe UI\", sans-serif"
+    ],
+    "metricOverflow": [],
+    "overflow": false,
+    "path": "/director",
+    "width": 1440
+  },
+  {
+    "fontFamilies": [
+      "\"Manrope Variable\", \"Segoe UI\", sans-serif",
+      "\"DM Sans Variable\", \"Segoe UI\", sans-serif"
+    ],
+    "metricOverflow": [],
+    "overflow": false,
+    "path": "/director/activities",
+    "width": 1440
+  },
+  {
+    "fontFamilies": [
+      "\"DM Sans Variable\", \"Segoe UI\", sans-serif",
+      "\"Manrope Variable\", \"Segoe UI\", sans-serif"
+    ],
+    "metricOverflow": [],
+    "overflow": false,
+    "path": "/director/activities/new",
+    "width": 1440
+  },
+  {
+    "fontFamilies": [
+      "\"Manrope Variable\", \"Segoe UI\", sans-serif",
+      "\"DM Sans Variable\", \"Segoe UI\", sans-serif"
+    ],
+    "metricOverflow": [],
+    "overflow": false,
+    "path": "/director/activities/innovation-summit",
+    "width": 1440
+  },
+  {
+    "fontFamilies": [
+      "\"DM Sans Variable\", \"Segoe UI\", sans-serif",
+      "\"Manrope Variable\", \"Segoe UI\", sans-serif"
+    ],
+    "metricOverflow": [],
+    "overflow": false,
+    "path": "/director/activities/innovation-summit/edit",
+    "width": 1440
+  },
+  {
+    "fontFamilies": [
+      "\"Manrope Variable\", \"Segoe UI\", sans-serif",
+      "\"DM Sans Variable\", \"Segoe UI\", sans-serif"
+    ],
+    "metricOverflow": [],
+    "overflow": false,
+    "path": "/director/activities/innovation-summit/departments",
+    "width": 1440
+  },
+  {
+    "fontFamilies": [
+      "\"Manrope Variable\", \"Segoe UI\", sans-serif",
+      "\"DM Sans Variable\", \"Segoe UI\", sans-serif"
+    ],
+    "metricOverflow": [],
+    "overflow": false,
+    "path": "/director/activities/innovation-summit/budget",
+    "width": 1440
+  },
+  {
+    "fontFamilies": [
+      "\"Manrope Variable\", \"Segoe UI\", sans-serif",
+      "\"DM Sans Variable\", \"Segoe UI\", sans-serif"
+    ],
+    "metricOverflow": [],
+    "overflow": false,
+    "path": "/director/budgets",
+    "width": 1440
+  },
+  {
+    "fontFamilies": [
+      "\"Manrope Variable\", \"Segoe UI\", sans-serif",
+      "\"DM Sans Variable\", \"Segoe UI\", sans-serif"
+    ],
+    "metricOverflow": [],
+    "overflow": false,
+    "path": "/director/history",
+    "width": 1440
+  },
+  {
+    "fontFamilies": [
+      "\"Manrope Variable\", \"Segoe UI\", sans-serif",
+      "\"DM Sans Variable\", \"Segoe UI\", sans-serif"
+    ],
+    "metricOverflow": [],
+    "overflow": false,
+    "path": "/director/settings",
+    "width": 1440
+  }
+]
