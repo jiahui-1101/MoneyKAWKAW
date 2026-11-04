@@ -589,6 +589,18 @@ select[aria-invalid='true'] { border-color: var(--danger); background-color: var
   }
 }
 @media (max-width: 760px) {
+  .table-scroll::before {
+    content: '↔ Scroll horizontally to view all columns';
+    display: block;
+    position: sticky;
+    left: 0;
+    padding: 10px 17px;
+    color: var(--muted);
+    background: var(--surface-soft);
+    border-top: 1px solid var(--line);
+    border-bottom: 1px solid var(--line);
+    font: 10px var(--font-body);
+  }
   .topbar:has(.demo-profile) {
     flex-wrap: wrap;
     height: auto;
