@@ -149,7 +149,7 @@ export function AccountForm({ id, onClose }: { id?: string; onClose: () => void 
                 autoComplete="off"
               />
             </Field>
-            <label className="member-check">
+            <label className="member-check-field">
               <input
                 type="checkbox"
                 checked={form.isDefault}

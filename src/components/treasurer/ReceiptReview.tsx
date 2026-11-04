@@ -102,7 +102,10 @@ export function ReceiptEvidenceView({
           subtitle="Line annotations show corrections and exclusions; the source image is preserved"
         >
           <div className="treasury-annotation">
-            <span className="eyebrow">FINAL CLAIM · {receipt.id}</span>
+            <span className="eyebrow">
+              {receipt.expenseId ? 'FINAL CLAIM' : 'DRAFT REVIEW'} ·{' '}
+              {receipt.expenseId || receipt.id}
+            </span>
             <h3>{receipt.merchant}</h3>
             {lines.map((l) => (
               <div
@@ -133,7 +136,9 @@ export function ReceiptEvidenceView({
             </div>
             <Badge tone={total === amount ? 'green' : 'danger'}>
               {total === amount
-                ? 'Reconciles to submitted amount'
+                ? receipt.expenseId
+                  ? 'Reconciles to submitted amount'
+                  : 'Draft amount reconciles'
                 : 'Amount mismatch · approval blocked'}
             </Badge>
             <p className="field-hint">
@@ -264,7 +269,7 @@ export function ReceiptEvidenceView({
             </p>
             <details>
               <summary>View retained source text</summary>
-              <pre className="receipt-raw">
+              <pre className="receipt-raw" tabIndex={0} aria-label="Retained receipt source text">
                 {receipt.extraction.rawText ||
                   'Manually transcribed from the uploaded image; no machine extraction was performed.'}
               </pre>

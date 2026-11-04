@@ -212,7 +212,9 @@ export function ReceiptBaselineForm({
         {suggestion.rawText && (
           <details>
             <summary>View actual recognized text</summary>
-            <pre className="receipt-raw">{suggestion.rawText}</pre>
+            <pre className="receipt-raw" tabIndex={0} aria-label="Recognized receipt source text">
+              {suggestion.rawText}
+            </pre>
           </details>
         )}
         {error && (

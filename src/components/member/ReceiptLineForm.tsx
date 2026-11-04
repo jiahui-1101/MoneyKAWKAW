@@ -96,7 +96,7 @@ export function ReceiptLineForm({
             <option value="discount">Discount (subtracts)</option>
           </select>
         </Field>
-        <label className="member-check">
+        <label className="member-check-field">
           <input
             type="checkbox"
             checked={quantityMode}
@@ -141,7 +141,7 @@ export function ReceiptLineForm({
           </Field>
         )}
         {line && (
-          <label className="member-check">
+          <label className="member-check-field">
             <input
               type="checkbox"
               checked={excluded}

@@ -207,7 +207,7 @@
   margin: 5px 0;
   color: var(--ink);
 }
-.member-check {
+.member-check-field {
   display: flex;
   align-items: flex-start;
   gap: 12px;
@@ -215,7 +215,7 @@
   font-size: 12px;
   line-height: 1.8;
 }
-.member-check input {
+.member-check-field input {
   appearance: none;
   width: 20px;
   height: 20px;
@@ -227,17 +227,17 @@
   border-radius: 4px;
   background: var(--surface);
 }
-.member-check input:checked {
+.member-check-field input:checked {
   background: var(--green);
   border-color: var(--green);
 }
-.member-check input:checked::after {
+.member-check-field input:checked::after {
   content: '✓';
   font-size: 14px;
   color: var(--surface);
   font-weight: 750;
 }
-.member-check input:disabled {
+.member-check-field input:disabled {
   opacity: 0.5;
   cursor: not-allowed;
 }

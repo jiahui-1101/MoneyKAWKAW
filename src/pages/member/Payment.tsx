@@ -268,7 +268,7 @@ export function MemberPayment() {
               />
             </Field>
             {dialog === 'confirm' ? (
-              <label className="member-check">
+              <label className="member-check-field">
                 <input type="checkbox" checked={ack} onChange={(e) => setAck(e.target.checked)} />
                 <span>I have actually received the full recorded amount.</span>
               </label>
