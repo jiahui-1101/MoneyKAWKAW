@@ -38,8 +38,8 @@ export function treasuryEvent(store: Store, claimId: string, action: string, det
 // Serialize local commands across tabs where Web Locks are available. APIs must repeat these checks.
 let queue=Promise.resolve();
 export function treasuryWrite<T>(operation:()=>Promise<T>):Promise<T> {
-  const perform=()=>typeof navigator!=='undefined' && navigator.locks
-    ?navigator.locks.request('moneykawkaw-ledger',operation):operation();
+  const perform=async():Promise<T>=>typeof navigator!=='undefined' && navigator.locks
+    ?await navigator.locks.request('moneykawkaw-ledger',operation):await operation();
   const next=queue.then(perform,perform);
   queue=next.then(()=>undefined,()=>undefined);
   return next;

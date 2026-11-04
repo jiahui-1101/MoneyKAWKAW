@@ -2,7 +2,7 @@ import { ArrowRight, ShieldCheck, Wallet } from 'lucide-react';
 import type { ReactNode } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useSession } from '../context/session-context';
-import { demoProfiles, type DemoActor } from '../domain/session';
+import { demoProfiles, roleHome, type DemoActor } from '../domain/session';
 import { Empty, PageHeader, Panel } from './ui';
 
 export function DemoRoleSwitcher() {
@@ -16,7 +16,7 @@ export function DemoRoleSwitcher() {
       onChange={(e) => {
         const profile = demoProfiles.find((p) => p.userId === e.target.value)!;
         select(profile.userId);
-        navigate(profile.role === 'Director' ? '/director' : '/hod');
+        navigate(roleHome(profile.role));
       }}
     >
       {demoProfiles.map((p) => (
@@ -37,7 +37,7 @@ export function RoleGate({ role, children }: { role: DemoActor['role']; children
         title={`${role} access required`}
         action={
           <div className="row wrap">
-            <Link className="btn primary" to={actor.role === 'HOD' ? '/hod' : '/director'}>
+            <Link className="btn primary" to={roleHome(actor.role)}>
               Return to my workspace
             </Link>
             <Link className="btn" to="/demo">
@@ -79,7 +79,7 @@ export function DemoAccess() {
               key={profile.userId}
               onClick={() => {
                 select(profile.userId);
-                navigate(profile.role === 'HOD' ? '/hod' : '/director');
+                navigate(roleHome(profile.role));
               }}
             >
               <span className="department-icon">
@@ -89,7 +89,7 @@ export function DemoAccess() {
               <p>
                 {profile.role === 'Director'
                   ? 'Activity setup & club financial oversight'
-                  : 'Assigned department purchasing & team oversight'}
+                  : profile.role==='Treasurer'?'Claim review & reimbursement oversight':'Assigned department purchasing & team oversight'}
               </p>
               <span className="text-link">
                 Open {profile.role} workspace <ArrowRight size={15} />
@@ -99,8 +99,7 @@ export function DemoAccess() {
         </div>
       </Panel>
       <p className="data-note">
-        HOD profiles have explicit scoped memberships. No Treasurer or Member workspace is available
-        in this phase.
+        HOD memberships and Treasurer activity grants are explicit. Member submission and receipt confirmation are reserved for a future phase.
       </p>
     </main>
   );
