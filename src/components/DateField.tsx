@@ -7,11 +7,12 @@ interface Props {
   onChange: (value: string) => void;
   invalid?: boolean;
   min?: string;
+  calendarLabel?: string;
 }
 function isoDate(year: number, month: number, day: number) {
   return `${year}-${String(month + 1).padStart(2, '0')}-${String(day).padStart(2, '0')}`;
 }
-export function DateField({ id, value, onChange, invalid, min }: Props) {
+export function DateField({ id, value, onChange, invalid, min, calendarLabel }: Props) {
   const parsed = /^\d{4}-\d{2}-\d{2}$/.test(value) ? new Date(`${value}T12:00:00`) : new Date();
   const today = Number.isNaN(parsed.getTime()) ? new Date() : parsed;
   const [month, setMonth] = useState(today.getMonth());
@@ -67,7 +68,7 @@ export function DateField({ id, value, onChange, invalid, min }: Props) {
           type="button"
           ref={trigger}
           className="icon-btn"
-          aria-label={`Choose ${id === 'startDate' ? 'start' : 'end'} date`}
+          aria-label={calendarLabel ?? `Choose ${id === 'startDate' ? 'start' : 'end'} date`}
           aria-expanded={open}
           aria-controls={`${id}-calendar`}
           onClick={() => {
