@@ -1,0 +1,134 @@
+[
+  {
+    "defaultBlue": 0,
+    "fontFamilies": [
+      "\"Manrope Variable\", \"Segoe UI\", sans-serif",
+      "\"DM Sans Variable\", \"Segoe UI\", sans-serif"
+    ],
+    "heading": "A little clarity. A bigger impact.",
+    "overflow": false,
+    "path": "/director",
+    "unstyledControls": 0,
+    "width": 390
+  },
+  {
+    "defaultBlue": 0,
+    "fontFamilies": [
+      "\"Manrope Variable\", \"Segoe UI\", sans-serif",
+      "\"DM Sans Variable\", \"Segoe UI\", sans-serif"
+    ],
+    "heading": "Good ideas start here.",
+    "overflow": false,
+    "path": "/director/activities",
+    "unstyledControls": 0,
+    "width": 390
+  },
+  {
+    "defaultBlue": 0,
+    "fontFamilies": [
+      "\"DM Sans Variable\", \"Segoe UI\", sans-serif",
+      "\"Manrope Variable\", \"Segoe UI\", sans-serif"
+    ],
+    "heading": "Create your next activity.",
+    "overflow": false,
+    "path": "/director/activities/new",
+    "unstyledControls": 0,
+    "width": 390
+  },
+  {
+    "defaultBlue": 0,
+    "fontFamilies": [
+      "\"DM Sans Variable\", \"Segoe UI\", sans-serif",
+      "\"Manrope Variable\", \"Segoe UI\", sans-serif"
+    ],
+    "heading": "Innovation Summit 2026",
+    "overflow": false,
+    "path": "/director/activities/innovation-summit",
+    "unstyledControls": 0,
+    "width": 390
+  },
+  {
+    "defaultBlue": 0,
+    "fontFamilies": [
+      "\"DM Sans Variable\", \"Segoe UI\", sans-serif",
+      "\"Manrope Variable\", \"Segoe UI\", sans-serif"
+    ],
+    "heading": "Refine the plan.",
+    "overflow": false,
+    "path": "/director/activities/innovation-summit/edit",
+    "unstyledControls": 0,
+    "width": 390
+  },
+  {
+    "defaultBlue": 0,
+    "fontFamilies": [
+      "\"DM Sans Variable\", \"Segoe UI\", sans-serif",
+      "\"Manrope Variable\", \"Segoe UI\", sans-serif"
+    ],
+    "heading": "Innovation Summit 2026",
+    "overflow": false,
+    "path": "/director/activities/innovation-summit/departments",
+    "unstyledControls": 0,
+    "width": 390
+  },
+  {
+    "defaultBlue": 0,
+    "fontFamilies": [
+      "\"DM Sans Variable\", \"Segoe UI\", sans-serif",
+      "\"Manrope Variable\", \"Segoe UI\", sans-serif"
+    ],
+    "heading": "Community Impact Day",
+    "overflow": false,
+    "path": "/director/activities/community-day/budget",
+    "unstyledControls": 0,
+    "width": 390
+  },
+  {
+    "defaultBlue": 0,
+    "fontFamilies": [
+      "\"Manrope Variable\", \"Segoe UI\", sans-serif",
+      "\"DM Sans Variable\", \"Segoe UI\", sans-serif"
+    ],
+    "heading": "Every budget. One clear picture.",
+    "overflow": false,
+    "path": "/director/budgets",
+    "unstyledControls": 0,
+    "width": 390
+  },
+  {
+    "defaultBlue": 0,
+    "fontFamilies": [
+      "\"Manrope Variable\", \"Segoe UI\", sans-serif",
+      "\"DM Sans Variable\", \"Segoe UI\", sans-serif"
+    ],
+    "heading": "Every change has a story.",
+    "overflow": false,
+    "path": "/director/history",
+    "unstyledControls": 0,
+    "width": 390
+  },
+  {
+    "defaultBlue": 0,
+    "fontFamilies": [
+      "\"Manrope Variable\", \"Segoe UI\", sans-serif",
+      "\"DM Sans Variable\", \"Segoe UI\", sans-serif"
+    ],
+    "heading": "The details behind the clarity.",
+    "overflow": false,
+    "path": "/director/settings",
+    "unstyledControls": 0,
+    "width": 390
+  },
+  {
+    "defaultBlue": 0,
+    "fontFamilies": [
+      "\"Manrope Variable\", \"Segoe UI\", sans-serif",
+      "\"DM Sans Variable\", \"Segoe UI\", sans-serif"
+    ],
+    "heading": "This page isn’t in your workspace",
+    "overflow": false,
+    "path": "/director/unknown",
+    "unstyledControls": 0,
+    "width": 390
+  }
+]

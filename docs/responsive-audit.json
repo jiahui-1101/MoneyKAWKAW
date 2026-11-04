@@ -1,0 +1,282 @@
+[
+  {
+    "clientWidth": 305,
+    "overflow": false,
+    "path": "/director",
+    "scrollWidth": 305,
+    "width": 320
+  },
+  {
+    "clientWidth": 305,
+    "overflow": false,
+    "path": "/director/activities",
+    "scrollWidth": 305,
+    "width": 320
+  },
+  {
+    "clientWidth": 305,
+    "overflow": false,
+    "path": "/director/activities/new",
+    "scrollWidth": 305,
+    "width": 320
+  },
+  {
+    "clientWidth": 305,
+    "overflow": false,
+    "path": "/director/activities/innovation-summit",
+    "scrollWidth": 305,
+    "width": 320
+  },
+  {
+    "clientWidth": 305,
+    "overflow": false,
+    "path": "/director/activities/innovation-summit/edit",
+    "scrollWidth": 305,
+    "width": 320
+  },
+  {
+    "clientWidth": 305,
+    "overflow": false,
+    "path": "/director/activities/innovation-summit/departments",
+    "scrollWidth": 305,
+    "width": 320
+  },
+  {
+    "clientWidth": 305,
+    "overflow": false,
+    "path": "/director/activities/community-day/budget",
+    "scrollWidth": 305,
+    "width": 320
+  },
+  {
+    "clientWidth": 305,
+    "overflow": false,
+    "path": "/director/budgets",
+    "scrollWidth": 305,
+    "width": 320
+  },
+  {
+    "clientWidth": 320,
+    "overflow": false,
+    "path": "/director/history",
+    "scrollWidth": 320,
+    "width": 320
+  },
+  {
+    "clientWidth": 305,
+    "overflow": false,
+    "path": "/director/settings",
+    "scrollWidth": 305,
+    "width": 320
+  },
+  {
+    "clientWidth": 375,
+    "overflow": false,
+    "path": "/director",
+    "scrollWidth": 375,
+    "width": 390
+  },
+  {
+    "clientWidth": 375,
+    "overflow": false,
+    "path": "/director/activities",
+    "scrollWidth": 375,
+    "width": 390
+  },
+  {
+    "clientWidth": 375,
+    "overflow": false,
+    "path": "/director/activities/new",
+    "scrollWidth": 375,
+    "width": 390
+  },
+  {
+    "clientWidth": 375,
+    "overflow": false,
+    "path": "/director/activities/innovation-summit",
+    "scrollWidth": 375,
+    "width": 390
+  },
+  {
+    "clientWidth": 375,
+    "overflow": false,
+    "path": "/director/activities/innovation-summit/edit",
+    "scrollWidth": 375,
+    "width": 390
+  },
+  {
+    "clientWidth": 375,
+    "overflow": false,
+    "path": "/director/activities/innovation-summit/departments",
+    "scrollWidth": 375,
+    "width": 390
+  },
+  {
+    "clientWidth": 375,
+    "overflow": false,
+    "path": "/director/activities/community-day/budget",
+    "scrollWidth": 375,
+    "width": 390
+  },
+  {
+    "clientWidth": 375,
+    "overflow": false,
+    "path": "/director/budgets",
+    "scrollWidth": 375,
+    "width": 390
+  },
+  {
+    "clientWidth": 390,
+    "overflow": false,
+    "path": "/director/history",
+    "scrollWidth": 390,
+    "width": 390
+  },
+  {
+    "clientWidth": 375,
+    "overflow": false,
+    "path": "/director/settings",
+    "scrollWidth": 375,
+    "width": 390
+  },
+  {
+    "clientWidth": 805,
+    "overflow": false,
+    "path": "/director",
+    "scrollWidth": 805,
+    "width": 820
+  },
+  {
+    "clientWidth": 805,
+    "overflow": false,
+    "path": "/director/activities",
+    "scrollWidth": 805,
+    "width": 820
+  },
+  {
+    "clientWidth": 805,
+    "overflow": false,
+    "path": "/director/activities/new",
+    "scrollWidth": 805,
+    "width": 820
+  },
+  {
+    "clientWidth": 805,
+    "overflow": false,
+    "path": "/director/activities/innovation-summit",
+    "scrollWidth": 805,
+    "width": 820
+  },
+  {
+    "clientWidth": 805,
+    "overflow": false,
+    "path": "/director/activities/innovation-summit/edit",
+    "scrollWidth": 805,
+    "width": 820
+  },
+  {
+    "clientWidth": 805,
+    "overflow": false,
+    "path": "/director/activities/innovation-summit/departments",
+    "scrollWidth": 805,
+    "width": 820
+  },
+  {
+    "clientWidth": 805,
+    "overflow": false,
+    "path": "/director/activities/community-day/budget",
+    "scrollWidth": 805,
+    "width": 820
+  },
+  {
+    "clientWidth": 805,
+    "overflow": false,
+    "path": "/director/budgets",
+    "scrollWidth": 805,
+    "width": 820
+  },
+  {
+    "clientWidth": 820,
+    "overflow": false,
+    "path": "/director/history",
+    "scrollWidth": 820,
+    "width": 820
+  },
+  {
+    "clientWidth": 805,
+    "overflow": false,
+    "path": "/director/settings",
+    "scrollWidth": 805,
+    "width": 820
+  },
+  {
+    "clientWidth": 1425,
+    "overflow": false,
+    "path": "/director",
+    "scrollWidth": 1425,
+    "width": 1440
+  },
+  {
+    "clientWidth": 1425,
+    "overflow": false,
+    "path": "/director/activities",
+    "scrollWidth": 1425,
+    "width": 1440
+  },
+  {
+    "clientWidth": 1425,
+    "overflow": false,
+    "path": "/director/activities/new",
+    "scrollWidth": 1425,
+    "width": 1440
+  },
+  {
+    "clientWidth": 1425,
+    "overflow": false,
+    "path": "/director/activities/innovation-summit",
+    "scrollWidth": 1425,
+    "width": 1440
+  },
+  {
+    "clientWidth": 1425,
+    "overflow": false,
+    "path": "/director/activities/innovation-summit/edit",
+    "scrollWidth": 1425,
+    "width": 1440
+  },
+  {
+    "clientWidth": 1425,
+    "overflow": false,
+    "path": "/director/activities/innovation-summit/departments",
+    "scrollWidth": 1425,
+    "width": 1440
+  },
+  {
+    "clientWidth": 1425,
+    "overflow": false,
+    "path": "/director/activities/community-day/budget",
+    "scrollWidth": 1425,
+    "width": 1440
+  },
+  {
+    "clientWidth": 1425,
+    "overflow": false,
+    "path": "/director/budgets",
+    "scrollWidth": 1425,
+    "width": 1440
+  },
+  {
+    "clientWidth": 1440,
+    "overflow": false,
+    "path": "/director/history",
+    "scrollWidth": 1440,
+    "width": 1440
+  },
+  {
+    "clientWidth": 1440,
+    "overflow": false,
+    "path": "/director/settings",
+    "scrollWidth": 1440,
+    "width": 1440
+  }
+]

@@ -1,0 +1,145 @@
+[
+  {
+    "bodyColor": "rgb(32, 38, 38)",
+    "canvas": "rgb(247, 248, 250)",
+    "defaultBlue": 0,
+    "fontFamilies": [
+      "\"Manrope Variable\", \"Segoe UI\", sans-serif",
+      "\"DM Sans Variable\", \"Segoe UI\", sans-serif"
+    ],
+    "overflow": false,
+    "path": "/director",
+    "unstyledControls": 0,
+    "width": 1440
+  },
+  {
+    "bodyColor": "rgb(32, 38, 38)",
+    "canvas": "rgb(247, 248, 250)",
+    "defaultBlue": 0,
+    "fontFamilies": [
+      "\"Manrope Variable\", \"Segoe UI\", sans-serif",
+      "\"DM Sans Variable\", \"Segoe UI\", sans-serif"
+    ],
+    "overflow": false,
+    "path": "/director/activities",
+    "unstyledControls": 0,
+    "width": 1440
+  },
+  {
+    "bodyColor": "rgb(32, 38, 38)",
+    "canvas": "rgb(247, 248, 250)",
+    "defaultBlue": 0,
+    "fontFamilies": [
+      "\"DM Sans Variable\", \"Segoe UI\", sans-serif",
+      "\"Manrope Variable\", \"Segoe UI\", sans-serif"
+    ],
+    "overflow": false,
+    "path": "/director/activities/new",
+    "unstyledControls": 0,
+    "width": 1440
+  },
+  {
+    "bodyColor": "rgb(32, 38, 38)",
+    "canvas": "rgb(247, 248, 250)",
+    "defaultBlue": 0,
+    "fontFamilies": [
+      "\"DM Sans Variable\", \"Segoe UI\", sans-serif",
+      "\"Manrope Variable\", \"Segoe UI\", sans-serif"
+    ],
+    "overflow": false,
+    "path": "/director/activities/innovation-summit",
+    "unstyledControls": 0,
+    "width": 1440
+  },
+  {
+    "bodyColor": "rgb(32, 38, 38)",
+    "canvas": "rgb(247, 248, 250)",
+    "defaultBlue": 0,
+    "fontFamilies": [
+      "\"DM Sans Variable\", \"Segoe UI\", sans-serif",
+      "\"Manrope Variable\", \"Segoe UI\", sans-serif"
+    ],
+    "overflow": false,
+    "path": "/director/activities/innovation-summit/edit",
+    "unstyledControls": 0,
+    "width": 1440
+  },
+  {
+    "bodyColor": "rgb(32, 38, 38)",
+    "canvas": "rgb(247, 248, 250)",
+    "defaultBlue": 0,
+    "fontFamilies": [
+      "\"DM Sans Variable\", \"Segoe UI\", sans-serif",
+      "\"Manrope Variable\", \"Segoe UI\", sans-serif"
+    ],
+    "overflow": false,
+    "path": "/director/activities/innovation-summit/departments",
+    "unstyledControls": 0,
+    "width": 1440
+  },
+  {
+    "bodyColor": "rgb(32, 38, 38)",
+    "canvas": "rgb(247, 248, 250)",
+    "defaultBlue": 0,
+    "fontFamilies": [
+      "\"DM Sans Variable\", \"Segoe UI\", sans-serif",
+      "\"Manrope Variable\", \"Segoe UI\", sans-serif"
+    ],
+    "overflow": false,
+    "path": "/director/activities/community-day/budget",
+    "unstyledControls": 0,
+    "width": 1440
+  },
+  {
+    "bodyColor": "rgb(32, 38, 38)",
+    "canvas": "rgb(247, 248, 250)",
+    "defaultBlue": 0,
+    "fontFamilies": [
+      "\"Manrope Variable\", \"Segoe UI\", sans-serif",
+      "\"DM Sans Variable\", \"Segoe UI\", sans-serif"
+    ],
+    "overflow": false,
+    "path": "/director/budgets",
+    "unstyledControls": 0,
+    "width": 1440
+  },
+  {
+    "bodyColor": "rgb(32, 38, 38)",
+    "canvas": "rgb(247, 248, 250)",
+    "defaultBlue": 0,
+    "fontFamilies": [
+      "\"Manrope Variable\", \"Segoe UI\", sans-serif",
+      "\"DM Sans Variable\", \"Segoe UI\", sans-serif"
+    ],
+    "overflow": false,
+    "path": "/director/history",
+    "unstyledControls": 0,
+    "width": 1440
+  },
+  {
+    "bodyColor": "rgb(32, 38, 38)",
+    "canvas": "rgb(247, 248, 250)",
+    "defaultBlue": 0,
+    "fontFamilies": [
+      "\"Manrope Variable\", \"Segoe UI\", sans-serif",
+      "\"DM Sans Variable\", \"Segoe UI\", sans-serif"
+    ],
+    "overflow": false,
+    "path": "/director/settings",
+    "unstyledControls": 0,
+    "width": 1440
+  },
+  {
+    "bodyColor": "rgb(32, 38, 38)",
+    "canvas": "rgb(247, 248, 250)",
+    "defaultBlue": 0,
+    "fontFamilies": [
+      "\"Manrope Variable\", \"Segoe UI\", sans-serif",
+      "\"DM Sans Variable\", \"Segoe UI\", sans-serif"
+    ],
+    "overflow": false,
+    "path": "/director/unknown",
+    "unstyledControls": 0,
+    "width": 1440
+  }
+]

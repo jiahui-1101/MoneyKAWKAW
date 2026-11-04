@@ -1,0 +1,50 @@
+{
+  "scope": "Final clean session after shared-context fix, including provider hot reload and all Director routes",
+  "logs": [],
+  "routes": [
+    {
+      "path": "/director",
+      "title": "A little clarity. A bigger impact."
+    },
+    {
+      "path": "/director/activities",
+      "title": "Good ideas start here."
+    },
+    {
+      "path": "/director/activities/new",
+      "title": "Create your next activity."
+    },
+    {
+      "path": "/director/activities/innovation-summit",
+      "title": "Innovation Summit 2026"
+    },
+    {
+      "path": "/director/activities/innovation-summit/edit",
+      "title": "Refine the plan."
+    },
+    {
+      "path": "/director/activities/innovation-summit/departments",
+      "title": "Innovation Summit 2026"
+    },
+    {
+      "path": "/director/activities/community-day/budget",
+      "title": "Community Impact Day"
+    },
+    {
+      "path": "/director/budgets",
+      "title": "Every budget. One clear picture."
+    },
+    {
+      "path": "/director/history",
+      "title": "Every change has a story."
+    },
+    {
+      "path": "/director/settings",
+      "title": "The details behind the clarity."
+    },
+    {
+      "path": "/director/unknown",
+      "title": "This page isn’t in your workspace"
+    }
+  ]
+}
