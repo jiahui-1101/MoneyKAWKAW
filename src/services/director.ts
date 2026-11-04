@@ -3,6 +3,7 @@ import { validateActivity, validateDepartment } from '../domain/budget';
 import { seed } from './seed';
 import { upgradeSharedStore, validatePurchasingData } from './shared-migration';
 import { requireRole } from '../domain/session';
+import { upgradeTreasury } from './treasury-migration';
 
 export const STORAGE_KEY = 'moneykawkaw.director.v1';
 const copy = <T>(value: T): T => structuredClone(value);
@@ -57,7 +58,7 @@ export function validateStore(value: unknown): asserts value is Store {
     if (
       !linked(e) ||
       !amount(e.amount) ||
-      !['Pending review', 'Approved'].includes(e.state) ||
+      !['Pending review', 'In review', 'Approved', 'Declined'].includes(e.state) ||
       typeof e.description !== 'string' ||
       Number.isNaN(Date.parse(e.date))
     )
@@ -110,7 +111,7 @@ export const sharedRepository: DirectorService = {
     const raw = localStorage.getItem(STORAGE_KEY);
     if (!raw) return copy(seed);
     try {
-      const data: unknown = upgradeSharedStore(JSON.parse(raw));
+      const data: unknown = upgradeTreasury(upgradeSharedStore(JSON.parse(raw)));
       validateStore(data);
       return data;
     } catch {
@@ -120,7 +121,7 @@ export const sharedRepository: DirectorService = {
     }
   },
   async save(store) {
-    const ready = upgradeSharedStore(store);
+    const ready = upgradeTreasury(upgradeSharedStore(store));
     validateStore(ready);
     try {
       localStorage.setItem(STORAGE_KEY, JSON.stringify(ready));
@@ -137,15 +138,19 @@ export const sharedRepository: DirectorService = {
 export const directorService: DirectorService = {
   async load() {
     requireRole('Director');
-    return sharedRepository.load();
+    const store = await sharedRepository.load();
+    requireRole('Director');
+    return { ...store, payments:store.payments.map(({manual,...p})=>p), treasury:store.treasury ? {...store.treasury,receipts:[],payouts:[]} : undefined };
   },
   async save(store) {
     requireRole('Director');
-    return sharedRepository.save(store);
+    const fresh=await sharedRepository.load(); requireRole('Director');
+    await sharedRepository.save({...store,expenses:fresh.expenses,payments:fresh.payments,assignments:fresh.assignments,treasury:fresh.treasury ? {...fresh.treasury,grants:store.treasury?.grants??fresh.treasury.grants} : undefined});
+    return directorService.load();
   },
   async reset() {
     requireRole('Director');
-    return sharedRepository.reset();
+    await sharedRepository.reset(); return directorService.load();
   },
 };
 

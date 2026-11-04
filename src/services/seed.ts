@@ -1,5 +1,6 @@
 import type { Activity, Store } from '../domain/models';
 import { upgradeSharedStore } from './shared-migration';
+import { upgradeTreasury } from './treasury-migration';
 
 const activities: Activity[] = [
   {
@@ -280,4 +281,4 @@ const baseSeed: Store = {
   ],
   settings: { currency: 'MYR', timezone: 'Asia/Kuala_Lumpur', warningPercent: 85 },
 };
-export const seed = upgradeSharedStore(baseSeed);
+export const seed = upgradeTreasury(upgradeSharedStore(baseSeed));
