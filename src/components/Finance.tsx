@@ -202,7 +202,7 @@ export function BudgetComparison({
       ) : (
         <div
           className="comparison-chart"
-          role="img"
+          role="group"
           aria-label="Activity budget and recorded expense comparison. Exact figures follow each activity."
         >
           {activities.map((a) => {
