@@ -8,6 +8,7 @@ import {
 } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { summarize } from '../domain/budget';
+import { MetricCards } from './MetricCards';
 import type { Activity, BudgetSummary, Store } from '../domain/models';
 import { Badge, Empty, Panel, Progress, Status, TextLink, useFormat } from './ui';
 
@@ -45,25 +46,7 @@ export function Metrics({ summary, count }: { summary: BudgetSummary; count?: nu
       tone: 'gold',
     },
   ];
-  return (
-    <div className="metrics">
-      {items.map(({ label, value, icon: Icon, note, tone }) => (
-        <section className={`metric metric-${tone}`} key={label}>
-          <div className="row between">
-            <span>{label}</span>
-            <span className="metric-icon">
-              <Icon size={17} />
-            </span>
-          </div>
-          <strong className="metric-value money">{value}</strong>
-          <p>
-            <span className="metric-mini-dot" />
-            {note}
-          </p>
-        </section>
-      ))}
-    </div>
-  );
+  return <MetricCards items={items} />;
 }
 
 export function BudgetLifecycle({ summary }: { summary: BudgetSummary }) {
