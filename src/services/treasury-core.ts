@@ -23,7 +23,7 @@ export function scopedClaim(store: Store, claimId: string) {
 export function projectTreasury(store: Store): Store {
   const ids=new Set(store.treasury!.grants.filter(g=>g.userId===getDemoActor().userId).map(g=>g.activityId));
   const expenses=store.expenses.filter(e=>ids.has(e.activityId));
-  const members=new Set(expenses.map(e=>e.review?.claimantId));
+  const members=new Set([...expenses.map(e=>e.review?.claimantId),...store.assignments.filter(t=>ids.has(t.activityId)).map(t=>t.purchasing?.assigneeId)]);
   return {...store,activities:store.activities.filter(a=>ids.has(a.id)),expenses,
     assignments:store.assignments.filter(t=>ids.has(t.activityId)),events:store.events.filter(e=>ids.has(e.activityId)),
     payments:store.payments.filter(p=>expenses.some(e=>e.id===p.expenseId)).map(p=>({...p,manual:p.manual?{...p.manual,proof:{...p.manual.proof,dataUrl:''}}:undefined})),

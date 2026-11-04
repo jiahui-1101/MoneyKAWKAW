@@ -4,6 +4,7 @@ import { seed } from './seed';
 import { upgradeSharedStore, validatePurchasingData } from './shared-migration';
 import { requireRole } from '../domain/session';
 import { upgradeTreasury } from './treasury-migration';
+import { validateTreasury } from './treasury-validation';
 
 export const STORAGE_KEY = 'moneykawkaw.director.v1';
 const copy = <T>(value: T): T => structuredClone(value);
@@ -96,6 +97,7 @@ export function validateStore(value: unknown): asserts value is Store {
     )
       throw new Error('Invalid activity history.');
   if (s.directory) validatePurchasingData(s);
+  validateTreasury(s);
 }
 
 // Replace this adapter with authenticated APIs later. No authentication is simulated.
