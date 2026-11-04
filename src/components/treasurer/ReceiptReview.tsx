@@ -1,10 +1,9 @@
 import { useEffect, useState } from 'react';
 import type { ReceiptEvidence } from '../../domain/treasury';
-import { receiptLines } from '../../domain/risk';
+import { lineValue, receiptLines, receiptTotal, reviewedTotal } from '../../domain/receipt';
 import { treasuryService } from '../../services/treasury';
 import { Badge, Empty, Panel, useFormat } from '../ui';
-export function ReceiptReview({ claimId, amount }: { claimId: string; amount: number }) {
-  const { money, time } = useFormat();
+export function ReceiptReview({ claimId, amount, load=treasuryService.receipt }: { claimId: string; amount: number; load?:(id:string)=>Promise<ReceiptEvidence> }) {
   const [receipt, setReceipt] = useState<ReceiptEvidence | null>(null),
     [error, setError] = useState(''),
     [attempt, setAttempt] = useState(0);
@@ -12,8 +11,7 @@ export function ReceiptReview({ claimId, amount }: { claimId: string; amount: nu
     let active = true;
     setReceipt(null);
     setError('');
-    treasuryService
-      .receipt(claimId)
+    load(claimId)
       .then((r) => {
         if (active) setReceipt(r);
       })
@@ -23,7 +21,7 @@ export function ReceiptReview({ claimId, amount }: { claimId: string; amount: nu
     return () => {
       active = false;
     };
-  }, [claimId, attempt]);
+  }, [claimId, attempt, load]);
   if (error)
     return (
       <Panel title="Receipt evidence">
@@ -48,24 +46,27 @@ export function ReceiptReview({ claimId, amount }: { claimId: string; amount: nu
         aria-label="Loading claim evidence"
       />
     );
-  const lines = receiptLines(receipt);
-  const total = lines.filter((l) => !l.excluded).reduce((s, l) => s + l.final.amount, 0);
+  return <ReceiptEvidenceView receipt={receipt} amount={amount}/>;
+}
+export function ReceiptEvidenceView({receipt,amount}:{receipt:ReceiptEvidence;amount:number}) {
+  const {money,time}=useFormat();
+  const lines = receiptLines(receipt),total=receiptTotal(receipt);
   return (
     <>
       <div className="treasury-two-col">
         <Panel
           title="Original receipt"
-          subtitle="Immutable source · sample evidence, not a live OCR result"
+          subtitle={receipt.extraction?'Exact uploaded image · original source is preserved':'Immutable fictional sample · no live OCR was run on this legacy fixture'}
           action={
-            <a className="text-link" href={receipt.originalUrl} download={`${receipt.id}.svg`}>
+            <a className="text-link" href={receipt.originalUrl} download={receipt.file?.name??`${receipt.id}.svg`}>
               Download original
             </a>
           }
         >
           <div className="treasury-receipt">
-            <img src={receipt.originalUrl} alt={`Unmodified fictional receipt for ${claimId}`} />
+            <img src={receipt.originalUrl} alt={`Unmodified receipt for ${receipt.expenseId||receipt.id}`} />
             <p>
-              {receipt.merchant} · submitted {time(receipt.submittedAt)}
+              {receipt.merchant} · {receipt.expenseId?'submitted':'uploaded'} {time(receipt.submittedAt)}
             </p>
           </div>
         </Panel>
@@ -87,15 +88,15 @@ export function ReceiptReview({ claimId, amount }: { claimId: string; amount: nu
                     {l.excluded
                       ? 'Excluded from claim'
                       : l.edited
-                        ? 'Corrected OCR value'
+                        ? 'Corrected source value'
                         : 'Included unchanged'}
                   </small>
                 </div>
                 <div className="receipt-values">
                   {l.edited && l.original.amount !== l.final.amount && (
-                    <del>{money(l.original.amount)}</del>
+                    <del>{money(lineValue(l.original))}</del>
                   )}
-                  <strong>{money(l.final.amount)}</strong>
+                  <strong>{money(lineValue(l.final))}</strong>
                 </div>
               </div>
             ))}
@@ -116,8 +117,8 @@ export function ReceiptReview({ claimId, amount }: { claimId: string; amount: nu
         </Panel>
       </div>
       <Panel
-        title="Extracted items & final values"
-        subtitle="Original OCR suggestions are retained alongside the claimant’s changes"
+        title="Source items & final values"
+        subtitle={receipt.extraction?.method==='manual'?'Manually entered source values, retained alongside corrections':'Original OCR suggestions are retained alongside the claimant’s changes'}
       >
         <div
           className="table-scroll"
@@ -139,9 +140,9 @@ export function ReceiptReview({ claimId, amount }: { claimId: string; amount: nu
               {lines.map((l) => (
                 <tr key={l.original.id}>
                   <td>{l.original.description}</td>
-                  <td className="money">{money(l.original.amount)}</td>
-                  <td>{l.final.description}</td>
-                  <td className="money">{money(l.final.amount)}</td>
+                  <td className="money">{money(lineValue(l.original))}</td>
+                  <td>{l.final.description}{l.final.quantityMilli!==undefined&&<small className="cell-sub">Qty {l.final.quantityMilli/1000} × {money(l.final.unitPrice!)}</small>}</td>
+                  <td className="money">{money(lineValue(l.final))}</td>
                   <td>
                     <Badge tone={l.excluded ? 'danger' : l.edited ? 'gold' : 'green'}>
                       {l.excluded ? 'Excluded' : l.edited ? 'Corrected' : 'Included'}
@@ -161,16 +162,16 @@ export function ReceiptReview({ claimId, amount }: { claimId: string; amount: nu
           {receipt.edits.map((edit, i) => (
             <article key={`${edit.lineId}-${i}`}>
               <div className="row between wrap">
-                <h3>{edit.excluded ? 'Item excluded' : 'OCR value corrected'}</h3>
+                  <h3>{edit.excluded ? 'Item excluded' : edit.beforeExcluded?'Item included again':'Source value corrected'}</h3>
                 <small>
                   {time(edit.at)} · {edit.actor}
                 </small>
               </div>
               <p>
-                Before: {edit.before.description} · {money(edit.before.amount)}
+                Before: {edit.before.description} · {money(lineValue(edit.before))}{edit.before.quantityMilli!==undefined?` · Qty ${edit.before.quantityMilli/1000} × ${money(edit.before.unitPrice!)}`:''}
               </p>
               <p>
-                After: {edit.after.description} · {money(edit.after.amount)}
+                After: {edit.after.description} · {money(lineValue(edit.after))}{edit.after.quantityMilli!==undefined?` · Qty ${edit.after.quantityMilli/1000} × ${money(edit.after.unitPrice!)}`:''}
                 {edit.excluded ? ' · excluded from total' : ''}
               </p>
               <p className="muted">{edit.reason}</p>
@@ -179,8 +180,10 @@ export function ReceiptReview({ claimId, amount }: { claimId: string; amount: nu
           {!receipt.edits.length && (
             <p className="muted">No corrections or exclusions were submitted.</p>
           )}
+          {receipt.totalEdits?.map((e,i)=><article key={`total-${i}`}><h3>Receipt total corrected</h3><p>{money(e.before)} → {money(e.after)} · {e.reason}</p><small>{e.actor} · {time(e.at)}</small></article>)}
         </div>
       </Panel>
+      {receipt.extraction&&<Panel title="Retained extraction & receipt totals" subtitle={receipt.extraction.method==='tesseract'?'Tesseract on-device OCR · suggestions require human review':'Manual entry · no OCR accuracy is claimed'}><div className="treasury-evidence-history"><div className="row between wrap"><span>Original total: {money(receipt.originalTotal!)}</span><span>Reviewed total: {money(reviewedTotal(receipt))}</span><strong>Claimable: {money(total)}</strong></div><p className="field-hint">Purchase date: {receipt.purchaseDate}. Shared tax and discount allocations are explicit line corrections; no hidden proration is applied.</p><details><summary>View retained source text</summary><pre className="receipt-raw">{receipt.extraction.rawText||'Manually transcribed from the uploaded image; no machine extraction was performed.'}</pre></details></div></Panel>}
     </>
   );
 }
