@@ -67,7 +67,7 @@ export function validatePurchasingData(store: Store) {
   for (const task of store.assignments) {
     const p: PurchasingDetails | undefined = task.purchasing;
     if (!p || !p.name.trim() || p.name.length > 120 || !p.description.trim() || p.description.length > 2000 || !['Low', 'Medium', 'High'].includes(p.priority) || !['Not Started', 'In Progress', 'Purchased', 'Claim Submitted', 'Completed', 'Cancelled'].includes(p.status) || !/^\d{4}-\d{2}-\d{2}$/.test(p.dueDate) || Number.isNaN(Date.parse(p.dueDate)) || new Date(p.dueDate).toISOString().slice(0,10) !== p.dueDate) throw new Error('Invalid purchasing task details.');
-    if (p.assigneeId && !directory.memberships.some(m => m.active && m.userId === p.assigneeId && m.activityId === task.activityId && m.departmentId === task.departmentId)) throw new Error('A task assignee must belong to its department.');
+    if (p.assigneeId && !directory.memberships.some(m => (m.active || !!task.expenseId || p.status === 'Cancelled') && m.userId === p.assigneeId && m.activityId === task.activityId && m.departmentId === task.departmentId)) throw new Error('A task assignee must belong to its department.');
     if ((p.status === 'Claim Submitted' && !task.expenseId) || (p.status === 'Cancelled' && task.expenseId)) throw new Error('Purchasing status conflicts with its claim record.');
   }
 }
