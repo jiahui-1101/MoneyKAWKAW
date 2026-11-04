@@ -105,6 +105,7 @@ export function MemberPayment() {
       >
         <dl className="treasury-facts">
           {[
+            ['Claim ID', claim.id],
             [
               'Approved claim amount',
               claim.state === 'Approved' ? money(claim.amount) : 'Not approved',

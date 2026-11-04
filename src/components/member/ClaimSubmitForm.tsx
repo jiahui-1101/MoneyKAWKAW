@@ -51,6 +51,9 @@ export function ClaimSubmitForm({
     };
   }, [draft.id, draft.updatedAt]);
   if (!data) return null;
+  const scope = data.scopes.find(
+    (s) => s.activity.id === task.activityId && s.department.id === task.departmentId,
+  );
   const review = async (e: FormEvent) => {
     e.preventDefault();
     setError('');
@@ -93,6 +96,9 @@ export function ClaimSubmitForm({
       subtitle="The claim amount is derived from your retained receipt items, never entered separately"
     >
       <form className="member-content stack" onSubmit={review} noValidate>
+        <p className="settings-copy">
+          {scope?.activity.name} / {scope?.department.name} · {task.purchasing!.name}
+        </p>
         {loading ? (
           <p role="status">Reconciling receipt and checking current budget context…</p>
         ) : (
@@ -195,6 +201,9 @@ export function ClaimSubmitForm({
         >
           <div className="stack">
             <h3>{task.purchasing!.name}</h3>
+            <p className="settings-copy">
+              {scope?.activity.name} / {scope?.department.name}
+            </p>
             <p>
               Item budget: {money(task.budget)} · Requested:{' '}
               <strong>{money(confirm.amount)}</strong>

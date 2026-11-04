@@ -46,6 +46,9 @@ export function MemberDraft() {
       </Empty>
     );
   const canEdit = !!draft.receipt?.extraction;
+  const scope = data.scopes.find(
+    (s) => s.activity.id === task.activityId && s.department.id === task.departmentId,
+  );
   const requested = params.get('step') ?? (canEdit ? 'items' : 'upload'),
     step =
       steps.some((s) => s.id === requested) && (requested === 'upload' || canEdit)
@@ -58,9 +61,9 @@ export function MemberDraft() {
         ← My purchase / Claim preparation
       </Link>
       <PageHeader
-        eyebrow="RECEIPT-BACKED CLAIM DRAFT"
+        eyebrow={`${scope?.activity.name ?? 'My activity'} · ${scope?.department.name ?? 'My department'} · CLAIM DRAFT`}
         title={task.purchasing!.name}
-        description={`Item budget ${money(task.budget)} · Your original evidence and saved modifications stay linked to this purchase.`}
+        description={`${task.purchasing!.description} · Item budget ${money(task.budget)}. Your original evidence and saved modifications stay linked to this purchase.`}
       />
       <div className="member-wizard" aria-label="Claim preparation steps">
         {steps.map((s, i) => (
