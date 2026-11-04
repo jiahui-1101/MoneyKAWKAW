@@ -5,12 +5,14 @@ import { Empty } from '../../components/ui';
 import { TreasuryDashboard } from './Dashboard';
 import { TreasuryActivities, TreasuryActivityDetail } from './Activities';
 import { TreasuryClaims } from './Claims';
+import { TreasuryClaimDetail } from './ClaimDetail';
 export function TreasuryRoutes() {
   return <TreasuryProvider><Routes><Route element={<TreasuryShell/>}>
     <Route index element={<TreasuryDashboard/>}/>
     <Route path="activities" element={<TreasuryActivities/>}/>
     <Route path="activities/:id" element={<TreasuryActivityDetail/>}/>
     <Route path="claims" element={<TreasuryClaims/>}/>
+    <Route path="claims/:id" element={<TreasuryClaimDetail/>}/>
     <Route path="reimbursements" element={<TreasuryClaims reimbursements/>}/>
     <Route path="*" element={<Empty title="Financial workspace" action={<Link className="btn" to="/treasurer">Return to overview</Link>}>Choose a financial record from your navigation.</Empty>}/>
   </Route></Routes></TreasuryProvider>;

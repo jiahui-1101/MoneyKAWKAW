@@ -42,6 +42,16 @@
 .treasury-evidence-history {padding:0 22px 24px;display:grid;gap:16px;}
 .treasury-evidence-history article {padding:16px;border:1px solid var(--line);border-radius:var(--radius-sm);display:grid;gap:9px;font-size:12px;overflow-wrap:anywhere;}
 .treasury-shell td {max-width:290px;}
+.treasury-record-bar {display:flex;align-items:center;gap:12px;flex-wrap:wrap;color:var(--muted);font-size:11px;}
+.treasury-facts {margin:0;padding:0 22px 24px;display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:24px;}
+.treasury-facts div {min-width:0;}
+.treasury-facts dt {color:var(--muted);font-size:11px;}
+.treasury-facts dd {margin:8px 0 0;font-size:13px;font-weight:650;overflow-wrap:anywhere;}
+.treasury-justification,.treasury-decision {padding:22px;border:1px solid var(--line);border-radius:var(--radius);background:var(--gold-soft);display:grid;gap:9px;overflow-wrap:anywhere;}
+.treasury-justification p,.treasury-decision p {font-size:13px;line-height:1.8;white-space:pre-wrap;}
+.treasury-decision {background:var(--green-soft);}
+.treasury-decision.is-declined {background:var(--danger-soft);border-color:var(--danger);}
+@media(max-width:760px){.treasury-facts{grid-template-columns:repeat(2,minmax(0,1fr));padding:0 17px 22px;}}
 @media(max-width:600px){.treasury-filters{grid-template-columns:1fr;padding:0 17px 20px;}.treasury-tabs{padding:0 17px 20px;}.treasury-result{padding-left:17px;}}
 @media(max-width:1000px){.treasury-counts{grid-template-columns:repeat(3,minmax(0,1fr));}.treasury-counts a{border-bottom:1px solid var(--line);}.treasury-two-col{grid-template-columns:1fr;}}
 @media(max-width:600px){.treasury-counts{grid-template-columns:repeat(2,minmax(0,1fr));}.treasury-chart-list,.treasury-alerts{padding:0 17px 20px;}.treasury-alerts>a{align-items:flex-start;flex-wrap:wrap;}}
