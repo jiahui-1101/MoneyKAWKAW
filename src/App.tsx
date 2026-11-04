@@ -12,6 +12,8 @@ import { SessionProvider } from './context/Session';
 import { useSession } from './context/session-context';
 import { DemoAccess, RoleGate } from './components/DemoAccess';
 import { HodRoutes } from './pages/hod/HodRoutes';
+import { TreasuryRoutes } from './pages/treasurer/TreasuryRoutes';
+import { roleHome } from './domain/session';
 
 class ErrorBoundary extends Component<{ children: ReactNode }, { failed: boolean }> {
   state = { failed: false };
@@ -43,6 +45,7 @@ export default function App() {
           <Routes>
             <Route path="/" element={<LandingRedirect />} />
             <Route path="/demo" element={<DemoAccess />} />
+            <Route path="/treasurer/*" element={<RoleGate role="Treasurer"><TreasuryRoutes/></RoleGate>}/>
             <Route
               path="/hod/*"
               element={
@@ -101,7 +104,7 @@ function LandingRedirect({ missing = false }: { missing?: boolean }) {
   const { actor } = useSession();
   return (
     <Navigate
-      to={`${actor.role === 'Director' ? '/director' : '/hod'}${missing ? '/not-found' : ''}`}
+      to={`${roleHome(actor.role)}${missing ? '/not-found' : ''}`}
       replace
     />
   );
