@@ -14,7 +14,7 @@ export function Dashboard({ budgets = false }: { budgets?: boolean }) {
   const [activityId, setActivityId] = useState('');
   if (!store) return null;
   const activities = store.activities.filter(a => (!status || a.status === status) && (!activityId || a.id === activityId));
-  const filtered = { ...store, activities };
+  const filtered = { ...store, activities, events: store.events.filter(e => activities.some(a => a.id === e.activityId)) };
   const summary = summarize(filtered);
   const active = activities.filter(a => a.status === 'Active').length;
   return <div className="stack dashboard">
