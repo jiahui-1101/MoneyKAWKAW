@@ -1,5 +1,5 @@
 import { ArrowRight, ShieldCheck, Wallet } from 'lucide-react';
-import type { ReactNode } from 'react';
+import { useState, type ReactNode } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useSession } from '../context/session-context';
 import { demoProfiles, roleHome, type DemoActor } from '../domain/session';
@@ -10,12 +10,14 @@ import { logout } from '../services/firebase/auth';
 export function DemoRoleSwitcher() {
   const { actor, select, roles } = useSession();
   const navigate = useNavigate();
+  const [signOutError, setSignOutError] = useState('');
   if (!demoMode) return <div className="row wrap">
     <select className="compact-select demo-profile" aria-label="Workspace" value={actor.role}
       onChange={(e) => { select(e.target.value); navigate(roleHome(e.target.value as DemoActor['role'])); }}>
       {roles?.map((role) => <option key={role}>{role}</option>)}
     </select>
-    <button className="btn" onClick={() => void logout()}>Sign out</button>
+    <button className="btn" onClick={() => { void logout().catch(() => setSignOutError('Unable to sign out. Please retry.')); }}>Sign out</button>
+    {signOutError && <span role="alert">{signOutError}</span>}
   </div>;
   return (
     <select

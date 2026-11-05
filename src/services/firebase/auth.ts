@@ -26,11 +26,17 @@ export function watchSession(update: (state: AuthState) => void) {
           error: 'Club access is unavailable. Check your invitation or retry your connection.' });
       }
     }, () => {
-      if (alive) update({ profile: null, signedIn: true, loading: false,
-        error: 'Your club membership could not be verified. Retry to continue.' });
+      if (alive) {
+        ++generation;
+        update({ profile: null, signedIn: true, loading: false,
+          error: 'Your club membership could not be verified. Retry to continue.' });
+      }
     });
     stopMember = () => { alive = false; unsubscribe(); };
-  }, () => update({ profile: null, signedIn: false, loading: false, error: 'Unable to restore your session.' }));
+  }, () => {
+    ++generation; stopMember();
+    update({ profile: null, signedIn: false, loading: false, error: 'Unable to restore your session.' });
+  });
   return () => { ++generation; stopMember(); stopAuth(); };
 }
 export async function login() {
