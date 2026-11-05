@@ -4,10 +4,19 @@ import { Link, useNavigate } from 'react-router-dom';
 import { useSession } from '../context/session-context';
 import { demoProfiles, roleHome, type DemoActor } from '../domain/session';
 import { Empty, PageHeader, Panel } from './ui';
+import { demoMode } from '../services/firebase/client';
+import { logout } from '../services/firebase/auth';
 
 export function DemoRoleSwitcher() {
-  const { actor, select } = useSession();
+  const { actor, select, roles } = useSession();
   const navigate = useNavigate();
+  if (!demoMode) return <div className="row wrap">
+    <select className="compact-select demo-profile" aria-label="Workspace" value={actor.role}
+      onChange={(e) => { select(e.target.value); navigate(roleHome(e.target.value as DemoActor['role'])); }}>
+      {roles?.map((role) => <option key={role}>{role}</option>)}
+    </select>
+    <button className="btn" onClick={() => void logout()}>Sign out</button>
+  </div>;
   return (
     <select
       className="compact-select demo-profile"
@@ -47,20 +56,21 @@ export function RoleGate({
               Return to my workspace
             </Link>
             <Link className="btn" to="/demo">
-              Choose a demo profile
+              Choose a workspace
             </Link>
           </div>
         }
       >
-        Your current {actor.role} profile cannot open this workspace. Role changes must be selected
-        explicitly in the local demo.
+        Your current {actor.role} profile cannot open this workspace. An explicit role assignment is required.
       </Empty>
     </div>
   );
 }
 export function DemoAccess() {
-  const { select } = useSession();
+  const { select, actor } = useSession();
   const navigate = useNavigate();
+  if (!demoMode) return <main className="access-page stack"><h1>Your club workspace</h1>
+    <DemoRoleSwitcher /><Link className="btn primary" to={roleHome(actor.role)}>Open workspace</Link></main>;
   return (
     <main className="access-page stack">
       <div className="brand">
