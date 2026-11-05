@@ -52,6 +52,7 @@ it('rejects unauthenticated reads and all unfinished business writes', async () 
   mocks.auth.currentUser = null;
   await expect(firebaseRepository.load()).rejects.toThrow('Sign in');
   await expect(firebaseRepository.reset()).rejects.toThrow('not enabled');
+  await expect(firebaseRepository.save({} as never)).rejects.toThrow('No changes were saved');
 });
 it('never replaces backend failures with mock data', async () => {
   mocks.callable.mockRejectedValue(new Error('unavailable'));

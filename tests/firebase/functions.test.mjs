@@ -71,9 +71,13 @@ test('membership and grant revocation take effect with an existing identity toke
 test('seed is idempotent and preserves existing memberships and preferences', async () => {
   const db = getFirestore(), ref = db.doc(`${root}/members/member-b/preferences/notifications`);
   await ref.set({ notificationEnabled: false });
-  const before = (await db.doc(`${root}/members/director`).get()).data();
-  await seed();
-  assert.deepEqual((await db.doc(`${root}/members/director`).get()).data(), before);
+  const member = db.doc(`${root}/members/member-b`), before = (await member.get()).data();
+  try {
+    await member.update({ active: false, revision: 99 });
+    await seed();
+    assert.equal((await member.get()).data().active, false);
+    assert.equal((await member.get()).data().revision, 99);
+  } finally { await member.set(before); }
   assert.equal((await ref.get()).data().notificationEnabled, false);
 });
 test('invalid fractional monetary source data is rejected before reaching dashboards', async () => {

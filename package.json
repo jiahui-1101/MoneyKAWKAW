@@ -15,7 +15,7 @@
     "functions:build": "npm run build --prefix functions",
     "emulators": "npm run functions:build && firebase emulators:start --project demo-moneykawkaw --only auth,firestore,storage,functions",
     "emulators:seed": "node scripts/seed-emulators.mjs",
-    "test:firebase": "npm run functions:build && firebase emulators:exec --project demo-moneykawkaw --only auth,firestore,storage,functions \"node --test tests/firebase/*.test.mjs\"",
+    "test:firebase": "npm run functions:build && firebase emulators:exec --project demo-moneykawkaw --only auth,firestore,storage,functions \"node --test --test-concurrency=1 tests/firebase/*.test.mjs\"",
     "lint": "oxlint --react-plugin --jsx-a11y-plugin --deny-warnings src tests",
     "typecheck": "tsc --noEmit"
   },
