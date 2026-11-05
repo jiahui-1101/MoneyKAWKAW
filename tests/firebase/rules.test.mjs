@@ -88,3 +88,24 @@ test('Storage reads, lists, uploads and deletions stay closed until evidence pha
   }
   await assertFails(getBytes(ref(env.unauthenticatedContext().storage(), 'private/proof.png')));
 });
+test('unverified Google accounts and inactive memberships fail closed', async () => {
+  const unverified = env.authenticatedContext('director', { ...token, email_verified: false }).firestore();
+  await assertFails(getDoc(doc(unverified, root)));
+  await env.withSecurityRulesDisabled(async (ctx) => {
+    await setDoc(doc(ctx.firestore(), root, 'members/inactive'), { uid: 'inactive', active: false, roles: ['Director'] });
+    await setDoc(doc(ctx.firestore(), root, 'members/malformed'), { uid: 'someone-else', active: true, roles: ['Director'] });
+  });
+  for (const uid of ['inactive', 'malformed']) await assertFails(getDoc(doc(as(uid), activity)));
+});
+test('receipt history, payment proof metadata and drafts retain parent ownership and scope', async () => {
+  await env.withSecurityRulesDisabled(async (ctx) => {
+    for (const path of ['claims/a/payments/one', 'receipts/a/extractions/original', 'receipts/a/edits/one'])
+      await setDoc(doc(ctx.firestore(), activity, path), { synthetic: true });
+    await setDoc(doc(ctx.firestore(), root, 'members/member-a/drafts/foreign'), { activityId: 'welcome', departmentId: 'beta' });
+  });
+  for (const path of ['claims/a/payments/one', 'receipts/a/extractions/original', 'receipts/a/edits/one']) {
+    await assertSucceeds(getDoc(doc(as('member-a'), activity, path)));
+    for (const uid of ['member-b', 'hod', 'director']) await assertFails(getDoc(doc(as(uid), activity, path)));
+  }
+  await assertFails(getDoc(doc(as('member-a'), root, 'members/member-a/drafts/foreign')));
+});
