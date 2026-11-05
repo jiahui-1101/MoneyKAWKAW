@@ -1,6 +1,91 @@
 rules_version = '2';
 service cloud.firestore {
   match /databases/{database}/documents {
+    // Server-owned members(uid,active,roles) and activity grants(active,treasurer,
+    // departmentRoles). All financial records carry immutable scope and owner IDs.
+    function google() {
+      return request.auth != null && request.auth.token.email_verified == true
+        && request.auth.token.firebase.sign_in_provider == 'google.com';
+    }
+    function member() {
+      return get(/databases/$(database)/documents/clubs/main/members/$(request.auth.uid)).data;
+    }
+    function active() { return google() && member().active == true; }
+    function role(name) { return active() && name in member().roles; }
+    function grant(aid) {
+      return get(/databases/$(database)/documents/clubs/main/activities/$(aid)/members/$(request.auth.uid)).data;
+    }
+    function treasurer(aid) {
+      return role('Treasurer') && grant(aid).active && grant(aid).treasurer;
+    }
+    function department(aid, did, name) {
+      return role(name) && grant(aid).active && did in grant(aid).departmentRoles
+        && name in grant(aid).departmentRoles[did];
+    }
+    function team(aid, did) {
+      return department(aid, did, 'HOD') || department(aid, did, 'Member');
+    }
+    function claimAccess(aid, data) {
+      return treasurer(aid) || (active() && data.claimantUid == request.auth.uid
+        && department(aid, data.departmentId, 'Member'));
+    }
+    function validPreferences(data) {
+      return data.keys().hasAll(['notificationEnabled', 'updatedAt'])
+        && data.keys().hasOnly(['notificationEnabled', 'updatedAt'])
+        && data.notificationEnabled is bool && data.updatedAt == request.time;
+    }
+    match /clubs/main {
+      allow get: if active();
+      match /members/{uid} {
+        allow get: if google() && request.auth.uid == uid;
+        match /preferences/{id} {
+          allow read: if active() && request.auth.uid == uid && id == 'notifications';
+          allow create, update: if active() && request.auth.uid == uid
+            && id == 'notifications' && validPreferences(request.resource.data);
+        }
+        match /payoutMethods/{id} { allow read: if active() && request.auth.uid == uid; }
+        match /drafts/{id} { allow read: if active() && request.auth.uid == uid; }
+        match /notifications/{id} { allow read: if active() && request.auth.uid == uid; }
+      }
+      match /activities/{aid} {
+        allow read: if role('Director') || treasurer(aid);
+        match /members/{uid} { allow get: if active() && request.auth.uid == uid; }
+        match /departments/{did} {
+          allow read: if role('Director') || treasurer(aid) || team(aid, did);
+        }
+        match /assignments/{id} {
+          allow read: if role('Director') || treasurer(aid) || team(aid, resource.data.departmentId);
+        }
+        match /claimSummaries/{id} {
+          allow read: if role('Director') || treasurer(aid)
+            || department(aid, resource.data.departmentId, 'HOD');
+        }
+        match /claims/{cid} {
+          allow read: if claimAccess(aid, resource.data);
+          match /{collection}/{id} {
+            allow read: if collection in ['versions', 'decisions', 'analyses', 'payments']
+              && claimAccess(aid, get(/databases/$(database)/documents/clubs/main/activities/$(aid)/claims/$(cid)).data);
+          }
+        }
+        match /receipts/{rid} {
+          allow read: if treasurer(aid) || (active() && resource.data.ownerUid == request.auth.uid
+            && department(aid, resource.data.departmentId, 'Member'));
+          match /{collection}/{id} {
+            allow read: if collection in ['extractions', 'edits'] && (treasurer(aid) ||
+              (active() && get(/databases/$(database)/documents/clubs/main/activities/$(aid)/receipts/$(rid)).data.ownerUid == request.auth.uid
+              && department(aid, get(/databases/$(database)/documents/clubs/main/activities/$(aid)/receipts/$(rid)).data.departmentId, 'Member')));
+          }
+        }
+        match /summaries/{id} {
+          allow read: if role('Director') || treasurer(aid)
+            || department(aid, resource.data.departmentId, 'HOD');
+        }
+        match /audit/{id} {
+          allow read: if role('Director') || treasurer(aid)
+            || department(aid, resource.data.departmentId, 'HOD');
+        }
+      }
+    }
     match /{document=**} { allow read, write: if false; }
   }
 }
