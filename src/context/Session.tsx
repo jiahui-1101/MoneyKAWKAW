@@ -33,7 +33,7 @@ function FirebaseSession({ children }: { children: ReactNode }) {
   const role = selected && profile.roles.includes(selected) ? selected : profile.roles[0];
   const actor = { userId: profile.uid, name: profile.name, role };
   setSessionActor(actor);
-  return <SessionContext.Provider value={{ actor, roles: profile.roles, select: (value) => {
+  return <SessionContext.Provider value={{ actor, clubName: profile.clubName, roles: profile.roles, select: (value) => {
     if (!profile.roles.includes(value as Role)) throw new Error('This workspace is not assigned to you.');
     setSelected(value as Role);
   } }}><div className="data-note" role="status">Club connection active · Business actions will be enabled in the next phases.</div>

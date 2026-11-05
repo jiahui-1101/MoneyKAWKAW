@@ -12,7 +12,7 @@ export interface ActivityMembership {
   treasurer: boolean;
   departmentRoles: Record<string, ('HOD' | 'Member')[]>;
 }
-export type SessionProfile = ClubMember;
+export interface SessionProfile extends ClubMember { clubName: string }
 export interface ClubProfile {
   name: string; currency: 'MYR'; timezone: string; warningPercent: number;
 }

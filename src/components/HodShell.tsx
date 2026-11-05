@@ -24,7 +24,7 @@ import { useWorkspaceNavigation } from './useWorkspaceNavigation';
 
 export function HodShell() {
   const { data, loading, error, reload, notice, dismiss } = useHod();
-  const { actor } = useSession();
+  const { actor, clubName } = useSession();
   const nav = useWorkspaceNavigation();
   const navigate = useNavigate();
   const location = useLocation();
@@ -93,7 +93,7 @@ export function HodShell() {
         <div className="workspace-card">
           <span className="club-mark">C</span>
           <div>
-            <strong>Campus Collective</strong>
+            <strong>{clubName ?? 'Campus Collective'}</strong>
             <small>Department workspace</small>
           </div>
           <ShieldCheck size={15} />

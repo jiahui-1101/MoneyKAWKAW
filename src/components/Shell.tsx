@@ -27,7 +27,7 @@ const navigation = [
   { to: '/director/history', label: 'Activity log', icon: Activity },
 ];
 export function Shell() {
-  const { actor } = useSession();
+  const { actor, clubName } = useSession();
   const initials = actor.name.split(' ').map((part) => part[0]).slice(0, 2).join('');
   const { store, loading, error, reload, reset } = useWorkspace();
   const [open, setOpen] = useState(false);
@@ -124,7 +124,7 @@ export function Shell() {
         <div className="workspace-card">
           <span className="club-mark">C</span>
           <div>
-            <strong>Campus Collective</strong>
+            <strong>{clubName ?? 'Campus Collective'}</strong>
             <small>Director workspace</small>
           </div>
           <ShieldCheck size={15} />

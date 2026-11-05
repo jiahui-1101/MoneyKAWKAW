@@ -30,7 +30,7 @@ const entries = [
 ];
 export function MemberShell() {
   const { data, loading, error, reload, notice, dismiss } = useMember();
-  const { actor } = useSession();
+  const { actor, clubName } = useSession();
   const nav = useWorkspaceNavigation(),
     location = useLocation();
   const [help, setHelp] = useState(false);
@@ -79,7 +79,7 @@ export function MemberShell() {
         <div className="workspace-card">
           <span className="club-mark">C</span>
           <div>
-            <strong>Campus Collective</strong>
+            <strong>{clubName ?? 'Campus Collective'}</strong>
             <small>Committee workspace</small>
           </div>
           <Users size={15} />

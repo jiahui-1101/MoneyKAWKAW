@@ -29,7 +29,8 @@ const entries = [
 ];
 export function TreasuryShell() {
   const { data, loading, error, reload, notice, dismiss } = useTreasury();
-  const { actor } = useSession();
+  const { actor, clubName } = useSession();
+  const initials = actor.name.split(' ').map((part) => part[0]).slice(0, 2).join('');
   const nav = useWorkspaceNavigation();
   const location = useLocation();
   const [help, setHelp] = useState(false);
@@ -73,7 +74,7 @@ export function TreasuryShell() {
         <div className="workspace-card">
           <span className="club-mark">C</span>
           <div>
-            <strong>Campus Collective</strong>
+            <strong>{clubName ?? 'Campus Collective'}</strong>
             <small>Financial workspace</small>
           </div>
           <ShieldCheck size={15} />
@@ -121,7 +122,7 @@ export function TreasuryShell() {
             {demoMode ? 'Demo profiles' : 'My workspaces'}
           </Link>
           <div className="user-card">
-            <span className="avatar">NL</span>
+            <span className="avatar">{initials}</span>
             <div>
               <strong>{actor.name}</strong>
               <small>Treasurer{demoMode ? ' · Demo' : ''}</small>
@@ -157,7 +158,7 @@ export function TreasuryShell() {
             >
               <RefreshCw size={16} />
             </button>
-            <span className="avatar">NL</span>
+            <span className="avatar">{initials}</span>
           </div>
         </header>
         <main id="main" tabIndex={-1} key={location.pathname}>
