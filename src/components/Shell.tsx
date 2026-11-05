@@ -17,6 +17,8 @@ import { Link, NavLink, Outlet, useLocation, useNavigate } from 'react-router-do
 import { useWorkspace } from '../context/workspace-context';
 import { Modal, Skeleton, Toast } from './ui';
 import { DemoRoleSwitcher } from './DemoAccess';
+import { useSession } from '../context/session-context';
+import { demoMode } from '../services/firebase/client';
 
 const navigation = [
   { to: '/director', label: 'Overview', icon: LayoutDashboard, end: true },
@@ -25,6 +27,8 @@ const navigation = [
   { to: '/director/history', label: 'Activity log', icon: Activity },
 ];
 export function Shell() {
+  const { actor } = useSession();
+  const initials = actor.name.split(' ').map((part) => part[0]).slice(0, 2).join('');
   const { store, loading, error, reload, reset } = useWorkspace();
   const [open, setOpen] = useState(false);
   const [mobile, setMobile] = useState(() => window.matchMedia('(max-width: 760px)').matches);
@@ -175,10 +179,10 @@ export function Shell() {
             Help & guidance
           </button>
           <div className="user-card">
-            <span className="avatar">JL</span>
+            <span className="avatar">{initials}</span>
             <div>
-              <strong>Jamie Lee</strong>
-              <small>Club Director · Demo</small>
+              <strong>{actor.name}</strong>
+              <small>Club Director{demoMode ? ' · Demo' : ''}</small>
             </div>
             <span className="online-dot" />
           </div>
@@ -218,14 +222,14 @@ export function Shell() {
             <DemoRoleSwitcher />
             <span className="demo-pill">
               <span />
-              Local demo
+              {demoMode ? 'Local demo' : 'Club workspace'}
             </span>
             <button
               className="avatar avatar-button"
               aria-label="View workspace settings"
               onClick={() => navigate('/director/settings')}
             >
-              JL
+              {initials}
             </button>
           </div>
         </header>
@@ -240,9 +244,9 @@ export function Shell() {
                 <button className="btn primary" onClick={() => void reload()}>
                   Retry loading
                 </button>
-                <button className="btn" onClick={() => setConfirmReset(true)}>
+                {demoMode && <button className="btn" onClick={() => setConfirmReset(true)}>
                   Reset demo data
-                </button>
+                </button>}
               </div>
             </div>
           ) : (

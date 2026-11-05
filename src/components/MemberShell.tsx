@@ -17,6 +17,7 @@ import { useMember } from '../context/member-context';
 import { useSession } from '../context/session-context';
 import { memberNotifications } from '../domain/member-notifications';
 import { DemoRoleSwitcher } from './DemoAccess';
+import { demoMode } from '../services/firebase/client';
 import { Empty, Modal, Skeleton, ToastMessage } from './ui';
 import { useWorkspaceNavigation } from './useWorkspaceNavigation';
 const entries = [
@@ -126,13 +127,13 @@ export function MemberShell() {
           </button>
           <Link className="nav-item" to="/demo" onClick={() => nav.setOpen(false)}>
             <Users size={18} />
-            Demo profiles
+            {demoMode ? 'Demo profiles' : 'My workspaces'}
           </Link>
           <div className="user-card">
             <span className="avatar">{initials}</span>
             <div>
               <strong>{actor.name}</strong>
-              <small>Committee Member · Demo</small>
+              <small>Committee Member{demoMode ? ' · Demo' : ''}</small>
             </div>
             <span className="online-dot" />
           </div>
@@ -188,7 +189,7 @@ export function MemberShell() {
         </main>
         <footer className="app-footer">
           <span>Clear responsibilities. Confident purchases.</span>
-          <span>MoneyKAWKAW · Member · Local demo</span>
+          <span>MoneyKAWKAW · Member{demoMode ? ' · Local demo' : ''}</span>
         </footer>
       </div>
       <ToastMessage notice={notice} dismiss={dismiss} />

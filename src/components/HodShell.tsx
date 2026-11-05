@@ -18,6 +18,7 @@ import { useHod } from '../context/hod-context';
 import { useSession } from '../context/session-context';
 import { scopePath } from '../domain/hod';
 import { DemoRoleSwitcher } from './DemoAccess';
+import { demoMode } from '../services/firebase/client';
 import { Empty, Modal, Skeleton, ToastMessage } from './ui';
 import { useWorkspaceNavigation } from './useWorkspaceNavigation';
 
@@ -141,13 +142,13 @@ export function HodShell() {
           </button>
           <Link className="nav-item" to="/demo" onClick={() => nav.setOpen(false)}>
             <Users size={18} />
-            Demo profiles
+            {demoMode ? 'Demo profiles' : 'My workspaces'}
           </Link>
           <div className="user-card">
             <span className="avatar">{initials}</span>
             <div>
               <strong>{actor.name}</strong>
-              <small>Head of Department · Demo</small>
+              <small>Head of Department{demoMode ? ' · Demo' : ''}</small>
             </div>
             <span className="online-dot" />
           </div>
@@ -248,7 +249,7 @@ export function HodShell() {
         </main>
         <footer className="app-footer">
           <span>Clear responsibilities. Thoughtful spending.</span>
-          <span>MoneyKAWKAW · HOD workspace · Local demo</span>
+          <span>MoneyKAWKAW · HOD workspace{demoMode ? ' · Local demo' : ''}</span>
         </footer>
       </div>
       <ToastMessage notice={notice} dismiss={dismiss} />

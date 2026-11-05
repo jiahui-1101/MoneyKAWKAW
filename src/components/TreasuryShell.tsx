@@ -16,6 +16,7 @@ import { Link, NavLink, Outlet, useLocation } from 'react-router-dom';
 import { useTreasury } from '../context/treasury-context';
 import { useSession } from '../context/session-context';
 import { DemoRoleSwitcher } from './DemoAccess';
+import { demoMode } from '../services/firebase/client';
 import { Empty, Modal, Skeleton, ToastMessage } from './ui';
 import { useWorkspaceNavigation } from './useWorkspaceNavigation';
 
@@ -117,13 +118,13 @@ export function TreasuryShell() {
           </button>
           <Link className="nav-item" to="/demo" onClick={() => nav.setOpen(false)}>
             <Users size={18} />
-            Demo profiles
+            {demoMode ? 'Demo profiles' : 'My workspaces'}
           </Link>
           <div className="user-card">
             <span className="avatar">NL</span>
             <div>
               <strong>{actor.name}</strong>
-              <small>Treasurer · Demo</small>
+              <small>Treasurer{demoMode ? ' · Demo' : ''}</small>
             </div>
             <span className="online-dot" />
           </div>
@@ -190,7 +191,7 @@ export function TreasuryShell() {
         </main>
         <footer className="app-footer">
           <span>Thoughtful review. Traceable decisions.</span>
-          <span>MoneyKAWKAW · Treasurer · Local demo</span>
+          <span>MoneyKAWKAW · Treasurer{demoMode ? ' · Local demo' : ''}</span>
         </footer>
       </div>
       <ToastMessage notice={notice} dismiss={dismiss} />
