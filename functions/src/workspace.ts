@@ -1,0 +1,41 @@
+import { HttpsError, onCall } from 'firebase-functions/v2/https';
+import { authorize, db, hasDepartment, hasTreasury } from './access';
+import { clubPath, roles, type Role, type ActivityMembership, type ActivityRecord, type DepartmentRecord } from './contracts';
+export const foundationWorkspace = onCall(async (request) => {
+  const role = request.data?.role as Role;
+  if (!roles.includes(role)) throw new HttpsError('invalid-argument', 'Choose an assigned workspace.');
+  const member = await authorize(request, role);
+  const activities = [], memberships = [], grants = [];
+  const documents = await db.collection(`${clubPath}/activities`).limit(101).get();
+  if (documents.size > 100) throw new HttpsError('resource-exhausted', 'Activity pagination is required.');
+  for (const document of documents.docs) {
+    const activity = document.data() as ActivityRecord;
+    const grant = (await document.ref.collection('members').doc(member.uid).get()).data() as ActivityMembership | undefined;
+    const finance = role === 'Director' || (role === 'Treasurer' && hasTreasury(member, grant));
+    const departmentDocs = await document.ref.collection('departments').get();
+    const departments = [];
+    for (const d of departmentDocs.docs) {
+      const dep = d.data() as DepartmentRecord;
+      const allowed = (role === 'HOD' || role === 'Member') && hasDepartment(member, grant, d.id, role);
+      if (!finance && !allowed) continue;
+      departments.push({ id: d.id, name: dep.name, description: dep.description,
+        head: dep.head, hodUserId: dep.hodUserId ?? undefined, allocation: dep.allocation });
+      if (allowed) memberships.push({ userId: member.uid, activityId: document.id,
+        departmentId: d.id, role, active: true });
+    }
+    if (!finance && !departments.length) continue;
+    if (role === 'Treasurer') grants.push({ userId: member.uid, activityId: document.id });
+    activities.push({ id: document.id, name: activity.name, description: activity.description,
+      type: activity.type, status: activity.status, startDate: activity.startDate,
+      endDate: activity.endDate, budget: finance ? activity.budget : 0, departments });
+  }
+  // Explicit field projection: never return arbitrary Admin SDK document spreads.
+  // Business collections are intentionally not loaded or mutated in Phase 01.
+  await authorize(request, role);
+  return { version: 1, setupRevision: 0, activities, expenses: [], payments: [], assignments: [],
+    events: [], settings: { currency: 'MYR', timezone: 'Asia/Kuala_Lumpur', warningPercent: 80 },
+    directory: { users: [{ id: member.uid, name: member.name }], memberships },
+    member: { accounts: [], drafts: [], readNotifications: [] },
+    treasury: { grants, receipts: [], payouts: [],
+      rules: { mediumVariance: 10, highVariance: 25, lowHeadroomPercent: 10 } } };
+});
