@@ -1,16 +1,20 @@
 import { HttpsError } from 'firebase-functions/v2/https';
 import { db } from './access';
 import { clubPath, type ClubMember, type ActivityMembership } from './contracts';
-export async function scopedDirectory(activityId: string, departmentIds: string[]) {
+export async function scopedDirectory(activityId: string, departmentIds: string[], profiles: Map<string, ClubMember | undefined>) {
   const grants = await db.collection(`${clubPath}/activities/${activityId}/members`).limit(101).get();
   if (grants.size > 100) throw new HttpsError('resource-exhausted', 'Membership pagination is required.');
   const memberships: { userId: string; activityId: string; departmentId: string; role: 'HOD' | 'Member'; active: true }[] = [];
   const eligible = grants.docs.filter((doc) => (doc.data() as ActivityMembership).active === true);
   if (!eligible.length) return { users: [], memberships };
-  const profiles = await db.getAll(...eligible.map((doc) => db.doc(`${clubPath}/members/${doc.id}`)));
+  const missing = eligible.filter((doc) => !profiles.has(doc.id));
+  if (missing.length) {
+    const fetched = await db.getAll(...missing.map((doc) => db.doc(`${clubPath}/members/${doc.id}`)));
+    fetched.forEach((doc) => profiles.set(doc.id, doc.data() as ClubMember | undefined));
+  }
   const users = [];
   for (let i = 0; i < eligible.length; i++) {
-    const member = profiles[i].data() as ClubMember | undefined;
+    const member = profiles.get(eligible[i].id);
     if (member?.active !== true || member.uid !== eligible[i].id || !Array.isArray(member.roles)) continue;
     const grant = eligible[i].data() as ActivityMembership;
     let visible = false;

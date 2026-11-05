@@ -1,8 +1,9 @@
 import { HttpsError, onCall } from 'firebase-functions/v2/https';
 import { authorize, db, hasDepartment, hasTreasury } from './access';
 import { scopedDirectory } from './directory';
+import { callableOptions } from './options';
 import { clubPath, roles, type Role, type ActivityMembership, type ActivityRecord, type DepartmentRecord, type ClubProfile } from './contracts';
-export const foundationWorkspace = onCall(async (request) => {
+export const foundationWorkspace = onCall(callableOptions, async (request) => {
   const role = request.data?.role as Role;
   if (!roles.includes(role)) throw new HttpsError('invalid-argument', 'Choose an assigned workspace.');
   const member = await authorize(request, role);
@@ -10,6 +11,7 @@ export const foundationWorkspace = onCall(async (request) => {
   if (!club || club.currency !== 'MYR') throw new HttpsError('failed-precondition', 'Club configuration is unavailable.');
   const activities = [], memberships = [], grants = [];
   const users = new Map([[member.uid, { id: member.uid, name: member.name }]]);
+  const profiles = new Map([[member.uid, member]]);
   const documents = await db.collection(`${clubPath}/activities`).limit(101).get();
   if (documents.size > 100) throw new HttpsError('resource-exhausted', 'Activity pagination is required.');
   for (const document of documents.docs) {
@@ -27,7 +29,7 @@ export const foundationWorkspace = onCall(async (request) => {
         head: dep.head, hodUserId: dep.hodUserId ?? undefined, allocation: dep.allocation });
     }
     if (!finance && !departments.length) continue;
-    const directory = await scopedDirectory(document.id, departments.map((d) => d.id));
+    const directory = await scopedDirectory(document.id, departments.map((d) => d.id), profiles);
     memberships.push(...directory.memberships);
     directory.users.forEach((user) => users.set(user.id, user));
     if (role === 'Treasurer') grants.push({ userId: member.uid, activityId: document.id });
