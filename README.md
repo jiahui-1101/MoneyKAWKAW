@@ -1,6 +1,8 @@
 # MoneyKAWKAW · Club budget & purchasing workspace
 
-A browser-local Director, HOD, Treasurer, and Committee Member frontend for club activity planning, purchasing, receipt-backed claims, and reimbursement tracking. React 19, TypeScript, Vite, and React Router.
+A Director, HOD, Treasurer, and Committee Member frontend with an invite-only Firebase foundation. React 19, TypeScript, Vite, and React Router. Firebase mode enables Google sign-in and scoped club/activity/department/roster reads; business commands remain disabled until later phases.
+
+Follow the [Firebase setup, schema, security boundaries and emulator guide](docs/firebase/README.md) first. The feature descriptions below describe the original explicit demo mode; they are not a claim that financial modules are Firebase-backed.
 
 ## Run locally
 
