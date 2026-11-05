@@ -1,5 +1,6 @@
 import { HttpsError, onCall } from 'firebase-functions/v2/https';
 import { authorize, db, hasDepartment, hasTreasury } from './access';
+import { scopedDirectory } from './directory';
 import { clubPath, roles, type Role, type ActivityMembership, type ActivityRecord, type DepartmentRecord, type ClubProfile } from './contracts';
 export const foundationWorkspace = onCall(async (request) => {
   const role = request.data?.role as Role;
@@ -8,6 +9,7 @@ export const foundationWorkspace = onCall(async (request) => {
   const club = (await db.doc(clubPath).get()).data() as ClubProfile | undefined;
   if (!club || club.currency !== 'MYR') throw new HttpsError('failed-precondition', 'Club configuration is unavailable.');
   const activities = [], memberships = [], grants = [];
+  const users = new Map([[member.uid, { id: member.uid, name: member.name }]]);
   const documents = await db.collection(`${clubPath}/activities`).limit(101).get();
   if (documents.size > 100) throw new HttpsError('resource-exhausted', 'Activity pagination is required.');
   for (const document of documents.docs) {
@@ -23,10 +25,11 @@ export const foundationWorkspace = onCall(async (request) => {
       if (!finance && !allowed) continue;
       departments.push({ id: d.id, name: dep.name, description: dep.description,
         head: dep.head, hodUserId: dep.hodUserId ?? undefined, allocation: dep.allocation });
-      if (allowed) memberships.push({ userId: member.uid, activityId: document.id,
-        departmentId: d.id, role, active: true });
     }
     if (!finance && !departments.length) continue;
+    const directory = await scopedDirectory(document.id, departments.map((d) => d.id));
+    memberships.push(...directory.memberships);
+    directory.users.forEach((user) => users.set(user.id, user));
     if (role === 'Treasurer') grants.push({ userId: member.uid, activityId: document.id });
     activities.push({ id: document.id, name: activity.name, description: activity.description,
       type: activity.type, status: activity.status, startDate: activity.startDate,
@@ -37,7 +40,7 @@ export const foundationWorkspace = onCall(async (request) => {
   await authorize(request, role);
   return { version: 1, setupRevision: 0, activities, expenses: [], payments: [], assignments: [],
     events: [], settings: { currency: club.currency, timezone: club.timezone, warningPercent: club.warningPercent ?? 80 },
-    directory: { users: [{ id: member.uid, name: member.name }], memberships },
+    directory: { users: [...users.values()], memberships },
     member: { accounts: [], drafts: [], readNotifications: [] },
     treasury: { grants, receipts: [], payouts: [],
       rules: { mediumVariance: 10, highVariance: 25, lowHeadroomPercent: 10 } } };

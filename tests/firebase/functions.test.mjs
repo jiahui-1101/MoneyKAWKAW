@@ -40,7 +40,9 @@ test('workspace projections enforce role, activity and department scope on the s
   assert.deepEqual(response.result.activities.map((a) => a.id), ['welcome']);
   assert.deepEqual(response.result.activities[0].departments.map((d) => d.id), ['alpha']);
   assert.equal(response.result.activities[0].budget, 0);
-  assert.deepEqual(response.result.directory.users.map((u) => u.id), ['member-a']);
+  assert.deepEqual(response.result.directory.users.map((u) => u.id).sort(), ['hod', 'member-a']);
+  assert.equal(response.result.directory.memberships.some((m) => m.departmentId === 'beta'), false);
+  assert.equal(response.result.directory.users.some((u) => 'email' in u || 'roles' in u), false);
   assert.deepEqual(response.result.member.accounts, []);
   const hod = await call('foundationWorkspace', await google('hod'), { role: 'HOD' });
   assert.deepEqual(hod.result.activities[0].departments.map((d) => d.id), ['alpha']);
