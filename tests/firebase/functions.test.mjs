@@ -76,3 +76,12 @@ test('seed is idempotent and preserves existing memberships and preferences', as
   assert.deepEqual((await db.doc(`${root}/members/director`).get()).data(), before);
   assert.equal((await ref.get()).data().notificationEnabled, false);
 });
+test('invalid fractional monetary source data is rejected before reaching dashboards', async () => {
+  const ref = getFirestore().doc(`${root}/activities/invalid-budget`);
+  try {
+    await ref.set({ budget: 1.5, currency: 'MYR' });
+    const result = await call('foundationWorkspace', await google('director'), { role: 'Director' });
+    assert.equal(result.status, 400);
+    assert.equal(result.error.status, 'FAILED_PRECONDITION');
+  } finally { await ref.delete(); }
+});

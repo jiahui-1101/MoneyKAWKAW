@@ -2,7 +2,7 @@ import { HttpsError, onCall } from 'firebase-functions/v2/https';
 import { authorize, db, hasDepartment, hasTreasury } from './access';
 import { scopedDirectory } from './directory';
 import { callableOptions } from './options';
-import { clubPath, roles, type Role, type ActivityMembership, type ActivityRecord, type DepartmentRecord, type ClubProfile } from './contracts';
+import { clubPath, roles, validSen, type Role, type ActivityMembership, type ActivityRecord, type DepartmentRecord, type ClubProfile } from './contracts';
 export const foundationWorkspace = onCall(callableOptions, async (request) => {
   const role = request.data?.role as Role;
   if (!roles.includes(role)) throw new HttpsError('invalid-argument', 'Choose an assigned workspace.');
@@ -19,12 +19,16 @@ export const foundationWorkspace = onCall(callableOptions, async (request) => {
     const grant = (await document.ref.collection('members').doc(member.uid).get()).data() as ActivityMembership | undefined;
     const finance = role === 'Director' || (role === 'Treasurer' && hasTreasury(member, grant));
     if (!finance && !grant?.active) continue;
+    if (!validSen(activity.budget) || activity.currency !== 'MYR')
+      throw new HttpsError('failed-precondition', 'Activity budget data needs administrator review.');
     const departmentDocs = await document.ref.collection('departments').get();
     const departments = [];
     for (const d of departmentDocs.docs) {
       const dep = d.data() as DepartmentRecord;
       const allowed = (role === 'HOD' || role === 'Member') && hasDepartment(member, grant, d.id, role);
       if (!finance && !allowed) continue;
+      if (!validSen(dep.allocation))
+        throw new HttpsError('failed-precondition', 'Department budget data needs administrator review.');
       departments.push({ id: d.id, name: dep.name, description: dep.description,
         head: dep.head, hodUserId: dep.hodUserId ?? undefined, allocation: dep.allocation });
     }
