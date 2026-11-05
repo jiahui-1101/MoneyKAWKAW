@@ -1,5 +1,5 @@
 import { beforeEach, expect, it, vi } from 'vitest';
-const mocks = vi.hoisted(() => ({ authChanged: (_: { uid: string } | null) => {},
+const mocks = vi.hoisted(() => ({ authChanged: (_: { uid: string } | null) => { void _; },
   membershipChanged: async () => {}, membershipError: () => {},
   callable: vi.fn(), signOut: vi.fn(), stopMember: vi.fn(), stopAuth: vi.fn(),
   auth: { currentUser: null as null | { uid: string } }, actor: { userId: 'member-a', role: 'Member' } }));
