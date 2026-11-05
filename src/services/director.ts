@@ -6,6 +6,8 @@ import { requireRole } from '../domain/session';
 import { upgradeTreasury } from './treasury-migration';
 import { validateTreasury } from './treasury-validation';
 import { validateMemberData } from './member-validation';
+import { demoMode } from './firebase/client';
+import { firebaseRepository } from './firebase/repository';
 
 export const STORAGE_KEY = 'moneykawkaw.director.v1';
 const copy = <T>(value: T): T => structuredClone(value);
@@ -117,6 +119,7 @@ export interface DirectorService {
 // Storage adapter is internal infrastructure. Role-facing services enforce access before using it.
 export const sharedRepository: DirectorService = {
   async load() {
+    if (!demoMode) return firebaseRepository.load();
     await new Promise((resolve) => setTimeout(resolve, 180));
     const raw = localStorage.getItem(STORAGE_KEY);
     if (!raw) return copy(seed);
@@ -131,6 +134,7 @@ export const sharedRepository: DirectorService = {
     }
   },
   async save(store) {
+    if (!demoMode) return firebaseRepository.save(store);
     const ready = upgradeTreasury(upgradeSharedStore(store));
     validateStore(ready);
     try {
@@ -141,6 +145,7 @@ export const sharedRepository: DirectorService = {
     return copy(ready);
   },
   async reset() {
+    if (!demoMode) return firebaseRepository.reset();
     localStorage.removeItem(STORAGE_KEY);
     return copy(seed);
   },
