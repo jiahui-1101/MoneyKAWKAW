@@ -10,3 +10,7 @@ playwright-report/
 .local/
 # Generated from locked OCR dependencies; rebuilt before dev/build
 /public/ocr/
+/functions/lib/
+/.firebase/
+*-debug.log
+/.firebaserc
