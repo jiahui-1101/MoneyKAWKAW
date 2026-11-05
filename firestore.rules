@@ -10,7 +10,10 @@ service cloud.firestore {
     function member() {
       return get(/databases/$(database)/documents/clubs/main/members/$(request.auth.uid)).data;
     }
-    function active() { return google() && member().active == true; }
+    function active() {
+      return google() && member().active == true && member().uid == request.auth.uid
+        && member().roles.size() > 0 && member().roles.hasOnly(['Director', 'Treasurer', 'HOD', 'Member']);
+    }
     function role(name) { return active() && name in member().roles; }
     function grant(aid) {
       return get(/databases/$(database)/documents/clubs/main/activities/$(aid)/members/$(request.auth.uid)).data;
@@ -44,7 +47,10 @@ service cloud.firestore {
             && id == 'notifications' && validPreferences(request.resource.data);
         }
         match /payoutMethods/{id} { allow read: if active() && request.auth.uid == uid; }
-        match /drafts/{id} { allow read: if active() && request.auth.uid == uid; }
+        match /drafts/{id} {
+          allow read: if active() && request.auth.uid == uid
+            && department(resource.data.activityId, resource.data.departmentId, 'Member');
+        }
         match /notifications/{id} { allow read: if active() && request.auth.uid == uid; }
       }
       match /activities/{aid} {

@@ -12,8 +12,9 @@ export interface ActivityMembership {
   treasurer: boolean;
   departmentRoles: Record<string, ('HOD' | 'Member')[]>;
 }
-export interface SessionProfile extends ClubMember {
-  activityIds: string[];
+export type SessionProfile = ClubMember;
+export interface ClubProfile {
+  name: string; currency: 'MYR'; timezone: string; warningPercent: number;
 }
 export interface RecordMetadata<T = string> {
   schemaVersion: 1;

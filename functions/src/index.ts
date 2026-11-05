@@ -5,5 +5,5 @@ export { foundationWorkspace } from './workspace';
 export const sessionProfile = onCall(async (request) => {
   const member = await authorize(request);
   return { uid: member.uid, name: member.name, roles: member.roles,
-    active: true, revision: member.revision, activityIds: [] };
+    active: true, revision: member.revision };
 });

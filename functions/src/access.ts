@@ -10,7 +10,8 @@ export async function authorize(request: CallableRequest<unknown>, role?: Role):
     throw new HttpsError('permission-denied', 'Use your verified Google account.');
   const snapshot = await db.doc(`${clubPath}/members/${request.auth.uid}`).get();
   const member = snapshot.data() as ClubMember | undefined;
-  if (!member?.active || member.uid !== request.auth.uid || !Array.isArray(member.roles) ||
+  if (member?.active !== true || member.uid !== request.auth.uid || !Array.isArray(member.roles) ||
+      typeof member.name !== 'string' || !Number.isSafeInteger(member.revision) || member.revision < 0 ||
       !member.roles.length || member.roles.some((r) => !roles.includes(r)) ||
       (role && !member.roles.includes(role)))
     throw new HttpsError('permission-denied', 'An active club invitation and role are required.');

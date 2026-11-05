@@ -28,7 +28,7 @@ export async function seed() {
     const ref = db.doc(path);
     if (!(await tx.get(ref)).exists) tx.create(ref, data);
   });
-  await create(root, { name: 'Example Club', currency: 'MYR', timezone: 'Asia/Kuala_Lumpur', schemaVersion: 1 });
+  await create(root, { ...metadata, name: 'Example Club', currency: 'MYR', timezone: 'Asia/Kuala_Lumpur', warningPercent: 80 });
   for (const [uid, role, name] of people) {
     try { await auth.getUser(uid); } catch (e) {
       if (e.code !== 'auth/user-not-found') throw e;

@@ -1,10 +1,12 @@
 import { HttpsError, onCall } from 'firebase-functions/v2/https';
 import { authorize, db, hasDepartment, hasTreasury } from './access';
-import { clubPath, roles, type Role, type ActivityMembership, type ActivityRecord, type DepartmentRecord } from './contracts';
+import { clubPath, roles, type Role, type ActivityMembership, type ActivityRecord, type DepartmentRecord, type ClubProfile } from './contracts';
 export const foundationWorkspace = onCall(async (request) => {
   const role = request.data?.role as Role;
   if (!roles.includes(role)) throw new HttpsError('invalid-argument', 'Choose an assigned workspace.');
   const member = await authorize(request, role);
+  const club = (await db.doc(clubPath).get()).data() as ClubProfile | undefined;
+  if (!club || club.currency !== 'MYR') throw new HttpsError('failed-precondition', 'Club configuration is unavailable.');
   const activities = [], memberships = [], grants = [];
   const documents = await db.collection(`${clubPath}/activities`).limit(101).get();
   if (documents.size > 100) throw new HttpsError('resource-exhausted', 'Activity pagination is required.');
@@ -12,6 +14,7 @@ export const foundationWorkspace = onCall(async (request) => {
     const activity = document.data() as ActivityRecord;
     const grant = (await document.ref.collection('members').doc(member.uid).get()).data() as ActivityMembership | undefined;
     const finance = role === 'Director' || (role === 'Treasurer' && hasTreasury(member, grant));
+    if (!finance && !grant?.active) continue;
     const departmentDocs = await document.ref.collection('departments').get();
     const departments = [];
     for (const d of departmentDocs.docs) {
@@ -33,7 +36,7 @@ export const foundationWorkspace = onCall(async (request) => {
   // Business collections are intentionally not loaded or mutated in Phase 01.
   await authorize(request, role);
   return { version: 1, setupRevision: 0, activities, expenses: [], payments: [], assignments: [],
-    events: [], settings: { currency: 'MYR', timezone: 'Asia/Kuala_Lumpur', warningPercent: 80 },
+    events: [], settings: { currency: club.currency, timezone: club.timezone, warningPercent: club.warningPercent ?? 80 },
     directory: { users: [{ id: member.uid, name: member.name }], memberships },
     member: { accounts: [], drafts: [], readNotifications: [] },
     treasury: { grants, receipts: [], payouts: [],
