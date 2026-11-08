@@ -32,18 +32,19 @@ All app tables are under the exposed `public` schema and use UUID keys. `auth.us
 | `club_role_grants`, `activity_role_grants` | Explicit Director/Treasurer grants |
 | `activities`, `departments` | Activity budget and canonical integer-sen department allocations |
 | `activity_memberships`, `department_memberships` | Activity relation and explicit HOD/Member department grants |
+| `purchase_tasks` | HOD-authored purchasing plans linked to activity, department, and assigned member; estimates are integer sen |
 | `member_preferences` | Owner-only notification preference |
-| `audit_events`, `archive_records` | Prepared append-only audit and retention metadata; app access is closed |
+| `audit_events`, `archive_records` | Scoped setup/task audit history and prepared retention metadata; archive app access is closed |
 
-Purchasing tasks, claim versions/items, receipts/OCR corrections, payout accounts/secrets, reimbursements, notifications, and file metadata are deferred to their own business phases. The current repository maps only allowed foundation rows into the unchanged `Store`; financial arrays are empty and all business writes remain disabled.
+Phase 02 adds the Director → HOD → Member purchasing flow. The existing `Store` remains the UI boundary: activities, department assignments, tasks, and allowed audit events load from Supabase; claim, receipt, account, payment, and notification arrays remain empty. Purchasing estimates and progress never create a claim or imply approval or payment.
 
 ## Authorization and integrity
 
 RLS is enabled on every app table. Anonymous reads are revoked. Authenticated roles receive only safe `SELECT`, plus the owner's notification-preference update. Invitation/profile RPCs are no-argument and identity-bound. Scoped helpers live in non-exposed `private`, use a fixed empty search path, and consult active database grants; no user metadata or selected UI role is authoritative.
 
-Director and Treasurer read club foundation data; HOD reads assigned departments and same-department member names; Committee Member reads their own profile/membership and permitted department context. Peer profiles, cross-department data, role grants, invitations, audit/archive records, payment details and evidence remain private. Every privileged hosted function must repeat authorization because service-role credentials bypass RLS.
+Director and Treasurer read club and activity budgets. Only Director can save activities and department setup. HOD can manage tasks in assigned departments and read their same-department roster; Committee Members see only their assignments and can update their own purchase progress. Treasurer remains read-only. Cross-department records, role grants, invitations, archive metadata, payment details, and evidence remain private. Every privileged hosted function must repeat authorization because elevated server credentials bypass RLS.
 
-All monetary columns use integer `bigint` sen with bounded values. Activity currency must match the club. Club currency cannot be relabeled while activities exist. Department allocation changes lock their activity row and reject totals above its budget; activity budget decreases below allocations are rejected. Future business commands must calculate derived totals in a database transaction, lock the activity/claim as appropriate, validate current role/scope/revisions/idempotency, and append an audit event. This phase exposes no such financial write command.
+All monetary columns use integer `bigint` sen with bounded values. Activity currency must match the club. Club currency cannot be relabeled while activities exist. Department allocation changes lock their activity row and reject totals above its budget; activity budget decreases below allocations are rejected. Task writes validate HOD scope, idempotency key, assignment membership, and active task estimates against the department allocation in database functions/triggers. Member progress updates lock the task and are limited to the assigned member's allowed transitions. Setup, task, and progress writes append scoped audit events. Claims, reimbursements, and disbursement commands are not part of Phase 02.
 
 ## Storage, retention and AI boundary
 
@@ -53,4 +54,4 @@ Activities and `archive_records` carry archive/retention/legal-hold metadata. Th
 
 ## Migration boundary
 
-The prior Firebase foundation had no configured production project or live data source. Its 27 commits remain in Git history, but Firebase is removed from current runtime/configuration. No Firestore import is needed for synthetic/demo local data. The new migrations are the schema source of truth; they have not been applied to the hosted project. Hosted OAuth, schema rollout, policies, keys, and backups require a separate authorized release step.
+The prior Firebase foundation had no configured production project or live data source. Its commits remain in Git history, but Firebase is removed from current runtime/configuration. No Firestore import is needed for synthetic/demo local data. The migrations are the schema source of truth; they have not been applied to the hosted project. `npm run test:supabase` rebuilds the local database, provisions synthetic users, runs Auth/API/RLS/Storage and purchasing checks, then stops the local stack. Hosted OAuth, schema rollout, policies, keys, and backups require a separate authorized release step.
