@@ -18,7 +18,7 @@ import { useWorkspace } from '../context/workspace-context';
 import { Modal, Skeleton, Toast } from './ui';
 import { DemoRoleSwitcher } from './DemoAccess';
 import { useSession } from '../context/session-context';
-import { demoMode } from '../services/firebase/client';
+import { demoMode } from '../services/supabase/client';
 
 const navigation = [
   { to: '/director', label: 'Overview', icon: LayoutDashboard, end: true },

@@ -17,7 +17,7 @@ import { useMember } from '../context/member-context';
 import { useSession } from '../context/session-context';
 import { memberNotifications } from '../domain/member-notifications';
 import { DemoRoleSwitcher } from './DemoAccess';
-import { demoMode } from '../services/firebase/client';
+import { demoMode } from '../services/supabase/client';
 import { Empty, Modal, Skeleton, ToastMessage } from './ui';
 import { useWorkspaceNavigation } from './useWorkspaceNavigation';
 const entries = [

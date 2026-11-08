@@ -4,8 +4,8 @@ import { Link, useNavigate } from 'react-router-dom';
 import { useSession } from '../context/session-context';
 import { demoProfiles, roleHome, type DemoActor } from '../domain/session';
 import { Empty, PageHeader, Panel } from './ui';
-import { demoMode } from '../services/firebase/client';
-import { logout } from '../services/firebase/auth';
+import { demoMode } from '../services/supabase/client';
+import { logout } from '../services/supabase/auth';
 
 export function DemoRoleSwitcher() {
   const { actor, select, roles } = useSession();
