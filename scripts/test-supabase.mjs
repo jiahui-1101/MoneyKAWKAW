@@ -5,11 +5,13 @@ import { fileURLToPath } from 'node:url';
 
 const win = process.platform === 'win32';
 const root = fileURLToPath(new URL('..', import.meta.url));
-const cli = resolve(root, 'node_modules', '.bin', win ? 'supabase.cmd' : 'supabase');
+const cli = win
+  ? resolve(root, 'node_modules', '@supabase', 'cli-windows-x64', 'bin', 'supabase.exe')
+  : resolve(root, 'node_modules', '.bin', 'supabase');
 let startAttempted = false;
 function run(command, args, label, inherit = false) {
   const result = spawnSync(command, args, {
-    cwd: root, encoding: 'utf8', windowsHide: true, shell: win,
+    cwd: root, encoding: 'utf8', windowsHide: true, shell: false,
     stdio: inherit ? 'inherit' : ['ignore', 'pipe', 'pipe'],
   });
   if (result.error || result.status !== 0) throw new Error(`${label} failed. See the local runtime and CLI prerequisites.`);

@@ -3,9 +3,11 @@ import { resolve } from 'node:path';
 
 export function supabaseLocalEnvironment() {
   const win = process.platform === 'win32';
-  const cli = resolve(process.cwd(), 'node_modules', '.bin', win ? 'supabase.cmd' : 'supabase');
+  const cli = win
+    ? resolve(process.cwd(), 'node_modules', '@supabase', 'cli-windows-x64', 'bin', 'supabase.exe')
+    : resolve(process.cwd(), 'node_modules', '.bin', 'supabase');
   const output = execFileSync(cli, ['status', '-o', 'env'], {
-    encoding: 'utf8', windowsHide: true, shell: win,
+    encoding: 'utf8', windowsHide: true,
   });
   const values = new Map();
   for (const line of output.split(/\r?\n/)) {
