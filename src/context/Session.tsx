@@ -36,7 +36,7 @@ function SupabaseSession({ children }: { children: ReactNode }) {
   return <SessionContext.Provider value={{ actor, clubName: profile.clubName, roles: profile.roles, select: (value) => {
     if (!profile.roles.includes(value as Role)) throw new Error('This workspace is not assigned to you.');
     setSelected(value as Role);
-  } }}><div className="data-note" role="status">Club connection active · Business actions will be enabled in the next phases.</div>
+  } }}><div className="data-note" role="status">Club connection active · Activity budgets and purchasing tasks are connected.</div>
     {children}
   </SessionContext.Provider>;
 }

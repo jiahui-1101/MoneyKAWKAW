@@ -23,7 +23,7 @@ try {
   run(cli, ['db', 'reset'], 'Local database reset');
   run(process.execPath, ['scripts/seed-supabase.mjs'], 'Synthetic local seed', true);
   const tests = readdirSync(new URL('../tests/supabase', import.meta.url))
-    .filter((file) => file.endsWith('.test.mjs')).map((file) => `tests/supabase/${file}`);
+    .filter((file) => file.endsWith('.test.mjs')).sort().map((file) => `tests/supabase/${file}`);
   if (!tests.length) throw new Error('No Supabase integration tests were found.');
   run(process.execPath, ['--test', '--test-concurrency=1', ...tests], 'Supabase integration tests', true);
 } finally {
