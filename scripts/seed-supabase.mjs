@@ -9,9 +9,9 @@ const invited = [
   ['director@moneykawkaw.test', 'Jamie Lee'],
   ['treasurer@moneykawkaw.test', 'Nora Lim'],
   ['hod-multimedia@moneykawkaw.test', 'Noor HOD'],
-  ['hod-community@moneykawkaw.test', 'Rafi HOD'],
+  ['hod-marketing@moneykawkaw.test', 'Rafi HOD'],
   ['member-multimedia@moneykawkaw.test', 'Aina Member'],
-  ['member-community@moneykawkaw.test', 'Kian Member'],
+  ['member-marketing@moneykawkaw.test', 'Kian Member'],
 ];
 const users = [...invited, ['uninvited@moneykawkaw.test', 'Synthetic Uninvited']];
 const listed = await admin.auth.admin.listUsers({ page: 1, perPage: 100 });

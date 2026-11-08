@@ -38,14 +38,22 @@ test('HOD sees assigned department and same-department roster only', async () =>
   assert.deepEqual(crossDepartment.data, []);
 });
 
+test('Marketing HOD is limited to the Marketing department', async () => {
+  const { client } = await signIn(syntheticEmails.marketingHod);
+  assert.deepEqual((await rows(client.from('departments').select('name'))).map((row) => row.name), ['Marketing']);
+  assert.equal((await rows(client.from('profiles').select('display_name'))).length, 2);
+  assert.deepEqual((await client.from('departments').select('id')
+    .eq('id', '33333333-3333-4333-8333-333333333331')).data, []);
+});
+
 test('Committee Member sees own profile and cannot query another department', async () => {
   const { client, user } = await signIn(syntheticEmails.multimediaMember);
   assert.equal((await rows(client.from('profiles').select('user_id'))).length, 1);
   assert.equal((await rows(client.from('department_memberships').select('department_id'))).length, 1);
-  const otherId = await userId(syntheticEmails.communityMember);
+  const otherId = await userId(syntheticEmails.marketingMember);
   assert.deepEqual((await client.from('profiles').select('user_id').eq('user_id', otherId)).data, []);
   assert.deepEqual((await client.from('departments').select('id')
-    .eq('id', '33333333-3333-4333-8333-333333333333')).data, []);
+    .eq('id', '33333333-3333-4333-8333-333333333332')).data, []);
   assert.equal(user.email, syntheticEmails.multimediaMember);
 });
 

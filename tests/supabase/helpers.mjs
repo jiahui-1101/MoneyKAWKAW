@@ -5,8 +5,8 @@ export const local = supabaseLocalEnvironment();
 export const testPassword = 'local-test-only-2026!';
 export const syntheticEmails = {
   director: 'director@moneykawkaw.test', treasurer: 'treasurer@moneykawkaw.test',
-  multimediaHod: 'hod-multimedia@moneykawkaw.test', communityHod: 'hod-community@moneykawkaw.test',
-  multimediaMember: 'member-multimedia@moneykawkaw.test', communityMember: 'member-community@moneykawkaw.test',
+  multimediaHod: 'hod-multimedia@moneykawkaw.test', marketingHod: 'hod-marketing@moneykawkaw.test',
+  multimediaMember: 'member-multimedia@moneykawkaw.test', marketingMember: 'member-marketing@moneykawkaw.test',
   uninvited: 'uninvited@moneykawkaw.test',
 };
 const options = { auth: { persistSession: false, autoRefreshToken: false, detectSessionInUrl: false } };
