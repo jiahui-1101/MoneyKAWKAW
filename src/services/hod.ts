@@ -4,6 +4,8 @@ import type { PurchasingStatus, Store } from '../domain/models';
 import { sharedRepository } from './director';
 import { assertHodScope, projectHod } from './hod-access';
 import { changePurchasingStatus, savePurchasingTask } from './hod-tasks';
+import { demoMode } from './supabase/client';
+import { savePurchaseTask, setHodPurchaseStatus } from './supabase/business';
 
 async function readAuthorizedStore() {
   const actor = requireRole('HOD');
@@ -68,23 +70,42 @@ export const hodService = {
       },
     };
   },
-  save(activityId: string, departmentId: string, input: TaskInput, id?: string, expected?: string) {
+  async save(activityId: string, departmentId: string, input: TaskInput, id?: string, expected?: string, requestKey = crypto.randomUUID()) {
+    if (!demoMode) {
+      if (writing) throw new Error('A purchase is being saved. Please try again.');
+      writing = true;
+      try {
+        const saved = await savePurchaseTask(activityId, departmentId, input, requestKey, id, expected);
+        const store = await readAuthorizedStore();
+        return { data: projectHod(store), taskId: saved.id };
+      } finally {
+        writing = false;
+      }
+    }
     return command((store) =>
       savePurchasingTask(store, activityId, departmentId, input, id, expected),
     );
   },
-  transition(
+  async transition(
     activityId: string,
     departmentId: string,
     id: string,
     status: PurchasingStatus,
     expected?: string,
   ) {
+    if (!demoMode) {
+      await setHodPurchaseStatus(id, status, expected);
+      return { data: projectHod(await readAuthorizedStore()) };
+    }
     return command((store) => ({
       store: changePurchasingStatus(store, activityId, departmentId, id, status, expected),
     }));
   },
-  cancel(activityId: string, departmentId: string, id: string, expected?: string) {
+  async cancel(activityId: string, departmentId: string, id: string, expected?: string) {
+    if (!demoMode) {
+      await setHodPurchaseStatus(id, 'Cancelled', expected);
+      return { data: projectHod(await readAuthorizedStore()) };
+    }
     return command((store) => ({
       store: changePurchasingStatus(
         store,

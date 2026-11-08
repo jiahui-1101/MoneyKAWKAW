@@ -1,4 +1,6 @@
 import type { PurchasingStatus } from '../domain/models';
+import { demoMode } from './supabase/client';
+import { setMemberPurchaseProgress } from './supabase/business';
 import {
   memberCommand,
   memberEvent,
@@ -11,7 +13,11 @@ export const memberService = {
   async load() {
     return projectMember((await memberRead()).store);
   },
-  progress(id: string, expected: string, status: PurchasingStatus) {
+  async progress(id: string, expected: string, status: PurchasingStatus) {
+    if (!demoMode) {
+      await setMemberPurchaseProgress(id, status, expected);
+      return { data: projectMember((await memberRead()).store), result: undefined };
+    }
     return memberCommand((store) => {
       const task = ownedTask(store, id),
         p = task.purchasing!;

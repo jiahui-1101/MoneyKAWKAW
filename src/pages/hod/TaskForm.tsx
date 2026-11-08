@@ -28,6 +28,7 @@ export function HodTaskForm() {
     priority: p?.priority ?? 'Medium',
     version: p?.updatedAt,
   }));
+  const [requestKey] = useState(() => crypto.randomUUID());
   const [form, setForm] = useState(baseline);
   const [invalid, setInvalid] = useState<string[]>([]);
   const [error, setError] = useState('');
@@ -100,6 +101,7 @@ export function HodTaskForm() {
             },
             taskId,
             baseline.version,
+            requestKey,
           ),
         taskId ? 'Purchasing task updated.' : 'Purchasing task created and assigned.',
       );

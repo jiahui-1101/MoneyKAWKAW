@@ -90,6 +90,7 @@ export function eligibleMembers(data: HodSnapshot, activityId: string, departmen
     data.directory.memberships.some(
       (m) =>
         m.active &&
+        m.role === 'Member' &&
         m.userId === u.id &&
         m.activityId === activityId &&
         m.departmentId === departmentId,
