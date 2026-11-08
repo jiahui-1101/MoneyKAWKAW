@@ -32,6 +32,11 @@ export function Dashboard({ budgets = false }: { budgets?: boolean }) {
   };
   const summary = summarize(filtered);
   const active = activities.filter((a) => a.status === 'Active').length;
+  const utilization = demoMode
+    ? summary.utilization
+    : summary.budget
+      ? (summary.committed / summary.budget) * 100
+      : 0;
   return (
     <div className="stack dashboard">
       <PageHeader
@@ -103,13 +108,13 @@ export function Dashboard({ budgets = false }: { budgets?: boolean }) {
         </div>
         <div className="pulse-progress">
           <div className="row between">
-            <span>Overall utilization</span>
-            <strong>{summary.utilization.toFixed(1)}%</strong>
+            <span>{demoMode ? 'Overall utilization' : 'Planned commitment utilization'}</span>
+            <strong>{utilization.toFixed(1)}%</strong>
           </div>
           <Progress
-            value={summary.utilization}
-            label="Overall budget utilization"
-            tone={summary.recorded > summary.budget ? 'danger' : 'brand'}
+            value={utilization}
+            label={demoMode ? 'Overall budget utilization' : 'Planned commitment utilization'}
+            tone={(demoMode ? summary.recorded : summary.committed) > summary.budget ? 'danger' : 'brand'}
           />
         </div>
       </div>
