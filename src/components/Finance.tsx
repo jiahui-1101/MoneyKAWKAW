@@ -25,25 +25,25 @@ export function Metrics({ summary, count }: { summary: BudgetSummary; count?: nu
     },
     {
       label: demoMode ? 'Recorded expenses' : 'Claim expenditure',
-      value: money(summary.recorded, true),
+      value: demoMode ? money(summary.recorded, true) : 'Phase 03',
       icon: CircleDollarSign,
       note: demoMode ? 'Pending + approved claims' : 'Claims unavailable until Phase 03',
       tone: 'violet',
     },
     {
-      label: 'Remaining budget',
-      value: money(summary.remaining, true),
+      label: demoMode ? 'Remaining budget' : 'Available to plan',
+      value: money(demoMode ? summary.remaining : summary.available, true),
       icon: ArrowDownLeft,
-      note: 'Budget less recorded expenses',
-      tone: summary.remaining < 0 ? 'danger' : 'green',
+      note: demoMode ? 'Budget less recorded expenses' : 'After planned purchasing commitments',
+      tone: (demoMode ? summary.remaining : summary.available) < 0 ? 'danger' : 'green',
     },
     {
-      label: count === undefined ? 'Budget utilization' : 'Total activities',
+      label: count === undefined ? (demoMode ? 'Budget utilization' : 'Claim utilization') : 'Total activities',
       value:
-        count === undefined ? `${summary.utilization.toFixed(1)}%` : String(count).padStart(2, '0'),
+        count === undefined ? (demoMode ? `${summary.utilization.toFixed(1)}%` : 'Phase 03') : String(count).padStart(2, '0'),
       icon: count === undefined ? ArrowUpRight : FolderKanban,
       note:
-        count === undefined ? 'Recorded expenses / overall budget' : 'Every idea, in one workspace',
+        count === undefined ? (demoMode ? 'Recorded expenses / overall budget' : 'Unavailable until claim records are introduced') : 'Every idea, in one workspace',
       tone: 'gold',
     },
   ];
@@ -57,14 +57,14 @@ export function BudgetLifecycle({ summary }: { summary: BudgetSummary }) {
       {[
         ['Department allocations', summary.allocated, 'Portion assigned to departments'],
         [demoMode ? 'Committed' : 'Planned purchasing commitments', summary.committed, demoMode ? 'Open assignments + approved unpaid' : 'Active task estimates · cancelled tasks excluded'],
-        ['Pending review', summary.pending, demoMode ? 'Submitted claims awaiting decision' : 'Claims unavailable until Phase 03'],
-        [demoMode ? 'Paid (sample records)' : 'Paid reimbursements', summary.paid, demoMode ? 'Recorded separately from approval' : 'Payment records unavailable until Phase 03'],
+        ['Pending review', demoMode ? summary.pending : 'Phase 03', demoMode ? 'Submitted claims awaiting decision' : 'Claim records unavailable until Phase 03'],
+        [demoMode ? 'Paid (sample records)' : 'Paid reimbursements', demoMode ? summary.paid : 'Phase 03', demoMode ? 'Recorded separately from approval' : 'Payment records unavailable until Phase 03'],
         ['Available to plan', summary.available, demoMode ? 'Budget less paid, pending, committed' : 'Budget less planned task commitments'],
       ].map(([label, amount, note]) => (
         <div key={label}>
           <small>{label}</small>
-          <strong className={`money ${Number(amount) < 0 ? 'danger-text' : ''}`}>
-            {money(Number(amount))}
+          <strong className={`money ${typeof amount === 'number' && amount < 0 ? 'danger-text' : ''}`}>
+            {typeof amount === 'number' ? money(amount) : amount}
           </strong>
           <span>{note}</span>
         </div>
@@ -102,7 +102,7 @@ export function ActivityTable({
             <th>ACTIVITY</th>
             <th>STATUS</th>
             <th>BUDGET</th>
-            <th>EXPENSES</th>
+            <th>{demoMode ? 'EXPENSES' : 'PLANNED TASKS'}</th>
             <th>UTILIZATION</th>
             <th aria-label="Activity details">
               <span className="sr-only">Details</span>
@@ -112,7 +112,8 @@ export function ActivityTable({
         <tbody>
           {activities.slice(0, limit).map((a, i) => {
             const s = summarize(store, a.id);
-            const warning = s.utilization >= store.settings.warningPercent;
+            const utilization = demoMode ? s.utilization : (a.budget ? (s.committed / a.budget) * 100 : 0);
+            const warning = utilization >= store.settings.warningPercent;
             return (
               <tr key={a.id}>
                 <td aria-label={a.name}>
@@ -134,15 +135,15 @@ export function ActivityTable({
                   <Status value={a.status} />
                 </td>
                 <td className="money">{money(a.budget, true)}</td>
-                <td className="money">{money(s.recorded, true)}</td>
+                <td className="money">{money(demoMode ? s.recorded : s.committed, true)}</td>
                 <td>
                   <div className="utilization-cell">
-                    <span className={s.recorded > s.budget ? 'danger-text' : ''}>
-                      {s.utilization.toFixed(1)}%
+                    <span className={utilization > 100 ? 'danger-text' : ''}>
+                      {utilization.toFixed(1)}%
                     </span>
                     <Progress
-                      value={s.utilization}
-                      tone={s.recorded > s.budget ? 'danger' : warning ? 'gold' : 'green'}
+                      value={utilization}
+                      tone={utilization > 100 ? 'danger' : warning ? 'gold' : 'green'}
                       label={`${a.name} utilization`}
                     />
                   </div>
@@ -175,14 +176,15 @@ export function BudgetComparison({
   root?: string;
 }) {
   const { money } = useFormat();
-  const max = Math.max(
-    ...activities.map((a) => Math.max(a.budget, summarize(store, a.id).recorded)),
-    1,
-  );
+  const amountFor = (activity: Activity) => {
+    const summary = summarize(store, activity.id);
+    return demoMode ? summary.recorded : summary.committed;
+  };
+  const max = Math.max(...activities.map((a) => Math.max(a.budget, amountFor(a))), 1);
   return (
     <Panel
-      title="Budget & spending"
-      subtitle="A clear view of where each activity stands"
+      title={demoMode ? 'Budget & spending' : 'Budget & planned purchases'}
+      subtitle={demoMode ? 'A clear view of where each activity stands' : 'Purchasing commitments compared with activity budgets'}
       action={
         <div className="chart-legend">
           <span>
@@ -191,7 +193,7 @@ export function BudgetComparison({
           </span>
           <span>
             <i className="swatch expense-swatch" />
-            Expenses
+            {demoMode ? 'Expenses' : 'Planned purchases'}
           </span>
         </div>
       }
@@ -204,10 +206,10 @@ export function BudgetComparison({
         <div
           className="comparison-chart"
           role="group"
-          aria-label="Activity budget and recorded expense comparison. Exact figures follow each activity."
+          aria-label={`Activity budgets and ${demoMode ? 'recorded expenses' : 'planned purchases'} comparison. Exact figures follow each activity.`}
         >
           {activities.map((a) => {
-            const recorded = summarize(store, a.id).recorded;
+            const amount = amountFor(a);
             return (
               <div className="comparison-row" key={a.id}>
                 <Link to={`${root}/activities/${a.id}`}>{a.name}</Link>
@@ -218,11 +220,11 @@ export function BudgetComparison({
                   />
                   <div
                     className="comparison-expense"
-                    style={{ width: `${(recorded / max) * 100}%` }}
+                    style={{ width: `${(amount / max) * 100}%` }}
                   />
                 </div>
                 <div className="comparison-value">
-                  <strong>{money(recorded, true)}</strong>
+                  <strong>{money(amount, true)}</strong>
                   <small>of {money(a.budget, true)}</small>
                 </div>
               </div>
