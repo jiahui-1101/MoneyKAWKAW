@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { Wallet } from 'lucide-react';
-import { login, logout, type AuthState } from '../services/firebase/auth';
+import { login, logout, type AuthState } from '../services/supabase/auth';
 import { PageHeader, Panel, Skeleton } from './ui';
 export function ClubLogin({ state, retry }: { state: AuthState; retry: () => void }) {
   const [error, setError] = useState(''), [busy, setBusy] = useState(false);

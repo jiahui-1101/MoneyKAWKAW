@@ -1,12 +1,12 @@
 import { useEffect, useState, type ReactNode } from 'react';
 import { getDemoActor, selectDemoActor, setSessionActor } from '../domain/session';
 import { SessionContext } from './session-context';
-import { demoMode } from '../services/firebase/client';
-import { initialAuthState, watchSession } from '../services/firebase/auth';
+import { demoMode } from '../services/supabase/client';
+import { initialAuthState, watchSession } from '../services/supabase/auth';
 import { ClubLogin } from '../components/ClubLogin';
-import type { Role } from '../../functions/src/contracts';
+import type { Role } from '../domain/access';
 export function SessionProvider({ children }: { children: ReactNode }) {
-  return demoMode ? <DemoSession>{children}</DemoSession> : <FirebaseSession>{children}</FirebaseSession>;
+  return demoMode ? <DemoSession>{children}</DemoSession> : <SupabaseSession>{children}</SupabaseSession>;
 }
 function DemoSession({ children }: { children: ReactNode }) {
   const [actor, setActor] = useState(getDemoActor);
@@ -16,7 +16,7 @@ function DemoSession({ children }: { children: ReactNode }) {
     </SessionContext.Provider>
   );
 }
-function FirebaseSession({ children }: { children: ReactNode }) {
+function SupabaseSession({ children }: { children: ReactNode }) {
   const [state, setState] = useState(initialAuthState), [retry, setRetry] = useState(0);
   const [selected, setSelected] = useState<Role | null>(null);
   useEffect(() => {
