@@ -2,12 +2,14 @@ import { Pencil, Plus, Trash2, Users } from 'lucide-react';
 import { useState, type FormEvent } from 'react';
 import { useWorkspace } from '../context/workspace-context';
 import type { Activity, Department } from '../domain/models';
-import { parseMoney, summarize } from '../domain/budget';
+import { parseMoney, summarize, validateDepartment } from '../domain/budget';
 import { removeDepartment, upsertDepartment } from '../services/director';
 import { Badge, Empty, Modal, Panel, Progress, useFormat } from './ui';
 import { Field } from './Field';
 import { DepartmentAccessFields } from './DepartmentAccessFields';
 import { configureDepartmentAccess } from '../services/department-access';
+import { demoMode } from '../services/supabase/client';
+import { saveDepartmentSetup } from '../services/supabase/business';
 
 export function Departments({ activity }: { activity: Activity }) {
   const { store, mutate, busy } = useWorkspace();
@@ -78,7 +80,7 @@ export function Departments({ activity }: { activity: Activity }) {
                       <Users size={19} />
                     </span>
                     <div className="row">
-                      <button
+                      {demoMode && <button
                         className="icon-btn"
                         aria-label={`Edit ${d.name}`}
                         onClick={() => {
@@ -87,7 +89,7 @@ export function Departments({ activity }: { activity: Activity }) {
                         }}
                       >
                         <Pencil size={14} />
-                      </button>
+                      </button>}
                       <button
                         className="icon-btn"
                         aria-label={`Remove ${d.name}`}
@@ -214,6 +216,7 @@ export function Departments({ activity }: { activity: Activity }) {
         All allocations are in {currency}. Reducing an allocation below recorded expenses is allowed
         and shows an overspending indicator; historical records are preserved.
       </p>
+      {!demoMode && <p className="data-note">Department removal is unavailable in this phase so linked assignments and the audit history remain intact.</p>}
     </div>
   );
 }
@@ -227,7 +230,7 @@ function DepartmentForm({
   department?: Department;
   onClose: () => void;
 }) {
-  const { store, mutate, busy } = useWorkspace();
+  const { store, mutate, run, busy } = useWorkspace();
   const [setupRevision] = useState(store?.setupRevision ?? 0);
   const { money, currency } = useFormat();
   const [name, setName] = useState(department?.name ?? '');
@@ -260,27 +263,41 @@ function DepartmentForm({
     e.preventDefault();
     setAttempted(true);
     try {
-      await mutate(
-        (s) => {
-          if ((s.setupRevision ?? 0) !== setupRevision)
-            throw new Error(
-              'Department setup changed in another view. Reopen this form before saving.',
-            );
-          const next = upsertDepartment(
-            s,
-            activity.id,
-            { name, description, head, allocation: parseMoney(allocation) },
-            department?.id,
-          );
-          const target =
-            department?.id ??
-            next.activities.find((a) => a.id === activity.id)!.departments.at(-1)!.id;
-          return configureDepartmentAccess(next, activity.id, target, hodId, memberIds);
-        },
-        department
-          ? 'Department and allocation updated.'
-          : 'Department created and budget allocated.',
-      );
+      const allocationSen = parseMoney(allocation);
+      if (demoMode) {
+        await mutate(
+          (s) => {
+            if ((s.setupRevision ?? 0) !== setupRevision)
+              throw new Error('Department setup changed in another view. Reopen this form before saving.');
+            const next = upsertDepartment(s, activity.id,
+              { name, description, head, allocation: allocationSen }, department?.id);
+            const target = department?.id ?? next.activities.find((a) => a.id === activity.id)!.departments.at(-1)!.id;
+            return configureDepartmentAccess(next, activity.id, target, hodId, memberIds);
+          },
+          department ? 'Department and allocation updated.' : 'Department created and budget allocated.',
+        );
+      } else {
+        const others = activity.departments.filter((d) => d.id !== department?.id);
+        validateDepartment(
+          { name, description, head, allocation: allocationSen },
+          activity.budget,
+          others.reduce((sum, d) => sum + d.allocation, 0),
+          others.some((d) => d.name.toLowerCase() === name.trim().toLowerCase()),
+        );
+        await run(
+          () => saveDepartmentSetup({
+            activityId: activity.id,
+            departmentId: department?.id,
+            name,
+            description,
+            head,
+            allocation: allocationSen,
+            hodUserId: hodId || undefined,
+            memberUserIds: memberIds,
+          }),
+          department ? 'Department, allocation, and assignments updated.' : 'Department created and budget allocated.',
+        );
+      }
       onClose();
     } catch (e) {
       setError(e instanceof Error ? e.message : 'Unable to save department.');

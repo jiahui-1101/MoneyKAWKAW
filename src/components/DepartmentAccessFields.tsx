@@ -1,6 +1,7 @@
 import { Check } from 'lucide-react';
 import type { ClubDirectory } from '../domain/models';
 import { demoProfiles } from '../domain/session';
+import { demoMode } from '../services/supabase/client';
 import { Field } from './Field';
 
 export function DepartmentAccessFields({
@@ -18,11 +19,11 @@ export function DepartmentAccessFields({
 }) {
   return (
     <div className="stack">
-      <Field label="Assigned HOD (explicit demo access)" id="department-hod">
+      <Field label={demoMode ? 'Assigned HOD (explicit demo access)' : 'Assigned HOD'} id="department-hod">
         <select id="department-hod" value={hodId} onChange={(e) => setHodId(e.target.value)}>
           <option value="">No HOD assigned</option>
           {directory.users
-            .filter((u) => demoProfiles.some((p) => p.userId === u.id && p.role === 'HOD'))
+            .filter((u) => !demoMode || demoProfiles.some((p) => p.userId === u.id && p.role === 'HOD'))
             .map((u) => (
               <option key={u.id} value={u.id}>
                 {u.name}
