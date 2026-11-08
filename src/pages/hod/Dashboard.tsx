@@ -17,6 +17,11 @@ export function HodDashboard({ department = false }: { department?: boolean }) {
   const { data, scope, tasks, base, summary } = useDepartmentScope();
   const { money, date } = useFormat();
   const today = departmentToday(data.settings.timezone);
+  const utilization = demoMode
+    ? summary.utilization
+    : summary.budget
+      ? (summary.planned / summary.budget) * 100
+      : 0;
   const counts = [
     ['Total purchasing tasks', tasks.length, ''],
     [
@@ -121,16 +126,16 @@ export function HodDashboard({ department = false }: { department?: boolean }) {
         </div>
         <div className="pulse-progress">
           <div className="row between">
-            <span>Budget utilization</span>
-            <strong>{summary.utilization.toFixed(1)}%</strong>
+            <span>{demoMode ? 'Budget utilization' : 'Planned commitment utilization'}</span>
+            <strong>{utilization.toFixed(1)}%</strong>
           </div>
           <Progress
-            value={summary.utilization}
-            label="Department budget utilization"
+            value={utilization}
+            label={demoMode ? 'Department budget utilization' : 'Planned commitment utilization'}
             tone={
-              summary.recorded > summary.budget
+              (demoMode ? summary.recorded : summary.planned) > summary.budget
                 ? 'danger'
-                : summary.utilization >= data.settings.warningPercent
+                : utilization >= data.settings.warningPercent
                   ? 'gold'
                   : 'green'
             }
@@ -141,7 +146,7 @@ export function HodDashboard({ department = false }: { department?: boolean }) {
         <div className="form-error" role="status">
           Department budget attention:{' '}
           {summary.available < 0
-            ? `${money(-summary.available)} beyond available allocation after claims and commitments.`
+            ? `${money(-summary.available)} beyond available allocation ${demoMode ? 'after claims and commitments.' : 'after planned task commitments.'}`
             : `Planned estimates exceed the allocation by ${money(summary.planned - summary.budget)}.`}{' '}
           Review outstanding plans. Claim decisions remain with the Treasurer.
         </div>
@@ -158,32 +163,30 @@ export function HodDashboard({ department = false }: { department?: boolean }) {
       <ProcurementFlow tasks={tasks} base={base} />
       <DepartmentBalances data={data} scope={scope} />
       <div className="hod-two-columns">
-        <Panel
-          title="Department expense overview"
-          subtitle="Actual financial records, separate from purchasing estimates"
-          action={<Badge tone="neutral">{demoMode ? 'Sample records' : 'Phase 03 unavailable'}</Badge>}
-        >
-          <div className="expense-overview">
-            {[
-              ['Pending review', summary.pending, 'gold'],
-              ['Approved · not paid', summary.recorded - summary.pending - summary.paid, 'violet'],
-              ['Paid reimbursements', summary.paid, 'green'],
-              ['Unclaimed purchase plans', summary.open, 'brand'],
-            ].map(([label, value, tone]) => (
-              <div key={label}>
-                <div className="row between">
-                  <span>{label}</span>
-                  <strong className="money">{money(Number(value))}</strong>
+        {demoMode ? (
+          <Panel title="Department expense overview" subtitle="Actual financial records, separate from purchasing estimates" action={<Badge tone="neutral">Sample records</Badge>}>
+            <div className="expense-overview">
+              {[
+                ['Pending review', summary.pending, 'gold'],
+                ['Approved · not paid', summary.recorded - summary.pending - summary.paid, 'violet'],
+                ['Paid reimbursements', summary.paid, 'green'],
+                ['Unclaimed purchase plans', summary.open, 'brand'],
+              ].map(([label, value, tone]) => (
+                <div key={label}>
+                  <div className="row between">
+                    <span>{label}</span>
+                    <strong className="money">{money(Number(value))}</strong>
+                  </div>
+                  <Progress value={summary.budget ? (Number(value) / summary.budget) * 100 : 0} label={`${label} share of allocation`} tone={String(tone)} />
                 </div>
-                <Progress
-                  value={summary.budget ? (Number(value) / summary.budget) * 100 : 0}
-                  label={`${label} share of allocation`}
-                  tone={String(tone)}
-                />
-              </div>
-            ))}
-          </div>
-        </Panel>
+              ))}
+            </div>
+          </Panel>
+        ) : (
+          <Panel title="Claims and reimbursements" subtitle="Financial review will be available in Phase 03" action={<Badge tone="neutral">Phase 03</Badge>}>
+            <p className="settings-copy">Claim amounts, approvals, and paid reimbursements are not recorded yet. Planned purchasing commitments remain visible separately.</p>
+          </Panel>
+        )}
         <UpcomingPurchases tasks={tasks} data={data} base={base} />
       </div>
       <Panel

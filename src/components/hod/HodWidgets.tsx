@@ -80,7 +80,7 @@ export function DepartmentMetrics({ data, scope }: { data: HodSnapshot; scope: H
         },
         {
           label: demoMode ? 'Recorded spending' : 'Claim expenditure',
-          value: money(s.recorded, true),
+          value: demoMode ? money(s.recorded, true) : 'Phase 03',
           icon: CircleDollarSign,
           note: demoMode ? 'Pending + approved claim amounts' : 'Claims unavailable until Phase 03',
           tone: 'gold',
@@ -104,9 +104,9 @@ export function DepartmentBalances({ data, scope }: { data: HodSnapshot; scope: 
       {[
         [demoMode ? 'Remaining after expenses' : 'Available to plan', money(s.available), demoMode ? 'Allocation less recorded claims' : 'Allocation less active task commitments'],
         [demoMode ? 'Committed' : 'Planned purchasing commitments', money(s.committed), demoMode ? 'Open purchases + approved unpaid' : 'Active task estimates · cancelled tasks excluded'],
-        ['Pending claim review', money(s.pending), demoMode ? 'Decision remains with Treasurer' : 'Claims unavailable until Phase 03'],
-        ['Paid reimbursements', money(s.paid), demoMode ? 'Fictional shared payment records' : 'Payment records unavailable until Phase 03'],
-        ['Budget utilization', `${s.utilization.toFixed(1)}%`, demoMode ? 'Actual claims / department budget' : 'Recorded claim amount / department budget'],
+        ['Pending claim review', demoMode ? money(s.pending) : 'Phase 03', demoMode ? 'Decision remains with Treasurer' : 'Claims unavailable until Phase 03'],
+        ['Paid reimbursements', demoMode ? money(s.paid) : 'Phase 03', demoMode ? 'Fictional shared payment records' : 'Payment records unavailable until Phase 03'],
+        ['Budget utilization', demoMode ? `${s.utilization.toFixed(1)}%` : 'Phase 03', demoMode ? 'Actual claims / department budget' : 'Claim utilization unavailable until claim records exist'],
       ].map(([label, value, note]) => (
         <div key={label}>
           <small>{label}</small>
