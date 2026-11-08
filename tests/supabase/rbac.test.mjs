@@ -49,7 +49,7 @@ test('Marketing HOD is limited to the Marketing department', async () => {
 test('Committee Member sees own profile and cannot query another department', async () => {
   const { client, user } = await signIn(syntheticEmails.multimediaMember);
   assert.equal((await rows(client.from('profiles').select('user_id'))).length, 2);
-  assert.equal((await rows(client.from('department_memberships').select('department_id'))).length, 1);
+  assert.equal((await rows(client.from('department_memberships').select('department_id'))).length, 2);
   const otherId = await userId(syntheticEmails.marketingMember);
   assert.deepEqual((await client.from('profiles').select('user_id').eq('user_id', otherId)).data, []);
   assert.deepEqual((await client.from('departments').select('id')

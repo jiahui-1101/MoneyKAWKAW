@@ -42,7 +42,7 @@ test('Director persists activity, allocations, and scoped assignments', async ()
   assert.equal(belowAllocation.error?.code, '23514');
   const overAllocation = await saveDepartment('Over budget', 800_001, null, []);
   assert.equal(overAllocation.error?.code, '23514');
-  const saved = await client.from('activities').select('name,budget_sen').eq('id', created.data.id).single();
+  const saved = await client.from('activities').select('name,description,budget_sen').eq('id', created.data.id).single();
   assert.ifError(saved.error);
   assert.equal(saved.data.name, 'Annual Dinner');
   assert.equal(saved.data.description, 'Edited synthetic procurement activity');
