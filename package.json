@@ -12,6 +12,7 @@
     "preview": "vite preview --host 127.0.0.1",
     "test": "vitest run --exclude tests/supabase/**",
     "supabase:start": "supabase start",
+    "supabase:status": "node scripts/supabase-status.mjs",
     "supabase:reset": "supabase db reset",
     "supabase:seed": "node scripts/seed-supabase.mjs",
     "supabase:types": "node scripts/generate-supabase-types.mjs",

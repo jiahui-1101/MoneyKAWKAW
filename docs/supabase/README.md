@@ -5,8 +5,8 @@ The app now uses Supabase Auth and Postgres for hosted/local foundation data. Th
 ## Local setup
 
 1. Install and start Docker Desktop or another Docker-compatible runtime.
-2. Copy `.env.example` to `.env.local`. Keep `VITE_DATA_MODE=local`, `VITE_SUPABASE_URL=http://127.0.0.1:54321`, and set the local public key from `npx supabase status -o env`.
-3. Run `npm run supabase:start`.
+2. Run `npm run supabase:start`.
+3. Copy `.env.example` to `.env.local`, run `npm run supabase:status`, and copy its three public frontend values into `.env.local`.
 4. Run `npm run supabase:reset` to rebuild only the local database and apply migrations plus synthetic SQL fixtures.
 5. Run `npm run supabase:seed` to create synthetic local Auth users and claim their invitations.
 6. Run `npm run test:supabase` for the isolated Auth/API/RLS/Storage integration suite. It resets the local database and stops the local stack when finished.
@@ -16,7 +16,7 @@ The seed script refuses any non-loopback URL. Test passwords and `.test` email a
 
 ## Google OAuth
 
-The local provider is disabled until genuine Google OAuth credentials are supplied. In Google Cloud Console, create a Web OAuth client and register these JavaScript origins: `http://127.0.0.1:5173` and `http://localhost:5173`. Add the local Supabase callback `http://127.0.0.1:54321/auth/v1/callback` as an authorized redirect URI. Put the client ID and secret in ignored `.env.local` as `SUPABASE_AUTH_EXTERNAL_GOOGLE_CLIENT_ID` and `SUPABASE_AUTH_EXTERNAL_GOOGLE_SECRET`, then enable the Google provider in local `supabase/config.toml`.
+The local provider is disabled until genuine Google OAuth credentials are supplied. In Google Cloud Console, create a Web OAuth client and register these JavaScript origins: `http://127.0.0.1:5173` and `http://localhost:5173`. Add the local Supabase callback `http://127.0.0.1:54321/auth/v1/callback` as an authorized redirect URI. Provide the client ID and secret to the local Supabase CLI process as `SUPABASE_AUTH_EXTERNAL_GOOGLE_CLIENT_ID` and `SUPABASE_AUTH_EXTERNAL_GOOGLE_SECRET`, then enable the Google provider in local `supabase/config.toml`. Do not prefix either secret with `VITE_`.
 
 For hosted OAuth, configure Authentication → Providers → Google in the created project and add the exact hosted callback shown by Supabase to the Google OAuth client. The project callback is `https://mqklyfboywbxcexdttrl.supabase.co/auth/v1/callback`. Also allow the app's final origin in Supabase redirect URLs and Google JavaScript origins. Never invent credentials; actual Google sign-in remains unverified until an authorized operator supplies them.
 

@@ -1,8 +1,10 @@
 import { execFileSync } from 'node:child_process';
+import { resolve } from 'node:path';
 
 export function supabaseLocalEnvironment() {
   const win = process.platform === 'win32';
-  const output = execFileSync(win ? 'npx.cmd' : 'npx', ['supabase', 'status', '-o', 'env'], {
+  const cli = resolve(process.cwd(), 'node_modules', '.bin', win ? 'supabase.cmd' : 'supabase');
+  const output = execFileSync(cli, ['status', '-o', 'env'], {
     encoding: 'utf8', windowsHide: true, shell: win,
   });
   const values = new Map();

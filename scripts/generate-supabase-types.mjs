@@ -1,10 +1,12 @@
 import { execFileSync } from 'node:child_process';
 import { writeFileSync } from 'node:fs';
+import { resolve } from 'node:path';
 
 const win = process.platform === 'win32';
+const cli = resolve(process.cwd(), 'node_modules', '.bin', win ? 'supabase.cmd' : 'supabase');
 let generated;
 try {
-  generated = execFileSync(win ? 'npx.cmd' : 'npx', ['supabase', 'gen', 'types', 'typescript', '--local'], {
+  generated = execFileSync(cli, ['gen', 'types', 'typescript', '--local'], {
     encoding: 'utf8', windowsHide: true, shell: win,
   });
 } catch {
