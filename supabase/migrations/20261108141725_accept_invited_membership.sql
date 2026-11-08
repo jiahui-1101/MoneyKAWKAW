@@ -31,7 +31,7 @@ begin
     select distinct activity_id, club_id, v_uid from public.invitation_role_grants
     where invitation_id = v_invitation.id and activity_id is not null on conflict do nothing;
   insert into public.club_role_grants(club_id, user_id, role, created_by)
-    select club_id, v_uid, club_role, invited_by from public.invitation_role_grants
+    select club_id, v_uid, club_role, v_invitation.invited_by from public.invitation_role_grants
     where invitation_id = v_invitation.id and club_role is not null on conflict do nothing;
   insert into public.activity_role_grants(activity_id, club_id, user_id, role, created_by)
     select g.activity_id, g.club_id, v_uid, g.activity_role, v_invitation.invited_by
