@@ -31,7 +31,6 @@ create function public.update_hod_purchase_task_status(
 returns public.purchase_tasks language plpgsql security definer set search_path = '' as $$
 declare
   v_task public.purchase_tasks%rowtype;
-  v_activity public.activities%rowtype;
   v_before jsonb;
 begin
   if p_status is null then raise exception 'Choose a purchasing status' using errcode = '22023'; end if;
@@ -40,7 +39,7 @@ begin
   if not private.has_department_role(v_task.department_id, 'HOD') then
     raise exception 'Assigned HOD access required' using errcode = '42501';
   end if;
-  select * into v_activity from public.activities
+  perform 1 from public.activities
     where id = v_task.activity_id and club_id = v_task.club_id for update;
   if not found then raise exception 'Activity not found' using errcode = 'P0002'; end if;
   perform 1 from public.departments where id = v_task.department_id for update;
@@ -82,14 +81,13 @@ create function public.update_my_purchase_progress(
 returns public.purchase_tasks language plpgsql security definer set search_path = '' as $$
 declare
   v_task public.purchase_tasks%rowtype;
-  v_activity public.activities%rowtype;
   v_before jsonb;
 begin
   if auth.uid() is null then raise exception 'Authentication required' using errcode = '42501'; end if;
   if p_status is null then raise exception 'Choose a purchasing status' using errcode = '22023'; end if;
   select * into v_task from public.purchase_tasks where id = p_task_id;
   if not found then raise exception 'Purchasing task not found' using errcode = 'P0002'; end if;
-  select * into v_activity from public.activities
+  perform 1 from public.activities
     where id = v_task.activity_id and club_id = v_task.club_id for update;
   if not found then raise exception 'Activity not found' using errcode = 'P0002'; end if;
   perform 1 from public.departments where id = v_task.department_id for update;
