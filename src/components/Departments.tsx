@@ -72,7 +72,10 @@ export function Departments({ activity }: { activity: Activity }) {
             .filter((d) => `${d.name} ${d.head}`.toLowerCase().includes(query.toLowerCase()))
             .map((d) => {
               const s = summarize(store, activity.id, d.id);
-              const over = s.recorded > d.allocation;
+              const used = demoMode ? s.recorded : s.committed;
+              const remaining = demoMode ? s.remaining : s.available;
+              const utilization = d.allocation ? (used / d.allocation) * 100 : 0;
+              const over = used > d.allocation;
               return (
                 <article className="department-card" key={d.id}>
                   <div className="row between">
@@ -127,25 +130,24 @@ export function Departments({ activity }: { activity: Activity }) {
                       <strong className="money">{money(d.allocation)}</strong>
                     </div>
                     <div>
-                      <small>Recorded expenses</small>
-                      <strong className="money">{money(s.recorded)}</strong>
+                      <small>{demoMode ? 'Recorded expenses' : 'Planned commitments'}</small>
+                      <strong className="money">{money(used)}</strong>
                     </div>
                   </div>
                   <Progress
-                    value={s.utilization}
-                    label={`${d.name} spending utilization`}
+                    value={utilization}
+                    label={`${d.name} ${demoMode ? 'spending' : 'planned commitment'} utilization`}
                     tone={over ? 'danger' : 'green'}
                   />
                   <div className="row between department-remaining">
                     <span className={over ? 'danger-text' : ''}>
-                      {money(s.remaining)} remaining
+                      {money(remaining)} {demoMode ? 'remaining' : 'available to plan'}
                     </span>
-                    <span>{s.utilization.toFixed(1)}% used</span>
+                    <span>{utilization.toFixed(1)}% {demoMode ? 'used' : 'planned'}</span>
                   </div>
                   {over && (
                     <p className="department-warning">
-                      Expenses exceed this allocation by {money(-s.remaining)}. Review the
-                      allocation.
+                      {demoMode ? 'Expenses exceed' : 'Planned commitments exceed'} this allocation by {money(-remaining)}. Review the allocation.
                     </p>
                   )}
                 </article>
@@ -215,8 +217,9 @@ export function Departments({ activity }: { activity: Activity }) {
         </Modal>
       )}
       <p className="data-note">
-        All allocations are in {currency}. Reducing an allocation below recorded expenses is allowed
-        and shows an overspending indicator; historical records are preserved.
+        {demoMode
+          ? `All allocations are in ${currency}. Reducing an allocation below recorded expenses shows an overspending indicator; historical records are preserved.`
+          : `All allocations are in ${currency}. Active purchasing estimates reserve department funds until the task is cancelled or otherwise released.`}
       </p>
       {!demoMode && <p className="data-note">Department removal is unavailable in this phase so linked assignments and the audit history remain intact.</p>}
     </div>
