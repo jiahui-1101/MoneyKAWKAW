@@ -10,6 +10,7 @@ import {
 } from '../../components/member/MemberTables';
 import { MetricCards } from '../../components/MetricCards';
 import { Empty, PageHeader, Panel, Progress, TextLink, useFormat } from '../../components/ui';
+import { demoMode } from '../../services/supabase/client';
 export function MemberDashboard() {
   const { data } = useMember(),
     { actor } = useSession(),
@@ -30,7 +31,7 @@ export function MemberDashboard() {
       <PageHeader
         eyebrow="COMMITTEE MEMBER WORKSPACE"
         title={`${actor.name.split(' ')[0]}, here’s your part of the plan.`}
-        description="Your department’s purpose, your next purchase, and a clear path to reimbursement."
+        description={demoMode ? 'Your department’s purpose, your next purchase, and a clear path to reimbursement.' : 'Your assigned activities, purchasing tasks, and shared progress.'}
       >
         <Link className="btn primary" to="/member/tasks">
           View my purchases
@@ -38,8 +39,7 @@ export function MemberDashboard() {
       </PageHeader>
       {!data.scopes.length && (
         <Empty title="No active departments assigned">
-          Your Director must explicitly add your Member profile to an activity department. Your
-          private saved accounts remain available.
+          Your Director must explicitly add your Member profile to an activity department.
         </Empty>
       )}
       <MetricCards
@@ -57,6 +57,7 @@ export function MemberDashboard() {
             note: 'Shared HOD purchasing plans',
             tone: 'violet',
           },
+          ...(demoMode ? [
           {
             label: 'Claims awaiting review',
             value: String(awaiting.length).padStart(2, '0'),
@@ -74,18 +75,21 @@ export function MemberDashboard() {
             note: 'Manually recorded · check receipt status',
             tone: 'green',
           },
+          ] : []),
         ]}
       />
       <div className="member-counts">
         {[
           ['Pending purchases', pending.length, '/member/tasks'],
           ['Completed purchases', completed.length, '/member/tasks'],
+          ...(demoMode ? [
           [
             'Approved claims',
             data.expenses.filter((e) => e.state === 'Approved').length,
             '/member/claims',
           ],
           ['Pending reimbursements', unpaid.length, '/member/claims'],
+          ] : []),
         ].map(([label, value, to]) => (
           <Link key={label} to={String(to)}>
             <span>{label}</span>
@@ -140,7 +144,7 @@ export function MemberDashboard() {
             })}
           </div>
         </Panel>
-        <Panel
+        {demoMode ? <Panel
           title="Claim status overview"
           subtitle="Only your own reimbursement records"
           action={<TextLink to="/member/claims">My claims</TextLink>}
@@ -157,9 +161,11 @@ export function MemberDashboard() {
               confirm its receipt.
             </p>
           </div>
-        </Panel>
+        </Panel> : <Panel title="Claims and receipts" subtitle="Phase 03">
+          <p className="settings-copy">Claim submission, receipt history, reimbursement tracking, and payout accounts are not available in this phase.</p>
+        </Panel>}
       </div>
-      <Panel
+      {demoMode && <Panel
         title="Recent claims"
         subtitle="Shared Treasurer status, evidence, and payment history"
         action={<TextLink to="/member/claims">All my claims</TextLink>}
@@ -168,7 +174,7 @@ export function MemberDashboard() {
           claims={[...data.expenses].sort((a, b) => b.date.localeCompare(a.date)).slice(0, 4)}
           data={data}
         />
-      </Panel>
+      </Panel>}
       <Panel
         title="Recent notifications"
         subtitle="Real assignments, deadlines, and shared claim events"
@@ -190,7 +196,7 @@ export function MemberDashboard() {
           ))}
           {!notes.length && (
             <Empty title="You’re up to date">
-              Notifications will follow actual changes to your responsibilities and claims.
+              Notifications will follow actual changes to your responsibilities{demoMode ? ' and claims' : ''}.
             </Empty>
           )}
         </div>

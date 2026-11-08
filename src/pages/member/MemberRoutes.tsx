@@ -13,6 +13,7 @@ import { MemberDraft } from './Draft';
 import { MemberClaimDetail } from './ClaimDetail';
 import { MemberPayment } from './Payment';
 import { MemberNotifications } from './Notifications';
+import { demoMode } from '../../services/supabase/client';
 export function MemberRoutes() {
   const { actor } = useSession();
   return (
@@ -27,11 +28,17 @@ export function MemberRoutes() {
           />
           <Route path="tasks" element={<MemberTasks />} />
           <Route path="tasks/:id" element={<MemberTaskDetail />} />
-          <Route path="drafts/:id" element={<MemberDraft />} />
-          <Route path="claims" element={<MemberClaims />} />
-          <Route path="claims/:id" element={<MemberClaimDetail />} />
-          <Route path="claims/:id/payment" element={<MemberPayment />} />
-          <Route path="accounts" element={<MemberAccounts />} />
+          {demoMode ? <>
+            <Route path="drafts/:id" element={<MemberDraft />} />
+            <Route path="claims" element={<MemberClaims />} />
+            <Route path="claims/:id" element={<MemberClaimDetail />} />
+            <Route path="claims/:id/payment" element={<MemberPayment />} />
+            <Route path="accounts" element={<MemberAccounts />} />
+          </> : <>
+            <Route path="drafts/*" element={<Phase03Unavailable />} />
+            <Route path="claims/*" element={<Phase03Unavailable />} />
+            <Route path="accounts" element={<Phase03Unavailable />} />
+          </>}
           <Route path="notifications" element={<MemberNotifications />} />
           <Route
             path="*"
@@ -51,5 +58,12 @@ export function MemberRoutes() {
         </Route>
       </Routes>
     </MemberProvider>
+  );
+}
+function Phase03Unavailable() {
+  return (
+    <Empty title="Claims and payment accounts aren’t available yet">
+      Purchasing tasks and progress are connected. Receipt uploads, claims, and payout details are planned for Phase 03.
+    </Empty>
   );
 }

@@ -33,6 +33,7 @@ export function MemberShell() {
   const { actor, clubName } = useSession();
   const nav = useWorkspaceNavigation(),
     location = useLocation();
+  const visibleEntries = demoMode ? entries : entries.filter((entry) => !['/member/claims', '/member/accounts'].includes(entry.to));
   const [help, setHelp] = useState(false);
   const initials = actor.name
     .split(' ')
@@ -40,7 +41,7 @@ export function MemberShell() {
     .join('');
   const unread = data ? memberNotifications(data).filter((n) => !n.read).length : 0;
   const section =
-    entries.find((e) => (e.end ? e.to === location.pathname : location.pathname.startsWith(e.to)))
+    visibleEntries.find((e) => (e.end ? e.to === location.pathname : location.pathname.startsWith(e.to)))
       ?.title ?? 'My purchase';
   return (
     <div className="app-shell member-shell">
@@ -86,7 +87,7 @@ export function MemberShell() {
         </div>
         <p className="nav-label">MY RESPONSIBILITIES</p>
         <nav>
-          {entries.map(({ to, title, icon: Icon, end }) => (
+          {visibleEntries.map(({ to, title, icon: Icon, end }) => (
             <NavLink
               key={to}
               to={to}
@@ -200,6 +201,7 @@ export function MemberShell() {
               Coordinate with your department and update only your own assigned purchases. Your HOD
               controls task budgets, ownership, and deadlines.
             </p>
+            {demoMode ? <>
             <p>
               Upload the original receipt, read it on device or enter source values manually, and
               retain corrections and exclusions. The Treasurer decides your submitted claim.
@@ -208,6 +210,7 @@ export function MemberShell() {
               Store fictional payout instructions for this local demo. A recorded payment is
               separate from bank verification and your acknowledgment of receipt.
             </p>
+            </> : <p>Claims, receipt uploads, and payment accounts will become available in Phase 03.</p>}
           </div>
         </Modal>
       )}
