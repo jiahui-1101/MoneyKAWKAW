@@ -90,16 +90,18 @@ export function Departments({ activity }: { activity: Activity }) {
                       >
                         <Pencil size={14} />
                       </button>}
-                      <button
-                        className="icon-btn"
-                        aria-label={`Remove ${d.name}`}
-                        onClick={() => {
-                          setError('');
-                          setRemoving(d);
-                        }}
-                      >
-                        <Trash2 size={14} />
-                      </button>
+                      {demoMode && (
+                        <button
+                          className="icon-btn"
+                          aria-label={`Remove ${d.name}`}
+                          onClick={() => {
+                            setError('');
+                            setRemoving(d);
+                          }}
+                        >
+                          <Trash2 size={14} />
+                        </button>
+                      )}
                     </div>
                   </div>
                   <div className="row between">
