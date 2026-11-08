@@ -31,7 +31,8 @@ for (const [email] of users) {
   if (login.error) throw login.error;
   const claim = await client.rpc('accept_club_invitation');
   if (claim.error) throw claim.error;
-  const membership = await client.from('club_memberships').select('status').maybeSingle();
+  const membership = await client.from('club_memberships').select('status')
+    .eq('user_id', login.data.user.id).maybeSingle();
   if (membership.error) throw membership.error;
   if (invited.some(([candidate]) => candidate === email)) {
     if (claim.data !== true || membership.data?.status !== 'active')
