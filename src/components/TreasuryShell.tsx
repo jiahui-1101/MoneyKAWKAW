@@ -34,8 +34,9 @@ export function TreasuryShell() {
   const nav = useWorkspaceNavigation();
   const location = useLocation();
   const [help, setHelp] = useState(false);
+  const visibleEntries = demoMode ? entries : entries.slice(0, 2);
   const section =
-    entries.find((e) => (e.end ? e.to === location.pathname : location.pathname.startsWith(e.to)))
+    visibleEntries.find((e) => (e.end ? e.to === location.pathname : location.pathname.startsWith(e.to)))
       ?.title ?? 'Financial record';
   return (
     <div className="app-shell treasury-shell">
@@ -81,7 +82,7 @@ export function TreasuryShell() {
         </div>
         <p className="nav-label">FINANCIAL MANAGEMENT</p>
         <nav>
-          {entries.map(({ to, title, icon: Icon, end }) => (
+          {visibleEntries.map(({ to, title, icon: Icon, end }) => (
             <NavLink
               key={to}
               to={to}
@@ -102,10 +103,13 @@ export function TreasuryShell() {
               <br />
               Considered decisions.
             </h3>
-            <p>Follow the record from submitted claim to reimbursement.</p>
-            <Link to="/treasurer/claims" onClick={() => nav.setOpen(false)}>
-              Open review queue →
-            </Link>
+            {demoMode ? <>
+              <p>Follow the record from submitted claim to reimbursement.</p>
+              <Link to="/treasurer/claims" onClick={() => nav.setOpen(false)}>Open review queue →</Link>
+            </> : <>
+              <p>Review activity budgets and planned purchasing commitments. Claim review is planned for Phase 03.</p>
+              <Link to="/treasurer/activities" onClick={() => nav.setOpen(false)}>View activity budgets →</Link>
+            </>}
           </div>
           <button
             className="nav-item"
