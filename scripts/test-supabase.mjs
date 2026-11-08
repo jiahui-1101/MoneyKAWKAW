@@ -21,7 +21,7 @@ try {
   startAttempted = true;
   run(cli, ['start'], 'Local Supabase startup');
   run(cli, ['db', 'reset'], 'Local database reset');
-  run(process.execPath, ['scripts/seed-supabase.mjs'], 'Synthetic local seed');
+  run(process.execPath, ['scripts/seed-supabase.mjs'], 'Synthetic local seed', true);
   const tests = readdirSync(new URL('../tests/supabase', import.meta.url))
     .filter((file) => file.endsWith('.test.mjs')).map((file) => `tests/supabase/${file}`);
   if (!tests.length) throw new Error('No Supabase integration tests were found.');

@@ -1,6 +1,8 @@
 import assert from 'node:assert/strict';
+import { createHmac } from 'node:crypto';
 import test from 'node:test';
-import { admin, local, signIn, syntheticEmails } from './helpers.mjs';
+import { createClient } from '@supabase/supabase-js';
+import { admin, local, signIn, syntheticEmails, userId } from './helpers.mjs';
 
 test('client uploads are denied and private proof downloads require a later authorized flow', async () => {
   const { client } = await signIn(syntheticEmails.multimediaMember);
@@ -35,6 +37,25 @@ test('browser storage restores a session and logout clears it', async () => {
   assert.equal((await restored.rpc('current_club_session')).data.roles[0], 'Director');
   await restored.auth.signOut();
   assert.equal((await restored.auth.getSession()).data.session, null);
+});
+
+test('expired signed sessions cannot read club data', async () => {
+  const now = Math.floor(Date.now() / 1000);
+  const encode = (value) => Buffer.from(JSON.stringify(value)).toString('base64url');
+  const user = await userId(syntheticEmails.director);
+  const input = [
+    encode({ alg: 'HS256', typ: 'JWT' }),
+    encode({ iss: 'supabase', aud: 'authenticated', role: 'authenticated',
+      sub: user, iat: now - 3600, exp: now - 60 }),
+  ].join('.');
+  const signature = createHmac('sha256', local.jwtSecret).update(input).digest('base64url');
+  const expiredClient = createClient(local.url, local.anonKey, {
+    auth: { persistSession: false, autoRefreshToken: false, detectSessionInUrl: false },
+    global: { headers: { Authorization: `Bearer ${input}.${signature}` } },
+  });
+  const response = await expiredClient.from('activities').select('id');
+  assert.ok(response.error);
+  assert.match(response.error.message, /expired/i);
 });
 
 test('membership revocation blocks data for an already-issued JWT', async () => {

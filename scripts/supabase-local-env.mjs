@@ -17,8 +17,9 @@ export function supabaseLocalEnvironment() {
   const url = values.get('API_URL');
   const anonKey = values.get('ANON_KEY') ?? values.get('PUBLISHABLE_KEY');
   const serviceKey = values.get('SERVICE_ROLE_KEY') ?? values.get('SECRET_KEY');
+  const jwtSecret = values.get('JWT_SECRET');
   if (!url || !anonKey || !serviceKey) throw new Error('Local Supabase is not running or did not return local keys.');
   if (!['127.0.0.1', 'localhost', '::1'].includes(new URL(url).hostname))
     throw new Error('Local-only data scripts reject non-loopback Supabase URLs.');
-  return { url, anonKey, serviceKey };
+  return { url, anonKey, serviceKey, jwtSecret };
 }
