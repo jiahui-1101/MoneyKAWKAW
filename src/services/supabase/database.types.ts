@@ -1,5 +1,4 @@
-// Generated contract mirror for the checked-in migrations. Regenerate from the local schema with:
-// npx supabase gen types typescript --local > src/services/supabase/database.types.ts
+// Schema-aligned interim contract. `npm run supabase:types` regenerates this from the local database.
 export type Json = string | number | boolean | null | { [key: string]: Json | undefined } | Json[];
 type Table<Row> = { Row: Row; Insert: Partial<Row>; Update: Partial<Row>; Relationships: [] };
 type TimeRow = { created_at: string; updated_at: string };

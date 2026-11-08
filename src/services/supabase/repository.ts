@@ -41,7 +41,7 @@ export const supabaseRepository: WorkspaceRepository = {
     const departments: Department[] = departmentResult.data.map((row) => ({
       id: row.id, name: row.name, description: row.description, head: row.head_label,
       allocation: Number(row.allocation_sen),
-      hodUserId: memberships.find((m) => m.departmentId === row.id && m.role === 'HOD')?.userId,
+      hodUserId: memberships.find((m) => m.departmentId === row.id && m.role === 'HOD' && m.active)?.userId,
     }));
     const departmentActivities = new Map<string, Department[]>();
     for (const row of departmentResult.data) {
