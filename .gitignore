@@ -10,6 +10,8 @@ playwright-report/
 .local/
 # Generated from locked OCR dependencies; rebuilt before dev/build
 /public/ocr/
+# Legacy local build output; no current source or deployment uses it.
+/functions/lib/
 *-debug.log
 /.firebaserc
 
