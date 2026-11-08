@@ -1,6 +1,6 @@
 import type { ClaimReview, ManualPayment, TreasuryData } from './treasury';
 import type { MemberData } from './member';
-export const activityTypes = ['Workshop', 'Large-scale event', 'Community', 'Other'] as const;
+export const activityTypes = ['Workshop', 'Small Event', 'Large-scale event', 'Community', 'Other'] as const;
 export const activityStatuses = ['Planning', 'Active', 'Completed'] as const;
 export type ActivityType = (typeof activityTypes)[number];
 export type ActivityStatus = (typeof activityStatuses)[number];

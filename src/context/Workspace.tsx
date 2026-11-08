@@ -53,6 +53,27 @@ export function WorkspaceProvider({ children }: { children: ReactNode }) {
       setBusy(false);
     }
   };
+  const run = async <T,>(operation: () => Promise<T>, message: string) => {
+    if (locked.current) throw new Error('Workspace is busy. Please try again.');
+    locked.current = true;
+    setBusy(true);
+    setError('');
+    try {
+      const value = await operation();
+      try {
+        const saved = await directorService.load();
+        current.current = saved;
+        setStore(saved);
+        setNotice(message);
+      } catch {
+        throw new Error('The change was saved, but the workspace could not refresh. Reload and verify it.');
+      }
+      return value;
+    } finally {
+      locked.current = false;
+      setBusy(false);
+    }
+  };
   const reset = async () => {
     const s = await directorService.reset();
     current.current = s;
@@ -71,6 +92,7 @@ export function WorkspaceProvider({ children }: { children: ReactNode }) {
         reload,
         mutate,
         reset,
+        run,
         dismiss: () => setNotice(''),
       }}
     >

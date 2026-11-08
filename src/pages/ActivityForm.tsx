@@ -9,10 +9,13 @@ import { Empty, Modal, PageHeader, useFormat } from '../components/ui';
 import { DateField } from '../components/DateField';
 import { Field } from '../components/Field';
 import { configureTreasurer } from '../services/treasury-access';
+import { demoMode } from '../services/supabase/client';
+import { saveActivity } from '../services/supabase/business';
+import { validateActivity } from '../domain/budget';
 
 export function ActivityForm() {
   const { id } = useParams();
-  const { store, mutate, busy } = useWorkspace();
+  const { store, mutate, run, busy } = useWorkspace();
   const { currency, money } = useFormat();
   const navigate = useNavigate();
   const existing = store?.activities.find((a) => a.id === id);
@@ -79,20 +82,26 @@ export function ActivityForm() {
         status: form.status as ActivityInput['status'],
         budget: parseMoney(form.budget),
       };
-      const saved = await mutate(
-        (s) => {
-          if ((s.setupRevision ?? 0) !== setupRevision)
-            throw new Error(
-              'Activity setup changed in another view. Reload before saving this form.',
-            );
-          const next = upsertActivity(s, input, id);
-          return configureTreasurer(next, id ?? next.activities[0].id, treasurer);
-        },
-        id
-          ? 'Activity updated successfully.'
-          : 'Activity created. Next, configure your departments.',
-      );
-      const activityId = id ?? saved.activities[0].id;
+      let activityId = id;
+      if (demoMode) {
+        const saved = await mutate(
+          (s) => {
+            if ((s.setupRevision ?? 0) !== setupRevision)
+              throw new Error('Activity setup changed in another view. Reload before saving this form.');
+            const next = upsertActivity(s, input, id);
+            return configureTreasurer(next, id ?? next.activities[0].id, treasurer);
+          },
+          id ? 'Activity updated successfully.' : 'Activity created. Next, configure your departments.',
+        );
+        activityId = id ?? saved.activities[0].id;
+      } else {
+        validateActivity(input, existing?.departments.reduce((sum, d) => sum + d.allocation, 0));
+        const saved = await run(
+          () => saveActivity(id, input),
+          id ? 'Activity updated.' : 'Activity created. Next, set up its departments.',
+        );
+        activityId = saved.id;
+      }
       navigate(`/director/activities/${activityId}${id ? '' : '/departments'}`);
     } catch (e) {
       setError(e instanceof Error ? e.message : 'Unable to save this activity.');
@@ -239,7 +248,7 @@ export function ActivityForm() {
               {existing &&
                 ` Currently allocated: ${money(existing.departments.reduce((s, d) => s + d.allocation, 0))}.`}
             </p>
-            <Field label="Treasurer oversight" id="treasurer-access">
+            {demoMode && <Field label="Treasurer oversight" id="treasurer-access">
               <select
                 id="treasurer-access"
                 value={treasurer ? 'yes' : 'no'}
@@ -248,7 +257,7 @@ export function ActivityForm() {
                 <option value="no">No Treasurer assigned</option>
                 <option value="yes">Nora Lim · Treasurer demo</option>
               </select>
-            </Field>
+            </Field>}
           </div>
           {error && (
             <div className="form-error" role="alert">
@@ -289,7 +298,7 @@ export function ActivityForm() {
             </li>
           </ul>
           <div className="aside-note">
-            This is a local demo. Your changes are saved in this browser.
+            {demoMode ? 'This is a local demo. Your changes are saved in this browser.' : 'Activity details are saved to the connected club workspace.'}
           </div>
         </aside>
       </div>

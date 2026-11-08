@@ -10,6 +10,7 @@ interface WorkspaceValue {
   reload: () => Promise<void>;
   reset: () => Promise<void>;
   mutate: (change: (store: Store) => Store, message: string) => Promise<Store>;
+  run: <T>(operation: () => Promise<T>, message: string) => Promise<T>;
   dismiss: () => void;
 }
 
