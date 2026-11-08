@@ -1,8 +1,8 @@
 # MoneyKAWKAW · Club budget & purchasing workspace
 
-A Director, HOD, Treasurer, and Committee Member frontend with an invite-only Firebase foundation. React 19, TypeScript, Vite, and React Router. Firebase mode enables Google sign-in and scoped club/activity/department/roster reads; business commands remain disabled until later phases.
+A Director, HOD, Treasurer, and Committee Member frontend with an invite-only Supabase foundation. React 19, TypeScript, Vite, and React Router. Supabase mode provides Google sign-in and database-scoped club/activity/department/roster reads; financial business commands remain disabled until later phases.
 
-Follow the [Firebase setup, schema, security boundaries and emulator guide](docs/firebase/README.md) first. The feature descriptions below describe the original explicit demo mode; they are not a claim that financial modules are Firebase-backed.
+Read the [Supabase setup, schema, security boundaries and local testing guide](docs/supabase/README.md) first. The feature descriptions below describe the established role workspaces; financial workflows are still demo-only and are not backed by Supabase yet.
 
 ## Run locally
 
@@ -126,8 +126,8 @@ Manrope headings and DM Sans body/UI text are bundled through Fontsource, with n
 
 See [original Director verification](docs/VERIFICATION.md), [HOD verification and Director regression checks](docs/hod/VERIFICATION.md), [HOD commit history](docs/hod/COMMITS.md), and [HOD screenshots](docs/hod/screenshots/overview-preview.jpg).
 
-This is frontend-only: local demo identity is not authentication, browser storage is not a security boundary, and history is not durable production audit storage. Use fictional financial information. Treasurer decisions, manual payment records, and Member acknowledgments persist locally. There are no money transfers, external transfer verification, or trained financial predictions. English receipt OCR runs in the browser using locally served Tesseract assets and needs human review. Historical sample payments lack proof/reference metadata and are labeled accordingly.
+The foundation is Supabase-backed, but financial pages still use the explicit local demo ledger. Demo identity is not authentication, browser storage is not a security boundary, and history is not durable production audit storage. Use fictional financial information. Treasurer decisions, manual payment records, and Member acknowledgments persist only in demo mode; Supabase mode rejects those writes. There are no money transfers, external transfer verification, or trained financial predictions. English receipt OCR runs in the browser using locally served Tesseract assets and needs human review. Historical sample payments lack proof/reference metadata and are labeled accordingly.
 
-The four frontends share linked tasks/claims, immutable submitted receipts, corrections, payout snapshots, review/payment status, and audit events. Before production, replace mock adapters with authenticated APIs, server-enforced ownership/scope, authoritative validation/calculations, transaction-level concurrency, durable append-only history, encrypted payout storage, and protected receipt/proof downloads. OCR assets are prepared automatically before dev/build from locked dependencies; see the Member notes for footprint and limitations.
+The four frontends share linked tasks/claims, immutable submitted receipts, corrections, payout snapshots, review/payment status, and audit events in demo mode. Before financial production use, add authenticated, transaction-backed commands for those workflows, scoped ownership, durable append-only history, encrypted payout storage, and protected receipt/proof access. OCR assets are prepared automatically before dev/build from locked dependencies; see the Member notes for footprint and limitations.
 
 Local `AGENTS.md` and `REQUIREMENTS.md` are ignored and excluded from Git. Nothing has been pushed or deployed as part of this implementation.
