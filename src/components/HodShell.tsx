@@ -48,7 +48,7 @@ export function HodShell() {
     { to: `${base}/tasks`, title: 'Purchasing tasks', icon: ClipboardList },
     { to: `${base}/members`, title: 'Department members', icon: Users },
     { to: `${base}/budget`, title: 'Budget & allocations', icon: PiggyBank },
-    { to: `${base}/expenses`, title: 'Expenses & claims', icon: Wallet },
+    ...(demoMode ? [{ to: `${base}/expenses`, title: 'Expenses & claims', icon: Wallet }] : []),
     { to: `${base}/history`, title: 'Department activity', icon: Activity },
   ];
   const [help, setHelp] = useState(false);

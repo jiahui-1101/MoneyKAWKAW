@@ -16,6 +16,7 @@ import { nextPurchasingStates } from '../../services/hod-tasks';
 import { MetricCards } from '../../components/MetricCards';
 import { PurchaseBadge, useDepartmentScope } from '../../components/hod/HodWidgets';
 import { Badge, Empty, Modal, PageHeader, Panel, Status, useFormat } from '../../components/ui';
+import { demoMode } from '../../services/supabase/client';
 
 export function HodTaskDetail() {
   const { taskId } = useParams();
@@ -157,7 +158,7 @@ export function HodTaskDetail() {
               {claim
                 ? 'This task is linked to a submitted claim. Its purchasing details and status are protected.'
                 : p.status === 'Completed'
-                  ? 'The purchase is complete. Its estimated budget stays reserved until a claim is recorded or the plan is explicitly cancelled.'
+                  ? demoMode ? 'The purchase is complete. Its estimated budget stays reserved until a claim is recorded or the plan is explicitly cancelled.' : 'The purchase is complete. Its estimate remains a planned commitment in Phase 02.'
                   : p.status === 'Cancelled'
                     ? 'This plan was cancelled. Its estimate is excluded from active purchasing commitments.'
                     : 'Update the purchasing stage as the work progresses. No claim or payment is created by this action.'}
@@ -213,7 +214,7 @@ export function HodTaskDetail() {
       </div>
       <Panel
         title="Claim & reimbursement"
-        subtitle="Monitoring only · sample records are fictional"
+        subtitle={demoMode ? 'Monitoring only · sample records are fictional' : 'Claims and reimbursements are unavailable until Phase 03'}
       >
         <div className="panel-body">
           <dl className="task-facts claim-facts">

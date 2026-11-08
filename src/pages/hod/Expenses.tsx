@@ -5,6 +5,7 @@ import { useDepartmentScope, TaskTable } from '../../components/hod/HodWidgets';
 import { Empty, PageHeader, Panel, Status, useFormat } from '../../components/ui';
 import { MetricCards } from '../../components/MetricCards';
 import { CircleDollarSign, Clock, Wallet, CheckCircle2 } from 'lucide-react';
+import { demoMode } from '../../services/supabase/client';
 
 export function HodExpenses() {
   const { data, scope, tasks, base, summary } = useDepartmentScope();
@@ -12,6 +13,14 @@ export function HodExpenses() {
   const [query, setQuery] = useState(''),
     [review, setReview] = useState(''),
     [payment, setPayment] = useState('');
+  if (!demoMode) return <div className="stack">
+    <PageHeader eyebrow={`${scope.department.name.toUpperCase()} · FINANCIAL VISIBILITY`}
+      title="Claims are coming in Phase 03."
+      description="This phase connects department budgets and purchasing tasks. Claim and reimbursement records are not available yet." />
+    <Panel title="No claim records are available" subtitle="Purchasing estimates remain separate from actual expenses">
+      <p className="settings-copy">You can review assigned tasks and their planned budgets. Receipt uploads, claims, approvals, risk review, and payment recording are not available in this workspace yet.</p>
+    </Panel>
+  </div>;
   const expenses = data.expenses
     .filter((e) => e.activityId === scope.activity.id && e.departmentId === scope.department.id)
     .filter((e) => {

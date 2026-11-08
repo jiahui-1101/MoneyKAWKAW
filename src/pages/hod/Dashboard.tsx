@@ -36,9 +36,9 @@ export function HodDashboard({ department = false }: { department?: boolean }) {
       'attention=unassigned',
     ],
     [
-      'Purchased · no claim',
-      tasks.filter((t) => t.purchasing!.status === 'Purchased' && !t.expenseId).length,
-      'attention=awaiting-claim',
+      demoMode ? 'Purchased · no claim' : 'Purchased tasks',
+      tasks.filter((t) => t.purchasing!.status === 'Purchased' && (demoMode ? !t.expenseId : true)).length,
+      demoMode ? 'attention=awaiting-claim' : 'status=Purchased',
     ],
   ] as const;
   return (
