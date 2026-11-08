@@ -77,6 +77,10 @@ export async function login() {
   });
   if (error) throw error;
 }
+export async function loginLocal(email: string, password: string) {
+  const { error } = await supabaseClient().auth.signInWithPassword({ email, password });
+  if (error) throw error;
+}
 export async function logout() {
   const { error } = await supabaseClient().auth.signOut();
   if (error) throw error;
