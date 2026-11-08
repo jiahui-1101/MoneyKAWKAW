@@ -5,7 +5,6 @@ create function public.save_department_setup(
 returns uuid language plpgsql security definer set search_path = '' as $$
 declare
   v_club_id uuid := private.require_club_director();
-  v_activity public.activities%rowtype;
   v_department public.departments%rowtype;
   v_people uuid[] := coalesce(p_member_user_ids, '{}'::uuid[]);
   v_all_people uuid[];
@@ -28,7 +27,7 @@ begin
   end if;
   v_all_people := v_people;
   if p_hod_user_id is not null then v_all_people := array_append(v_all_people, p_hod_user_id); end if;
-  select * into v_activity from public.activities
+  perform 1 from public.activities
     where id = p_activity_id and club_id = v_club_id for update;
   if not found then raise exception 'Activity not found' using errcode = 'P0002'; end if;
   if exists (select 1 from unnest(v_all_people) as x(user_id)
