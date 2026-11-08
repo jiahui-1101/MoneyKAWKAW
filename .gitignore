@@ -14,3 +14,7 @@ playwright-report/
 /.firebase/
 *-debug.log
 /.firebaserc
+
+# Local Supabase state
+/supabase/.temp/
+/supabase/.branches/
