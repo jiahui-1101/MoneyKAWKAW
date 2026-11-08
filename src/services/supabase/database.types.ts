@@ -333,6 +333,44 @@ isOneToOne: false
                   Relationships: [
 
                   ]
+                },"purchase_tasks": {
+                  Row: {
+                    "activity_id": string,"assigned_member_id": string,"club_id": string,"completed_at": string | null,"created_at": string,"created_by_hod": string,"department_id": string,"description": string,"due_date": string,"estimated_budget_sen": number,"id": string,"item_name": string,"priority": Database["public"]['Enums']["purchase_priority"],"request_key": string,"status": Database["public"]['Enums']["purchase_task_status"],"updated_at": string
+                  }
+                  ComputedFields: never
+                  Insert: {
+                    "activity_id": string,"assigned_member_id": string,"club_id": string,"completed_at"?: string | null,"created_at"?: string,"created_by_hod": string,"department_id": string,"description": string,"due_date": string,"estimated_budget_sen": number,"id"?: string,"item_name": string,"priority"?: Database["public"]['Enums']["purchase_priority"],"request_key": string,"status"?: Database["public"]['Enums']["purchase_task_status"],"updated_at"?: string
+                  }
+                  Update: {
+                    "activity_id"?: string,"assigned_member_id"?: string,"club_id"?: string,"completed_at"?: string | null,"created_at"?: string,"created_by_hod"?: string,"department_id"?: string,"description"?: string,"due_date"?: string,"estimated_budget_sen"?: number,"id"?: string,"item_name"?: string,"priority"?: Database["public"]['Enums']["purchase_priority"],"request_key"?: string,"status"?: Database["public"]['Enums']["purchase_task_status"],"updated_at"?: string
+                  }
+                  Relationships: [
+                    {
+      foreignKeyName: "purchase_tasks_activity_id_club_id_fkey"
+      columns: ["activity_id","club_id"]
+isOneToOne: false
+      referencedRelation: "activities"
+      referencedColumns: ["id","club_id"]
+    },{
+      foreignKeyName: "purchase_tasks_club_id_fkey"
+      columns: ["club_id"]
+isOneToOne: false
+      referencedRelation: "clubs"
+      referencedColumns: ["id"]
+    },{
+      foreignKeyName: "purchase_tasks_department_id_activity_id_club_id_assigned__fkey"
+      columns: ["department_id","activity_id","club_id","assigned_member_id"]
+isOneToOne: false
+      referencedRelation: "department_memberships"
+      referencedColumns: ["department_id","activity_id","club_id","user_id"]
+    },{
+      foreignKeyName: "purchase_tasks_department_id_activity_id_club_id_fkey"
+      columns: ["department_id","activity_id","club_id"]
+isOneToOne: false
+      referencedRelation: "departments"
+      referencedColumns: ["id","activity_id","club_id"]
+    }
+                  ]
                 }
           }
           Views: {
@@ -344,10 +382,113 @@ isOneToOne: false
                            },
 "current_club_session":
 { Args: Record<PropertyKey, never>; Returns: Json
-                           }
+                           },
+"save_activity":
+{ Args: { "p_budget_sen": number,"p_description": string,"p_end_date": string,"p_id": string,"p_name": string,"p_start_date": string,"p_status": Database["public"]['Enums']["activity_status"],"p_type": Database["public"]['Enums']["activity_type"] }; Returns: {
+              "archived_at": string | null,
+"archived_by": string | null,
+"budget_sen": number,
+"club_id": string,
+"created_at": string,
+"currency": Database["public"]['Enums']["currency_code"],
+"description": string,
+"end_date": string,
+"id": string,
+"legal_hold": boolean,
+"name": string,
+"retain_until": string | null,
+"start_date": string,
+"status": Database["public"]['Enums']["activity_status"],
+"type": Database["public"]['Enums']["activity_type"],
+"updated_at": string
+            }
+                          SetofOptions: {
+        from: "*"
+        to: "activities"
+        isOneToOne: true
+        isSetofReturn: false
+      } },
+"save_department_setup":
+{ Args: { "p_activity_id": string,"p_allocation_sen": number,"p_department_id": string,"p_description": string,"p_head_label": string,"p_hod_user_id": string,"p_member_user_ids": (string)[],"p_name": string }; Returns: string
+                           },
+"save_purchase_task":
+{ Args: { "p_activity_id": string,"p_assigned_member_id": string,"p_department_id": string,"p_description": string,"p_due_date": string,"p_estimated_budget_sen": number,"p_expected_updated_at": string,"p_id": string,"p_item_name": string,"p_priority": Database["public"]['Enums']["purchase_priority"],"p_request_key": string }; Returns: {
+              "activity_id": string,
+"assigned_member_id": string,
+"club_id": string,
+"completed_at": string | null,
+"created_at": string,
+"created_by_hod": string,
+"department_id": string,
+"description": string,
+"due_date": string,
+"estimated_budget_sen": number,
+"id": string,
+"item_name": string,
+"priority": Database["public"]['Enums']["purchase_priority"],
+"request_key": string,
+"status": Database["public"]['Enums']["purchase_task_status"],
+"updated_at": string
+            }
+                          SetofOptions: {
+        from: "*"
+        to: "purchase_tasks"
+        isOneToOne: true
+        isSetofReturn: false
+      } },
+"update_hod_purchase_task_status":
+{ Args: { "p_expected_updated_at": string,"p_status": Database["public"]['Enums']["purchase_task_status"],"p_task_id": string }; Returns: {
+              "activity_id": string,
+"assigned_member_id": string,
+"club_id": string,
+"completed_at": string | null,
+"created_at": string,
+"created_by_hod": string,
+"department_id": string,
+"description": string,
+"due_date": string,
+"estimated_budget_sen": number,
+"id": string,
+"item_name": string,
+"priority": Database["public"]['Enums']["purchase_priority"],
+"request_key": string,
+"status": Database["public"]['Enums']["purchase_task_status"],
+"updated_at": string
+            }
+                          SetofOptions: {
+        from: "*"
+        to: "purchase_tasks"
+        isOneToOne: true
+        isSetofReturn: false
+      } },
+"update_my_purchase_progress":
+{ Args: { "p_expected_updated_at": string,"p_status": Database["public"]['Enums']["purchase_task_status"],"p_task_id": string }; Returns: {
+              "activity_id": string,
+"assigned_member_id": string,
+"club_id": string,
+"completed_at": string | null,
+"created_at": string,
+"created_by_hod": string,
+"department_id": string,
+"description": string,
+"due_date": string,
+"estimated_budget_sen": number,
+"id": string,
+"item_name": string,
+"priority": Database["public"]['Enums']["purchase_priority"],
+"request_key": string,
+"status": Database["public"]['Enums']["purchase_task_status"],
+"updated_at": string
+            }
+                          SetofOptions: {
+        from: "*"
+        to: "purchase_tasks"
+        isOneToOne: true
+        isSetofReturn: false
+      } }
           }
           Enums: {
-            "activity_role": "Treasurer","activity_status": "Planning"|"Active"|"Completed","activity_type": "Workshop"|"Large-scale event"|"Community"|"Other","club_role": "Director"|"Treasurer","currency_code": "MYR"|"SGD"|"USD","department_role": "HOD"|"Member"
+            "activity_role": "Treasurer","activity_status": "Planning"|"Active"|"Completed","activity_type": "Workshop"|"Large-scale event"|"Community"|"Other"|"Small Event","club_role": "Director"|"Treasurer","currency_code": "MYR"|"SGD"|"USD","department_role": "HOD"|"Member","purchase_priority": "Low"|"Medium"|"High","purchase_task_status": "Not Started"|"In Progress"|"Purchased"|"Completed"|"Cancelled"
           }
           CompositeTypes: {
             [_ in never]: never
@@ -467,7 +608,7 @@ export const Constants = {
           }
         },"public": {
           Enums: {
-            "activity_role": ["Treasurer"],"activity_status": ["Planning", "Active", "Completed"],"activity_type": ["Workshop", "Large-scale event", "Community", "Other"],"club_role": ["Director", "Treasurer"],"currency_code": ["MYR", "SGD", "USD"],"department_role": ["HOD", "Member"]
+            "activity_role": ["Treasurer"],"activity_status": ["Planning", "Active", "Completed"],"activity_type": ["Workshop", "Large-scale event", "Community", "Other", "Small Event"],"club_role": ["Director", "Treasurer"],"currency_code": ["MYR", "SGD", "USD"],"department_role": ["HOD", "Member"],"purchase_priority": ["Low", "Medium", "High"],"purchase_task_status": ["Not Started", "In Progress", "Purchased", "Completed", "Cancelled"]
           }
         }
 } as const
