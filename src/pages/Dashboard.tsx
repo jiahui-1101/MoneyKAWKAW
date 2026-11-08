@@ -14,6 +14,7 @@ import {
   RecentActivity,
 } from '../components/Finance';
 import { PageHeader, Panel, Progress, TextLink, useFormat } from '../components/ui';
+import { demoMode } from '../services/supabase/client';
 
 export function Dashboard({ budgets = false }: { budgets?: boolean }) {
   const { store } = useWorkspace();
@@ -94,8 +95,9 @@ export function Dashboard({ budgets = false }: { budgets?: boolean }) {
             <h2>Your budget, at a glance.</h2>
             <p>
               {active} active {active === 1 ? 'activity' : 'activities'} <span>·</span>{' '}
-              {money(summary.paid, true)} paid in sample records <span>·</span>{' '}
-              {money(summary.pending, true)} pending review
+              {demoMode
+                ? `${money(summary.paid, true)} paid in sample records · ${money(summary.pending, true)} pending review`
+                : `${money(summary.committed, true)} planned task commitments · claims unavailable until Phase 03`}
             </p>
           </div>
         </div>

@@ -19,6 +19,7 @@ import {
 import type { Assignment } from '../../domain/models';
 import { MetricCards } from '../MetricCards';
 import { Badge, Empty, Panel, Progress, Status, TextLink, useFormat } from '../ui';
+import { demoMode } from '../../services/supabase/client';
 
 export function useDepartmentScope() {
   const { data } = useHod();
@@ -78,17 +79,17 @@ export function DepartmentMetrics({ data, scope }: { data: HodSnapshot; scope: H
           tone: 'violet',
         },
         {
-          label: 'Recorded spending',
+          label: demoMode ? 'Recorded spending' : 'Claim expenditure',
           value: money(s.recorded, true),
           icon: CircleDollarSign,
-          note: 'Pending + approved claim amounts',
+          note: demoMode ? 'Pending + approved claim amounts' : 'Claims unavailable until Phase 03',
           tone: 'gold',
         },
         {
           label: 'Available for purchases',
           value: money(s.available, true),
           icon: PiggyBank,
-          note: 'After claims and unclaimed plans',
+          note: demoMode ? 'After claims and unclaimed plans' : 'Allocation less active task commitments',
           tone: s.available < 0 ? 'danger' : 'green',
         },
       ]}
@@ -101,11 +102,11 @@ export function DepartmentBalances({ data, scope }: { data: HodSnapshot; scope: 
   return (
     <div className="lifecycle">
       {[
-        ['Remaining after expenses', money(s.remaining), 'Allocation less recorded claims'],
-        ['Committed', money(s.committed), 'Open purchases + approved unpaid'],
-        ['Pending claim review', money(s.pending), 'Decision remains with Treasurer'],
-        ['Paid reimbursements', money(s.paid), 'Fictional shared payment records'],
-        ['Budget utilization', `${s.utilization.toFixed(1)}%`, 'Actual claims / department budget'],
+        [demoMode ? 'Remaining after expenses' : 'Available to plan', money(s.available), demoMode ? 'Allocation less recorded claims' : 'Allocation less active task commitments'],
+        [demoMode ? 'Committed' : 'Planned purchasing commitments', money(s.committed), demoMode ? 'Open purchases + approved unpaid' : 'Active task estimates · cancelled tasks excluded'],
+        ['Pending claim review', money(s.pending), demoMode ? 'Decision remains with Treasurer' : 'Claims unavailable until Phase 03'],
+        ['Paid reimbursements', money(s.paid), demoMode ? 'Fictional shared payment records' : 'Payment records unavailable until Phase 03'],
+        ['Budget utilization', `${s.utilization.toFixed(1)}%`, demoMode ? 'Actual claims / department budget' : 'Recorded claim amount / department budget'],
       ].map(([label, value, note]) => (
         <div key={label}>
           <small>{label}</small>

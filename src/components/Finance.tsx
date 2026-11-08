@@ -11,6 +11,7 @@ import { summarize } from '../domain/budget';
 import { MetricCards } from './MetricCards';
 import type { Activity, BudgetSummary, Store } from '../domain/models';
 import { Badge, Empty, Panel, Progress, Status, TextLink, useFormat } from './ui';
+import { demoMode } from '../services/supabase/client';
 
 export function Metrics({ summary, count }: { summary: BudgetSummary; count?: number }) {
   const { money } = useFormat();
@@ -23,10 +24,10 @@ export function Metrics({ summary, count }: { summary: BudgetSummary; count?: nu
       tone: 'brand',
     },
     {
-      label: 'Recorded expenses',
+      label: demoMode ? 'Recorded expenses' : 'Claim expenditure',
       value: money(summary.recorded, true),
       icon: CircleDollarSign,
-      note: 'Pending + approved claims',
+      note: demoMode ? 'Pending + approved claims' : 'Claims unavailable until Phase 03',
       tone: 'violet',
     },
     {
@@ -55,10 +56,10 @@ export function BudgetLifecycle({ summary }: { summary: BudgetSummary }) {
     <div className="lifecycle">
       {[
         ['Department allocations', summary.allocated, 'Portion assigned to departments'],
-        ['Committed', summary.committed, 'Open assignments + approved unpaid'],
-        ['Pending review', summary.pending, 'Submitted claims awaiting decision'],
-        ['Paid (sample records)', summary.paid, 'Recorded separately from approval'],
-        ['Available to plan', summary.available, 'Budget less paid, pending, committed'],
+        [demoMode ? 'Committed' : 'Planned purchasing commitments', summary.committed, demoMode ? 'Open assignments + approved unpaid' : 'Active task estimates · cancelled tasks excluded'],
+        ['Pending review', summary.pending, demoMode ? 'Submitted claims awaiting decision' : 'Claims unavailable until Phase 03'],
+        [demoMode ? 'Paid (sample records)' : 'Paid reimbursements', summary.paid, demoMode ? 'Recorded separately from approval' : 'Payment records unavailable until Phase 03'],
+        ['Available to plan', summary.available, demoMode ? 'Budget less paid, pending, committed' : 'Budget less planned task commitments'],
       ].map(([label, amount, note]) => (
         <div key={label}>
           <small>{label}</small>
@@ -306,7 +307,7 @@ export function RecentActivity({
   return (
     <Panel
       title={all ? 'Workspace history' : 'Recent activity'}
-      subtitle="Setup changes and sample financial history"
+      subtitle={demoMode ? 'Setup changes and sample financial history' : 'Persisted setup and purchasing changes'}
       action={!all && <TextLink to="/director/history">View all</TextLink>}
     >
       <div className="timeline">

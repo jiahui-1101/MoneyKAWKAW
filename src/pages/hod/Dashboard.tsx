@@ -11,6 +11,7 @@ import {
   UpcomingPurchases,
   useDepartmentScope,
 } from '../../components/hod/HodWidgets';
+import { demoMode } from '../../services/supabase/client';
 
 export function HodDashboard({ department = false }: { department?: boolean }) {
   const { data, scope, tasks, base, summary } = useDepartmentScope();
@@ -112,8 +113,9 @@ export function HodDashboard({ department = false }: { department?: boolean }) {
               {scope.activity.name} · {scope.department.name}
             </h2>
             <p>
-              {money(summary.remaining)} remaining after recorded expenses · {money(summary.open)}{' '}
-              reserved for unclaimed purchases
+              {demoMode
+                ? `${money(summary.remaining)} remaining after recorded expenses · ${money(summary.open)} reserved for unclaimed purchases`
+                : `${money(summary.available)} available after planned task commitments · ${money(summary.planned)} planned across ${tasks.filter((task) => task.purchasing?.status !== 'Cancelled').length} active tasks`}
             </p>
           </div>
         </div>
@@ -159,7 +161,7 @@ export function HodDashboard({ department = false }: { department?: boolean }) {
         <Panel
           title="Department expense overview"
           subtitle="Actual financial records, separate from purchasing estimates"
-          action={<Badge tone="neutral">Sample records</Badge>}
+          action={<Badge tone="neutral">{demoMode ? 'Sample records' : 'Phase 03 unavailable'}</Badge>}
         >
           <div className="expense-overview">
             {[
