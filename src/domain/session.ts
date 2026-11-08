@@ -1,5 +1,5 @@
-import { demoMode } from '../services/firebase/client';
-import type { Role } from '../../functions/src/contracts';
+import type { Role } from './access';
+import { demoMode } from '../services/supabase/client';
 export const demoProfiles = [
   { userId: 'director-jamie', name: 'Jamie Lee', role: 'Director' },
   { userId: 'hod-sarah', name: 'Sarah Tan', role: 'HOD' },
@@ -34,7 +34,7 @@ export const getDemoActor = () => {
 };
 export function setSessionActor(value: DemoActor | null) { actor = value; }
 export function selectDemoActor(id: string) {
-  if (!demoMode) throw new Error('Demo profiles are disabled in Firebase mode.');
+  if (!demoMode) throw new Error('Demo profiles are disabled outside explicit demo mode.');
   const next = demoProfiles.find((p) => p.userId === id);
   if (!next) throw new Error('Choose an available demo profile.');
   try {
