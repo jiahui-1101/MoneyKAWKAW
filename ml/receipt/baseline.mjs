@@ -7,7 +7,9 @@ await build({ stdin: { contents: "export {parseReceiptText} from './src/services
   outfile: '.local/phase05/parser.mjs', bundle: true, platform: 'node', format: 'esm',
   define: { 'import.meta.env': JSON.stringify({ MODE: 'test' }) }, external: ['tesseract.js'] });
 const { parseReceiptText, hybridReceipt } = await import(pathToFileURL(resolve('.local/phase05/parser.mjs')).href);
-const docs = JSON.parse(await readFile('.local/phase05/prepared.json', 'utf8')).filter(d => d.split === 'test');
+let dataPath = '.local/phase05/prepared.json';
+try { await readFile('.local/phase05/evaluation-documents.json'); dataPath = '.local/phase05/evaluation-documents.json'; } catch { /* Initial baseline. */ }
+const docs = JSON.parse(await readFile(dataPath, 'utf8')).filter(d => d.split === 'test');
 let predictions = {};
 try { predictions = JSON.parse(await readFile('.local/phase05/test-predictions.json', 'utf8')); } catch { /* Baseline before model evaluation. */ }
 const results = docs.map(doc => {
