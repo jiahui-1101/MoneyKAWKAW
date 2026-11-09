@@ -12,6 +12,8 @@ playwright-report/
 /public/ocr/
 /public/models/
 /public/receipt-runtime/
+__pycache__/
+*.pyc
 # Legacy local build output; no current source or deployment uses it.
 /functions/lib/
 *-debug.log
