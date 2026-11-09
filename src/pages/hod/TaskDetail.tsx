@@ -105,7 +105,7 @@ export function HodTaskDetail() {
           },
           {
             label: 'Reimbursement recorded',
-            value: money(paid, true),
+            value: demoMode ? money(paid, true) : 'Restricted',
             icon: CheckCircle2,
             note: paid ? 'Sample payment history' : 'Purchase completion is not payment',
             tone: 'green',
@@ -214,13 +214,13 @@ export function HodTaskDetail() {
       </div>
       <Panel
         title="Claim & reimbursement"
-        subtitle={demoMode ? 'Monitoring only · sample records are fictional' : 'Claims and reimbursements are unavailable until Phase 03'}
+        subtitle={demoMode ? 'Monitoring only · sample records are fictional' : 'Private records stay with the claimant and authorized Treasurer; department totals remain available'}
       >
         <div className="panel-body">
           <dl className="task-facts claim-facts">
             <div>
               <dt>Claim source</dt>
-              <dd>{claim?.id ?? 'No submitted claim'}</dd>
+              <dd>{claim?.id ?? (demoMode ? 'No submitted claim' : 'Restricted')}</dd>
             </div>
             <div>
               <dt>Review state</dt>
@@ -228,13 +228,13 @@ export function HodTaskDetail() {
                 {claim ? (
                   <Status value={claim.state} />
                 ) : (
-                  <span className="muted">Not submitted</span>
+                  <span className="muted">{demoMode ? 'Not submitted' : 'Restricted'}</span>
                 )}
               </dd>
             </div>
             <div>
               <dt>Payment state</dt>
-              <dd>{paid ? `${money(paid)} recorded` : 'Not paid'}</dd>
+              <dd>{demoMode ? paid ? `${money(paid)} recorded` : 'Not paid' : 'Restricted'}</dd>
             </div>
             <div>
               <dt>Unreimbursed claim amount</dt>
