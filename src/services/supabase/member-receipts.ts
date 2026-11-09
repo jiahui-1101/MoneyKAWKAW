@@ -99,15 +99,18 @@ async function bytes(file: { dataUrl: string; mime: string; size: number }) {
 export async function uploadReceipt(id: string, expected: string, file: { name: string; mime: string; size: number; dataUrl: string } | null) {
   const client = supabaseClient();
   if (!file) {
-    const { data: current, error } = await client.from('claim_receipts').select('id,storage_path')
-      .eq('claim_id', id).eq('is_current', true).maybeSingle();
-    fail(error, 'Current receipt could not be loaded.');
-    if (current) {
-      const { error: abandonError } = await client.rpc('abandon_my_claim_receipt', { p_receipt_id: current.id });
+    const { data: active, error } = await client.from('claim_receipts').select('id')
+      .eq('claim_id', id).in('upload_status', ['uploading', 'ready']);
+    fail(error, 'Draft receipts could not be loaded.');
+    for (const receipt of active ?? []) {
+      const { error: abandonError } = await client.rpc('abandon_my_claim_receipt', { p_receipt_id: receipt.id });
       fail(abandonError, 'Unsubmitted receipt could not be removed.');
-      const removed = await client.storage.from('receipts').remove([current.storage_path]);
-      fail(removed.error, 'Receipt was marked for cleanup, but its stored file could not be removed.');
     }
+    const { data: abandoned, error: abandonedError } = await client.from('claim_receipts').select('storage_path')
+      .eq('claim_id', id).eq('upload_status', 'abandoned');
+    fail(abandonedError, 'Previous draft receipt cleanup could not be checked.');
+    if (abandoned?.length) fail((await client.storage.from('receipts').remove(abandoned.map((row) => row.storage_path))).error,
+      'Receipt was marked for cleanup, but its stored file could not be removed.');
     return;
   }
   const verified = await bytes(file);
