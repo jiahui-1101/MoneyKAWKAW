@@ -7,6 +7,8 @@ import pyarrow.parquet as pq
 from huggingface_hub import HfFileSystem
 
 ROOT = Path('.local/phase05')
+MODEL_SOURCE = {'repo': 'distilbert/distilbert-base-multilingual-cased',
+                'revision': '45c032ab32cc946ad88a166f7cb282f58c753c2e', 'license': 'Apache-2.0'}
 SOURCES = {
     'cord': ('naver-clova-ix/cord-v1', '64fe41966657fbf60c1443a84143a2081dbd50a6', ['ground_truth']),
     'sroie': ('jsdnrs/ICDAR2019-SROIE', 'bffe40c26759f3376ec2b3ae9031dbba54cd587c', ['key', 'entities', 'words', 'bboxes']),
@@ -14,6 +16,7 @@ SOURCES = {
 
 def fetch_sources():
     ROOT.mkdir(parents=True, exist_ok=True)
+    (ROOT / 'base-model.json').write_text(json.dumps(MODEL_SOURCE), encoding='utf8')
     fs = HfFileSystem(token=False)
     manifest = {}
     for name, (repo, revision, columns) in SOURCES.items():
