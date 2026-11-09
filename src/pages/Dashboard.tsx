@@ -102,7 +102,7 @@ export function Dashboard({ budgets = false }: { budgets?: boolean }) {
               {active} active {active === 1 ? 'activity' : 'activities'} <span>·</span>{' '}
               {demoMode
                 ? `${money(summary.paid, true)} paid in sample records · ${money(summary.pending, true)} pending review`
-                : `${money(summary.committed, true)} planned task commitments · claims unavailable until Phase 03`}
+                : `${money(summary.committed, true)} outstanding commitments; submitted exposure and paid amounts are shown separately`}
             </p>
           </div>
         </div>

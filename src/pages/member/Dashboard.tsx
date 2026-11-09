@@ -57,7 +57,7 @@ export function MemberDashboard() {
             note: 'Shared HOD purchasing plans',
             tone: 'violet',
           },
-          ...(demoMode ? [
+          ...([
           {
             label: 'Claims awaiting review',
             value: String(awaiting.length).padStart(2, '0'),
@@ -75,21 +75,21 @@ export function MemberDashboard() {
             note: 'Manually recorded · check receipt status',
             tone: 'green',
           },
-          ] : []),
+          ]),
         ]}
       />
       <div className="member-counts">
         {[
           ['Pending purchases', pending.length, '/member/tasks'],
           ['Completed purchases', completed.length, '/member/tasks'],
-          ...(demoMode ? [
+          ...([
           [
             'Approved claims',
             data.expenses.filter((e) => e.state === 'Approved').length,
             '/member/claims',
           ],
           ['Pending reimbursements', unpaid.length, '/member/claims'],
-          ] : []),
+          ]),
         ].map(([label, value, to]) => (
           <Link key={label} to={String(to)}>
             <span>{label}</span>
@@ -144,7 +144,7 @@ export function MemberDashboard() {
             })}
           </div>
         </Panel>
-        {demoMode ? <Panel
+        {<Panel
           title="Claim status overview"
           subtitle="Only your own reimbursement records"
           action={<TextLink to="/member/claims">My claims</TextLink>}
@@ -161,11 +161,9 @@ export function MemberDashboard() {
               confirm its receipt.
             </p>
           </div>
-        </Panel> : <Panel title="Claims and receipts" subtitle="Phase 03">
-          <p className="settings-copy">Claim submission, receipt history, reimbursement tracking, and payout accounts are not available in this phase.</p>
         </Panel>}
       </div>
-      {demoMode && <Panel
+      {<Panel
         title="Recent claims"
         subtitle="Shared Treasurer status, evidence, and payment history"
         action={<TextLink to="/member/claims">All my claims</TextLink>}
