@@ -119,7 +119,7 @@ export function MemberPayment() {
             [
               'Recorded by',
               demoProfiles.find((p) => p.userId === manual?.recordedBy)?.name ??
-                'Not retained / awaiting Treasurer',
+                (manual?.recordedBy ? 'Authorized Treasurer' : 'Awaiting Treasurer'),
             ],
             [
               'Receipt confirmed',

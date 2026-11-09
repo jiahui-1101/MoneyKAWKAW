@@ -9,6 +9,7 @@ import { Field } from '../../components/Field';
 import { DateField } from '../../components/DateField';
 import { Badge, Empty, Modal, PageHeader, useFormat } from '../../components/ui';
 import { ProofPreview } from '../../components/treasurer/ProofPreview';
+import { demoMode } from '../../services/supabase/client';
 
 export function TreasuryReimburse() {
   const { id } = useParams();
@@ -122,6 +123,7 @@ export function TreasuryReimburse() {
       />
       <div className="treasury-justification">
         <Badge tone="gold">External transfer · locally recorded</Badge>
+        {!demoMode && payout && <Badge tone="neutral">Payment Pending · approved and unpaid</Badge>}
         <p>
           This application does not transfer money or verify bank transactions. Use fictional
           destination details and sample proof in this local demo. The selected snapshot comes from
@@ -204,7 +206,7 @@ export function TreasuryReimburse() {
               <input
                 id="payment-proof"
                 type="file"
-                accept="image/png,image/jpeg,application/pdf"
+                accept={demoMode ? 'image/png,image/jpeg,application/pdf' : 'image/png,image/jpeg'}
                 disabled={reading || busy}
                 onChange={async (e) => {
                   setProof(null);
@@ -223,7 +225,7 @@ export function TreasuryReimburse() {
               />
             </Field>
             <p className="field-hint">
-              PNG, JPEG, or PDF · up to 1 MB · the uploaded file is preserved.
+              {demoMode ? 'PNG, JPEG, or PDF' : 'PNG or JPEG'} · up to 1 MB · the uploaded file is preserved.
             </p>
             {reading && <p role="status">Reading and validating proof…</p>}
             {proof && <ProofPreview proof={proof} />}

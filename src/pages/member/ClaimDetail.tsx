@@ -105,7 +105,7 @@ export function MemberClaimDetail() {
             [
               'Reviewer',
               demoProfiles.find((p) => p.userId === claim.review?.reviewer)?.name ??
-                'Awaiting review',
+                (claim.review?.reviewer ? 'Authorized Treasurer' : 'Awaiting review'),
             ],
             [
               'Decision time',
