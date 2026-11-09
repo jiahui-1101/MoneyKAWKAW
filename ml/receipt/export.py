@@ -16,6 +16,9 @@ def main():
     torch.set_num_threads(4)
     checkpoint = ROOT / 'checkpoint'
     model = AutoModelForSequenceClassification.from_pretrained(checkpoint, attn_implementation='eager').eval()
+    training = json.loads((ROOT/'training.json').read_text(encoding='utf8'))
+    encoder_sha = hashlib.sha256(model.distilbert.transformer.layer[5].ffn.lin1.weight.detach().numpy().tobytes()).hexdigest()
+    assert encoder_sha != training['beforeEncoderSHA256'], 'Selected checkpoint must contain actual encoder updates.'
     tokenizer = AutoTokenizer.from_pretrained(checkpoint)
     tokenizer.model_max_length = 48
     target = ROOT / 'onnx'
@@ -62,7 +65,7 @@ def main():
     shutil.copy2('ml/receipt/README.md', browser/'ATTRIBUTION.md')
     shutil.copy2(target/'model_quantized.onnx', browser/'onnx/model_quantized.onnx')
     manifest = {'id': 'receipt-bert-v1', 'experimental': True, 'source': json.loads((ROOT/'base-model.json').read_text()),
-        'training': json.loads((ROOT/'training.json').read_text()), 'parity': results,
+        'training': training, 'checkpointEncoderSHA256': encoder_sha, 'parity': results,
         'sha256': sha256, 'artifactDirectory': directory,
         'maxLength': 48, 'classificationTask': 'semantic-line', 'license': 'Apache-2.0; training annotations CC-BY-4.0'}
     (Path('public/models/receipt-bert')/'manifest.json').write_text(json.dumps(manifest, indent=2), encoding='utf8')
