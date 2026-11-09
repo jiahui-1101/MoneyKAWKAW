@@ -4,9 +4,7 @@ import type { Database, Json } from './database.types';
 import { supabaseClient } from './client';
 
 type ClaimRow = Database['public']['Tables']['claims']['Row'];
-type ReceiptRow = Database['public']['Tables']['claim_receipts']['Row'];
 type ItemRow = Database['public']['Tables']['claim_items']['Row'];
-type EditRow = Database['public']['Tables']['receipt_modifications']['Row'];
 const fail = (error: { message: string } | null, fallback: string) => {
   if (error) throw new Error(/^(Claim|Receipt|Draft|Upload|Line|Selected|Enter|Choose|Include|All|The|Account)/.test(error.message) ? error.message : fallback);
 };

@@ -17,13 +17,14 @@ export function TreasuryClaimDetail() {
     [decision, setDecision] = useState<'Approved' | 'Declined' | null>(null),
     [destination, setDestination] = useState<Awaited<ReturnType<typeof treasuryService.destination>> | null>(null);
   const claim = data?.expenses.find((e) => e.id === id);
+  const claimId = claim?.id;
   useEffect(() => {
     let active = true;
-    if (demoMode || !claim) { setDestination(null); return () => { active = false; }; }
-    treasuryService.destination(claim.id).then((value) => { if (active) setDestination(value); })
+    if (demoMode || !claimId) { setDestination(null); return () => { active = false; }; }
+    treasuryService.destination(claimId).then((value) => { if (active) setDestination(value); })
       .catch(() => { if (active) setDestination(null); });
     return () => { active = false; };
-  }, [claim?.id]);
+  }, [claimId]);
   if (!data || !claim)
     return (
       <Empty
