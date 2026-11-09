@@ -30,7 +30,7 @@ def sroie_rows(data):
             entity = entities[field]
             if entity and (entity in upper or (field == 'company' and len(upper) > 4 and upper in entity)):
                 # A bare amount repeated elsewhere is ambiguous: only total-tagged rows are mapped.
-                if field != 'total' or 'TOTAL' in upper or upper == entity:
+                if field != 'total' or re.search(r'\b(?:GRAND\s+)?TOTAL\b', upper):
                     label = target
                     break
         rows.append({'text': text, 'label': label})
