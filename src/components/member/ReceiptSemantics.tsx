@@ -13,7 +13,7 @@ export function ReceiptSemantics({ understanding }: { understanding?: Understand
       {understanding.status === 'ready' && <>
         <p>These labels suggest what text means. They do not verify prices, decide eligibility, or exclude personal purchases. Low scores are marked uncertain; scores are not calibrated probabilities.</p>
         <details><summary>Review detected line labels ({understanding.predictions.length})</summary>
-          <ul>{understanding.predictions.map((p, i) => <li key={i}>
+          <ul className="receipt-semantic-lines">{understanding.predictions.map((p, i) => <li key={i}>
             <strong>{p.label.toLowerCase().replaceAll('_', ' ')}</strong>{p.score < .85 ? ' · uncertain' : ' · suggested'}: {p.text}
           </li>)}</ul>
         </details>

@@ -4,7 +4,7 @@ let identity = 0;
 export async function understandReceipt(rawText: string, signal: AbortSignal): Promise<Understanding> {
   const started = performance.now();
   const base = new URL(import.meta.env.BASE_URL, window.location.origin).href;
-  const rows = rawText.slice(0, 50000).split(/\r?\n/).map(r => r.trim().slice(0, 500)).filter(Boolean).slice(0, 100);
+  const rows = rawText.slice(0, 50000).split(/\r?\n/).map(r => r.normalize('NFKC').trim().slice(0, 500)).filter(Boolean).slice(0, 100);
   let model = 'receipt-bert-v1';
   if (signal.aborted) throw new Error('Receipt reading cancelled.');
   try {
