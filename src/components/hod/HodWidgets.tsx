@@ -80,9 +80,9 @@ export function DepartmentMetrics({ data, scope }: { data: HodSnapshot; scope: H
         },
         {
           label: demoMode ? 'Recorded spending' : 'Claim spending',
-          value: demoMode ? money(s.recorded, true) : 'Treasurer only',
+          value: money(s.recorded, true),
           icon: CircleDollarSign,
-          note: demoMode ? 'Pending + approved claim amounts' : 'Private claim records are scoped to the Treasurer',
+          note: 'Aggregated approved liability and paid expenditure',
           tone: 'gold',
         },
         {
@@ -104,9 +104,9 @@ export function DepartmentBalances({ data, scope }: { data: HodSnapshot; scope: 
       {[
         [demoMode ? 'Remaining after expenses' : 'Available to plan', money(s.available), demoMode ? 'Allocation less recorded claims' : 'Allocation less active task commitments'],
         [demoMode ? 'Committed' : 'Planned purchasing commitments', money(s.committed), demoMode ? 'Open purchases + approved unpaid' : 'Active task estimates · cancelled tasks excluded'],
-        ['Pending claim review', demoMode ? money(s.pending) : 'Treasurer only', demoMode ? 'Decision remains with Treasurer' : 'Private member claims are not part of HOD access'],
-        ['Paid reimbursements', demoMode ? money(s.paid) : 'Phase 04', demoMode ? 'Fictional shared payment records' : 'Payment recording is not part of this phase'],
-        ['Budget utilization', demoMode ? `${s.utilization.toFixed(1)}%` : 'Phase 03', demoMode ? 'Actual claims / department budget' : 'Claim utilization unavailable until claim records exist'],
+        ['Pending claim review', money(s.pending), demoMode ? 'Decision remains with Treasurer' : 'Department aggregate only; private evidence stays restricted'],
+        ['Paid reimbursements', money(s.paid), demoMode ? 'Fictional shared payment records' : 'Recorded transfers; recipient confirmation remains separate'],
+        ['Budget utilization', `${s.utilization.toFixed(1)}%`, demoMode ? 'Actual claims / department budget' : 'Approved liability and paid expenditure / department allocation'],
       ].map(([label, value, note]) => (
         <div key={label}>
           <small>{label}</small>

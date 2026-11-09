@@ -163,12 +163,12 @@ export function HodDashboard({ department = false }: { department?: boolean }) {
       <ProcurementFlow tasks={tasks} base={base} />
       <DepartmentBalances data={data} scope={scope} />
       <div className="hod-two-columns">
-        {demoMode ? (
-          <Panel title="Department expense overview" subtitle="Actual financial records, separate from purchasing estimates" action={<Badge tone="neutral">Sample records</Badge>}>
+        {(
+          <Panel title="Department expense overview" subtitle="Actual financial records, separate from purchasing estimates" action={<Badge tone="neutral">Department totals</Badge>}>
             <div className="expense-overview">
               {[
                 ['Pending review', summary.pending, 'gold'],
-                ['Approved · not paid', summary.recorded - summary.pending - summary.paid, 'violet'],
+                ['Approved · not paid', summary.recorded - summary.paid - (demoMode ? summary.pending : 0), 'violet'],
                 ['Paid reimbursements', summary.paid, 'green'],
                 ['Unclaimed purchase plans', summary.open, 'brand'],
               ].map(([label, value, tone]) => (
@@ -181,10 +181,6 @@ export function HodDashboard({ department = false }: { department?: boolean }) {
                 </div>
               ))}
             </div>
-          </Panel>
-        ) : (
-          <Panel title="Claims and reimbursements" subtitle="Financial review will be available in Phase 03" action={<Badge tone="neutral">Phase 03</Badge>}>
-            <p className="settings-copy">Claim amounts, approvals, and paid reimbursements are not recorded yet. Planned purchasing commitments remain visible separately.</p>
           </Panel>
         )}
         <UpcomingPurchases tasks={tasks} data={data} base={base} />
