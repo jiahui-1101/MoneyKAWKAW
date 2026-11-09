@@ -24,7 +24,7 @@
   "dependencies": {
     "@fontsource-variable/dm-sans": "^5.2.8",
     "@fontsource-variable/manrope": "^5.2.8",
-    "@huggingface/transformers": "4.3.2",
+    "@huggingface/transformers": "3.8.1",
     "@supabase/supabase-js": "2.119.0",
     "@tesseract.js-data/eng": "^1.0.0",
     "lucide-react": "^0.544.0",
@@ -43,5 +43,8 @@
     "typescript": "^5.9.2",
     "vite": "^7.1.5",
     "vitest": "^5.1.0"
+  },
+  "overrides": {
+    "sharp": "0.35.5"
   }
 }

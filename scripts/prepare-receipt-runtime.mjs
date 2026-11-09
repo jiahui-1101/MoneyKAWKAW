@@ -8,7 +8,7 @@ const runtime = dirname(require.resolve('onnxruntime-web'));
 const target = join(root, 'public', 'receipt-runtime');
 await mkdir(target, { recursive: true });
 for (const file of await readdir(runtime)) {
-  if (/^ort-wasm-simd-threaded\.asyncify\.(wasm|mjs)$/.test(file)) await cp(join(runtime, file), join(target, file));
+  if (/^ort-wasm-simd-threaded\.jsep\.(wasm|mjs)$/.test(file)) await cp(join(runtime, file), join(target, file));
 }
 try {
   await access(join(root, 'public', 'models', 'receipt-bert', 'manifest.json'));
