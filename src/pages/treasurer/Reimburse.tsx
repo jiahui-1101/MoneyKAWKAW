@@ -9,7 +9,7 @@ import { Field } from '../../components/Field';
 import { DateField } from '../../components/DateField';
 import { Badge, Empty, Modal, PageHeader, useFormat } from '../../components/ui';
 import { ProofPreview } from '../../components/treasurer/ProofPreview';
-import { demoMode } from '../../services/supabase/client';
+import { dataMode, demoMode } from '../../services/supabase/client';
 
 export function TreasuryReimburse() {
   const { id } = useParams();
@@ -125,9 +125,9 @@ export function TreasuryReimburse() {
         <Badge tone="gold">External transfer · locally recorded</Badge>
         {!demoMode && payout && <Badge tone="neutral">Payment Pending · approved and unpaid</Badge>}
         <p>
-          This application does not transfer money or verify bank transactions. Use fictional
-          destination details and sample proof in this local demo. The selected snapshot comes from
-          the submitted claim; recording it does not establish external delivery.
+          This application does not transfer money or verify bank transactions.
+          {dataMode !== 'supabase' && ' Use synthetic destination details and sample proof for local testing.'}
+          {' '}The selected snapshot comes from the submitted claim; recording it does not establish external delivery.
         </p>
       </div>
       <div className="form-layout">
@@ -236,8 +236,8 @@ export function TreasuryReimburse() {
                 onChange={(e) => setConfirmed(e.target.checked)}
               />
               <span>
-                I confirm the transfer was made externally, or I am recording a fictional transfer
-                for this local demo.
+                {dataMode === 'supabase' ? 'I confirm the transfer was made externally.' :
+                  'I confirm this is a synthetic local test, or the transfer was made externally.'}
               </span>
             </label>
             {error && (
@@ -258,7 +258,7 @@ export function TreasuryReimburse() {
         <aside className="form-aside">
           <h2>A record with a clear trail.</h2>
           <p>
-            Approval and payment are separate events. This demo records one full reimbursement per
+            Approval and payment are separate events. This workflow records one full reimbursement per
             claim.
           </p>
           <p>
