@@ -88,7 +88,7 @@ export function SpendingChart({
   return (
     <Panel
       title={`Spending by ${departments ? 'department' : 'activity'}`}
-      subtitle="Recorded claims · pending + approved, excluding declined"
+      subtitle={demoMode ? 'Recorded claims · pending + approved, excluding declined' : 'Approved unpaid liability and paid expenditure · pending exposure stays separate'}
     >
       <div className="treasury-chart-list">
         {rows.map((r, i) => (

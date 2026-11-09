@@ -202,7 +202,7 @@ export function TreasuryActivityDetail() {
             label: 'Recorded claims',
             value: money(s.recorded, true),
             icon: CircleDollarSign,
-            note: 'Pending + approved',
+            note: 'Approved liability + paid expenditure',
             tone: 'violet',
           },
           {
