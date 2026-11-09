@@ -84,7 +84,7 @@ export function ClaimDestination({ claim }: { claim: Expense }) {
               <strong>{destination.masked}</strong>
               <p className="field-hint">
                 {!demoMode
-                  ? 'This submitted destination is immutable in Phase 03. Only a masked summary is shown here; payment details are not exposed to the Treasurer.'
+                  ? 'This submitted destination is frozen. Full instructions are available only to an independent authorized Treasurer during payment processing.'
                   : locked
                   ? 'This destination is locked because a payment was recorded or the claim was declined.'
                   : 'An unpaid destination change uses one of your saved accounts and records a reason. Full identifiers stay out of ordinary views.'}

@@ -44,7 +44,7 @@ export function ClaimList({
     )
     .filter(
       (e) =>
-        (!status || e.state === status) &&
+        (!status || (demoMode ? e.state : e.lifecycle) === status) &&
         (!activity || e.activityId === activity) &&
         (!department || e.departmentId === department) &&
         (!member || e.review?.claimantId === member) &&
@@ -97,7 +97,7 @@ export function ClaimList({
     <>
       {!reimbursements && (
         <div className="treasury-tabs" aria-label="Claim status filters">
-          {['', ...reviewStates].map((s) => (
+          {['', ...(demoMode ? reviewStates : ['Pending', 'Under Review', 'Approved', 'Rejected', 'Payment Pending', 'Paid', 'Received'])].map((s) => (
             <button
               key={s}
               className={s === status ? 'selected' : ''}
@@ -256,7 +256,7 @@ export function ClaimList({
                       <small className="cell-sub">{c.variancePercent.toFixed(2)}%</small>
                     </td>
                     <td>
-                      <Status value={e.state} />
+                      <Status value={e.lifecycle ?? e.state} />
                     </td>
                     <td>{paymentState(data, e)}</td>
                     <td>
@@ -266,7 +266,7 @@ export function ClaimList({
                         </Link>
                       ) : !demoMode ? (
                         <Link className="text-link" to={`/treasurer/claims/${e.id}`}>
-                          View read-only claim
+                          View claim
                         </Link>
                       ) : e.state === 'Pending review' ? (
                         <button

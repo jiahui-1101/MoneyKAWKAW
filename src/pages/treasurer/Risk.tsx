@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { demoMode } from '../../services/supabase/client';
 import { Link, useParams } from 'react-router-dom';
 import { useTreasury } from '../../context/treasury-context';
 import { summarize } from '../../domain/budget';
@@ -52,9 +53,9 @@ export function TreasuryRisk() {
         title="Understand the amount beyond the plan."
         description={`${claim.description} · ${c.activity.name} / ${c.department.name}`}
       >
-        <button className="btn" onClick={() => setConfigure(true)}>
+        {demoMode && <button className="btn" onClick={() => setConfigure(true)}>
           Configure thresholds
-        </button>
+        </button>}
         {!final && (
           <button className="btn primary" disabled={busy} onClick={() => void analyze()}>
             {busy ? 'Analyzing…' : 'Analyze risk'}
