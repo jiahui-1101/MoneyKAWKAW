@@ -57,7 +57,7 @@ test('private receipt, audited edits, account snapshot, and pending claim persis
   assert.ifError(postUpload.error);
   const captured = await member.client.rpc('save_my_claim_baseline', {
     p_claim_id: claimId, p_expected_updated_at: postUpload.data.updated_at, p_receipt_id: receipt.receipt_id,
-    p_merchant: 'DEMO SUPPLIES', p_purchase_date: '2026-11-05', p_total_sen: 6_000,
+    p_merchant: 'DEMO SUPPLIES', p_purchase_date: '2026-11-05', p_total_sen: 6_200,
     p_method: 'manual', p_raw_text: 'Synthetic sample; manual review', p_lines: [
       { id: 'line-1', description: 'HDMI adapter', amount: 4_500, kind: 'item' },
       { id: 'line-2', description: 'Personal snacks', amount: 1_500, kind: 'item' },
@@ -65,16 +65,20 @@ test('private receipt, audited edits, account snapshot, and pending claim persis
   });
   assert.ifError(captured.error);
   assert.equal((await member.client.from('claim_receipts').select('extraction').eq('id', receipt.receipt_id).single()).data.extraction.method, 'manual');
+  const correctedTotal = await member.client.rpc('correct_my_claim_receipt_total', {
+    p_claim_id: claimId, p_expected_updated_at: captured.data, p_total_sen: 6_000, p_reason: 'Corrected the manually reviewed receipt total.',
+  });
+  assert.ifError(correctedTotal.error);
   const items = await member.client.from('claim_items').select('id,corrected_description').eq('claim_id', claimId);
   assert.ifError(items.error);
   const snack = items.data.find((item) => item.corrected_description === 'Personal snacks');
   const excluded = await member.client.rpc('edit_my_claim_item', {
-    p_claim_id: claimId, p_expected_updated_at: captured.data, p_item_id: snack.id,
+    p_claim_id: claimId, p_expected_updated_at: correctedTotal.data, p_item_id: snack.id,
     p_line: { description: 'Personal snacks', amount: 1_500, kind: 'item' }, p_excluded: true,
     p_reason: 'Personal purchase excluded from reimbursement', p_modification_type: 'Item Exclusion',
   });
   assert.ifError(excluded.error);
-  assert.equal((await member.client.from('receipt_modifications').select('id').eq('claim_id', claimId)).data.length, 1);
+  assert.equal((await member.client.from('receipt_modifications').select('id').eq('claim_id', claimId)).data.length, 2);
   assert.equal((await member.client.from('claim_items').select('included').eq('id', snack.id).single()).data.included, false);
 
   let current = await draft();
