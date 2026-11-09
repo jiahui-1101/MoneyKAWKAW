@@ -25,6 +25,7 @@ export interface Activity {
   departments: Department[];
 }
 export interface Expense {
+  lifecycle?: 'Pending' | 'Under Review' | 'Approved' | 'Rejected' | 'Payment Pending' | 'Paid' | 'Received';
   id: string;
   activityId: string;
   departmentId: string;
@@ -65,6 +66,7 @@ export interface Settings {
   warningPercent: number;
 }
 export interface Store {
+  financialSummaries?: FinancialSummary[];
   version: 1;
   claimAccounting?: 'task-reservation';
   setupRevision?: number;
@@ -77,6 +79,18 @@ export interface Store {
   directory?: ClubDirectory;
   treasury?: TreasuryData;
   member?: MemberData;
+}
+export interface FinancialSummary {
+  departmentId: string;
+  activityId: string;
+  budget: number;
+  planned: number;
+  unclaimed: number;
+  pending: number;
+  liability: number;
+  paid: number;
+  available: number;
+  remaining: number;
 }
 
 export const purchasingStatuses = [

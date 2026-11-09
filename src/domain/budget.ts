@@ -9,6 +9,16 @@ import {
 import { isPending, isRecorded, isReservation } from './claim-balances';
 
 export function summarize(store: Store, activityId?: string, departmentId?: string): BudgetSummary {
+  if (store.financialSummaries) {
+    const rows = store.financialSummaries.filter((r) => (!activityId || r.activityId === activityId) && (!departmentId || r.departmentId === departmentId));
+    const sum = (key: 'budget' | 'pending' | 'unclaimed' | 'liability' | 'paid') => rows.reduce((s, r) => s + r[key], 0);
+    const allocated = sum('budget');
+    const budget = departmentId ? allocated : store.activities.filter((a) => !activityId || a.id === activityId).reduce((s, a) => s + a.budget, 0);
+    const paid = sum('paid'), pending = sum('pending'), recorded = paid + sum('liability');
+    const committed = sum('unclaimed') + sum('liability');
+    return { budget, allocated, paid, pending, recorded, committed, remaining: budget - recorded,
+      available: budget - paid - committed - pending, utilization: budget ? recorded / budget * 100 : 0 };
+  }
   const activities = store.activities.filter((a) => !activityId || a.id === activityId);
   const ids = new Set(activities.map((a) => a.id));
   const separatePending = store.claimAccounting === 'task-reservation';
