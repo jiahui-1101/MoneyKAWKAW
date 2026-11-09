@@ -247,14 +247,14 @@ isOneToOne: false
                   ]
                 },"claims": {
                   Row: {
-                    "activity_id": string,"claimant_user_id": string,"claimed_amount_sen": number | null,"club_id": string,"created_at": string,"department_id": string,"draft_payment_account_id": string | null,"extracted_items_total_sen": number | null,"id": string,"idempotency_key": string,"item_budget_sen_snapshot": number,"original_receipt_total_sen": number | null,"over_budget_amount_sen": number,"over_budget_justification": string,"purchase_task_id": string,"revision": number,"status": Database["public"]['Enums']["claim_status"],"submission_key": string | null,"submitted_at": string | null,"updated_at": string
+                    "activity_id": string,"approved_amount_sen": number | null,"claimant_user_id": string,"claimed_amount_sen": number | null,"club_id": string,"created_at": string,"decided_at": string | null,"decision_reason": string,"decision_risk": Json | null,"department_id": string,"draft_payment_account_id": string | null,"extracted_items_total_sen": number | null,"id": string,"idempotency_key": string,"item_budget_sen_snapshot": number,"original_receipt_total_sen": number | null,"over_budget_amount_sen": number,"over_budget_justification": string,"purchase_task_id": string,"review_started_at": string | null,"reviewer_uid": string | null,"revision": number,"risk_assessment": Json | null,"status": Database["public"]['Enums']["claim_status"],"submission_key": string | null,"submitted_at": string | null,"updated_at": string
                   }
                   ComputedFields: never
                   Insert: {
-                    "activity_id": string,"claimant_user_id": string,"claimed_amount_sen"?: number | null,"club_id": string,"created_at"?: string,"department_id": string,"draft_payment_account_id"?: string | null,"extracted_items_total_sen"?: number | null,"id"?: string,"idempotency_key": string,"item_budget_sen_snapshot": number,"original_receipt_total_sen"?: number | null,"over_budget_amount_sen"?: number,"over_budget_justification"?: string,"purchase_task_id": string,"revision"?: number,"status"?: Database["public"]['Enums']["claim_status"],"submission_key"?: string | null,"submitted_at"?: string | null,"updated_at"?: string
+                    "activity_id": string,"approved_amount_sen"?: number | null,"claimant_user_id": string,"claimed_amount_sen"?: number | null,"club_id": string,"created_at"?: string,"decided_at"?: string | null,"decision_reason"?: string,"decision_risk"?: Json | null,"department_id": string,"draft_payment_account_id"?: string | null,"extracted_items_total_sen"?: number | null,"id"?: string,"idempotency_key": string,"item_budget_sen_snapshot": number,"original_receipt_total_sen"?: number | null,"over_budget_amount_sen"?: number,"over_budget_justification"?: string,"purchase_task_id": string,"review_started_at"?: string | null,"reviewer_uid"?: string | null,"revision"?: number,"risk_assessment"?: Json | null,"status"?: Database["public"]['Enums']["claim_status"],"submission_key"?: string | null,"submitted_at"?: string | null,"updated_at"?: string
                   }
                   Update: {
-                    "activity_id"?: string,"claimant_user_id"?: string,"claimed_amount_sen"?: number | null,"club_id"?: string,"created_at"?: string,"department_id"?: string,"draft_payment_account_id"?: string | null,"extracted_items_total_sen"?: number | null,"id"?: string,"idempotency_key"?: string,"item_budget_sen_snapshot"?: number,"original_receipt_total_sen"?: number | null,"over_budget_amount_sen"?: number,"over_budget_justification"?: string,"purchase_task_id"?: string,"revision"?: number,"status"?: Database["public"]['Enums']["claim_status"],"submission_key"?: string | null,"submitted_at"?: string | null,"updated_at"?: string
+                    "activity_id"?: string,"approved_amount_sen"?: number | null,"claimant_user_id"?: string,"claimed_amount_sen"?: number | null,"club_id"?: string,"created_at"?: string,"decided_at"?: string | null,"decision_reason"?: string,"decision_risk"?: Json | null,"department_id"?: string,"draft_payment_account_id"?: string | null,"extracted_items_total_sen"?: number | null,"id"?: string,"idempotency_key"?: string,"item_budget_sen_snapshot"?: number,"original_receipt_total_sen"?: number | null,"over_budget_amount_sen"?: number,"over_budget_justification"?: string,"purchase_task_id"?: string,"review_started_at"?: string | null,"reviewer_uid"?: string | null,"revision"?: number,"risk_assessment"?: Json | null,"status"?: Database["public"]['Enums']["claim_status"],"submission_key"?: string | null,"submitted_at"?: string | null,"updated_at"?: string
                   }
                   Relationships: [
                     {
@@ -377,6 +377,46 @@ isOneToOne: false
       referencedColumns: ["id","club_id"]
     }
                   ]
+                },"financial_notifications": {
+                  Row: {
+                    "claim_id": string,"created_at": string,"detail": string,"id": string,"read_at": string | null,"recipient_uid": string,"title": string
+                  }
+                  ComputedFields: never
+                  Insert: {
+                    "claim_id": string,"created_at"?: string,"detail": string,"id"?: string,"read_at"?: string | null,"recipient_uid": string,"title": string
+                  }
+                  Update: {
+                    "claim_id"?: string,"created_at"?: string,"detail"?: string,"id"?: string,"read_at"?: string | null,"recipient_uid"?: string,"title"?: string
+                  }
+                  Relationships: [
+                    {
+      foreignKeyName: "financial_notifications_claim_id_fkey"
+      columns: ["claim_id"]
+isOneToOne: false
+      referencedRelation: "claims"
+      referencedColumns: ["id"]
+    }
+                  ]
+                },"financial_requests": {
+                  Row: {
+                    "action": string,"actor_uid": string,"claim_id": string,"created_at": string,"id": string,"payload": NonNullable<Json>
+                  }
+                  ComputedFields: never
+                  Insert: {
+                    "action": string,"actor_uid": string,"claim_id": string,"created_at"?: string,"id": string,"payload": NonNullable<Json>
+                  }
+                  Update: {
+                    "action"?: string,"actor_uid"?: string,"claim_id"?: string,"created_at"?: string,"id"?: string,"payload"?: NonNullable<Json>
+                  }
+                  Relationships: [
+                    {
+      foreignKeyName: "financial_requests_claim_id_fkey"
+      columns: ["claim_id"]
+isOneToOne: false
+      referencedRelation: "claims"
+      referencedColumns: ["id"]
+    }
+                  ]
                 },"invitation_role_grants": {
                   Row: {
                     "activity_id": string | null,"activity_role": Database["public"]['Enums']["activity_role"] | null,"club_id": string,"club_role": Database["public"]['Enums']["club_role"] | null,"created_at": string,"department_id": string | null,"department_role": Database["public"]['Enums']["department_role"] | null,"id": string,"invitation_id": string
@@ -469,6 +509,26 @@ isOneToOne: false
       referencedColumns: ["club_id","user_id"]
     }
                   ]
+                },"payment_proofs": {
+                  Row: {
+                    "claim_id": string,"created_at": string,"filename": string,"finalized_at": string | null,"id": string,"mime_type": string,"sha256": string,"size_bytes": number,"storage_path": string,"upload_status": string,"uploaded_by": string
+                  }
+                  ComputedFields: never
+                  Insert: {
+                    "claim_id": string,"created_at"?: string,"filename": string,"finalized_at"?: string | null,"id"?: string,"mime_type": string,"sha256": string,"size_bytes": number,"storage_path": string,"upload_status"?: string,"uploaded_by": string
+                  }
+                  Update: {
+                    "claim_id"?: string,"created_at"?: string,"filename"?: string,"finalized_at"?: string | null,"id"?: string,"mime_type"?: string,"sha256"?: string,"size_bytes"?: number,"storage_path"?: string,"upload_status"?: string,"uploaded_by"?: string
+                  }
+                  Relationships: [
+                    {
+      foreignKeyName: "payment_proofs_claim_id_fkey"
+      columns: ["claim_id"]
+isOneToOne: false
+      referencedRelation: "claims"
+      referencedColumns: ["id"]
+    }
+                  ]
                 },"profiles": {
                   Row: {
                     "created_at": string,"display_name": string,"updated_at": string,"user_id": string
@@ -553,6 +613,32 @@ isOneToOne: false
       referencedColumns: ["id"]
     }
                   ]
+                },"reimbursement_payments": {
+                  Row: {
+                    "amount_sen": number,"approved_amount_sen": number,"claim_id": string,"discrepancy_amount_sen": number | null,"discrepancy_at": string | null,"discrepancy_reason": string | null,"id": string,"payment_date": string,"proof_id": string,"received_at": string | null,"received_by": string | null,"recorded_at": string,"recorded_by": string,"reference": string,"request_key": string,"resolution_note": string | null,"resolved_at": string | null
+                  }
+                  ComputedFields: never
+                  Insert: {
+                    "amount_sen": number,"approved_amount_sen": number,"claim_id": string,"discrepancy_amount_sen"?: number | null,"discrepancy_at"?: string | null,"discrepancy_reason"?: string | null,"id"?: string,"payment_date": string,"proof_id": string,"received_at"?: string | null,"received_by"?: string | null,"recorded_at"?: string,"recorded_by": string,"reference": string,"request_key": string,"resolution_note"?: string | null,"resolved_at"?: string | null
+                  }
+                  Update: {
+                    "amount_sen"?: number,"approved_amount_sen"?: number,"claim_id"?: string,"discrepancy_amount_sen"?: number | null,"discrepancy_at"?: string | null,"discrepancy_reason"?: string | null,"id"?: string,"payment_date"?: string,"proof_id"?: string,"received_at"?: string | null,"received_by"?: string | null,"recorded_at"?: string,"recorded_by"?: string,"reference"?: string,"request_key"?: string,"resolution_note"?: string | null,"resolved_at"?: string | null
+                  }
+                  Relationships: [
+                    {
+      foreignKeyName: "reimbursement_payments_claim_id_fkey"
+      columns: ["claim_id"]
+isOneToOne: true
+      referencedRelation: "claims"
+      referencedColumns: ["id"]
+    },{
+      foreignKeyName: "reimbursement_payments_proof_id_claim_id_fkey"
+      columns: ["proof_id","claim_id"]
+isOneToOne: false
+      referencedRelation: "payment_proofs"
+      referencedColumns: ["id","claim_id"]
+    }
+                  ]
                 }
           }
           Views: {
@@ -562,8 +648,14 @@ isOneToOne: false
             "abandon_my_claim_receipt":
 { Args: { "p_receipt_id": string }; Returns: string
                            },
+"abandon_payment_proof":
+{ Args: { "p_proof_id": string }; Returns: string
+                           },
 "accept_club_invitation":
 { Args: Record<PropertyKey, never>; Returns: boolean
+                           },
+"assess_claim_risk":
+{ Args: { "p_claim_id": string }; Returns: Json
                            },
 "begin_my_claim":
 { Args: { "p_request_key": string,"p_task_id": string }; Returns: string
@@ -580,6 +672,12 @@ isOneToOne: false
 "finalize_claim_receipt":
 { Args: { "p_receipt_id": string }; Returns: string
                            },
+"finalize_payment_proof":
+{ Args: { "p_proof_id": string }; Returns: string
+                           },
+"financial_summaries":
+{ Args: Record<PropertyKey, never>; Returns: Json
+                           },
 "get_my_payment_account":
 { Args: { "p_account_id": string }; Returns: {
               "holder": string,"id": string,"identifier": string,"institution": string,"is_default": boolean,"kind": string,"label": string,"revision": number,"updated_at": string
@@ -595,13 +693,50 @@ isOneToOne: false
               "holder": string,"institution": string,"kind": string,"label": string,"masked": string,"selected_at": string
             }[]
                            },
+"payment_instructions":
+{ Args: { "p_claim_id": string }; Returns: {
+              "claim_id": string,"holder": string,"identifier": string,"institution": string,"kind": string,"label": string,"masked": string,"revision": string
+            }[]
+                           },
 "prepare_claim_receipt":
 { Args: { "p_claim_id": string,"p_expected_updated_at": string,"p_filename": string,"p_mime": string,"p_sha256": string,"p_size": number }; Returns: {
               "draft_updated_at": string,"receipt_id": string,"storage_path": string
             }[]
                            },
+"prepare_payment_proof":
+{ Args: { "p_claim_id": string,"p_filename": string,"p_mime": string,"p_sha256": string,"p_size": number }; Returns: {
+              "claim_id": string,
+"created_at": string,
+"filename": string,
+"finalized_at": string | null,
+"id": string,
+"mime_type": string,
+"sha256": string,
+"size_bytes": number,
+"storage_path": string,
+"upload_status": string,
+"uploaded_by": string
+            }
+                          SetofOptions: {
+        from: "*"
+        to: "payment_proofs"
+        isOneToOne: true
+        isSetofReturn: false
+      } },
+"read_financial_notification":
+{ Args: { "p_notification_id": string }; Returns: undefined
+                           },
+"record_reimbursement":
+{ Args: { "p_amount_sen": number,"p_claim_id": string,"p_confirmed": boolean,"p_destination_revision": string,"p_expected_updated_at": string,"p_payment_date": string,"p_proof_id": string,"p_reference": string,"p_request_key": string }; Returns: string
+                           },
 "remove_my_payment_account":
 { Args: { "p_account_id": string }; Returns: undefined
+                           },
+"report_payment_issue":
+{ Args: { "p_payment_id": string,"p_reason": string,"p_received_sen"?: number,"p_request_key": string }; Returns: undefined
+                           },
+"resolve_payment_issue":
+{ Args: { "p_note": string,"p_payment_id": string,"p_request_key": string }; Returns: undefined
                            },
 "save_activity":
 { Args: { "p_budget_sen": number,"p_description": string,"p_end_date": string,"p_id": string,"p_name": string,"p_start_date": string,"p_status": Database["public"]['Enums']["activity_status"],"p_type": Database["public"]['Enums']["activity_type"] }; Returns: {
@@ -671,6 +806,9 @@ isOneToOne: false
 "submit_my_claim":
 { Args: { "p_account_updated_at": string,"p_claim_id": string,"p_expected_updated_at": string,"p_submission_key": string,"p_task_updated_at": string }; Returns: string
                            },
+"transition_claim":
+{ Args: { "p_claim_id": string,"p_expected_updated_at": string,"p_reason"?: string,"p_request_key": string,"p_target": Database["public"]['Enums']["claim_status"] }; Returns: string
+                           },
 "update_hod_purchase_task_status":
 { Args: { "p_expected_updated_at": string,"p_status": Database["public"]['Enums']["purchase_task_status"],"p_task_id": string }; Returns: {
               "activity_id": string,
@@ -723,7 +861,7 @@ isOneToOne: false
       } }
           }
           Enums: {
-            "activity_role": "Treasurer","activity_status": "Planning"|"Active"|"Completed","activity_type": "Workshop"|"Large-scale event"|"Community"|"Other"|"Small Event","claim_status": "Draft"|"Pending","club_role": "Director"|"Treasurer","currency_code": "MYR"|"SGD"|"USD","department_role": "HOD"|"Member","purchase_priority": "Low"|"Medium"|"High","purchase_task_status": "Not Started"|"In Progress"|"Purchased"|"Completed"|"Cancelled","receipt_modification_type": "OCR Correction"|"Item Exclusion"|"Item Inclusion"|"Amount Adjustment"|"Description Correction","receipt_upload_status": "uploading"|"ready"|"abandoned"
+            "activity_role": "Treasurer","activity_status": "Planning"|"Active"|"Completed","activity_type": "Workshop"|"Large-scale event"|"Community"|"Other"|"Small Event","claim_status": "Draft"|"Pending"|"Under Review"|"Approved"|"Rejected"|"Payment Pending"|"Paid"|"Received","club_role": "Director"|"Treasurer","currency_code": "MYR"|"SGD"|"USD","department_role": "HOD"|"Member","purchase_priority": "Low"|"Medium"|"High","purchase_task_status": "Not Started"|"In Progress"|"Purchased"|"Completed"|"Cancelled","receipt_modification_type": "OCR Correction"|"Item Exclusion"|"Item Inclusion"|"Amount Adjustment"|"Description Correction","receipt_upload_status": "uploading"|"ready"|"abandoned"
           }
           CompositeTypes: {
             [_ in never]: never
@@ -843,7 +981,7 @@ export const Constants = {
           }
         },"public": {
           Enums: {
-            "activity_role": ["Treasurer"],"activity_status": ["Planning", "Active", "Completed"],"activity_type": ["Workshop", "Large-scale event", "Community", "Other", "Small Event"],"claim_status": ["Draft", "Pending"],"club_role": ["Director", "Treasurer"],"currency_code": ["MYR", "SGD", "USD"],"department_role": ["HOD", "Member"],"purchase_priority": ["Low", "Medium", "High"],"purchase_task_status": ["Not Started", "In Progress", "Purchased", "Completed", "Cancelled"],"receipt_modification_type": ["OCR Correction", "Item Exclusion", "Item Inclusion", "Amount Adjustment", "Description Correction"],"receipt_upload_status": ["uploading", "ready", "abandoned"]
+            "activity_role": ["Treasurer"],"activity_status": ["Planning", "Active", "Completed"],"activity_type": ["Workshop", "Large-scale event", "Community", "Other", "Small Event"],"claim_status": ["Draft", "Pending", "Under Review", "Approved", "Rejected", "Payment Pending", "Paid", "Received"],"club_role": ["Director", "Treasurer"],"currency_code": ["MYR", "SGD", "USD"],"department_role": ["HOD", "Member"],"purchase_priority": ["Low", "Medium", "High"],"purchase_task_status": ["Not Started", "In Progress", "Purchased", "Completed", "Cancelled"],"receipt_modification_type": ["OCR Correction", "Item Exclusion", "Item Inclusion", "Amount Adjustment", "Description Correction"],"receipt_upload_status": ["uploading", "ready", "abandoned"]
           }
         }
 } as const
