@@ -29,7 +29,7 @@ export function ReceiptUpload({
     [method, setMethod] = useState<'tesseract' | 'manual'>('manual'),
     [pending, setPending] = useState<ProofFile | null | undefined>();
   const [loadingFile, setLoadingFile] = useState(false);
-  const [useModel, setUseModel] = useState(true);
+  const [useModel, setUseModel] = useState(false);
   const controller = useRef<AbortController | null>(null);
   useEffect(() => {
     controller.current?.abort();
