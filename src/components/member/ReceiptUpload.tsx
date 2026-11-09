@@ -7,6 +7,9 @@ import { Field } from '../Field';
 import { Badge, Modal, Panel, Progress } from '../ui';
 import { ReceiptBaselineForm } from './ReceiptBaselineForm';
 import type { DraftChange } from './useMemberDraft';
+import { understandReceipt } from '../../services/receipt-understanding';
+import { hybridReceipt } from '../../domain/receipt-understanding';
+import { ReceiptSemantics } from './ReceiptSemantics';
 export function ReceiptUpload({
   draft,
   saving,
@@ -26,6 +29,7 @@ export function ReceiptUpload({
     [method, setMethod] = useState<'tesseract' | 'manual'>('manual'),
     [pending, setPending] = useState<ProofFile | null | undefined>();
   const [loadingFile, setLoadingFile] = useState(false);
+  const [useModel, setUseModel] = useState(true);
   const controller = useRef<AbortController | null>(null);
   useEffect(() => {
     controller.current?.abort();
@@ -68,7 +72,7 @@ export function ReceiptUpload({
     const current = new AbortController();
     controller.current = current;
     try {
-      const result = await recognizeReceipt(
+      let result = await recognizeReceipt(
         { ...draft.receipt.file, dataUrl: draft.receipt.originalUrl },
         (status, value) => {
           if (!current.signal.aborted) {
@@ -80,6 +84,13 @@ export function ReceiptUpload({
         },
         current.signal,
       );
+      if (current.signal.aborted || controller.current !== current) return;
+      if (useModel) {
+        setStage('Checking optional receipt suggestions'); setProgress(100);
+        const understanding = await understandReceipt(result.rawText, current.signal);
+        if (current.signal.aborted || controller.current !== current) return;
+        result = { ...hybridReceipt(result, understanding.predictions), understanding };
+      }
       setMethod(result.lines.length ? 'tesseract' : 'manual');
       setSuggestion(result);
       if (!result.lines.length)
@@ -89,7 +100,7 @@ export function ReceiptUpload({
     } catch (e) {
       setError(e instanceof Error ? e.message : 'OCR was unavailable. Continue with manual entry.');
     } finally {
-      setReading(false);
+      if (controller.current === current) setReading(false);
     }
   };
   const manual = () => {
@@ -169,6 +180,11 @@ export function ReceiptUpload({
                     misread values—compare every suggestion against the original.
                   </p>
                   <div className="row wrap">
+                    <label className="check-row">
+                      <input type="checkbox" checked={useModel} disabled={reading || saving}
+                        onChange={e => setUseModel(e.target.checked)} />
+                      Optional experimental line suggestions · large first download, processed on this device
+                    </label>
                     <button
                       className="btn primary"
                       disabled={reading || saving}
@@ -207,6 +223,9 @@ export function ReceiptUpload({
           )}
         </div>
       </Panel>
+      {suggestion && !reading && !draft.receipt?.extraction && (
+        <ReceiptSemantics understanding={suggestion.understanding} />
+      )}
       {suggestion && !reading && !draft.receipt?.extraction && (
         <ReceiptBaselineForm
           key={`${draft.receipt?.id}-${method}`}

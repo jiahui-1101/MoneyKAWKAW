@@ -4,6 +4,7 @@ import type { ProofFile, ReceiptLine } from '../domain/treasury';
 import { readProof } from './payment-proof';
 import { validateReceiptFile } from './member-drafts';
 export interface OcrSuggestion {
+  understanding?: import('../domain/receipt-understanding').Understanding;
   rawText: string;
   merchant: string;
   purchaseDate: string;
