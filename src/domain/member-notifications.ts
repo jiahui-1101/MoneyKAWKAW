@@ -10,6 +10,7 @@ export interface MemberNotification {
   read: boolean;
 }
 export function memberNotifications(data: MemberSnapshot): MemberNotification[] {
+  if (data.notifications) return data.notifications;
   const today = departmentToday(data.settings.timezone),
     notes: Omit<MemberNotification, 'read'>[] = [];
   const tasks = data.assignments.filter((t) => t.purchasing?.assigneeId === data.userId);

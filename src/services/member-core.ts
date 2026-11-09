@@ -109,6 +109,7 @@ export function projectMember(store: Store): MemberSnapshot {
   const data = store.member;
   return structuredClone({
     userId: actor.userId,
+    notifications: store.notifications,
     scopes,
     assignments,
     expenses,

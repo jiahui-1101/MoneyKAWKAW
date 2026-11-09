@@ -41,12 +41,14 @@ export const supabaseRepository: WorkspaceRepository = {
       client.rpc('financial_summaries'),
       client.from('reimbursement_payments').select('*'),
       client.from('payment_proofs').select('*').eq('upload_status', 'retained'),
+      client.from('financial_notifications').select('*').order('created_at', { ascending: false }).limit(100),
     ]);
     if (results.some(({ error }) => error)) fail();
     const [clubResult, activityResult, departmentResult, membershipResult, profileResult, taskResult, claimResult, eventResult] = results;
     if (!clubResult.data || !activityResult.data || !departmentResult.data || !membershipResult.data || !profileResult.data || !taskResult.data || !claimResult.data || !eventResult.data) fail();
     const claims = claimResult.data;
-    const [summaryResult, paymentResult, proofResult] = results.slice(8);
+    const [summaryResult, paymentResult, proofResult, notificationResult] = results.slice(8);
+    const notificationRows = notificationResult.data as unknown as Database['public']['Tables']['financial_notifications']['Row'][];
     const financialSummaries = summaryResult.data as unknown as FinancialSummary[];
     const paymentRows = paymentResult.data as unknown as Database['public']['Tables']['reimbursement_payments']['Row'][];
     const proofRows = proofResult.data as unknown as Database['public']['Tables']['payment_proofs']['Row'][];
@@ -142,6 +144,8 @@ export const supabaseRepository: WorkspaceRepository = {
     const accountData = accountRows.map((account) => ({ ...account, identifier: '' }));
     return {
       version: 1, claimAccounting: 'task-reservation', financialSummaries, activities, expenses, payments, assignments, events,
+      notifications: (notificationRows ?? []).map((n) => ({ id: n.id, title: n.title, detail: n.detail,
+        at: n.created_at, to: `/member/claims/${n.claim_id}`, tone: 'brand', read: !!n.read_at })),
       settings: { currency: clubResult.data.currency, timezone: clubResult.data.timezone, warningPercent: clubResult.data.warning_percent },
       directory: { users: profileResult.data.map((profile) => ({ id: profile.user_id, name: profile.display_name })), memberships },
       treasury: {

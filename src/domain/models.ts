@@ -66,6 +66,7 @@ export interface Settings {
   warningPercent: number;
 }
 export interface Store {
+  notifications?: FinancialNotification[];
   financialSummaries?: FinancialSummary[];
   version: 1;
   claimAccounting?: 'task-reservation';
@@ -79,6 +80,15 @@ export interface Store {
   directory?: ClubDirectory;
   treasury?: TreasuryData;
   member?: MemberData;
+}
+export interface FinancialNotification {
+  id: string;
+  title: string;
+  detail: string;
+  at: string;
+  to: string;
+  tone: string;
+  read: boolean;
 }
 export interface FinancialSummary {
   departmentId: string;

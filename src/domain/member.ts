@@ -52,6 +52,7 @@ export interface MemberScope {
   department: Pick<Department, 'id' | 'name' | 'description' | 'head' | 'hodUserId' | 'allocation'>;
 }
 export interface MemberSnapshot {
+  notifications?: import('./models').FinancialNotification[];
   userId: string;
   scopes: MemberScope[];
   directory: ClubDirectory;
