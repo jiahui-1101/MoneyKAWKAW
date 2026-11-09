@@ -7,9 +7,9 @@ export function requestKey(scope: string) {
   if (keys.size > 200) keys.delete(keys.keys().next().value!);
   return keys.get(scope)!;
 }
-export function checked<T>(result: { data: T; error: { message: string } | null }): T {
+export function checked<T>(result: { data: T; error: { message: string } | null }): NonNullable<T> {
   if (result.error) throw new Error(result.error.message);
-  return result.data;
+  return result.data!;
 }
 export async function currentClaim(id: string) {
   const data = checked(await supabaseClient().from('claims').select('*').eq('id', id).maybeSingle());
@@ -23,7 +23,7 @@ export async function transitionClaim(id: string, target: Database['public']['En
 export async function assessRisk(id: string): Promise<RiskResult> {
   return checked(await supabaseClient().rpc('assess_claim_risk', { p_claim_id: id })) as unknown as RiskResult;
 }
-export async function paymentInstructions(id: string): Promise<PayoutSnapshot> {
+export async function paymentInstructions(id: string): Promise<PayoutSnapshot & { revision: string }> {
   const c = await currentClaim(id);
   if (c.status === 'Approved') await transitionClaim(id, 'Payment Pending', c.updated_at);
   const data = checked(await supabaseClient().rpc('payment_instructions', { p_claim_id: id }));
