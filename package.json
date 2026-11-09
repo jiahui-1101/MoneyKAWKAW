@@ -5,8 +5,8 @@
   "type": "module",
   "scripts": {
     "prepare:ocr": "node scripts/prepare-ocr.mjs",
-    "predev": "npm run prepare:ocr",
-    "prebuild": "npm run prepare:ocr",
+    "predev": "npm run prepare:ocr && npm run prepare:receipt-model",
+    "prebuild": "npm run prepare:ocr && npm run prepare:receipt-model",
     "dev": "vite --host 127.0.0.1",
     "build": "tsc --noEmit && vite build",
     "preview": "vite preview --host 127.0.0.1",
@@ -18,7 +18,8 @@
     "supabase:types": "node scripts/generate-supabase-types.mjs",
     "test:supabase": "node scripts/test-supabase.mjs",
     "lint": "oxlint --react-plugin --jsx-a11y-plugin --deny-warnings src tests",
-    "typecheck": "tsc --noEmit"
+    "typecheck": "tsc --noEmit",
+    "prepare:receipt-model": "node scripts/prepare-receipt-runtime.mjs"
   },
   "dependencies": {
     "@fontsource-variable/dm-sans": "^5.2.8",
