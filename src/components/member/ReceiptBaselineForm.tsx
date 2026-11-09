@@ -71,7 +71,7 @@ export function ReceiptBaselineForm({
             rawText: suggestion.rawText,
           }),
         method === 'tesseract'
-          ? 'Original OCR suggestions captured. Make corrections in the item editor.'
+          ? 'Reviewed OCR source values captured. Make corrections in the item editor.'
           : 'Manual source values captured. No OCR accuracy is claimed.',
       );
       onSaved();
@@ -83,12 +83,14 @@ export function ReceiptBaselineForm({
     <Panel
       title={
         method === 'tesseract'
-          ? 'Review the original OCR suggestions'
+          ? suggestion.understanding?.status === 'ready' ? 'Review OCR and semantic suggestions' : 'Review the original OCR suggestions'
           : 'Enter the receipt’s source values'
       }
       subtitle={
         method === 'tesseract'
-          ? 'Check the image. Source item values are captured unchanged; corrections follow in the next step.'
+          ? suggestion.understanding?.status === 'ready'
+            ? 'Verify every candidate against the original image. Raw OCR text stays unchanged; accepted source values are retained before further corrections.'
+            : 'Check the image. Source item values are captured unchanged; corrections follow in the next step.'
           : 'Transcribe the actual uploaded receipt. Manual values are explicitly labeled, not presented as OCR.'
       }
     >
