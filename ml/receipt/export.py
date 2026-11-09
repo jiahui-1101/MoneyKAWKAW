@@ -65,6 +65,10 @@ def main():
         'sha256': sha256, 'artifactDirectory': directory,
         'maxLength': 48, 'classificationTask': 'semantic-line', 'license': 'Apache-2.0; training annotations CC-BY-4.0'}
     (Path('public/models/receipt-bert')/'manifest.json').write_text(json.dumps(manifest, indent=2), encoding='utf8')
+    # Retire only known flat generated files; versioned assets prevent stale browser cache reuse.
+    legacy=Path('public/models/receipt-bert')
+    for file in ('config.json','tokenizer.json','tokenizer_config.json','special_tokens_map.json','vocab.txt','onnx/model_quantized.onnx'):
+        (legacy/file).unlink(missing_ok=True)
     (ROOT/'export.json').write_text(json.dumps(results, indent=2), encoding='utf8')
     print(json.dumps(results), flush=True)
 

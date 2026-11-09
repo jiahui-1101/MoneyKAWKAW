@@ -3,6 +3,7 @@ import json
 import random
 import subprocess
 import time
+from pathlib import Path
 import numpy as np
 import onnxruntime as ort
 from transformers import AutoTokenizer
@@ -31,7 +32,8 @@ def main():
         documents.append(dict(d, id=d['id']+'/noise', rows=rows, variant='simulated-noise'))
         documents.append(dict(d, id=d['id']+'/partial', rows=[r for i,r in enumerate(d['rows']) if i%5 != 2], variant='missing-lines'))
     (ROOT/'evaluation-documents.json').write_text(json.dumps(documents, ensure_ascii=False), encoding='utf8')
-    tokenizer = AutoTokenizer.from_pretrained('public/models/receipt-bert')
+    manifest = json.loads(Path('public/models/receipt-bert/manifest.json').read_text(encoding='utf8'))
+    tokenizer = AutoTokenizer.from_pretrained(Path('public/models') / manifest['artifactDirectory'])
     options=ort.SessionOptions(); options.intra_op_num_threads=4
     session=ort.InferenceSession(str(ROOT/'onnx/model_quantized.onnx'),sess_options=options,providers=['CPUExecutionProvider'])
     texts=[r['text'] for d in documents for r in d['rows']]

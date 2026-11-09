@@ -15,7 +15,9 @@ class TrainedArtifact(unittest.TestCase):
     @classmethod
     def setUpClass(cls):
         torch.set_num_threads(4)
-        cls.tokenizer = AutoTokenizer.from_pretrained('public/models/receipt-bert')
+        cls.manifest=json.loads(Path('public/models/receipt-bert/manifest.json').read_text(encoding='utf8'))
+        cls.browser=Path('public/models')/cls.manifest['artifactDirectory']
+        cls.tokenizer = AutoTokenizer.from_pretrained(cls.browser)
         cls.model = AutoModelForSequenceClassification.from_pretrained(ROOT/'checkpoint', attn_implementation='eager').eval()
         options=ort.SessionOptions(); options.intra_op_num_threads=4
         cls.session=ort.InferenceSession(str(ROOT/'onnx/model_quantized.onnx'),sess_options=options,providers=['CPUExecutionProvider'])
@@ -42,9 +44,8 @@ class TrainedArtifact(unittest.TestCase):
         self.assertEqual(LABELS[int(logits[0].argmax())],'GRAND_TOTAL')
 
     def test_browser_artifact_identity_and_parity_evidence(self):
-        browser=Path('public/models/receipt-bert')
-        manifest=json.loads((browser/'manifest.json').read_text(encoding='utf8'))
-        self.assertEqual(manifest['sha256'],hashlib.sha256((browser/'onnx/model_quantized.onnx').read_bytes()).hexdigest())
+        manifest=self.manifest
+        self.assertEqual(manifest['sha256'],hashlib.sha256((self.browser/'onnx/model_quantized.onnx').read_bytes()).hexdigest())
         self.assertEqual(manifest['parity']['model.onnx']['top1Agreement'],1)
         self.assertGreaterEqual(manifest['parity']['model_quantized.onnx']['top1Agreement'],.95)
 
