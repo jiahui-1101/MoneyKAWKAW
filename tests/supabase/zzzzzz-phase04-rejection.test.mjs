@@ -3,6 +3,7 @@ import test from 'node:test';
 import { randomUUID } from 'node:crypto';
 import { admin, signIn, syntheticEmails } from './helpers.mjs';
 import { createFinancialClaim, ok } from './phase04-fixture.mjs';
+import { loadWorkflow } from './business-fixture.mjs';
 const transition=(client,c,target,reason='',key=randomUUID())=>client.rpc('transition_claim',{
   p_claim_id:c.id,p_expected_updated_at:c.updated_at,p_target:target,p_request_key:key,p_reason:reason});
 const current=async(client,id)=>ok(await client.from('claims').select('*').eq('id',id).single());
@@ -56,15 +57,22 @@ test('conflicting decisions serialize to exactly one decision and one liability 
 });
 
 test('lower actual claims release planned exposure for new purchases without losing the estimate',async()=>{
-  const {claim,task}=await createFinancialClaim('Lower actual cost',1000,160000);
   const {client:hod}=await signIn(syntheticEmails.multimediaHod);
+  const w=await loadWorkflow();
+  const before=ok(await hod.rpc('financial_summaries')).find(r=>r.departmentId===w.multimediaId);
+  const estimate=before.available-1000;
+  assert.ok(estimate>1000);
+  const {claim,task}=await createFinancialClaim('Lower actual cost',1000,estimate);
+  const raw=ok(await hod.from('purchase_tasks').select('estimated_budget_sen').eq('department_id',w.multimediaId).neq('status','Cancelled'))
+    .reduce((sum,t)=>sum+t.estimated_budget_sen,0);
+  const nextAmount=Math.max(1000,before.budget-raw+1);
   const next=ok(await hod.rpc('save_purchase_task',{
     p_id:null,p_request_key:randomUUID(),p_activity_id:claim.activity_id,p_department_id:claim.department_id,
     p_item_name:'Reuse available budget',p_description:'Synthetic canonical budget regression',
-    p_assigned_member_id:claim.claimant_user_id,p_estimated_budget_sen:20000,
+    p_assigned_member_id:claim.claimant_user_id,p_estimated_budget_sen:nextAmount,
     p_due_date:'2026-12-20',p_priority:'Medium',p_expected_updated_at:null}));
-  assert.equal(next.estimated_budget_sen,20000);
-  assert.equal(ok(await admin.from('purchase_tasks').select('estimated_budget_sen').eq('id',task.id).single()).estimated_budget_sen,160000);
+  assert.equal(next.estimated_budget_sen,nextAmount); assert.ok(raw+nextAmount>before.budget);
+  assert.equal(ok(await admin.from('purchase_tasks').select('estimated_budget_sen').eq('id',task.id).single()).estimated_budget_sen,estimate);
   const f=ok(await hod.rpc('financial_summaries')).find(r=>r.departmentId===claim.department_id);
   assert.ok(f.available>=0); assert.ok(f.pending>=1000);
 });
