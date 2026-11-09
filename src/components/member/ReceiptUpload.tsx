@@ -180,10 +180,10 @@ export function ReceiptUpload({
                     misread values—compare every suggestion against the original.
                   </p>
                   <div className="row wrap">
-                    <label className="check-row">
+                    <label className="member-check-field">
                       <input type="checkbox" checked={useModel} disabled={reading || saving}
                         onChange={e => setUseModel(e.target.checked)} />
-                      Optional experimental line suggestions · large first download, processed on this device
+                      <span>Optional experimental line suggestions · large first download, processed on this device</span>
                     </label>
                     <button
                       className="btn primary"
