@@ -138,7 +138,7 @@ export function MemberClaimTable({ claims, data }: { claims: Expense[]; data: Me
                 <td className="money">{money(claim.amount)}</td>
                 <td>{date(claim.date)}</td>
                 <td>
-                  <Status value={claim.state} />
+                  <Status value={claim.lifecycle ?? claim.state} />
                 </td>
                 <td>{paymentState(data, claim)}</td>
               </tr>

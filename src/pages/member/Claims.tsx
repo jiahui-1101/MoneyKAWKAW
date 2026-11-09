@@ -14,7 +14,7 @@ export function MemberClaims() {
   const claims = data.expenses
     .filter(
       (e) =>
-        (!status || e.state === status) &&
+        (!status || (e.lifecycle ?? e.state) === status) &&
         (!activity || e.activityId === activity) &&
         `${e.id} ${e.description}`.toLowerCase().includes(query.toLowerCase()),
     )
@@ -55,7 +55,7 @@ export function MemberClaims() {
         subtitle="Review and payment statuses come from the shared Treasurer records"
       >
         <div className="member-tabs">
-          {['', ...reviewStates].map((s) => (
+          {['', ...(data.expenses.some((e) => e.lifecycle) ? ['Pending', 'Under Review', 'Approved', 'Rejected', 'Payment Pending', 'Paid', 'Received'] : reviewStates)].map((s) => (
             <button
               key={s}
               aria-pressed={status === s}

@@ -150,10 +150,10 @@ export function MemberDashboard() {
           action={<TextLink to="/member/claims">My claims</TextLink>}
         >
           <div className="member-content stack">
-            {['Pending review', 'In review', 'Approved', 'Declined'].map((state) => (
+            {(demoMode ? ['Pending review', 'In review', 'Approved', 'Declined'] : ['Pending', 'Under Review', 'Approved', 'Rejected', 'Payment Pending', 'Paid', 'Received']).map((state) => (
               <div className="member-status-row" key={state}>
                 <span>{state}</span>
-                <strong>{data.expenses.filter((e) => e.state === state).length}</strong>
+                <strong>{data.expenses.filter((e) => (e.lifecycle ?? e.state) === state).length}</strong>
               </div>
             ))}
             <p className="field-hint">

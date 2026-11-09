@@ -15,7 +15,6 @@ import {
   TextLink,
   useFormat,
 } from '../../components/ui';
-import { demoMode } from '../../services/supabase/client';
 
 export function TreasuryActivities() {
   const { data } = useTreasury();
@@ -26,28 +25,6 @@ export function TreasuryActivities() {
   const activities = data.activities.filter(
     (a) => a.name.toLowerCase().includes(query.toLowerCase()) && (!type || a.type === type),
   );
-  if (!demoMode) return <div className="stack">
-    <PageHeader eyebrow="ACTIVITY BUDGETS" title="Activity budgets and purchasing plans."
-      description="Read-only summaries from the connected club database. Task estimates are planned commitments, not actual expenses." />
-    <Panel title="Authorized activities" subtitle={`${activities.length} visible in your Treasurer scope`}>
-      <div className="filters">
-        <div className="search-field"><Search size={16} /><input aria-label="Search activities" placeholder="Search activities…" value={query} onChange={(event) => setQuery(event.target.value)} /></div>
-        <select className="compact-select" aria-label="Activity type" value={type} onChange={(event) => setType(event.target.value)}>
-          <option value="">All types</option>{[...new Set(data.activities.map((activity) => activity.type))].map((value) => <option key={value}>{value}</option>)}
-        </select>
-      </div>
-      {activities.length ? <div className="table-scroll" tabIndex={0} role="region" aria-label="Activity budgets and task commitments">
-        <table><thead><tr><th>ACTIVITY</th><th>OVERALL BUDGET</th><th>ALLOCATED</th><th>PLANNED TASK COMMITMENTS</th><th>UNCOMMITTED</th></tr></thead>
-          <tbody>{activities.map((activity) => {
-            const summary = summarize(data, activity.id);
-            return <tr key={activity.id}><td><Link className="activity-name" to={`/treasurer/activities/${activity.id}`}>{activity.name}</Link><small className="cell-sub">{activity.type} · {activity.status}</small></td>
-              <td className="money">{money(summary.budget)}</td><td className="money">{money(summary.allocated)}</td><td className="money">{money(summary.committed)}</td><td className="money">{money(summary.available)}</td></tr>;
-          })}</tbody>
-        </table>
-      </div> : <Empty title="No matching activities">Try a different activity name or type.</Empty>}
-    </Panel>
-    <p className="data-note">Claim amounts, reimbursement, and payment proof are unavailable until Phase 03.</p>
-  </div>;
   return (
     <div className="stack">
       <PageHeader
@@ -201,27 +178,6 @@ export function TreasuryActivityDetail() {
     expenses: data.expenses.filter((e) => e.activityId === id),
   };
   const s = summarize(scope);
-  if (!demoMode) return <div className="stack">
-    <Link className="back-link" to="/treasurer/activities">← Activities / Budget summary</Link>
-    <PageHeader eyebrow={`${activity.type.toUpperCase()} · ${activity.status.toUpperCase()}`} title={activity.name} description={activity.description} />
-    <MetricCards items={[
-      { label: 'Overall budget', value: money(s.budget, true), icon: Wallet, note: 'Director-managed ceiling' },
-      { label: 'Department allocations', value: money(s.allocated, true), icon: CircleDollarSign, note: 'Current allocations' },
-      { label: 'Planned task commitments', value: money(s.committed, true), icon: ArrowDownLeft, note: 'Active purchasing estimates' },
-      { label: 'Uncommitted budget', value: money(s.available, true), icon: Percent, note: 'Budget less planned tasks' },
-    ]} />
-    <Panel title="Department purchasing plans" subtitle="No claims or payment records are included">
-      <div className="table-scroll" tabIndex={0} role="region" aria-label="Department purchasing plans">
-        <table><thead><tr><th>DEPARTMENT</th><th>ALLOCATION</th><th>PLANNED TASKS</th><th>UNCOMMITTED</th></tr></thead>
-          <tbody>{activity.departments.map((department) => {
-            const tasks = data.assignments.filter((task) => task.departmentId === department.id && task.activityId === activity.id && task.purchasing?.status !== 'Cancelled');
-            const planned = tasks.reduce((total, task) => total + task.budget, 0);
-            return <tr key={department.id}><td>{department.name}<small className="cell-sub">{tasks.length} active purchasing tasks</small></td><td className="money">{money(department.allocation)}</td><td className="money">{money(planned)}</td><td className="money">{money(department.allocation - planned)}</td></tr>;
-          })}</tbody>
-        </table>
-      </div>
-    </Panel>
-  </div>;
   return (
     <div className="stack">
       <Link className="back-link" to="/treasurer/activities">
