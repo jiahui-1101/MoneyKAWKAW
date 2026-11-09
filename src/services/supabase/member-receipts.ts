@@ -58,7 +58,7 @@ export async function loadReceipt(claim: ClaimRow): Promise<ReceiptEvidence> {
   const addedLines = items.filter((i) => i.original_ocr_reference === null).map((i) => sourceLine(i, true));
   const extraction = object(receipt.extraction ?? {});
   return {
-    id: receipt.id, expenseId: claim.status === 'Pending' ? claim.id : '',
+    id: receipt.id, expenseId: claim.status !== 'Draft' ? claim.id : '',
     originalUrl: signedResult.data.signedUrl, merchant: receipt.merchant ?? '',
     purchaseDate: receipt.purchase_date ?? undefined, originalTotal: Number(receipt.original_total_sen ?? 0),
     originalLines, addedLines, edits: receiptEdits, totalEdits,

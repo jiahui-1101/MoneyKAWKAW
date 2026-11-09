@@ -39,6 +39,12 @@ export function TreasuryDashboard() {
     { label: 'Pending reimbursements', value: unpaid.length, to: '/treasurer/reimbursements' },
     { label: 'Recorded reimbursements', value: data.payments.length, to: '/treasurer/history' },
   ];
+  const visibleCounts = data.financialSummaries
+    ? ['Pending', 'Under Review', 'Approved', 'Rejected', 'Payment Pending', 'Paid', 'Received'].map((status) => ({
+      label: status === 'Paid' ? 'Paid · awaiting confirmation' : status,
+      value: data.expenses.filter((e) => e.lifecycle === status).length,
+      to: `/treasurer/claims?status=${encodeURIComponent(status)}`,
+    })) : counts;
   return (
     <div className="stack dashboard">
       <PageHeader
@@ -88,7 +94,7 @@ export function TreasuryDashboard() {
         ]}
       />
       <div className="treasury-counts">
-        {counts.map((c) => (
+        {visibleCounts.map((c) => (
           <Link key={c.label} to={c.to}>
             <span>{c.label}</span>
             <strong>{c.value.toString().padStart(2, '0')}</strong>
@@ -102,6 +108,11 @@ export function TreasuryDashboard() {
         ))}
       </div>
       <TreasuryLifecycle data={data} />
+      {!!data.notifications?.length && <Panel title="Financial notifications" subtitle="Persisted business events · no email or push delivery implied">
+        <div className="member-content stack">{data.notifications.map((n) => <div key={n.id}>
+          <TextLink to={n.to}>{n.title}</TextLink><p>{n.detail}</p><small>{time(n.at)}</small>
+        </div>)}</div>
+      </Panel>}
       <div className="chart-grid">
         <BudgetComparison activities={data.activities} store={data} root="/treasurer" />
         <ClaimDistribution data={data} />

@@ -145,7 +145,7 @@ export const supabaseRepository: WorkspaceRepository = {
     return {
       version: 1, claimAccounting: 'task-reservation', financialSummaries, activities, expenses, payments, assignments, events,
       notifications: (notificationRows ?? []).map((n) => ({ id: n.id, title: n.title, detail: n.detail,
-        at: n.created_at, to: `/member/claims/${n.claim_id}`, tone: 'brand', read: !!n.read_at })),
+        at: n.created_at, to: `/${actor.role === 'Treasurer' ? 'treasurer' : 'member'}/claims/${n.claim_id}`, tone: 'brand', read: !!n.read_at })),
       settings: { currency: clubResult.data.currency, timezone: clubResult.data.timezone, warningPercent: clubResult.data.warning_percent },
       directory: { users: profileResult.data.map((profile) => ({ id: profile.user_id, name: profile.display_name })), memberships },
       treasury: {
