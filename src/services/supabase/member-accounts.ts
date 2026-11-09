@@ -30,7 +30,7 @@ export async function getAccount(id: string): Promise<PaymentAccount> {
 }
 export async function saveAccount(input: AccountInput, id?: string, expected?: string): Promise<string> {
   const { data, error } = await supabaseClient().rpc('save_my_payment_account', {
-    p_account_id: nullable(id ?? null), p_expected_updated_at: nullable(expected ?? null),
+    p_account_id: nullable(id || null), p_expected_updated_at: nullable(expected || null),
     p_label: input.label, p_kind: input.kind, p_holder: input.holder,
     p_institution: input.institution, p_identifier: input.identifier, p_is_default: input.isDefault,
   });
