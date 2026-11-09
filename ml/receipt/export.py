@@ -22,8 +22,11 @@ def main():
     target.mkdir(exist_ok=True)
     tokens = tokenizer(['Example item 12.50', 'TOTAL 12.50'], padding=True, return_tensors='pt')
     class Export(torch.nn.Module):
+        def __init__(self):
+            super().__init__()
+            self.model = model
         def forward(self, input_ids, attention_mask):
-            return model(input_ids=input_ids, attention_mask=attention_mask).logits
+            return self.model(input_ids=input_ids, attention_mask=attention_mask).logits
     # Official torch exporter with dynamic batch/sequence; no external ONNX data files.
     torch.onnx.export(Export(), (tokens['input_ids'], tokens['attention_mask']), target/'model.onnx',
         input_names=['input_ids', 'attention_mask'], output_names=['logits'], opset_version=17,
