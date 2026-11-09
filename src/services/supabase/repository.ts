@@ -1,4 +1,8 @@
 import type { Activity, Assignment, AuditEvent, Department, Membership, Store } from '../../domain/models';
+import type { Expense, Payment, FinancialSummary } from '../../domain/models';
+import type { RiskResult } from '../../domain/treasury';
+import type { Database } from './database.types';
+import { safeProofMetadata } from './payment-proof';
 import type { Role, SessionProfile } from '../../domain/access';
 import { getDemoActor } from '../../domain/session';
 import { supabaseClient } from './client';
@@ -34,11 +38,18 @@ export const supabaseRepository: WorkspaceRepository = {
       client.from('purchase_tasks').select('id,club_id,activity_id,department_id,item_name,description,assigned_member_id,created_by_hod,estimated_budget_sen,due_date,priority,status,updated_at'),
       client.from('claims').select('*').order('updated_at', { ascending: false }),
       client.from('audit_events').select('id,actor_uid,action,record_type,record_id,activity_id,department_id,changes,created_at').order('created_at', { ascending: false }).limit(250),
+      client.rpc('financial_summaries'),
+      client.from('reimbursement_payments').select('*'),
+      client.from('payment_proofs').select('*').eq('upload_status', 'retained'),
     ]);
     if (results.some(({ error }) => error)) fail();
     const [clubResult, activityResult, departmentResult, membershipResult, profileResult, taskResult, claimResult, eventResult] = results;
     if (!clubResult.data || !activityResult.data || !departmentResult.data || !membershipResult.data || !profileResult.data || !taskResult.data || !claimResult.data || !eventResult.data) fail();
     const claims = claimResult.data;
+    const [summaryResult, paymentResult, proofResult] = results.slice(8);
+    const financialSummaries = summaryResult.data as unknown as FinancialSummary[];
+    const paymentRows = paymentResult.data as unknown as Database['public']['Tables']['reimbursement_payments']['Row'][];
+    const proofRows = proofResult.data as unknown as Database['public']['Tables']['payment_proofs']['Row'][];
     const memberships = membershipResult.data.map((row): Membership => ({
       userId: row.user_id, activityId: row.activity_id, departmentId: row.department_id,
       role: row.role, active: row.status === 'active',
@@ -61,7 +72,7 @@ export const supabaseRepository: WorkspaceRepository = {
       departments: departmentActivities.get(row.id) ?? [],
     }));
     const assignments: Assignment[] = taskResult.data.map((row) => {
-      const claim = claims.find((entry) => entry.purchase_task_id === row.id && entry.status === 'Pending');
+      const claim = claims.find((entry) => entry.purchase_task_id === row.id && entry.status !== 'Draft');
       return {
       id: row.id,
       activityId: row.activity_id,
@@ -100,18 +111,37 @@ export const supabaseRepository: WorkspaceRepository = {
         assignments.some((task) => !Number.isSafeInteger(task.budget) || task.budget < 0)) fail();
     if (session.uid !== getDemoActor().userId || !session.roles.includes(getDemoActor().role as Role))
       throw new Error('Your club role or membership changed. Refresh to continue.');
-    const expenses = claims.filter((claim) => claim.status === 'Pending').map((claim) => ({
+    const expenses: Expense[] = claims.filter((claim) => claim.status !== 'Draft').map((claim) => ({
       id: claim.id, activityId: claim.activity_id, departmentId: claim.department_id,
       description: taskResult.data.find((task) => task.id === claim.purchase_task_id)?.item_name ?? 'Purchase claim',
       amount: Number(claim.claimed_amount_sen ?? 0), date: (claim.submitted_at ?? claim.created_at).slice(0,10),
-      state: 'Pending review' as const,
+      lifecycle: claim.status as Expense['lifecycle'],
+      state: claim.status === 'Pending' ? 'Pending review' : claim.status === 'Under Review' ? 'In review' : claim.status === 'Rejected' ? 'Declined' : 'Approved',
       review: { claimantId: claim.claimant_user_id, submittedAt: claim.submitted_at ?? claim.created_at,
-        updatedAt: claim.updated_at, justification: claim.over_budget_justification },
+        updatedAt: claim.updated_at, justification: claim.over_budget_justification,
+        reviewer: claim.reviewer_uid ?? undefined, reviewedAt: claim.decided_at ?? undefined,
+        reason: claim.decision_reason, analysis: claim.risk_assessment as unknown as RiskResult | undefined,
+        decisionAnalysis: claim.decision_risk as unknown as RiskResult | undefined },
+    }));
+    const payments: Payment[] = await Promise.all((paymentRows ?? []).map(async (p) => {
+      const destination = await client.rpc('my_claim_destination', { p_claim_id: p.claim_id });
+      if (destination.error || !destination.data?.[0]) fail();
+      const d = destination.data[0], proof = proofRows.find((r) => r.id === p.proof_id);
+      if (!proof) fail();
+      return { id: p.id, expenseId: p.claim_id, amount: Number(p.amount_sen), date: p.payment_date,
+        manual: { reference: p.reference, recordedAt: p.recorded_at, recordedBy: p.recorded_by,
+          payout: { label: d.label, kind: d.kind as 'Bank' | 'TNG', holder: d.holder, institution: d.institution, masked: d.masked },
+          proof: safeProofMetadata(proof.filename, proof.mime_type, proof.size_bytes), externalVerified: false,
+          receivedConfirmedAt: p.received_at ?? undefined, receivedConfirmedBy: p.received_by ?? undefined,
+          discrepancy: p.discrepancy_at ? { reason: p.discrepancy_reason ?? '', reportedAt: p.discrepancy_at,
+            reportedBy: claims.find((c) => c.id === p.claim_id)?.claimant_user_id ?? '',
+            receivedAmount: p.discrepancy_amount_sen ?? undefined, resolvedAt: p.resolved_at ?? undefined,
+            resolutions: p.resolution_note ? [{ note: p.resolution_note, at: p.resolved_at ?? p.recorded_at, by: p.recorded_by }] : [] } : undefined } };
     }));
     const accountRows = getDemoActor().role === 'Member' ? await listAccounts() : [];
     const accountData = accountRows.map((account) => ({ ...account, identifier: '' }));
     return {
-      version: 1, claimAccounting: 'task-reservation', activities, expenses, payments: [], assignments, events,
+      version: 1, claimAccounting: 'task-reservation', financialSummaries, activities, expenses, payments, assignments, events,
       settings: { currency: clubResult.data.currency, timezone: clubResult.data.timezone, warningPercent: clubResult.data.warning_percent },
       directory: { users: profileResult.data.map((profile) => ({ id: profile.user_id, name: profile.display_name })), memberships },
       treasury: {
