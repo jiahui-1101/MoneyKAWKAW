@@ -26,7 +26,9 @@ export function TreasuryRoutes() {
             <Route path="history" element={<TreasuryHistory />} />
             <Route path="reimbursements" element={<TreasuryClaims reimbursements />} />
           </> : <>
-            <Route path="claims/*" element={<Phase03Unavailable />} />
+            <Route path="claims" element={<TreasuryClaims />} />
+            <Route path="claims/:id" element={<TreasuryClaimDetail />} />
+            <Route path="claims/:id/*" element={<Phase03Unavailable />} />
             <Route path="reimbursements" element={<Phase03Unavailable />} />
             <Route path="history/*" element={<Phase03Unavailable />} />
           </>}
@@ -51,7 +53,7 @@ export function TreasuryRoutes() {
   );
 }
 function Phase03Unavailable() {
-  return <Empty title="Claims and reimbursement are not available yet">
-    Supabase mode currently provides read-only activity budgets and planned purchasing commitments. Claim review, risk analysis, payment, and payment history are planned for Phase 03.
+  return <Empty title="This claim action is not available yet">
+    Phase 03 provides read-only claim evidence. Approval, risk assessment, reimbursement, and payment history are reserved for Phase 04.
   </Empty>;
 }

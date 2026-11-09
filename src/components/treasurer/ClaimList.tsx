@@ -8,6 +8,7 @@ import { treasuryService } from '../../services/treasury';
 import { DateField } from '../DateField';
 import { Field } from '../Field';
 import { Empty, Status, useFormat } from '../ui';
+import { demoMode } from '../../services/supabase/client';
 
 export function ClaimList({
   activityId,
@@ -262,6 +263,10 @@ export function ClaimList({
                       {reimbursements ? (
                         <Link className="btn primary" to={`/treasurer/claims/${e.id}/reimburse`}>
                           Process reimbursement
+                        </Link>
+                      ) : !demoMode ? (
+                        <Link className="text-link" to={`/treasurer/claims/${e.id}`}>
+                          View read-only claim
                         </Link>
                       ) : e.state === 'Pending review' ? (
                         <button

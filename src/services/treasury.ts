@@ -3,6 +3,9 @@ import { receiptTotal } from '../domain/receipt';
 import type { RiskRules } from '../domain/treasury';
 import { sharedRepository } from './director';
 import { summarize } from '../domain/budget';
+import { demoMode } from './supabase/client';
+import { supabaseClient } from './supabase/client';
+import { loadReceipt } from './supabase/member-receipts';
 import {
   projectTreasury,
   scopedClaim,
@@ -16,11 +19,29 @@ export const treasuryService = {
     return projectTreasury((await treasuryRead()).store);
   },
   async receipt(claimId: string) {
+    if (!demoMode) {
+      const { data, error } = await supabaseClient().from('claims').select('*').eq('id', claimId).maybeSingle();
+      if (error || !data) throw new Error('Receipt evidence is unavailable in your authorized Treasurer scope.');
+      return loadReceipt(data);
+    }
     const { store } = await treasuryRead();
     scopedClaim(store, claimId);
     const receipt = store.treasury!.receipts.find((r) => r.expenseId === claimId);
     if (!receipt) throw new Error('Receipt evidence is unavailable for this legacy claim.');
     return structuredClone(receipt);
+  },
+  async destination(claimId: string) {
+    if (!demoMode) {
+      const { data, error } = await supabaseClient().rpc('my_claim_destination', { p_claim_id: claimId });
+      if (error || !data?.[0]) throw new Error('Selected payment destination is unavailable in your Treasurer scope.');
+      return data[0];
+    }
+    const { store } = await treasuryRead();
+    scopedClaim(store, claimId);
+    const payout = store.treasury!.payouts.find((value) => value.expenseId === claimId);
+    if (!payout) throw new Error('No selected payment destination was retained.');
+    const { identifier: _identifier, ...safe } = payout;
+    return safe;
   },
   review(claimId: string, expected: string) {
     return treasuryWrite(async () => {

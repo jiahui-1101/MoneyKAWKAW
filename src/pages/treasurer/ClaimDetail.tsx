@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { Link, useParams } from 'react-router-dom';
 import { useTreasury } from '../../context/treasury-context';
 import { claimContext, paymentState } from '../../domain/risk';
@@ -8,13 +8,22 @@ import { treasuryService } from '../../services/treasury';
 import { ReceiptReview } from '../../components/treasurer/ReceiptReview';
 import { ClaimDecision } from '../../components/treasurer/ClaimDecision';
 import { Badge, Empty, PageHeader, Panel, Status, TextLink, useFormat } from '../../components/ui';
+import { demoMode } from '../../services/supabase/client';
 export function TreasuryClaimDetail() {
   const { id } = useParams();
   const { data, busy, run } = useTreasury();
   const { money, time } = useFormat();
   const [error, setError] = useState(''),
-    [decision, setDecision] = useState<'Approved' | 'Declined' | null>(null);
+    [decision, setDecision] = useState<'Approved' | 'Declined' | null>(null),
+    [destination, setDestination] = useState<Awaited<ReturnType<typeof treasuryService.destination>> | null>(null);
   const claim = data?.expenses.find((e) => e.id === id);
+  useEffect(() => {
+    let active = true;
+    if (demoMode || !claim) { setDestination(null); return () => { active = false; }; }
+    treasuryService.destination(claim.id).then((value) => { if (active) setDestination(value); })
+      .catch(() => { if (active) setDestination(null); });
+    return () => { active = false; };
+  }, [claim?.id]);
   if (!data || !claim)
     return (
       <Empty
@@ -55,15 +64,15 @@ export function TreasuryClaimDetail() {
         title={claim.description}
         description={`${c.activity.name} / ${c.department.name}`}
       >
-        <Link className="btn" to={`/treasurer/claims/${id}/risk`}>
+        {demoMode && <Link className="btn" to={`/treasurer/claims/${id}/risk`}>
           Budget & risk analysis
-        </Link>
-        {claim.state === 'Pending review' && (
+        </Link>}
+        {demoMode && claim.state === 'Pending review' && (
           <button className="btn primary" disabled={busy} onClick={() => void review()}>
             Start review
           </button>
         )}
-        {claim.state === 'In review' && (
+        {demoMode && claim.state === 'In review' && (
           <>
             <button className="btn danger" disabled={busy} onClick={() => setDecision('Declined')}>
               Decline claim
@@ -73,7 +82,7 @@ export function TreasuryClaimDetail() {
             </button>
           </>
         )}
-        {claim.state === 'Approved' &&
+        {demoMode && claim.state === 'Approved' &&
           (paid ? (
             <TextLink to={`/treasurer/history?claim=${id}`}>View payment record</TextLink>
           ) : (
@@ -87,6 +96,7 @@ export function TreasuryClaimDetail() {
           {error}
         </p>
       )}
+        {!demoMode && <Badge tone="neutral">Read only · decisions begin in Phase 04</Badge>}
       <div className="treasury-record-bar">
         <Status value={claim.state} />
         <Badge tone={paid ? 'green' : 'neutral'}>{paymentState(data, claim)}</Badge>
@@ -94,7 +104,7 @@ export function TreasuryClaimDetail() {
       </div>
       <Panel
         title="The submitted financial record"
-        subtitle="Claim amounts and task budgets cannot be edited during review"
+        subtitle="The submitted amount and original task estimate are preserved separately"
       >
         <dl className="treasury-facts">
           {[
@@ -132,6 +142,13 @@ export function TreasuryClaimDetail() {
           {claim.review?.justification || 'No justification was retained in this legacy sample.'}
         </p>
       </div>
+      {!demoMode && destination && <Panel title="Selected payment destination summary" subtitle="Masked for Treasurer review in Phase 03">
+        <dl className="treasury-facts"><div><dt>Label</dt><dd>{destination.label}</dd></div>
+          <div><dt>Type</dt><dd>{destination.kind}</dd></div>
+          <div><dt>Holder</dt><dd>{destination.holder}</dd></div>
+          <div><dt>Institution</dt><dd>{destination.institution}</dd></div>
+          <div><dt>Identifier</dt><dd>{destination.masked}</dd></div></dl>
+      </Panel>}
       {claim.review?.reason && (
         <div className={`treasury-decision ${claim.state === 'Declined' ? 'is-declined' : ''}`}>
           <h2>{claim.state} · decision reason</h2>
@@ -164,7 +181,7 @@ export function TreasuryClaimDetail() {
           ))}
         </div>
       </Panel>
-      {decision && (
+      {demoMode && decision && (
         <ClaimDecision claim={claim} decision={decision} onClose={() => setDecision(null)} />
       )}
     </div>
