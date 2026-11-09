@@ -153,6 +153,130 @@ isOneToOne: false
       referencedColumns: ["id","activity_id","club_id"]
     }
                   ]
+                },"claim_items": {
+                  Row: {
+                    "claim_id": string,"corrected_description": string,"corrected_line_total_sen": number,"corrected_quantity_milli": number | null,"corrected_unit_price_sen": number | null,"created_at": string,"exclusion_reason": string,"id": string,"included": boolean,"line_kind": string,"original_description": string,"original_line_total_sen": number,"original_ocr_reference": string | null,"original_quantity_milli": number | null,"original_unit_price_sen": number | null,"receipt_id": string,"revision": number,"updated_at": string
+                  }
+                  ComputedFields: never
+                  Insert: {
+                    "claim_id": string,"corrected_description": string,"corrected_line_total_sen": number,"corrected_quantity_milli"?: number | null,"corrected_unit_price_sen"?: number | null,"created_at"?: string,"exclusion_reason"?: string,"id"?: string,"included"?: boolean,"line_kind"?: string,"original_description": string,"original_line_total_sen": number,"original_ocr_reference"?: string | null,"original_quantity_milli"?: number | null,"original_unit_price_sen"?: number | null,"receipt_id": string,"revision"?: number,"updated_at"?: string
+                  }
+                  Update: {
+                    "claim_id"?: string,"corrected_description"?: string,"corrected_line_total_sen"?: number,"corrected_quantity_milli"?: number | null,"corrected_unit_price_sen"?: number | null,"created_at"?: string,"exclusion_reason"?: string,"id"?: string,"included"?: boolean,"line_kind"?: string,"original_description"?: string,"original_line_total_sen"?: number,"original_ocr_reference"?: string | null,"original_quantity_milli"?: number | null,"original_unit_price_sen"?: number | null,"receipt_id"?: string,"revision"?: number,"updated_at"?: string
+                  }
+                  Relationships: [
+                    {
+      foreignKeyName: "claim_items_claim_id_fkey"
+      columns: ["claim_id"]
+isOneToOne: false
+      referencedRelation: "claims"
+      referencedColumns: ["id"]
+    },{
+      foreignKeyName: "claim_items_receipt_id_claim_id_fkey"
+      columns: ["receipt_id","claim_id"]
+isOneToOne: false
+      referencedRelation: "claim_receipts"
+      referencedColumns: ["id","claim_id"]
+    }
+                  ]
+                },"claim_payment_destinations": {
+                  Row: {
+                    "account_id": string | null,"claim_id": string,"holder": string,"identifier": string,"institution": string,"kind": string,"label": string,"masked": string,"owner_uid": string,"selected_at": string,"selected_by": string
+                  }
+                  ComputedFields: never
+                  Insert: {
+                    "account_id"?: string | null,"claim_id": string,"holder": string,"identifier": string,"institution": string,"kind": string,"label": string,"masked": string,"owner_uid": string,"selected_at"?: string,"selected_by": string
+                  }
+                  Update: {
+                    "account_id"?: string | null,"claim_id"?: string,"holder"?: string,"identifier"?: string,"institution"?: string,"kind"?: string,"label"?: string,"masked"?: string,"owner_uid"?: string,"selected_at"?: string,"selected_by"?: string
+                  }
+                  Relationships: [
+                    {
+      foreignKeyName: "claim_payment_destinations_account_id_fkey"
+      columns: ["account_id"]
+isOneToOne: false
+      referencedRelation: "payment_accounts"
+      referencedColumns: ["id"]
+    },{
+      foreignKeyName: "claim_payment_destinations_claim_id_fkey"
+      columns: ["claim_id"]
+isOneToOne: true
+      referencedRelation: "claims"
+      referencedColumns: ["id"]
+    }
+                  ]
+                },"claim_receipts": {
+                  Row: {
+                    "claim_id": string,"created_at": string,"extraction": Json | null,"id": string,"is_current": boolean,"merchant": string | null,"mime_type": string,"ocr_engine": string | null,"ocr_status": string,"ocr_version": string | null,"original_filename": string,"original_total_sen": number | null,"purchase_date": string | null,"reviewed_total_sen": number | null,"sha256": string | null,"size_bytes": number | null,"storage_path": string,"upload_status": Database["public"]['Enums']["receipt_upload_status"],"uploaded_at": string | null,"uploaded_by": string
+                  }
+                  ComputedFields: never
+                  Insert: {
+                    "claim_id": string,"created_at"?: string,"extraction"?: Json | null,"id"?: string,"is_current"?: boolean,"merchant"?: string | null,"mime_type": string,"ocr_engine"?: string | null,"ocr_status"?: string,"ocr_version"?: string | null,"original_filename": string,"original_total_sen"?: number | null,"purchase_date"?: string | null,"reviewed_total_sen"?: number | null,"sha256"?: string | null,"size_bytes"?: number | null,"storage_path": string,"upload_status"?: Database["public"]['Enums']["receipt_upload_status"],"uploaded_at"?: string | null,"uploaded_by": string
+                  }
+                  Update: {
+                    "claim_id"?: string,"created_at"?: string,"extraction"?: Json | null,"id"?: string,"is_current"?: boolean,"merchant"?: string | null,"mime_type"?: string,"ocr_engine"?: string | null,"ocr_status"?: string,"ocr_version"?: string | null,"original_filename"?: string,"original_total_sen"?: number | null,"purchase_date"?: string | null,"reviewed_total_sen"?: number | null,"sha256"?: string | null,"size_bytes"?: number | null,"storage_path"?: string,"upload_status"?: Database["public"]['Enums']["receipt_upload_status"],"uploaded_at"?: string | null,"uploaded_by"?: string
+                  }
+                  Relationships: [
+                    {
+      foreignKeyName: "claim_receipts_claim_id_fkey"
+      columns: ["claim_id"]
+isOneToOne: false
+      referencedRelation: "claims"
+      referencedColumns: ["id"]
+    }
+                  ]
+                },"claim_status_history": {
+                  Row: {
+                    "actor_uid": string,"claim_id": string,"created_at": string,"detail": NonNullable<Json>,"from_status": Database["public"]['Enums']["claim_status"] | null,"id": string,"to_status": Database["public"]['Enums']["claim_status"]
+                  }
+                  ComputedFields: never
+                  Insert: {
+                    "actor_uid": string,"claim_id": string,"created_at"?: string,"detail"?: NonNullable<Json>,"from_status"?: Database["public"]['Enums']["claim_status"] | null,"id"?: string,"to_status": Database["public"]['Enums']["claim_status"]
+                  }
+                  Update: {
+                    "actor_uid"?: string,"claim_id"?: string,"created_at"?: string,"detail"?: NonNullable<Json>,"from_status"?: Database["public"]['Enums']["claim_status"] | null,"id"?: string,"to_status"?: Database["public"]['Enums']["claim_status"]
+                  }
+                  Relationships: [
+                    {
+      foreignKeyName: "claim_status_history_claim_id_fkey"
+      columns: ["claim_id"]
+isOneToOne: false
+      referencedRelation: "claims"
+      referencedColumns: ["id"]
+    }
+                  ]
+                },"claims": {
+                  Row: {
+                    "activity_id": string,"claimant_user_id": string,"claimed_amount_sen": number | null,"club_id": string,"created_at": string,"department_id": string,"draft_payment_account_id": string | null,"extracted_items_total_sen": number | null,"id": string,"idempotency_key": string,"item_budget_sen_snapshot": number,"original_receipt_total_sen": number | null,"over_budget_amount_sen": number,"over_budget_justification": string,"purchase_task_id": string,"revision": number,"status": Database["public"]['Enums']["claim_status"],"submission_key": string | null,"submitted_at": string | null,"updated_at": string
+                  }
+                  ComputedFields: never
+                  Insert: {
+                    "activity_id": string,"claimant_user_id": string,"claimed_amount_sen"?: number | null,"club_id": string,"created_at"?: string,"department_id": string,"draft_payment_account_id"?: string | null,"extracted_items_total_sen"?: number | null,"id"?: string,"idempotency_key": string,"item_budget_sen_snapshot": number,"original_receipt_total_sen"?: number | null,"over_budget_amount_sen"?: number,"over_budget_justification"?: string,"purchase_task_id": string,"revision"?: number,"status"?: Database["public"]['Enums']["claim_status"],"submission_key"?: string | null,"submitted_at"?: string | null,"updated_at"?: string
+                  }
+                  Update: {
+                    "activity_id"?: string,"claimant_user_id"?: string,"claimed_amount_sen"?: number | null,"club_id"?: string,"created_at"?: string,"department_id"?: string,"draft_payment_account_id"?: string | null,"extracted_items_total_sen"?: number | null,"id"?: string,"idempotency_key"?: string,"item_budget_sen_snapshot"?: number,"original_receipt_total_sen"?: number | null,"over_budget_amount_sen"?: number,"over_budget_justification"?: string,"purchase_task_id"?: string,"revision"?: number,"status"?: Database["public"]['Enums']["claim_status"],"submission_key"?: string | null,"submitted_at"?: string | null,"updated_at"?: string
+                  }
+                  Relationships: [
+                    {
+      foreignKeyName: "claims_club_id_fkey"
+      columns: ["club_id"]
+isOneToOne: false
+      referencedRelation: "clubs"
+      referencedColumns: ["id"]
+    },{
+      foreignKeyName: "claims_draft_payment_account_id_fkey"
+      columns: ["draft_payment_account_id"]
+isOneToOne: false
+      referencedRelation: "payment_accounts"
+      referencedColumns: ["id"]
+    },{
+      foreignKeyName: "claims_purchase_task_id_activity_id_department_id_club_id_fkey"
+      columns: ["purchase_task_id","activity_id","department_id","club_id"]
+isOneToOne: false
+      referencedRelation: "purchase_tasks"
+      referencedColumns: ["id","activity_id","department_id","club_id"]
+    }
+                  ]
                 },"club_memberships": {
                   Row: {
                     "club_id": string,"created_at": string,"revision": number,"status": string,"updated_at": string,"user_id": string
@@ -319,6 +443,32 @@ isOneToOne: false
                   Relationships: [
 
                   ]
+                },"payment_accounts": {
+                  Row: {
+                    "club_id": string,"created_at": string,"holder": string,"id": string,"identifier": string,"institution": string,"is_default": boolean,"kind": string,"label": string,"masked": string,"owner_uid": string,"revision": number,"updated_at": string
+                  }
+                  ComputedFields: never
+                  Insert: {
+                    "club_id": string,"created_at"?: string,"holder": string,"id"?: string,"identifier": string,"institution": string,"is_default"?: boolean,"kind": string,"label": string,"masked": string,"owner_uid": string,"revision"?: number,"updated_at"?: string
+                  }
+                  Update: {
+                    "club_id"?: string,"created_at"?: string,"holder"?: string,"id"?: string,"identifier"?: string,"institution"?: string,"is_default"?: boolean,"kind"?: string,"label"?: string,"masked"?: string,"owner_uid"?: string,"revision"?: number,"updated_at"?: string
+                  }
+                  Relationships: [
+                    {
+      foreignKeyName: "payment_accounts_club_id_fkey"
+      columns: ["club_id"]
+isOneToOne: false
+      referencedRelation: "clubs"
+      referencedColumns: ["id"]
+    },{
+      foreignKeyName: "payment_accounts_member_fk"
+      columns: ["club_id","owner_uid"]
+isOneToOne: false
+      referencedRelation: "club_memberships"
+      referencedColumns: ["club_id","user_id"]
+    }
+                  ]
                 },"profiles": {
                   Row: {
                     "created_at": string,"display_name": string,"updated_at": string,"user_id": string
@@ -371,17 +521,87 @@ isOneToOne: false
       referencedColumns: ["id","activity_id","club_id"]
     }
                   ]
+                },"receipt_modifications": {
+                  Row: {
+                    "after_value": NonNullable<Json>,"before_value": NonNullable<Json>,"claim_id": string,"claim_item_id": string | null,"created_at": string,"field_changed": string,"id": string,"modification_type": Database["public"]['Enums']["receipt_modification_type"],"modified_by": string,"reason": string,"receipt_id": string
+                  }
+                  ComputedFields: never
+                  Insert: {
+                    "after_value": NonNullable<Json>,"before_value": NonNullable<Json>,"claim_id": string,"claim_item_id"?: string | null,"created_at"?: string,"field_changed": string,"id"?: string,"modification_type": Database["public"]['Enums']["receipt_modification_type"],"modified_by": string,"reason": string,"receipt_id": string
+                  }
+                  Update: {
+                    "after_value"?: NonNullable<Json>,"before_value"?: NonNullable<Json>,"claim_id"?: string,"claim_item_id"?: string | null,"created_at"?: string,"field_changed"?: string,"id"?: string,"modification_type"?: Database["public"]['Enums']["receipt_modification_type"],"modified_by"?: string,"reason"?: string,"receipt_id"?: string
+                  }
+                  Relationships: [
+                    {
+      foreignKeyName: "receipt_modifications_claim_id_fkey"
+      columns: ["claim_id"]
+isOneToOne: false
+      referencedRelation: "claims"
+      referencedColumns: ["id"]
+    },{
+      foreignKeyName: "receipt_modifications_claim_item_id_fkey"
+      columns: ["claim_item_id"]
+isOneToOne: false
+      referencedRelation: "claim_items"
+      referencedColumns: ["id"]
+    },{
+      foreignKeyName: "receipt_modifications_receipt_id_fkey"
+      columns: ["receipt_id"]
+isOneToOne: false
+      referencedRelation: "claim_receipts"
+      referencedColumns: ["id"]
+    }
+                  ]
                 }
           }
           Views: {
             [_ in never]: never
           }
           Functions: {
-            "accept_club_invitation":
+            "abandon_my_claim_receipt":
+{ Args: { "p_receipt_id": string }; Returns: string
+                           },
+"accept_club_invitation":
 { Args: Record<PropertyKey, never>; Returns: boolean
+                           },
+"begin_my_claim":
+{ Args: { "p_request_key": string,"p_task_id": string }; Returns: string
+                           },
+"correct_my_claim_receipt_total":
+{ Args: { "p_claim_id": string,"p_expected_updated_at": string,"p_reason": string,"p_total_sen": number }; Returns: string
                            },
 "current_club_session":
 { Args: Record<PropertyKey, never>; Returns: Json
+                           },
+"edit_my_claim_item":
+{ Args: { "p_claim_id": string,"p_excluded": boolean,"p_expected_updated_at": string,"p_item_id": string,"p_line": Json,"p_modification_type": Database["public"]['Enums']["receipt_modification_type"],"p_reason": string }; Returns: string
+                           },
+"finalize_claim_receipt":
+{ Args: { "p_receipt_id": string }; Returns: string
+                           },
+"get_my_payment_account":
+{ Args: { "p_account_id": string }; Returns: {
+              "holder": string,"id": string,"identifier": string,"institution": string,"is_default": boolean,"kind": string,"label": string,"revision": number,"updated_at": string
+            }[]
+                           },
+"list_my_payment_accounts":
+{ Args: Record<PropertyKey, never>; Returns: {
+              "holder": string,"id": string,"in_use": boolean,"institution": string,"is_default": boolean,"kind": string,"label": string,"masked": string,"revision": number,"updated_at": string
+            }[]
+                           },
+"my_claim_destination":
+{ Args: { "p_claim_id": string }; Returns: {
+              "holder": string,"institution": string,"kind": string,"label": string,"masked": string,"selected_at": string
+            }[]
+                           },
+"prepare_claim_receipt":
+{ Args: { "p_claim_id": string,"p_expected_updated_at": string,"p_filename": string,"p_mime": string,"p_sha256": string,"p_size": number }; Returns: {
+              "draft_updated_at": string,"receipt_id": string,"storage_path": string
+            }[]
+                           },
+"remove_my_payment_account":
+{ Args: { "p_account_id": string }; Returns: undefined
                            },
 "save_activity":
 { Args: { "p_budget_sen": number,"p_description": string,"p_end_date": string,"p_id": string,"p_name": string,"p_start_date": string,"p_status": Database["public"]['Enums']["activity_status"],"p_type": Database["public"]['Enums']["activity_type"] }; Returns: {
@@ -411,6 +631,15 @@ isOneToOne: false
 "save_department_setup":
 { Args: { "p_activity_id": string,"p_allocation_sen": number,"p_department_id": string,"p_description": string,"p_head_label": string,"p_hod_user_id": string,"p_member_user_ids": (string)[],"p_name": string }; Returns: string
                            },
+"save_my_claim_baseline":
+{ Args: { "p_claim_id": string,"p_expected_updated_at": string,"p_lines": Json,"p_merchant": string,"p_method": string,"p_purchase_date": string,"p_raw_text": string,"p_receipt_id": string,"p_total_sen": number }; Returns: string
+                           },
+"save_my_claim_preferences":
+{ Args: { "p_account_id": string,"p_claim_id": string,"p_expected_updated_at": string,"p_justification": string }; Returns: string
+                           },
+"save_my_payment_account":
+{ Args: { "p_account_id": string,"p_expected_updated_at": string,"p_holder": string,"p_identifier": string,"p_institution": string,"p_is_default": boolean,"p_kind": string,"p_label": string }; Returns: string
+                           },
 "save_purchase_task":
 { Args: { "p_activity_id": string,"p_assigned_member_id": string,"p_department_id": string,"p_description": string,"p_due_date": string,"p_estimated_budget_sen": number,"p_expected_updated_at": string,"p_id": string,"p_item_name": string,"p_priority": Database["public"]['Enums']["purchase_priority"],"p_request_key": string }; Returns: {
               "activity_id": string,
@@ -436,6 +665,12 @@ isOneToOne: false
         isOneToOne: true
         isSetofReturn: false
       } },
+"set_my_payment_account_default":
+{ Args: { "p_account_id": string }; Returns: undefined
+                           },
+"submit_my_claim":
+{ Args: { "p_account_updated_at": string,"p_claim_id": string,"p_expected_updated_at": string,"p_submission_key": string,"p_task_updated_at": string }; Returns: string
+                           },
 "update_hod_purchase_task_status":
 { Args: { "p_expected_updated_at": string,"p_status": Database["public"]['Enums']["purchase_task_status"],"p_task_id": string }; Returns: {
               "activity_id": string,
@@ -488,7 +723,7 @@ isOneToOne: false
       } }
           }
           Enums: {
-            "activity_role": "Treasurer","activity_status": "Planning"|"Active"|"Completed","activity_type": "Workshop"|"Large-scale event"|"Community"|"Other"|"Small Event","club_role": "Director"|"Treasurer","currency_code": "MYR"|"SGD"|"USD","department_role": "HOD"|"Member","purchase_priority": "Low"|"Medium"|"High","purchase_task_status": "Not Started"|"In Progress"|"Purchased"|"Completed"|"Cancelled"
+            "activity_role": "Treasurer","activity_status": "Planning"|"Active"|"Completed","activity_type": "Workshop"|"Large-scale event"|"Community"|"Other"|"Small Event","claim_status": "Draft"|"Pending","club_role": "Director"|"Treasurer","currency_code": "MYR"|"SGD"|"USD","department_role": "HOD"|"Member","purchase_priority": "Low"|"Medium"|"High","purchase_task_status": "Not Started"|"In Progress"|"Purchased"|"Completed"|"Cancelled","receipt_modification_type": "OCR Correction"|"Item Exclusion"|"Item Inclusion"|"Amount Adjustment"|"Description Correction","receipt_upload_status": "uploading"|"ready"|"abandoned"
           }
           CompositeTypes: {
             [_ in never]: never
@@ -608,7 +843,7 @@ export const Constants = {
           }
         },"public": {
           Enums: {
-            "activity_role": ["Treasurer"],"activity_status": ["Planning", "Active", "Completed"],"activity_type": ["Workshop", "Large-scale event", "Community", "Other", "Small Event"],"club_role": ["Director", "Treasurer"],"currency_code": ["MYR", "SGD", "USD"],"department_role": ["HOD", "Member"],"purchase_priority": ["Low", "Medium", "High"],"purchase_task_status": ["Not Started", "In Progress", "Purchased", "Completed", "Cancelled"]
+            "activity_role": ["Treasurer"],"activity_status": ["Planning", "Active", "Completed"],"activity_type": ["Workshop", "Large-scale event", "Community", "Other", "Small Event"],"claim_status": ["Draft", "Pending"],"club_role": ["Director", "Treasurer"],"currency_code": ["MYR", "SGD", "USD"],"department_role": ["HOD", "Member"],"purchase_priority": ["Low", "Medium", "High"],"purchase_task_status": ["Not Started", "In Progress", "Purchased", "Completed", "Cancelled"],"receipt_modification_type": ["OCR Correction", "Item Exclusion", "Item Inclusion", "Amount Adjustment", "Description Correction"],"receipt_upload_status": ["uploading", "ready", "abandoned"]
           }
         }
 } as const
