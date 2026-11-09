@@ -12,7 +12,8 @@ self.onmessage = async (event: MessageEvent<{ id: number; rows: string[]; base: 
     env.localModelPath = `${base}models/`;
     const wasm = env.backends.onnx.wasm;
     if (!wasm) throw new Error('WASM unavailable.');
-    wasm.wasmPaths = `${base}receipt-runtime/`;
+    wasm.wasmPaths = { mjs: `${base}receipt-runtime/ort-wasm-simd-threaded.asyncify.mjs`,
+      wasm: `${base}receipt-runtime/ort-wasm-simd-threaded.asyncify.wasm` };
     wasm.numThreads = 1;
     wasm.proxy = false;
     if (!version) {
