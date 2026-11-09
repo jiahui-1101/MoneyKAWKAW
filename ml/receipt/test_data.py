@@ -22,6 +22,13 @@ class DataIntegrity(unittest.TestCase):
                 'entities': {'company': '', 'date': '', 'total': '10.00'}}
         self.assertIsNone(sroie_rows(data)[0]['label'])
 
+    def test_same_visual_row_merges_total_label_and_amount(self):
+        data={'words':['TOTAL','125.00','Cable 125.00'], 'bboxes':[[0,0,40,10],[80,1,130,11],[0,30,130,40]],
+              'entities':{'company':'','date':'','total':'125.00'}}
+        rows=sroie_rows(data)
+        self.assertEqual(rows[0],{'text':'TOTAL 125.00','label':'GRAND_TOTAL'})
+        self.assertIsNone(rows[1]['label'])
+
     def test_duplicate_variants_stay_together(self):
         docs = [{'id': str(i), 'source': 'synthetic', 'family': 'layout-A',
                  'rows': [{'text': f'Cable {i}.00', 'label': 'ITEM_DESCRIPTION'}]} for i in range(12)]

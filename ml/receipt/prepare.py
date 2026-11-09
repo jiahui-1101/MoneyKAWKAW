@@ -17,13 +17,19 @@ def cord_rows(data):
              'label': cord_label([w[2] for w in words])} for _, words in sorted(grouped.items())]
 
 def sroie_rows(data):
-    groups = defaultdict(list)
-    for text, box in zip(data['words'], data['bboxes']):
-        groups[tuple(box)].append(text)
+    groups = []
+    for text, box in sorted(zip(data['words'], data['bboxes']), key=lambda p: ((p[1][1]+p[1][3])/2, p[1][0])):
+        center = (box[1]+box[3])/2
+        height = max(1, box[3]-box[1])
+        group = next((g for g in reversed(groups) if abs(g['center']-center) <= min(g['height'],height)*.5), None)
+        if group is None:
+            groups.append({'center': center, 'height': height, 'words': [(box[0],text)]})
+        else:
+            group['words'].append((box[0],text))
     entities = {k: normalize(v).upper() for k, v in data['entities'].items()}
     rows = []
-    for box, words in sorted(groups.items(), key=lambda p: (p[0][1], p[0][0])):
-        text = normalize(' '.join(words))
+    for group in groups:
+        text = normalize(' '.join(word for _,word in sorted(group['words'])))
         upper = text.upper()
         label = None
         for field, target in [('company', 'MERCHANT'), ('date', 'RECEIPT_DATE'), ('total', 'GRAND_TOTAL')]:
