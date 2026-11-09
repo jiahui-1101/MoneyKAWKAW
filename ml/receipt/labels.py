@@ -17,4 +17,4 @@ def cord_label(categories):
 def normalize(text):
     import re
     import unicodedata
-    return re.sub(r'\s+', ' ', unicodedata.normalize('NFKC', text)).strip()[:500]
+    return re.sub(r'\s+', ' ', unicodedata.normalize('NFKC', text)).strip()[:500] if isinstance(text, str) else ''
