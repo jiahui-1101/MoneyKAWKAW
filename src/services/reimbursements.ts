@@ -9,6 +9,9 @@ import {
   treasuryWrite,
 } from './treasury-core';
 import { validateProof } from './payment-proof';
+import { demoMode } from './supabase/client';
+import { paymentInstructions, paymentProof, resolvePaymentIssue } from './supabase/finance';
+import { recordPayment } from './supabase/payment-proof';
 
 function payable(store: Awaited<ReturnType<typeof treasuryRead>>['store'], id: string) {
   const claim = scopedClaim(store, id);
@@ -35,6 +38,10 @@ export interface PaymentInput {
 }
 export const reimbursementService = {
   resolveIssue(paymentId: string, note: string) {
+    if (!demoMode) return (async () => {
+      await resolvePaymentIssue(paymentId, note);
+      return projectTreasury((await treasuryRead()).store);
+    })();
     return treasuryWrite(async () => {
       const { store, actor } = await treasuryRead();
       const payment = store.payments.find((p) => p.id === paymentId);
@@ -64,6 +71,7 @@ export const reimbursementService = {
     });
   },
   async destination(id: string) {
+    if (!demoMode) return paymentInstructions(id);
     const { store } = await treasuryRead();
     const payout = payable(store, id).payout;
     return structuredClone({
@@ -72,6 +80,10 @@ export const reimbursementService = {
     });
   },
   record(id: string, input: PaymentInput) {
+    if (!demoMode) return (async () => {
+      await recordPayment(id, input);
+      return projectTreasury((await treasuryRead()).store);
+    })();
     return treasuryWrite(async () => {
       const { store, actor } = await treasuryRead();
       const { claim, payout } = payable(store, id);
@@ -130,6 +142,7 @@ export const reimbursementService = {
     });
   },
   async proof(paymentId: string) {
+    if (!demoMode) return paymentProof(paymentId);
     const { store } = await treasuryRead();
     const payment = store.payments.find((p) => p.id === paymentId);
     if (!payment) throw new Error('Payment unavailable.');

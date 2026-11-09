@@ -1,6 +1,8 @@
 import type { PurchasingStatus } from '../domain/models';
 import { demoMode } from './supabase/client';
 import { setMemberPurchaseProgress } from './supabase/business';
+import { checked, currentClaim, paymentProof, reportPaymentIssue, transitionClaim } from './supabase/finance';
+import { supabaseClient } from './supabase/client';
 import {
   memberCommand,
   memberEvent,
@@ -44,6 +46,7 @@ export const memberService = {
     });
   },
   async proof(paymentId: string) {
+    if (!demoMode) return paymentProof(paymentId);
     const { store } = await memberRead();
     const payment = store.payments.find((p) => p.id === paymentId);
     if (!payment) throw new Error('Payment unavailable for your profile.');
@@ -53,6 +56,13 @@ export const memberService = {
     return structuredClone(payment.manual.proof);
   },
   confirm(paymentId: string, amountReceived: number, confirmed: boolean) {
+    if (!demoMode) return (async () => {
+      const payment = checked(await supabaseClient().from('reimbursement_payments').select('claim_id,amount_sen').eq('id', paymentId).single());
+      if (!confirmed || payment.amount_sen !== amountReceived) throw new Error('Confirm the full amount only after receiving it.');
+      const claim = await currentClaim(payment.claim_id);
+      await transitionClaim(claim.id, 'Received', claim.updated_at);
+      return { data: projectMember((await memberRead()).store), result: undefined };
+    })();
     return memberCommand((store) => {
       const payment = store.payments.find((p) => p.id === paymentId);
       if (!payment) throw new Error('Payment unavailable.');
@@ -89,6 +99,10 @@ export const memberService = {
     });
   },
   discrepancy(paymentId: string, reason: string, receivedAmount?: number) {
+    if (!demoMode) return (async () => {
+      await reportPaymentIssue(paymentId, reason, receivedAmount);
+      return { data: projectMember((await memberRead()).store), result: undefined };
+    })();
     return memberCommand((store) => {
       const payment = store.payments.find((p) => p.id === paymentId);
       if (!payment) throw new Error('Payment unavailable.');

@@ -6,6 +6,7 @@ import { summarize } from '../domain/budget';
 import { demoMode } from './supabase/client';
 import { supabaseClient } from './supabase/client';
 import { loadReceipt } from './supabase/member-receipts';
+import { assessRisk, transitionClaim } from './supabase/finance';
 import {
   projectTreasury,
   scopedClaim,
@@ -44,6 +45,10 @@ export const treasuryService = {
     return safe;
   },
   review(claimId: string, expected: string) {
+    if (!demoMode) return (async () => {
+      await transitionClaim(claimId, 'Under Review', expected);
+      return projectTreasury((await treasuryRead()).store);
+    })();
     return treasuryWrite(async () => {
       const { store, actor } = await treasuryRead();
       const claim = scopedClaim(store, claimId);
@@ -58,6 +63,10 @@ export const treasuryService = {
     });
   },
   analyze(claimId: string) {
+    if (!demoMode) return (async () => {
+      await assessRisk(claimId);
+      return projectTreasury((await treasuryRead()).store);
+    })();
     return treasuryWrite(async () => {
       const { store, actor } = await treasuryRead();
       const claim = scopedClaim(store, claimId);
@@ -76,6 +85,10 @@ export const treasuryService = {
     });
   },
   decide(claimId: string, expected: string, decision: 'Approved' | 'Declined', reason: string) {
+    if (!demoMode) return (async () => {
+      await transitionClaim(claimId, decision === 'Declined' ? 'Rejected' : 'Approved', expected, reason);
+      return projectTreasury((await treasuryRead()).store);
+    })();
     return treasuryWrite(async () => {
       const { store, actor } = await treasuryRead();
       const claim = scopedClaim(store, claimId);
@@ -130,6 +143,7 @@ export const treasuryService = {
     });
   },
   rules(rules: RiskRules) {
+    if (!demoMode) throw new Error('Server risk thresholds are fixed at 10% medium and 25% high in this phase.');
     return treasuryWrite(async () => {
       const { store } = await treasuryRead();
       validateRiskRules(rules);
