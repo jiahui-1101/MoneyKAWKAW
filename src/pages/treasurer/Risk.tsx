@@ -90,7 +90,7 @@ export function TreasuryRisk() {
             ],
             [
               'Approved unpaid liabilities',
-              money(activity.recorded - activity.pending - activity.paid),
+              money(activity.recorded - activity.paid - (data.financialSummaries ? 0 : activity.pending)),
             ],
           ].map(([label, value]) => (
             <div key={label}>
