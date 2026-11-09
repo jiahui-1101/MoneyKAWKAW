@@ -74,7 +74,7 @@ export function TreasuryDashboard() {
             label: 'Recorded expenses',
             value: money(s.recorded, true),
             icon: CircleDollarSign,
-            note: 'Pending + approved claims',
+            note: demoMode ? 'Pending + approved claims' : 'Approved liability + paid expenditure',
             tone: 'violet',
           },
           {
@@ -155,3 +155,4 @@ export function TreasuryDashboard() {
     </div>
   );
 }
+import { demoMode } from '../../services/supabase/client';

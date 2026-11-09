@@ -2,26 +2,29 @@ import { Link } from 'react-router-dom';
 import type { Store } from '../../domain/models';
 import { summarize } from '../../domain/budget';
 import { reviewStates } from '../../domain/treasury';
+import { demoMode } from '../../services/supabase/client';
 import { Badge, Empty, Panel, Progress, useFormat } from '../ui';
 
 export function ClaimDistribution({ data }: { data: Store }) {
   let offset = 0;
   const total = data.expenses.length;
+  const states = demoMode ? reviewStates : ['Pending', 'Under Review', 'Approved', 'Rejected', 'Payment Pending', 'Paid', 'Received'];
+  const countFor = (state: string) => data.expenses.filter((e) => (demoMode ? e.state : e.lifecycle) === state).length;
   return (
     <Panel title="Claims at a glance" subtitle="Every submitted record, including declined claims">
       <div className="distribution">
         <div className="donut">
           <svg viewBox="0 0 180 180" role="img" aria-label={`${total} claims by review status`}>
             <circle cx="90" cy="90" r="70" className="donut-track" fill="none" strokeWidth="19" />
-            {reviewStates.map((state, i) => {
-              const count = data.expenses.filter((e) => e.state === state).length;
+            {states.map((state, i) => {
+              const count = countFor(state);
               const fraction = total ? count / total : 0;
               const start = offset;
               offset += fraction;
               return (
                 <circle
                   key={state}
-                  className={`donut-segment chart-color-${i}`}
+                  className={`donut-segment chart-color-${i % 4}`}
                   cx="90"
                   cy="90"
                   r="70"
@@ -42,11 +45,11 @@ export function ClaimDistribution({ data }: { data: Store }) {
           </div>
         </div>
         <div className="distribution-legend">
-          {reviewStates.map((state, i) => (
+          {states.map((state, i) => (
             <Link key={state} to={`/treasurer/claims?status=${encodeURIComponent(state)}`}>
-              <span className={`swatch chart-color-${i}`} />
+              <span className={`swatch chart-color-${i % 4}`} />
               <span>{state}</span>
-              <strong>{data.expenses.filter((e) => e.state === state).length}</strong>
+              <strong>{countFor(state)}</strong>
             </Link>
           ))}
         </div>

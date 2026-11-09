@@ -164,7 +164,7 @@ export function TaskTable({ tasks, data }: { tasks: Assignment[]; data: HodSnaps
                     {task.expenseId
                       ? 'Linked claim record'
                       : p.status === 'Purchased'
-                        ? 'Purchased · awaiting claim'
+                        ? demoMode ? 'Purchased · awaiting claim' : 'Purchased · claim details restricted'
                         : p.status === 'Completed'
                           ? 'Purchase complete · no claim recorded'
                           : 'Department purchasing plan'}
@@ -197,7 +197,7 @@ export function TaskTable({ tasks, data }: { tasks: Assignment[]; data: HodSnaps
                   <PurchaseBadge task={task} />
                 </td>
                 <td>
-                  {claim ? <Status value={claim.state} /> : <span className="muted">No claim</span>}
+                  {claim ? <Status value={claim.state} /> : <span className="muted">{demoMode ? 'No claim' : 'Restricted'}</span>}
                 </td>
                 <td>
                   <Link className="table-arrow" to={href} aria-label={`Open ${p.name}`}>

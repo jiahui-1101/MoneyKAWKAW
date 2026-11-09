@@ -87,9 +87,9 @@ export function HodTaskDetail() {
           },
           {
             label: 'Recorded claim amount',
-            value: claim ? money(claim.amount, true) : 'No claim',
+            value: claim ? money(claim.amount, true) : demoMode ? 'No claim' : 'Restricted',
             icon: CircleDollarSign,
-            note: claim ? 'Fictional shared expense record' : 'No expense has been recorded',
+            note: claim ? 'Shared expense record' : demoMode ? 'No expense has been recorded' : 'Use authorized department aggregates',
             tone: 'violet',
           },
           {
