@@ -54,3 +54,17 @@ test('conflicting decisions serialize to exactly one decision and one liability 
     .in('to_status',['Approved','Rejected'])).length,1);
   assert.ok((await member.from('receipt_modifications').delete().eq('claim_id',c.id)).error);
 });
+
+test('lower actual claims release planned exposure for new purchases without losing the estimate',async()=>{
+  const {claim,task}=await createFinancialClaim('Lower actual cost',1000,160000);
+  const {client:hod}=await signIn(syntheticEmails.multimediaHod);
+  const next=ok(await hod.rpc('save_purchase_task',{
+    p_id:null,p_request_key:randomUUID(),p_activity_id:claim.activity_id,p_department_id:claim.department_id,
+    p_item_name:'Reuse available budget',p_description:'Synthetic canonical budget regression',
+    p_assigned_member_id:claim.claimant_user_id,p_estimated_budget_sen:20000,
+    p_due_date:'2026-12-20',p_priority:'Medium',p_expected_updated_at:null}));
+  assert.equal(next.estimated_budget_sen,20000);
+  assert.equal(ok(await admin.from('purchase_tasks').select('estimated_budget_sen').eq('id',task.id).single()).estimated_budget_sen,160000);
+  const f=ok(await hod.rpc('financial_summaries')).find(r=>r.departmentId===claim.department_id);
+  assert.ok(f.available>=0); assert.ok(f.pending>=1000);
+});
