@@ -42,6 +42,25 @@ describe('derived financial balances', () => {
     expect(s.available).toBe(0);
     expect(s.recorded).toBe(0);
   });
+  it('keeps a submitted claim separate from the active task reservation', () => {
+    const activity = seed.activities[0], department = activity.departments[0],
+      claimId = 'pending-claim', task = {
+        id: 'submitted-task', activityId: activity.id, departmentId: department.id,
+        budget: 8_000, expenseId: claimId,
+        purchasing: { name: 'HDMI cable', description: 'Club equipment', assigneeId: 'member',
+          dueDate: '2026-11-10', priority: 'High' as const, status: 'Claim Submitted' as const,
+          createdBy: 'hod', updatedAt: new Date().toISOString() },
+      },
+      store = { ...seed, claimAccounting: 'task-reservation' as const,
+        activities: [{ ...activity, budget: 20_000, departments: [{ ...department, allocation: 20_000 }] }],
+        assignments: [task], payments: [], expenses: [{ id: claimId, activityId: activity.id,
+          departmentId: department.id, description: 'HDMI cable', amount: 11_000,
+          date: '2026-11-10', state: 'Pending review' as const }],
+      };
+    expect(summarize(store, activity.id, department.id)).toMatchObject({
+      recorded: 0, pending: 11_000, committed: 8_000, available: 12_000,
+    });
+  });
 });
 
 describe('monetary and setup validation', () => {

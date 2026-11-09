@@ -12,9 +12,11 @@ import { MetricCards } from './MetricCards';
 import type { Activity, BudgetSummary, Store } from '../domain/models';
 import { Badge, Empty, Panel, Progress, Status, TextLink, useFormat } from './ui';
 import { demoMode } from '../services/supabase/client';
+import { getDemoActor } from '../domain/session';
 
 export function Metrics({ summary, count }: { summary: BudgetSummary; count?: number }) {
   const { money } = useFormat();
+  const claimVisible = demoMode || getDemoActor().role === 'Treasurer';
   const items = [
     {
       label: count === undefined ? 'Overall budget' : 'Total activity budget',
@@ -24,10 +26,10 @@ export function Metrics({ summary, count }: { summary: BudgetSummary; count?: nu
       tone: 'brand',
     },
     {
-      label: demoMode ? 'Recorded expenses' : 'Claim expenditure',
-      value: demoMode ? money(summary.recorded, true) : 'Phase 03',
+      label: demoMode ? 'Recorded expenses' : 'Approved claims',
+      value: demoMode || claimVisible ? money(summary.recorded, true) : 'Treasurer only',
       icon: CircleDollarSign,
-      note: demoMode ? 'Pending + approved claims' : 'Claims unavailable until Phase 03',
+      note: demoMode ? 'Pending + approved claims' : 'Pending claims stay separate from planned task budgets',
       tone: 'violet',
     },
     {
@@ -38,12 +40,12 @@ export function Metrics({ summary, count }: { summary: BudgetSummary; count?: nu
       tone: (demoMode ? summary.remaining : summary.available) < 0 ? 'danger' : 'green',
     },
     {
-      label: count === undefined ? (demoMode ? 'Budget utilization' : 'Claim utilization') : 'Total activities',
+      label: count === undefined ? (demoMode ? 'Budget utilization' : 'Recorded utilization') : 'Total activities',
       value:
-        count === undefined ? (demoMode ? `${summary.utilization.toFixed(1)}%` : 'Phase 03') : String(count).padStart(2, '0'),
+        count === undefined ? `${summary.utilization.toFixed(1)}%` : String(count).padStart(2, '0'),
       icon: count === undefined ? ArrowUpRight : FolderKanban,
       note:
-        count === undefined ? (demoMode ? 'Recorded expenses / overall budget' : 'Unavailable until claim records are introduced') : 'Every idea, in one workspace',
+        count === undefined ? 'Approved recorded amounts / overall budget' : 'Every idea, in one workspace',
       tone: 'gold',
     },
   ];
@@ -57,9 +59,9 @@ export function BudgetLifecycle({ summary }: { summary: BudgetSummary }) {
       {[
         ['Department allocations', summary.allocated, 'Portion assigned to departments'],
         [demoMode ? 'Committed' : 'Planned purchasing commitments', summary.committed, demoMode ? 'Open assignments + approved unpaid' : 'Active task estimates · cancelled tasks excluded'],
-        ['Pending review', demoMode ? summary.pending : 'Phase 03', demoMode ? 'Submitted claims awaiting decision' : 'Claim records unavailable until Phase 03'],
-        [demoMode ? 'Paid (sample records)' : 'Paid reimbursements', demoMode ? summary.paid : 'Phase 03', demoMode ? 'Recorded separately from approval' : 'Payment records unavailable until Phase 03'],
-        ['Available to plan', summary.available, demoMode ? 'Budget less paid, pending, committed' : 'Budget less planned task commitments'],
+        ['Pending claim exposure', demoMode || getDemoActor().role === 'Treasurer' ? summary.pending : 'Treasurer only', 'Submitted requests · not recorded spending'],
+        [demoMode ? 'Paid (sample records)' : 'Paid reimbursements', demoMode ? summary.paid : 'Phase 04', demoMode ? 'Recorded separately from approval' : 'Payment recording is not part of this phase'],
+        ['Available to plan', summary.available, demoMode ? 'Budget less paid, pending, committed' : 'Budget less active task estimates'],
       ].map(([label, amount, note]) => (
         <div key={label}>
           <small>{label}</small>

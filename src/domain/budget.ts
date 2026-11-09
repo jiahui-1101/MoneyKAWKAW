@@ -11,10 +11,11 @@ import { isPending, isRecorded, isReservation } from './claim-balances';
 export function summarize(store: Store, activityId?: string, departmentId?: string): BudgetSummary {
   const activities = store.activities.filter((a) => !activityId || a.id === activityId);
   const ids = new Set(activities.map((a) => a.id));
-  const expenses = store.expenses.filter(
-    (e) =>
-      isRecorded(e) && ids.has(e.activityId) && (!departmentId || e.departmentId === departmentId),
+  const separatePending = store.claimAccounting === 'task-reservation';
+  const matchingClaims = store.expenses.filter(
+    (e) => isRecorded(e) && ids.has(e.activityId) && (!departmentId || e.departmentId === departmentId),
   );
+  const expenses = matchingClaims.filter((e) => !separatePending || !isPending(e));
   const departments = activities
     .flatMap((a) => a.departments)
     .filter((d) => !departmentId || d.id === departmentId);
@@ -24,16 +25,16 @@ export function summarize(store: Store, activityId?: string, departmentId?: stri
   const paid = store.payments
     .filter((p) => expenses.some((e) => e.id === p.expenseId))
     .reduce((s, p) => s + p.amount, 0);
-  const pending = expenses.filter(isPending).reduce((s, e) => s + e.amount, 0);
+  const pending = matchingClaims.filter(isPending).reduce((s, e) => s + e.amount, 0);
   const openAssignments = store.assignments
     .filter(
       (a) =>
         ids.has(a.activityId) &&
         (!departmentId || a.departmentId === departmentId) &&
-        isReservation(a, store.expenses),
+        isReservation(a, store.expenses, separatePending),
     )
     .reduce((s, a) => s + a.budget, 0);
-  const committed = Math.max(0, recorded - pending - paid) + openAssignments;
+  const committed = Math.max(0, recorded - (separatePending ? 0 : pending) - paid) + openAssignments;
   return {
     budget,
     allocated,
@@ -42,7 +43,7 @@ export function summarize(store: Store, activityId?: string, departmentId?: stri
     pending,
     committed,
     remaining: budget - recorded,
-    available: budget - paid - pending - committed,
+    available: budget - paid - (separatePending ? 0 : pending) - committed,
     utilization: budget ? (recorded / budget) * 100 : recorded ? 100 : 0,
   };
 }

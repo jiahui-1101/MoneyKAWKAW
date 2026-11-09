@@ -79,10 +79,10 @@ export function DepartmentMetrics({ data, scope }: { data: HodSnapshot; scope: H
           tone: 'violet',
         },
         {
-          label: demoMode ? 'Recorded spending' : 'Claim expenditure',
-          value: demoMode ? money(s.recorded, true) : 'Phase 03',
+          label: demoMode ? 'Recorded spending' : 'Claim spending',
+          value: demoMode ? money(s.recorded, true) : 'Treasurer only',
           icon: CircleDollarSign,
-          note: demoMode ? 'Pending + approved claim amounts' : 'Claims unavailable until Phase 03',
+          note: demoMode ? 'Pending + approved claim amounts' : 'Private claim records are scoped to the Treasurer',
           tone: 'gold',
         },
         {
@@ -104,8 +104,8 @@ export function DepartmentBalances({ data, scope }: { data: HodSnapshot; scope: 
       {[
         [demoMode ? 'Remaining after expenses' : 'Available to plan', money(s.available), demoMode ? 'Allocation less recorded claims' : 'Allocation less active task commitments'],
         [demoMode ? 'Committed' : 'Planned purchasing commitments', money(s.committed), demoMode ? 'Open purchases + approved unpaid' : 'Active task estimates · cancelled tasks excluded'],
-        ['Pending claim review', demoMode ? money(s.pending) : 'Phase 03', demoMode ? 'Decision remains with Treasurer' : 'Claims unavailable until Phase 03'],
-        ['Paid reimbursements', demoMode ? money(s.paid) : 'Phase 03', demoMode ? 'Fictional shared payment records' : 'Payment records unavailable until Phase 03'],
+        ['Pending claim review', demoMode ? money(s.pending) : 'Treasurer only', demoMode ? 'Decision remains with Treasurer' : 'Private member claims are not part of HOD access'],
+        ['Paid reimbursements', demoMode ? money(s.paid) : 'Phase 04', demoMode ? 'Fictional shared payment records' : 'Payment recording is not part of this phase'],
         ['Budget utilization', demoMode ? `${s.utilization.toFixed(1)}%` : 'Phase 03', demoMode ? 'Actual claims / department budget' : 'Claim utilization unavailable until claim records exist'],
       ].map(([label, value, note]) => (
         <div key={label}>

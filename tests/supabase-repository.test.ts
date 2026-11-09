@@ -18,11 +18,11 @@ beforeEach(() => {
     activities: [activity], departments: [department],
     department_memberships: [{ user_id: 'member-a', activity_id: 'activity-a', department_id: 'department-a', role: 'Member', status: 'active' }],
     profiles: [{ user_id: 'member-a', display_name: 'A Member' }],
-    purchase_tasks: [], audit_events: [],
+    purchase_tasks: [], claims: [], audit_events: [],
   };
   mocks.client = {
     auth: { getUser: vi.fn().mockResolvedValue({ data: { user: { id: 'member-a' } }, error: null }) },
-    rpc: vi.fn((name: string) => Promise.resolve({ data: name === 'current_club_session' ? profile : true, error: null })),
+    rpc: vi.fn((name: string) => Promise.resolve({ data: name === 'current_club_session' ? profile : name === 'list_my_payment_accounts' ? [] : true, error: null })),
     from: vi.fn((table: string) => {
       const query = {
         select() { return this; }, eq() { return this; }, order() { return this; }, limit() { return this; },

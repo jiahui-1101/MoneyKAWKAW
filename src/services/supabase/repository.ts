@@ -111,7 +111,7 @@ export const supabaseRepository: WorkspaceRepository = {
     const accountRows = getDemoActor().role === 'Member' ? await listAccounts() : [];
     const accountData = accountRows.map((account) => ({ ...account, identifier: '' }));
     return {
-      version: 1, activities, expenses, payments: [], assignments, events,
+      version: 1, claimAccounting: 'task-reservation', activities, expenses, payments: [], assignments, events,
       settings: { currency: clubResult.data.currency, timezone: clubResult.data.timezone, warningPercent: clubResult.data.warning_percent },
       directory: { users: profileResult.data.map((profile) => ({ id: profile.user_id, name: profile.display_name })), memberships },
       treasury: {
