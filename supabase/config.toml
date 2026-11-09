@@ -120,7 +120,7 @@ file_size_limit = "50MiB"
 
 [storage.buckets.receipts]
 public = false
-file_size_limit = "10MiB"
+file_size_limit = "1MiB"
 allowed_mime_types = ["image/jpeg", "image/png", "image/webp", "application/pdf"]
 
 [storage.buckets.payment-proofs]
