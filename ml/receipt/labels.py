@@ -3,6 +3,7 @@ LABELS = ['ITEM_DESCRIPTION', 'MERCHANT', 'RECEIPT_DATE', 'SUBTOTAL', 'TAX',
           'DISCOUNT', 'GRAND_TOTAL', 'PAYMENT_INFORMATION', 'OTHER']
 
 def cord_label(categories):
+    categories = [c.replace('sub_total.', 'subtotal.') for c in categories]
     if any(c in ('menu.nm', 'menu.sub_nm') for c in categories):
         return 'ITEM_DESCRIPTION'
     mapping = {'subtotal.subtotal_price': 'SUBTOTAL', 'subtotal.tax_price': 'TAX',
