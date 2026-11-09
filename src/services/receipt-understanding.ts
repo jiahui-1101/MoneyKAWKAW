@@ -4,7 +4,8 @@ let identity = 0;
 export async function understandReceipt(rawText: string, signal: AbortSignal): Promise<Understanding> {
   const started = performance.now();
   const base = new URL(import.meta.env.BASE_URL, window.location.origin).href;
-  const rows = rawText.slice(0, 50000).split(/\r?\n/).map(r => r.normalize('NFKC').trim().slice(0, 500)).filter(Boolean).slice(0, 100);
+  const normalized = rawText.slice(0, 50000).split(/\r?\n/).map(r => r.normalize('NFKC').trim().slice(0, 500)).filter(Boolean);
+  const rows = normalized.slice(0, 100);
   let model = 'receipt-bert-v1';
   if (signal.aborted) throw new Error('Receipt reading cancelled.');
   try {
@@ -36,7 +37,7 @@ export async function understandReceipt(rawText: string, signal: AbortSignal): P
     });
     if (signal.aborted) throw new Error('Receipt reading cancelled.');
     return { status: 'ready', model, predictions: validPredictions(predictions, rows),
-      milliseconds: performance.now() - started, message: 'Experimental semantic suggestions. Verify every line; labels do not determine claim eligibility.' };
+      milliseconds: performance.now() - started, message: `${normalized.length > 100 ? 'Only the first 100 lines were analyzed. ' : ''}Experimental semantic suggestions. Verify every line; labels do not determine claim eligibility.` };
   } catch {
     if (signal.aborted) throw new Error('Receipt reading cancelled.');
     return { status: 'unavailable', model, predictions: [], milliseconds: performance.now() - started,
