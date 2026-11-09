@@ -20,6 +20,8 @@ node ml/receipt/baseline.mjs
 .local/phase05/venv/Scripts/python ml/receipt/train.py --epochs 3 --batch 32 --lr 0.00003 --threads 6
 .local/phase05/venv/Scripts/python ml/receipt/export.py
 .local/phase05/venv/Scripts/python ml/receipt/evaluate.py
+.local/phase05/venv/Scripts/python ml/receipt/fields.py
+.local/phase05/venv/Scripts/python ml/receipt/test_model.py
 npm run build
 ```
 
@@ -32,6 +34,8 @@ Base checkpoint: `distilbert/distilbert-base-multilingual-cased`, revision
 CORD contains Indonesian item semantics; its published subset omits some store
 and payment annotations. SROIE supplies company/date/total fields, not comprehensive
 item labels. Unknown SROIE rows are masked, never treated as non-item negatives.
+SROIE text boxes on the same visual row are merged before field matching; bare
+matching amounts without a total label remain unknown, rather than invented labels.
 CORD rows merge annotated words by row identity; prices on separate physical rows
 remain separate. This is sequence classification, not token tagging or layout OCR.
 
@@ -72,6 +76,8 @@ detected description with an adjacent, deterministically parsed amount.
 Export produces a full-precision and a quantized ONNX model, runs CPU inference
 and checks PyTorch classification agreement before copying only the browser model,
 tokenizer/config and manifest to ignored `public/models/receipt-bert/`.
+The manifest selects a checksum-versioned subdirectory so browser caches cannot
+silently substitute an older checkpoint while reporting the new model version.
 No weights are committed or published to Hugging Face. Rebuild artifacts locally
 or distribute an internally reviewed, checksum-verified archive with attribution.
 
@@ -80,6 +86,7 @@ disables remote model loading; no receipt goes to a model service. Suggestions
 have request identity, cancellation, a 60-second timeout and output validation.
 No model artifact means an honest OCR/rules fallback. Set `VITE_RECEIPT_MODEL=off`
 to disable loading for a test build, or uncheck the optional model control.
+Members must opt in; no model download is needed for ordinary OCR.
 Model weights are separate assets, outside the main JavaScript bundle.
 
 For compiled-worker verification (synthetic text only):

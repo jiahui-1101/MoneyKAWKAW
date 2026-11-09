@@ -59,6 +59,7 @@ def main():
     directory = f'receipt-bert/{sha256[:12]}'
     browser = Path('public/models') / directory; (browser/'onnx').mkdir(parents=True, exist_ok=True)
     tokenizer.save_pretrained(browser); model.config.save_pretrained(browser)
+    shutil.copy2('ml/receipt/README.md', browser/'ATTRIBUTION.md')
     shutil.copy2(target/'model_quantized.onnx', browser/'onnx/model_quantized.onnx')
     manifest = {'id': 'receipt-bert-v1', 'experimental': True, 'source': json.loads((ROOT/'base-model.json').read_text()),
         'training': json.loads((ROOT/'training.json').read_text()), 'parity': results,
