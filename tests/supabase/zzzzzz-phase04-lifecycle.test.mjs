@@ -27,6 +27,10 @@ test('Phase 04 enforces independent review, exact payment and receipt confirmati
   ok(await admin.from('club_role_grants').insert({club_id:c.club_id,user_id:treasUser.id,role:'Treasurer'}));
   const startKey=randomUUID();
   const reviewed=ok(await call(treasurer,'Under Review',c.updated_at,startKey));
+  ok(await admin.from('club_role_grants').insert({club_id:c.club_id,user_id:memberUser.id,role:'Treasurer'}));
+  try {
+    assert.equal((await call(member,'Approved',reviewed)).error?.code,'42501');
+  } finally { ok(await admin.from('club_role_grants').delete().eq('club_id',c.club_id).eq('user_id',memberUser.id).eq('role','Treasurer')); }
   assert.equal(ok(await call(treasurer,'Under Review',c.updated_at,startKey)),reviewed);
   assert.equal((await call(treasurer,'Approved',c.updated_at)).error?.code,'40001');
   assert.ok((await call(treasurer,'Rejected',reviewed,randomUUID(),'')).error);
@@ -50,6 +54,11 @@ test('Phase 04 enforces independent review, exact payment and receipt confirmati
   const args={p_claim_id:c.id,p_expected_updated_at:pending,p_request_key:randomUUID(),p_amount_sen:4500,
     p_payment_date:new Date().toISOString().slice(0,10),p_reference:'SYNTHETIC-PHASE04-ONLY',p_proof_id:proof.id,
     p_destination_revision:instructions.revision,p_confirmed:true};
+  ok(await admin.from('club_role_grants').insert({club_id:c.club_id,user_id:memberUser.id,role:'Treasurer'}));
+  try {
+    assert.equal((await member.rpc('payment_instructions',{p_claim_id:c.id})).error?.code,'42501');
+    assert.equal((await member.rpc('record_reimbursement',args)).error?.code,'42501');
+  } finally { ok(await admin.from('club_role_grants').delete().eq('club_id',c.club_id).eq('user_id',memberUser.id).eq('role','Treasurer')); }
   assert.ok((await treasurer.rpc('record_reimbursement',{...args,p_amount_sen:4000})).error);
   assert.ok((await treasurer.rpc('record_reimbursement',{...args,p_reference:''})).error);
   assert.ok((await treasurer.rpc('record_reimbursement',{...args,p_proof_id:randomUUID()})).error);
