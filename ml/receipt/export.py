@@ -55,14 +55,16 @@ def main():
     print(json.dumps(results), flush=True)
     assert results['model.onnx']['top1Agreement'] == 1.0
     assert results['model_quantized.onnx']['top1Agreement'] >= .95
-    browser = Path('public/models/receipt-bert'); (browser/'onnx').mkdir(parents=True, exist_ok=True)
+    sha256 = hashlib.sha256((target/'model_quantized.onnx').read_bytes()).hexdigest()
+    directory = f'receipt-bert/{sha256[:12]}'
+    browser = Path('public/models') / directory; (browser/'onnx').mkdir(parents=True, exist_ok=True)
     tokenizer.save_pretrained(browser); model.config.save_pretrained(browser)
     shutil.copy2(target/'model_quantized.onnx', browser/'onnx/model_quantized.onnx')
     manifest = {'id': 'receipt-bert-v1', 'experimental': True, 'source': json.loads((ROOT/'base-model.json').read_text()),
         'training': json.loads((ROOT/'training.json').read_text()), 'parity': results,
-        'sha256': hashlib.sha256((browser/'onnx/model_quantized.onnx').read_bytes()).hexdigest(),
+        'sha256': sha256, 'artifactDirectory': directory,
         'maxLength': 48, 'classificationTask': 'semantic-line', 'license': 'Apache-2.0; training annotations CC-BY-4.0'}
-    (browser/'manifest.json').write_text(json.dumps(manifest, indent=2), encoding='utf8')
+    (Path('public/models/receipt-bert')/'manifest.json').write_text(json.dumps(manifest, indent=2), encoding='utf8')
     (ROOT/'export.json').write_text(json.dumps(results, indent=2), encoding='utf8')
     print(json.dumps(results), flush=True)
 

@@ -7,6 +7,7 @@ const createClassifier = pipeline as (task: 'text-classification', model: string
   options: { dtype: 'q8'; device: 'wasm' }) => Promise<TextClassificationPipeline>;
 let classifier: Promise<TextClassificationPipeline> | undefined;
 let version = '';
+let artifactDirectory = '';
 self.onmessage = async (event: MessageEvent<{ id: number; rows: string[]; base: string }>) => {
   const { id, rows, base } = event.data;
   let stage = 'assets';
@@ -21,15 +22,17 @@ self.onmessage = async (event: MessageEvent<{ id: number; rows: string[]; base: 
     wasm.numThreads = 1;
     wasm.proxy = false;
     if (!version) {
-      const response = await fetch(`${base}models/receipt-bert/manifest.json`, { credentials: 'omit' });
+      const response = await fetch(`${base}models/receipt-bert/manifest.json`, { credentials: 'omit', cache: 'no-store' });
       if (!response.ok) throw new Error('Model manifest unavailable.');
       const manifest = await response.json();
       if (manifest.id !== 'receipt-bert-v1' || manifest.maxLength !== 48 ||
-        !/^[a-f0-9]{64}$/.test(manifest.sha256) || !(manifest.training?.completedSteps > 0)) throw new Error('Incompatible model.');
+        !/^[a-f0-9]{64}$/.test(manifest.sha256) || !(manifest.training?.completedSteps > 0) ||
+        manifest.artifactDirectory !== `receipt-bert/${manifest.sha256.slice(0, 12)}`) throw new Error('Incompatible model.');
       version = `${manifest.id}:${manifest.sha256.slice(0, 12)}`;
+      artifactDirectory = manifest.artifactDirectory;
     }
     stage = 'initialization';
-    classifier ??= createClassifier('text-classification', 'receipt-bert', { dtype: 'q8', device: 'wasm' });
+    classifier ??= createClassifier('text-classification', artifactDirectory, { dtype: 'q8', device: 'wasm' });
     const model = await classifier;
     if (typeof model.tokenizer !== 'function') throw new Error(`Tokenizer unavailable: ${typeof model.tokenizer}; ${Object.keys(model.tokenizer ?? {}).join(',')}`);
     stage = 'inference';
