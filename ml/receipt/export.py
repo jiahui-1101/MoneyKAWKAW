@@ -28,7 +28,7 @@ def main():
         def forward(self, input_ids, attention_mask):
             return self.model(input_ids=input_ids, attention_mask=attention_mask).logits
     # Official torch exporter with dynamic batch/sequence; no external ONNX data files.
-    torch.onnx.export(Export(), (tokens['input_ids'], tokens['attention_mask']), target/'model.onnx',
+    torch.onnx.export(Export().eval(), (tokens['input_ids'], tokens['attention_mask']), target/'model.onnx',
         input_names=['input_ids', 'attention_mask'], output_names=['logits'], opset_version=17,
         dynamic_axes={'input_ids': {0: 'batch', 1: 'sequence'}, 'attention_mask': {0: 'batch', 1: 'sequence'}, 'logits': {0: 'batch'}},
         dynamo=False, external_data=False)
@@ -39,6 +39,7 @@ def main():
     samples = [r['text'] for d in documents if d['split'] == 'validation' for r in d['rows']][:128]
     samples += ['HDMI Cable 110.00', 'TOTAL 125.00', 'Personal snacks 15.00', '打印纸 12.00', 'JUMLAH RM 40.00']
     encoded = tokenizer(samples, padding=True, truncation=True, return_tensors='pt')
+    model.eval()
     with torch.no_grad():
         expected = model(**encoded).logits.numpy()
     options = ort.SessionOptions(); options.intra_op_num_threads = 4
@@ -51,6 +52,7 @@ def main():
             'top1Agreement': float(np.mean(expected.argmax(-1) == logits.argmax(-1))),
             'maxAbsoluteLogitDifference': float(np.max(np.abs(expected-logits))),
             'loadAndInferenceSeconds': time.perf_counter()-started}
+    print(json.dumps(results), flush=True)
     assert results['model.onnx']['top1Agreement'] == 1.0
     assert results['model_quantized.onnx']['top1Agreement'] >= .95
     browser = Path('public/models/receipt-bert'); (browser/'onnx').mkdir(parents=True, exist_ok=True)
