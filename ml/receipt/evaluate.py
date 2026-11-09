@@ -65,6 +65,18 @@ def main():
                 'fullyAnnotatedItemReceipts':eligible,'exactItemSelectionReceiptRate':complete/eligible if eligible else None}
     results['runtime']={'batchSize':32,'totalLines':len(texts),'medianBatchMs':float(np.median(durations)*1000),
                         'p95BatchMs':float(np.percentile(durations,95)*1000),'inferenceSeconds':sum(durations)}
+    item_sources={}
+    for source in ('cord','synthetic'):
+        item_sources[source]={}
+        for method in ('baseline','bert','hybrid'):
+            gold=[]; guesses=[]
+            for d in documents:
+                if d['source']!=source or d['variant'] not in ('clean','synthetic'): continue
+                labels=[p['label']for p in output[d['id']]] if method=='bert' else baseline[d['id']][method]
+                gold.extend(LABELS.index(r['label'])for r in d['rows'])
+                guesses.extend(LABELS.index(label)for label in labels)
+            item_sources[source][method]=metrics(gold,guesses)['report']['ITEM_DESCRIPTION']
+    (ROOT/'item-source-metrics.json').write_text(json.dumps(item_sources,indent=2),encoding='utf8')
     (ROOT/'evaluation.json').write_text(json.dumps(results,indent=2),encoding='utf8')
     print(json.dumps({k:{m:round(r['report']['macro avg']['f1-score'],4) for m,r in v.items()} for k,v in results.items() if k!='runtime'}),flush=True)
 
