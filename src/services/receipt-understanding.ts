@@ -5,7 +5,7 @@ export async function understandReceipt(rawText: string, signal: AbortSignal): P
   const started = performance.now();
   const base = new URL(import.meta.env.BASE_URL, window.location.origin).href;
   const rows = rawText.slice(0, 50000).split(/\r?\n/).map(r => r.trim().slice(0, 500)).filter(Boolean).slice(0, 100);
-  const model = 'receipt-bert-v1';
+  let model = 'receipt-bert-v1';
   if (signal.aborted) throw new Error('Receipt reading cancelled.');
   try {
     if (import.meta.env.VITE_RECEIPT_MODEL === 'off' || !rows.length) throw new Error('Semantic suggestions disabled.');
@@ -24,7 +24,10 @@ export async function understandReceipt(rawText: string, signal: AbortSignal): P
         if (event.data.id !== id) return;
         cleanup();
         if (event.data.error) { stop(); reject(new Error(event.data.error)); }
-        else resolve(event.data.predictions);
+        else {
+          if (typeof event.data.model === 'string') model = event.data.model;
+          resolve(event.data.predictions);
+        }
       };
       const timer = setTimeout(error, 60000);
       signal.addEventListener('abort', abort, { once: true });
