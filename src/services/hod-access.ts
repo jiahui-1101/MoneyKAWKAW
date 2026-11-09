@@ -63,6 +63,7 @@ export function projectHod(store: Store): HodSnapshot {
   const memberships =
     store.directory?.memberships.filter((m) => inScope(m.activityId, m.departmentId)) ?? [];
   return structuredClone({
+    financialSummaries: store.financialSummaries?.filter((r) => scopes.some((s) => s.department.id === r.departmentId)),
     actor,
     scopes,
     assignments: store.assignments

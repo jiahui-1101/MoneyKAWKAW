@@ -12,11 +12,9 @@ import { MetricCards } from './MetricCards';
 import type { Activity, BudgetSummary, Store } from '../domain/models';
 import { Badge, Empty, Panel, Progress, Status, TextLink, useFormat } from './ui';
 import { demoMode } from '../services/supabase/client';
-import { getDemoActor } from '../domain/session';
 
 export function Metrics({ summary, count }: { summary: BudgetSummary; count?: number }) {
   const { money } = useFormat();
-  const claimVisible = demoMode || getDemoActor().role === 'Treasurer';
   const items = [
     {
       label: count === undefined ? 'Overall budget' : 'Total activity budget',
@@ -27,7 +25,7 @@ export function Metrics({ summary, count }: { summary: BudgetSummary; count?: nu
     },
     {
       label: demoMode ? 'Recorded expenses' : 'Approved claims',
-      value: demoMode || claimVisible ? money(summary.recorded, true) : 'Treasurer only',
+      value: money(summary.recorded, true),
       icon: CircleDollarSign,
       note: demoMode ? 'Pending + approved claims' : 'Pending claims stay separate from planned task budgets',
       tone: 'violet',
@@ -59,9 +57,10 @@ export function BudgetLifecycle({ summary }: { summary: BudgetSummary }) {
       {[
         ['Department allocations', summary.allocated, 'Portion assigned to departments'],
         [demoMode ? 'Committed' : 'Planned purchasing commitments', summary.committed, demoMode ? 'Open assignments + approved unpaid' : 'Active task estimates · cancelled tasks excluded'],
-        ['Pending claim exposure', demoMode || getDemoActor().role === 'Treasurer' ? summary.pending : 'Treasurer only', 'Submitted requests · not recorded spending'],
-        [demoMode ? 'Paid (sample records)' : 'Paid reimbursements', demoMode ? summary.paid : 'Phase 04', demoMode ? 'Recorded separately from approval' : 'Payment recording is not part of this phase'],
-        ['Available to plan', summary.available, demoMode ? 'Budget less paid, pending, committed' : 'Budget less active task estimates'],
+        ['Pending claim exposure', summary.pending, 'Submitted requests · not paid expenditure'],
+        ['Approved unpaid liability', Math.max(0, summary.recorded - summary.paid - (demoMode ? summary.pending : 0)), 'Authorized amounts awaiting a transfer record'],
+        ['Paid reimbursements', summary.paid, 'Recorded external transfers · confirmation is separate'],
+        ['Available to plan', summary.available, 'Budget less paid, pending exposure and outstanding commitments'],
       ].map(([label, amount, note]) => (
         <div key={label}>
           <small>{label}</small>

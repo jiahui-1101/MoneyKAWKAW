@@ -17,6 +17,7 @@ export interface HodScope {
   department: Department;
 }
 export interface HodSnapshot {
+  financialSummaries?: import('./models').FinancialSummary[];
   actor: DemoActor;
   scopes: HodScope[];
   directory: ClubDirectory;
@@ -37,6 +38,11 @@ export function departmentBudget(data: HodSnapshot, activityId: string, departme
     (s) => s.activity.id === activityId && s.department.id === departmentId,
   );
   if (!scope) throw new Error('You do not have access to this department.');
+  const f = data.financialSummaries?.find((r) => r.departmentId === departmentId && r.activityId === activityId);
+  if (f) return { budget: f.budget, planned: f.planned, open: f.unclaimed, recorded: f.liability + f.paid,
+    paid: f.paid, pending: f.pending, committed: f.unclaimed + f.liability,
+    remaining: f.remaining, available: f.available, purchasingCapacity: Math.max(0, f.available),
+    utilization: f.budget ? (f.liability + f.paid) / f.budget * 100 : 0 };
   const tasks = data.assignments.filter(
     (t) =>
       t.activityId === activityId &&
