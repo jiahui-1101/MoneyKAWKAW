@@ -125,8 +125,8 @@ allowed_mime_types = ["image/jpeg", "image/png", "image/webp", "application/pdf"
 
 [storage.buckets.payment-proofs]
 public = false
-file_size_limit = "10MiB"
-allowed_mime_types = ["image/jpeg", "image/png", "image/webp", "application/pdf"]
+file_size_limit = "1MiB"
+allowed_mime_types = ["image/jpeg", "image/png"]
 
 [storage.buckets.financial-archive]
 public = false
