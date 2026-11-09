@@ -1,7 +1,7 @@
 import { ArrowUpRight, Search } from 'lucide-react';
 import { useState } from 'react';
 import { Link } from 'react-router-dom';
-import { useDepartmentScope, TaskTable } from '../../components/hod/HodWidgets';
+import { DepartmentBalances, DepartmentMetrics, useDepartmentScope, TaskTable } from '../../components/hod/HodWidgets';
 import { Empty, PageHeader, Panel, Status, useFormat } from '../../components/ui';
 import { MetricCards } from '../../components/MetricCards';
 import { CircleDollarSign, Clock, Wallet, CheckCircle2 } from 'lucide-react';
@@ -15,10 +15,12 @@ export function HodExpenses() {
     [payment, setPayment] = useState('');
   if (!demoMode) return <div className="stack">
     <PageHeader eyebrow={`${scope.department.name.toUpperCase()} · FINANCIAL VISIBILITY`}
-      title="Claims are coming in Phase 03."
-      description="This phase connects department budgets and purchasing tasks. Claim and reimbursement records are not available yet." />
-    <Panel title="No claim records are available" subtitle="Purchasing estimates remain separate from actual expenses">
-      <p className="settings-copy">You can review assigned tasks and their planned budgets. Receipt uploads, claims, approvals, risk review, and payment recording are not available in this workspace yet.</p>
+      title="Department finances, in context."
+      description="Authorized department totals separate purchasing plans, pending claims, approved obligations, and recorded payments." />
+    <DepartmentMetrics data={data} scope={scope} />
+    <DepartmentBalances data={data} scope={scope} />
+    <Panel title="Private claim evidence stays protected" subtitle="Department aggregates only">
+      <p className="settings-copy">Claim decisions belong to the Treasurer. Individual receipts, payout details, and payment proof remain restricted to the claimant and authorized Treasurer.</p>
     </Panel>
   </div>;
   const expenses = data.expenses
