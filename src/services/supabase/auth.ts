@@ -29,9 +29,10 @@ function sessionProfile(value: unknown): SessionProfile | null {
 export function watchSession(update: (state: AuthState) => void) {
   const client = supabaseClient();
   let active = true, generation = 0;
-  const restore = async () => {
+  const restore = async (background = false) => {
     const attempt = ++generation;
-    update({ ...initialAuthState, signedIn: true, loading: true });
+    // Focus rechecks still validate grants, but must not unmount an in-progress receipt editor.
+    if (!background) update({ ...initialAuthState, signedIn: true, loading: true });
     try {
       const { data: current, error: authError } = await client.auth.getUser();
       if (authError || !current.user) {
@@ -61,7 +62,7 @@ export function watchSession(update: (state: AuthState) => void) {
     if (!session) update({ profile: null, signedIn: false, loading: false, error: '' });
     else queueMicrotask(() => { if (active) void restore(); });
   });
-  const recheck = () => { if (typeof document === 'undefined' || document.visibilityState === 'visible') void restore(); };
+  const recheck = () => { if (typeof document === 'undefined' || document.visibilityState === 'visible') void restore(true); };
   if (typeof window !== 'undefined') window.addEventListener('focus', recheck);
   if (typeof document !== 'undefined') document.addEventListener('visibilitychange', recheck);
   return () => {

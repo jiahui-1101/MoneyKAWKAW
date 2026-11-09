@@ -66,3 +66,17 @@ it('fails closed for missing sessions and unfinished financial writes', async ()
   await expect(supabaseRepository.save({} as never)).rejects.toThrow('No changes were saved');
   await expect(supabaseRepository.reset()).rejects.toThrow('No changes were saved');
 });
+it('rechecks focus without discarding the editor, and still removes revoked access', async () => {
+  const events = new EventTarget();
+  vi.stubGlobal('window', events);
+  const stop = watchSession(state => states.push(state)); signIn();
+  await vi.waitFor(() => expect(states.at(-1)?.profile?.uid).toBe('member-a'));
+  states = [];
+  events.dispatchEvent(new Event('focus'));
+  await vi.waitFor(() => expect(states.at(-1)?.profile?.uid).toBe('member-a'));
+  expect(states.every(s => !s.loading && s.profile !== null)).toBe(true);
+  mocks.client.rpc.mockResolvedValueOnce({ data: false, error: null });
+  events.dispatchEvent(new Event('focus'));
+  await vi.waitFor(() => expect(states.at(-1)?.profile).toBeNull());
+  expect(states.at(-1)?.error).toContain('not an active club member'); stop();
+});
