@@ -34,7 +34,7 @@ export function TreasuryShell() {
   const nav = useWorkspaceNavigation();
   const location = useLocation();
   const [help, setHelp] = useState(false);
-  const visibleEntries = demoMode ? entries : entries.filter((entry) => !['/treasurer/reimbursements', '/treasurer/history'].includes(entry.to));
+  const visibleEntries = entries;
   const section =
     visibleEntries.find((e) => (e.end ? e.to === location.pathname : location.pathname.startsWith(e.to)))
       ?.title ?? 'Financial record';
@@ -105,9 +105,9 @@ export function TreasuryShell() {
             </h3>
             <p>{demoMode
               ? 'Follow the record from submitted claim to reimbursement.'
-              : 'Review submitted claims and receipts. Decisions and reimbursements become available in Phase 04.'}</p>
+              : 'Review evidence, record independent decisions, and track documented external reimbursements.'}</p>
             <Link to="/treasurer/claims" onClick={() => nav.setOpen(false)}>
-              {demoMode ? 'Open review queue →' : 'Open read-only claim queue →'}
+              {demoMode ? 'Open review queue →' : 'Open claim queue →'}
             </Link>
           </div>
           <button

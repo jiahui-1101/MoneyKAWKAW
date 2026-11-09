@@ -13,7 +13,6 @@ import { MemberDraft } from './Draft';
 import { MemberClaimDetail } from './ClaimDetail';
 import { MemberPayment } from './Payment';
 import { MemberNotifications } from './Notifications';
-import { demoMode } from '../../services/supabase/client';
 export function MemberRoutes() {
   const { actor } = useSession();
   return (
@@ -31,7 +30,7 @@ export function MemberRoutes() {
           <Route path="drafts/:id" element={<MemberDraft />} />
           <Route path="claims" element={<MemberClaims />} />
           <Route path="claims/:id" element={<MemberClaimDetail />} />
-          <Route path="claims/:id/payment" element={demoMode ? <MemberPayment /> : <Phase03Unavailable />} />
+          <Route path="claims/:id/payment" element={<MemberPayment />} />
           <Route path="accounts" element={<MemberAccounts />} />
           <Route path="notifications" element={<MemberNotifications />} />
           <Route
@@ -53,7 +52,4 @@ export function MemberRoutes() {
       </Routes>
     </MemberProvider>
   );
-}
-function Phase03Unavailable() {
-  return <Empty title="Payment recording is not available yet">Phase 03 records claim submissions only. Reimbursement updates are reserved for Phase 04.</Empty>;
 }
