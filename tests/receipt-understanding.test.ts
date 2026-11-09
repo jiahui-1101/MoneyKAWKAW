@@ -33,17 +33,17 @@ describe('receipt semantics preserves financial authority', () => {
   it('cancellation rejects instead of returning late suggestions', async () => {
     vi.stubGlobal('window', { location: { origin: 'http://127.0.0.1' } });
     vi.stubEnv('VITE_RECEIPT_MODEL', 'on');
-    let active: EventTarget | undefined;
     let terminated = false;
     vi.stubGlobal('Worker', class extends EventTarget {
-      constructor() { super(); active = this; }
-      postMessage() { /* Real output is verified separately with the exported artifact. */ }
+      postMessage() {
+        // A response queued before cancellation must not populate the draft afterward.
+        queueMicrotask(() => this.dispatchEvent(new MessageEvent('message', { data: { id: 1, predictions: [p('Cable')] } })));
+      }
       terminate() { terminated = true; }
     });
     const controller = new AbortController();
     const result = understandReceipt('Cable 10.00', controller.signal);
     controller.abort();
-    active?.dispatchEvent(new MessageEvent('message', { data: { id: 1, predictions: [p('Cable')] } }));
     await expect(result).rejects.toThrow('cancelled'); expect(terminated).toBe(true);
   });
 });
