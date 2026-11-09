@@ -5,6 +5,7 @@ import { paymentState } from '../../domain/risk';
 import { memberClaimService } from '../../services/member-claims';
 import { ReceiptReview } from '../../components/treasurer/ReceiptReview';
 import { ClaimDestination } from '../../components/member/ClaimDestination';
+import { demoMode } from '../../services/supabase/client';
 import { Badge, Empty, PageHeader, Panel, Status, useFormat } from '../../components/ui';
 export function MemberClaimDetail() {
   const { id } = useParams(),
@@ -53,9 +54,9 @@ export function MemberClaimDetail() {
         title={claim.description}
         description={`${scope.activity.name} / ${scope.department.name}`}
       >
-        <Link className="btn primary" to={`/member/claims/${claim.id}/payment`}>
+        {demoMode && <Link className="btn primary" to={`/member/claims/${claim.id}/payment`}>
           {payments.length ? 'View payment proof & receipt status' : 'View reimbursement status'}
-        </Link>
+        </Link>}
       </PageHeader>
       <div className="treasury-record-bar">
         <Status value={claim.state} />

@@ -4,6 +4,7 @@ import { useMember } from '../../context/member-context';
 import { memberClaimService } from '../../services/member-claims';
 import { Field } from '../Field';
 import { Empty, Modal, Panel } from '../ui';
+import { demoMode } from '../../services/supabase/client';
 type Destination = Awaited<ReturnType<typeof memberClaimService.destination>>;
 export function ClaimDestination({ claim }: { claim: Expense }) {
   const { data, busy, run } = useMember();
@@ -59,7 +60,7 @@ export function ClaimDestination({ claim }: { claim: Expense }) {
         title="Selected reimbursement destination"
         subtitle="A claim snapshot · changing your default never silently redirects this request"
         action={
-          destination &&
+          demoMode && destination &&
           !locked && (
             <button
               className="btn"
@@ -82,7 +83,9 @@ export function ClaimDestination({ claim }: { claim: Expense }) {
               </p>
               <strong>{destination.masked}</strong>
               <p className="field-hint">
-                {locked
+                {!demoMode
+                  ? 'This submitted destination is immutable in Phase 03. Only a masked summary is shown here; payment details are not exposed to the Treasurer.'
+                  : locked
                   ? 'This destination is locked because a payment was recorded or the claim was declined.'
                   : 'An unpaid destination change uses one of your saved accounts and records a reason. Full identifiers stay out of ordinary views.'}
               </p>

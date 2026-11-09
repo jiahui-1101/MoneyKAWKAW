@@ -7,7 +7,6 @@ import type { PurchasingStatus } from '../../domain/models';
 import { memberDepartmentPath } from '../../components/member/MemberTables';
 import { PurchaseBadge } from '../../components/hod/HodWidgets';
 import { Badge, Empty, PageHeader, Panel, Status, useFormat } from '../../components/ui';
-import { demoMode } from '../../services/supabase/client';
 export function MemberTaskDetail() {
   const { id } = useParams(),
     { data, busy, run } = useMember(),
@@ -65,7 +64,7 @@ export function MemberTaskDetail() {
         title={p.name}
         description={p.description}
       >
-        {demoMode && own && !task.expenseId && ['Purchased', 'Completed'].includes(p.status) && (
+        {own && !task.expenseId && ['Purchased', 'Completed'].includes(p.status) && (
           <button className="btn primary" disabled={busy} onClick={() => void begin()}>
             {draft ? 'Continue claim draft' : 'Prepare reimbursement claim'}
           </button>
@@ -125,10 +124,8 @@ export function MemberTaskDetail() {
         >
           <div className="member-content stack">
             <p className="settings-copy">
-              {!demoMode
-                ? 'Update the purchasing stage as the work progresses. Receipt uploads and claims are not available until Phase 03.'
-                : task.expenseId
-                ? 'This purchase has a submitted claim. Its original assignment and claim evidence are protected. Follow the Treasurer’s decision and payment updates in My claims.'
+              {task.expenseId
+                ? 'This purchase has a submitted claim. Its original assignment and claim evidence are protected. Follow the Treasurer’s decision in My claims.'
                 : p.status === 'Cancelled'
                   ? 'Your HOD cancelled this purchase. No claim can be prepared against it.'
                   : 'Update the physical purchase, then prepare a receipt-backed claim. Your HOD still controls the assignment details.'}

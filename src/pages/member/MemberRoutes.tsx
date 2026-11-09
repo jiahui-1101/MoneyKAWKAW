@@ -28,17 +28,11 @@ export function MemberRoutes() {
           />
           <Route path="tasks" element={<MemberTasks />} />
           <Route path="tasks/:id" element={<MemberTaskDetail />} />
-          {demoMode ? <>
-            <Route path="drafts/:id" element={<MemberDraft />} />
-            <Route path="claims" element={<MemberClaims />} />
-            <Route path="claims/:id" element={<MemberClaimDetail />} />
-            <Route path="claims/:id/payment" element={<MemberPayment />} />
-            <Route path="accounts" element={<MemberAccounts />} />
-          </> : <>
-            <Route path="drafts/*" element={<Phase03Unavailable />} />
-            <Route path="claims/*" element={<Phase03Unavailable />} />
-            <Route path="accounts" element={<Phase03Unavailable />} />
-          </>}
+          <Route path="drafts/:id" element={<MemberDraft />} />
+          <Route path="claims" element={<MemberClaims />} />
+          <Route path="claims/:id" element={<MemberClaimDetail />} />
+          <Route path="claims/:id/payment" element={demoMode ? <MemberPayment /> : <Phase03Unavailable />} />
+          <Route path="accounts" element={<MemberAccounts />} />
           <Route path="notifications" element={<MemberNotifications />} />
           <Route
             path="*"
@@ -61,9 +55,5 @@ export function MemberRoutes() {
   );
 }
 function Phase03Unavailable() {
-  return (
-    <Empty title="Claims and payment accounts aren’t available yet">
-      Purchasing tasks and progress are connected. Receipt uploads, claims, and payout details are planned for Phase 03.
-    </Empty>
-  );
+  return <Empty title="Payment recording is not available yet">Phase 03 records claim submissions only. Reimbursement updates are reserved for Phase 04.</Empty>;
 }

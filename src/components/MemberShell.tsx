@@ -33,7 +33,7 @@ export function MemberShell() {
   const { actor, clubName } = useSession();
   const nav = useWorkspaceNavigation(),
     location = useLocation();
-  const visibleEntries = demoMode ? entries : entries.filter((entry) => !['/member/claims', '/member/accounts'].includes(entry.to));
+  const visibleEntries = entries;
   const [help, setHelp] = useState(false);
   const initials = actor.name
     .split(' ')
@@ -201,16 +201,14 @@ export function MemberShell() {
               Coordinate with your department and update only your own assigned purchases. Your HOD
               controls task budgets, ownership, and deadlines.
             </p>
-            {demoMode ? <>
             <p>
               Upload the original receipt, read it on device or enter source values manually, and
               retain corrections and exclusions. The Treasurer decides your submitted claim.
             </p>
             <p>
-              Store fictional payout instructions for this local demo. A recorded payment is
-              separate from bank verification and your acknowledgment of receipt.
+              Save your own bank or eWallet destination. Full identifiers stay masked in ordinary
+              views, and submitted claims keep the selected destination as a fixed snapshot.
             </p>
-            </> : <p>Claims, receipt uploads, and payment accounts will become available in Phase 03.</p>}
           </div>
         </Modal>
       )}

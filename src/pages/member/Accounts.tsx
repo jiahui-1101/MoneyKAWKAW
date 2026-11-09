@@ -5,6 +5,7 @@ import type { AccountSummary } from '../../domain/member';
 import { accountService } from '../../services/member-accounts';
 import { AccountForm } from '../../components/member/AccountForm';
 import { Badge, Empty, Modal, PageHeader, Panel, useFormat } from '../../components/ui';
+import { demoMode } from '../../services/supabase/client';
 export function MemberAccounts() {
   const { data, busy, run } = useMember(),
     { time } = useFormat();
@@ -59,7 +60,7 @@ export function MemberAccounts() {
       )}
       <Panel
         title="My saved destinations"
-        subtitle="Local demonstration only · use fictional details"
+        subtitle={demoMode ? 'Local demonstration only · use fictional details' : 'Private payment instructions · full details are shown only to you while editing'}
       >
         <div className="member-account-grid">
           {data.accounts.map((a) => (

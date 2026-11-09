@@ -5,6 +5,7 @@ import { accountKinds } from '../../domain/accounts';
 import { accountService } from '../../services/member-accounts';
 import { Field } from '../Field';
 import { Modal } from '../ui';
+import { demoMode } from '../../services/supabase/client';
 export function AccountForm({ id, onClose }: { id?: string; onClose: () => void }) {
   const { busy, run } = useMember();
   const [form, setForm] = useState<AccountInput>({
@@ -73,10 +74,9 @@ export function AccountForm({ id, onClose }: { id?: string; onClose: () => void 
       }}
     >
       <form className="stack" onSubmit={submit} noValidate>
-        <p className="settings-copy">
-          Local demo storage is not production-secure. Use fictional destination details. These are
-          payment instructions only; never enter passwords, PINs, or OTPs.
-        </p>
+        <p className="settings-copy">{demoMode
+          ? 'Local demo storage is not production-secure. Use fictional destination details. Never enter passwords, PINs, or OTPs.'
+          : 'These are payment instructions only. Never enter passwords, PINs, or OTPs. Full details are private to your account.'}</p>
         {loading ? (
           <p role="status">Loading your account…</p>
         ) : id && !revision ? (
