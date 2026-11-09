@@ -42,7 +42,7 @@ export function TreasuryDashboard() {
   ];
   if (!demoMode) return <div className="stack dashboard">
     <PageHeader eyebrow="TREASURER WORKSPACE" title="Budgets and purchasing plans."
-      description="Read-only activity oversight from the connected club database. Claims and payments are not available in Phase 02." />
+      description="Read-only budget oversight and submitted claim evidence from the connected club database. Decisions and payments begin in Phase 04." />
     <div className="overview-toolbar"><span className="section-label">Authorized budget overview</span>
       <span className="period-tag">{data.activities.length} activities</span></div>
     <MetricCards items={[
@@ -63,7 +63,7 @@ export function TreasuryDashboard() {
         </table>
       </div>
     </Panel>
-    <p className="data-note">Claim submission, receipt review, reimbursement decisions, and payment records are intentionally unavailable until Phase 03.</p>
+    <p className="data-note">Submitted claims are available in the read-only claim queue. Pending requests remain separate from planned commitments; decisions and payment recording begin in Phase 04.</p>
   </div>;
   return (
     <div className="stack dashboard">
