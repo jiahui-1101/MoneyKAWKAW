@@ -48,7 +48,7 @@ export async function loadReceipt(claim: ClaimRow): Promise<ReceiptEvidence> {
   const items = itemsResult.data ?? [], edits = editsResult.data ?? [];
   const receiptEdits = edits.filter((e) => e.claim_item_id && e.field_changed === 'receipt_line').map((e) => {
     const before = object(e.before_value), after = object(e.after_value), id = e.claim_item_id!;
-    return { lineId: id, before: modifiedLine(id, e.before_value), after: modifiedLine(id, e.after_value),
+    return { lineId: id, before: modifiedLine(id, e.before_value), after: modifiedLine(id, e.after_value), type: e.modification_type,
       excluded: before.included === true && after.included === false,
       beforeExcluded: before.included === false, reason: e.reason, actor: e.modified_by, at: e.created_at };
   });

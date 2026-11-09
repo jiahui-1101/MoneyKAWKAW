@@ -5,6 +5,10 @@ import { memberCommand, memberData, memberRead, ownedTask } from './member-core'
 import type { Store } from '../domain/models';
 import { validateProof } from './payment-proof';
 import { departmentToday } from '../domain/hod';
+import { demoMode } from './supabase/client';
+import { beginClaim, saveBaseline, savePreferences } from './supabase/member-claims';
+import { loadDraft, uploadReceipt } from './supabase/member-receipts';
+import { projectMember } from './member-core';
 export function draftRecord(store: Store, id: string, expected?: string) {
   const draft = store.member?.drafts.find(
     (d) => d.id === id && d.ownerId === requireRole('Member').userId,
@@ -24,10 +28,15 @@ export function validateReceiptFile(file: ProofFile) {
 }
 export const draftService = {
   async load(id: string) {
+    if (!demoMode) return loadDraft(id);
     const { store } = await memberRead();
     return structuredClone(draftRecord(store, id).draft);
   },
   begin(taskId: string) {
+    if (!demoMode) return (async () => {
+      const id = await beginClaim(taskId), { store } = await memberRead();
+      return { data: projectMember(store), result: id };
+    })();
     return memberCommand((store) => {
       const task = ownedTask(store, taskId),
         userId = requireRole('Member').userId,
@@ -49,6 +58,11 @@ export const draftService = {
     });
   },
   receipt(id: string, expected: string, file: ProofFile | null) {
+    if (!demoMode) return (async () => {
+      await uploadReceipt(id, expected, file);
+      const { store } = await memberRead();
+      return { data: projectMember(store), result: undefined };
+    })();
     return memberCommand((store) => {
       const { draft } = draftRecord(store, id, expected);
       if (file) validateReceiptFile(file);
@@ -79,6 +93,13 @@ export const draftService = {
       rawText: string;
     },
   ) {
+    if (!demoMode) return (async () => {
+      const draft = await loadDraft(id);
+      if (!draft.receipt) throw new Error('Upload and verify your original receipt first.');
+      await saveBaseline({ id, expected, receiptId: draft.receipt.id, ...input });
+      const { store } = await memberRead();
+      return { data: projectMember(store), result: undefined };
+    })();
     return memberCommand((store) => {
       const { draft } = draftRecord(store, id, expected),
         receipt = draft.receipt;
@@ -119,6 +140,11 @@ export const draftService = {
     });
   },
   preferences(id: string, expected: string, accountId: string, justification: string) {
+    if (!demoMode) return (async () => {
+      await savePreferences(id, expected, accountId, justification);
+      const { store } = await memberRead();
+      return { data: projectMember(store), result: undefined };
+    })();
     return memberCommand((store) => {
       const { draft } = draftRecord(store, id, expected);
       if (

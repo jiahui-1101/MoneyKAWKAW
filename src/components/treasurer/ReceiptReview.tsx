@@ -206,11 +206,11 @@ export function ReceiptEvidenceView({
             <article key={`${edit.lineId}-${i}`}>
               <div className="row between wrap">
                 <h3>
-                  {edit.excluded
+                  {edit.type ?? (edit.excluded
                     ? 'Item excluded'
                     : edit.beforeExcluded
                       ? 'Item included again'
-                      : 'Source value corrected'}
+                      : 'Source value corrected')}
                 </h3>
                 <small>
                   {time(edit.at)} · {edit.actor}

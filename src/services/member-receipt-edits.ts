@@ -3,6 +3,9 @@ import { receiptLines, reviewedTotal, validateLine } from '../domain/receipt';
 import { requireRole } from '../domain/session';
 import { memberCommand } from './member-core';
 import { draftRecord } from './member-drafts';
+import { demoMode } from './supabase/client';
+import { editLine, editReceiptTotal } from './supabase/member-claims';
+import { memberRead, projectMember } from './member-core';
 function reasonText(reason: string) {
   if (typeof reason !== 'string' || reason.trim().length < 3 || reason.length > 500)
     throw new Error('Explain this correction or exclusion in 3–500 characters.');
@@ -28,7 +31,13 @@ export const receiptEditService = {
     input: ReceiptLine,
     excluded: boolean,
     reason: string,
+    type: NonNullable<import('../domain/treasury').ReceiptEdit['type']> = 'Amount Adjustment',
   ) {
+    if (!demoMode) return (async () => {
+      await editLine({ claimId: id, expected, itemId: lineId, line: input, excluded, reason, type });
+      const { store } = await memberRead();
+      return { data: projectMember(store), result: undefined };
+    })();
     return memberCommand((store) => {
       const { draft } = draftRecord(store, id, expected),
         receipt = draft.receipt;
@@ -48,6 +57,7 @@ export const receiptEditService = {
         excluded: !!excluded,
         beforeExcluded: current.excluded,
         reason: why,
+        type: excluded !== current.excluded ? excluded ? 'Item Exclusion' : 'Item Inclusion' : type,
         actor: requireRole('Member').name,
         at,
       });
@@ -55,6 +65,11 @@ export const receiptEditService = {
     });
   },
   add(id: string, expected: string, input: ReceiptLine, reason: string) {
+    if (!demoMode) return (async () => {
+      await editLine({ claimId: id, expected, line: input, excluded: false, reason, type: 'Item Inclusion' });
+      const { store } = await memberRead();
+      return { data: projectMember(store), result: undefined };
+    })();
     return memberCommand((store) => {
       const { draft } = draftRecord(store, id, expected),
         receipt = draft.receipt;
@@ -77,6 +92,7 @@ export const receiptEditService = {
         excluded: false,
         beforeExcluded: false,
         reason: why,
+        type: 'Item Inclusion',
         actor: requireRole('Member').name,
         at,
       });
@@ -84,6 +100,11 @@ export const receiptEditService = {
     });
   },
   total(id: string, expected: string, amount: number, reason: string) {
+    if (!demoMode) return (async () => {
+      await editReceiptTotal(id, expected, amount, reason);
+      const { store } = await memberRead();
+      return { data: projectMember(store), result: undefined };
+    })();
     return memberCommand((store) => {
       const { draft } = draftRecord(store, id, expected),
         receipt = draft.receipt;

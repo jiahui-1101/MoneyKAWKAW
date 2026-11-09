@@ -1,6 +1,6 @@
 import { useState, type FormEvent } from 'react';
 import type { ClaimDraft } from '../../domain/member';
-import type { ReceiptLine } from '../../domain/treasury';
+import type { ReceiptEdit, ReceiptLine } from '../../domain/treasury';
 import { parseMoney } from '../../domain/budget';
 import { parseQuantity, quantityAmount } from '../../domain/receipt';
 import { receiptEditService } from '../../services/member-receipt-edits';
@@ -29,6 +29,9 @@ export function ReceiptLineForm({
     [quantity, setQuantity] = useState(String((line?.quantityMilli ?? 1000) / 1000)),
     [unit, setUnit] = useState(line ? ((line.unitPrice ?? line.amount) / 100).toFixed(2) : '');
   const [excluded, setExcluded] = useState(current?.excluded ?? false),
+    [type, setType] = useState<NonNullable<ReceiptEdit['type']>>(
+      draft.receipt?.extraction?.method === 'tesseract' ? 'OCR Correction' : 'Amount Adjustment',
+    ),
     [reason, setReason] = useState(''),
     [error, setError] = useState('');
   const calculated = () => {
@@ -56,7 +59,7 @@ export function ReceiptLineForm({
       await change(
         () =>
           line
-            ? receiptEditService.line(draft.id, draft.updatedAt, line.id, after, excluded, reason)
+            ? receiptEditService.line(draft.id, draft.updatedAt, line.id, after, excluded, reason, type)
             : receiptEditService.add(draft.id, draft.updatedAt, after, reason),
         'Receipt modification saved with before/after history.',
       );
@@ -149,6 +152,15 @@ export function ReceiptLineForm({
             />
             <span>Exclude this line from reimbursement</span>
           </label>
+        )}
+        {line && excluded === (current?.excluded ?? false) && (
+          <Field id="edit-line-type" label="What kind of correction is this?" required>
+            <select id="edit-line-type" value={type} onChange={(e) => setType(e.target.value as typeof type)}>
+              <option value="OCR Correction">OCR correction</option>
+              <option value="Description Correction">Description correction</option>
+              <option value="Amount Adjustment">Amount adjustment</option>
+            </select>
+          </Field>
         )}
         <Field id="edit-line-reason" label="Reason for this modification" required>
           <textarea

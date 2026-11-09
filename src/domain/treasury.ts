@@ -14,6 +14,7 @@ export interface ReceiptEdit {
   after: ReceiptLine;
   excluded: boolean;
   reason: string;
+  type?: 'OCR Correction' | 'Item Exclusion' | 'Item Inclusion' | 'Amount Adjustment' | 'Description Correction';
   actor: string;
   at: string;
   beforeExcluded?: boolean;

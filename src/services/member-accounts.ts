@@ -3,6 +3,9 @@ import type { Store } from '../domain/models';
 import { requireRole } from '../domain/session';
 import { memberCommand, memberData, memberRead } from './member-core';
 import { accountInUse, validateAccount } from '../domain/accounts';
+import { demoMode } from './supabase/client';
+import { getAccount, removeAccount, saveAccount, setDefaultAccount } from './supabase/member-accounts';
+import { projectMember } from './member-core';
 const owned = (store: Store, id: string) => {
   const account = store.member?.accounts.find(
     (a) => a.id === id && a.ownerId === requireRole('Member').userId,
@@ -24,10 +27,16 @@ function audit(store: Store, account: PaymentAccount, action: string, detail: st
 }
 export const accountService = {
   async detail(id: string) {
+    if (!demoMode) return getAccount(id);
     const { store } = await memberRead();
     return structuredClone(owned(store, id));
   },
   save(input: AccountInput, id?: string, expected?: string) {
+    if (!demoMode) return (async () => {
+      validateAccount(input);
+      const result = await saveAccount(input, id, expected), { store } = await memberRead();
+      return { data: projectMember(store), result };
+    })();
     return memberCommand((store) => {
       validateAccount(input);
       const userId = requireRole('Member').userId,
@@ -66,6 +75,11 @@ export const accountService = {
     });
   },
   setDefault(id: string) {
+    if (!demoMode) return (async () => {
+      await setDefaultAccount(id);
+      const { store } = await memberRead();
+      return { data: projectMember(store), result: undefined };
+    })();
     return memberCommand((store) => {
       const account = owned(store, id),
         at = new Date().toISOString();
@@ -82,6 +96,11 @@ export const accountService = {
     });
   },
   remove(id: string) {
+    if (!demoMode) return (async () => {
+      await removeAccount(id);
+      const { store } = await memberRead();
+      return { data: projectMember(store), result: undefined };
+    })();
     return memberCommand((store) => {
       const account = owned(store, id),
         data = memberData(store);
