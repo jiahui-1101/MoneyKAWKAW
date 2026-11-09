@@ -9,7 +9,6 @@ returns public.purchase_tasks language plpgsql security definer set search_path 
 declare
   v_actor uuid := auth.uid();
   v_activity public.activities%rowtype;
-  v_department public.departments%rowtype;
   v_task public.purchase_tasks%rowtype;
   v_existing_request public.purchase_tasks%rowtype;
   v_before jsonb;
@@ -21,7 +20,7 @@ begin
     join public.departments d on d.activity_id = a.id and d.club_id = a.club_id
     where a.id = p_activity_id and d.id = p_department_id for update of a;
   if not found then raise exception 'Department is not part of this activity' using errcode = '42501'; end if;
-  select * into v_department from public.departments
+  perform 1 from public.departments
     where id = p_department_id and activity_id = p_activity_id and club_id = v_activity.club_id for update;
   if not found then raise exception 'Department is not part of this activity' using errcode = '42501'; end if;
   if p_item_name is null or length(trim(p_item_name)) not between 1 and 120 or
