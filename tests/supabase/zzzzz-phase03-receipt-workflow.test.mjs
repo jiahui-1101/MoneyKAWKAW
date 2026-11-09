@@ -51,9 +51,12 @@ test('private receipt, audited edits, account snapshot, and pending claim persis
   const upload = await member.client.storage.from('receipts').upload(receipt.storage_path, bytes,
     { contentType: 'image/png', upsert: false });
   assert.ifError(upload.error);
-  assert.equal((await member.client.rpc('finalize_claim_receipt', { p_receipt_id: receipt.receipt_id })).error, null);
+  const finalized = await member.client.rpc('finalize_claim_receipt', { p_receipt_id: receipt.receipt_id });
+  assert.ifError(finalized.error);
+  const postUpload = await draft();
+  assert.ifError(postUpload.error);
   const captured = await member.client.rpc('save_my_claim_baseline', {
-    p_claim_id: claimId, p_expected_updated_at: receipt.draft_updated_at, p_receipt_id: receipt.receipt_id,
+    p_claim_id: claimId, p_expected_updated_at: postUpload.data.updated_at, p_receipt_id: receipt.receipt_id,
     p_merchant: 'DEMO SUPPLIES', p_purchase_date: '2026-11-05', p_total_sen: 6_000,
     p_method: 'manual', p_raw_text: 'Synthetic sample; manual review', p_lines: [
       { id: 'line-1', description: 'HDMI adapter', amount: 4_500, kind: 'item' },
