@@ -46,4 +46,29 @@ describe('receipt semantics preserves financial authority', () => {
     controller.abort();
     await expect(result).rejects.toThrow('cancelled'); expect(terminated).toBe(true);
   });
+  it('worker initialization errors return an honest nonblocking fallback', async () => {
+    vi.stubGlobal('window', { location: { origin: 'http://127.0.0.1' } });
+    vi.stubEnv('VITE_RECEIPT_MODEL', 'on');
+    vi.stubGlobal('Worker', class extends EventTarget {
+      postMessage() { queueMicrotask(() => this.dispatchEvent(new Event('error'))); }
+      terminate() {}
+    });
+    expect((await understandReceipt('Cable 10.00', new AbortController().signal)).status).toBe('unavailable');
+  });
+  it('ignores another request identity before accepting matching predictions', async () => {
+    vi.stubGlobal('window', { location: { origin: 'http://127.0.0.1' } });
+    vi.stubEnv('VITE_RECEIPT_MODEL', 'on');
+    vi.stubGlobal('Worker', class extends EventTarget {
+      postMessage(input: { id: number; rows: string[] }) {
+        queueMicrotask(() => {
+          this.dispatchEvent(new MessageEvent('message', { data: { id: input.id + 1, error: 'Stale response' } }));
+          this.dispatchEvent(new MessageEvent('message', { data: { id: input.id, model: 'verified-test-model', predictions: input.rows.map(text => p(text)) } }));
+        });
+      }
+      terminate() {}
+    });
+    const result = await understandReceipt('Cable 10.00', new AbortController().signal);
+    expect(result.status).toBe('ready'); expect(result.model).toBe('verified-test-model');
+    expect(result.predictions[0].text).toBe('Cable 10.00');
+  });
 });
