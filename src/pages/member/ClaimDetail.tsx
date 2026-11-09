@@ -5,7 +5,6 @@ import { paymentState } from '../../domain/risk';
 import { memberClaimService } from '../../services/member-claims';
 import { ReceiptReview } from '../../components/treasurer/ReceiptReview';
 import { ClaimDestination } from '../../components/member/ClaimDestination';
-import { demoMode } from '../../services/supabase/client';
 import { Badge, Empty, PageHeader, Panel, Status, useFormat } from '../../components/ui';
 export function MemberClaimDetail() {
   const { id } = useParams(),
@@ -54,12 +53,12 @@ export function MemberClaimDetail() {
         title={claim.description}
         description={`${scope.activity.name} / ${scope.department.name}`}
       >
-        {demoMode && <Link className="btn primary" to={`/member/claims/${claim.id}/payment`}>
+        {<Link className="btn primary" to={`/member/claims/${claim.id}/payment`}>
           {payments.length ? 'View payment proof & receipt status' : 'View reimbursement status'}
         </Link>}
       </PageHeader>
       <div className="treasury-record-bar">
-        <Status value={claim.state} />
+        <Status value={claim.lifecycle ?? claim.state} />
         <Badge
           tone={
             state === 'Received confirmed'
@@ -137,12 +136,12 @@ export function MemberClaimDetail() {
       <ReceiptReview claimId={claim.id} amount={claim.amount} load={memberClaimService.receipt} />
       <Panel title="Claim status timeline" subtitle="Actual shared events, actors, and timestamps">
         <div className="treasury-evidence-history">
-          <article>
+          {!events.some((e) => e.action === 'Claim submitted') && <article>
             <h3>Claim submitted</h3>
             <p>
               {time(claim.review?.submittedAt ?? claim.date)} · {money(claim.amount)} requested
             </p>
-          </article>
+          </article>}
           {events.map((e) => (
             <article key={e.id}>
               <div className="row between wrap">

@@ -30,6 +30,7 @@ export function projectTreasury(store: Store): Store {
   const expenses = store.expenses.filter((e) => ids.has(e.activityId));
   const members = new Set([
     ...expenses.map((e) => e.review?.claimantId),
+    ...expenses.map((e) => e.review?.reviewer),
     ...store.assignments.filter((t) => ids.has(t.activityId)).map((t) => t.purchasing?.assigneeId),
   ]);
   return {

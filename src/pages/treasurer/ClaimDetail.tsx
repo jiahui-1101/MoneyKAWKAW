@@ -65,15 +65,15 @@ export function TreasuryClaimDetail() {
         title={claim.description}
         description={`${c.activity.name} / ${c.department.name}`}
       >
-        {demoMode && <Link className="btn" to={`/treasurer/claims/${id}/risk`}>
+        {<Link className="btn" to={`/treasurer/claims/${id}/risk`}>
           Budget & risk analysis
         </Link>}
-        {demoMode && claim.state === 'Pending review' && (
+        {claim.state === 'Pending review' && (
           <button className="btn primary" disabled={busy} onClick={() => void review()}>
             Start review
           </button>
         )}
-        {demoMode && claim.state === 'In review' && (
+        {claim.state === 'In review' && (
           <>
             <button className="btn danger" disabled={busy} onClick={() => setDecision('Declined')}>
               Decline claim
@@ -83,7 +83,7 @@ export function TreasuryClaimDetail() {
             </button>
           </>
         )}
-        {demoMode && claim.state === 'Approved' &&
+        {claim.state === 'Approved' &&
           (paid ? (
             <TextLink to={`/treasurer/history?claim=${id}`}>View payment record</TextLink>
           ) : (
@@ -97,9 +97,9 @@ export function TreasuryClaimDetail() {
           {error}
         </p>
       )}
-        {!demoMode && <Badge tone="neutral">Read only · decisions begin in Phase 04</Badge>}
+
       <div className="treasury-record-bar">
-        <Status value={claim.state} />
+        <Status value={claim.lifecycle ?? claim.state} />
         <Badge tone={paid ? 'green' : 'neutral'}>{paymentState(data, claim)}</Badge>
         <span>Submitted {time(claim.review?.submittedAt ?? claim.date)}</span>
       </div>
@@ -121,6 +121,7 @@ export function TreasuryClaimDetail() {
             ['Department available', money(dep.available)],
             [
               'Reviewer',
+              data.directory?.users.find((u) => u.id === claim.review?.reviewer)?.name ??
               demoProfiles.find((p) => p.userId === claim.review?.reviewer)?.name ??
                 'Not yet assigned',
             ],
@@ -143,7 +144,7 @@ export function TreasuryClaimDetail() {
           {claim.review?.justification || 'No justification was retained in this legacy sample.'}
         </p>
       </div>
-      {!demoMode && destination && <Panel title="Selected payment destination summary" subtitle="Masked for Treasurer review in Phase 03">
+      {!demoMode && destination && <Panel title="Selected payment destination summary" subtitle="Masked for review; full instructions require authorized payment access">
         <dl className="treasury-facts"><div><dt>Label</dt><dd>{destination.label}</dd></div>
           <div><dt>Type</dt><dd>{destination.kind}</dd></div>
           <div><dt>Holder</dt><dd>{destination.holder}</dd></div>
@@ -162,13 +163,13 @@ export function TreasuryClaimDetail() {
         subtitle="Append-only shared events · decision and payment remain distinct"
       >
         <div className="treasury-evidence-history">
-          <article>
+          {!events.some((e) => e.action === 'Claim submitted') && <article>
             <h3>Claim submitted</h3>
             <p>
               {time(claim.review?.submittedAt ?? claim.date)} · {money(claim.amount)} · original
               receipt and claimant changes retained.
             </p>
-          </article>
+          </article>}
           {events.map((e) => (
             <article key={e.id}>
               <div className="row between wrap">
@@ -182,7 +183,7 @@ export function TreasuryClaimDetail() {
           ))}
         </div>
       </Panel>
-      {demoMode && decision && (
+      {decision && (
         <ClaimDecision claim={claim} decision={decision} onClose={() => setDecision(null)} />
       )}
     </div>

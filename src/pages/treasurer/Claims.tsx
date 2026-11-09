@@ -16,7 +16,7 @@ export function TreasuryClaims({ reimbursements = false }: { reimbursements?: bo
         }
         description={
           !demoMode && !reimbursements
-            ? 'Review submitted member claims, the original receipt, and the saved modification history. Decisions and payments are unavailable until Phase 04.'
+            ? 'Review evidence and enter an independent decision. Approved claims can proceed to documented manual reimbursement.'
             :
           reimbursements
             ? 'Approved, unpaid claims with a selected payout snapshot. Record external transfers with proof.'
@@ -33,7 +33,7 @@ export function TreasuryClaims({ reimbursements = false }: { reimbursements?: bo
         title={reimbursements ? 'Pending reimbursements' : 'Claim review queue'}
         subtitle={
           !demoMode && !reimbursements
-            ? 'Read-only queue · pending claims are not approved or paid'
+            ? 'Review, decisions, payment obligations, and receipt confirmation stay distinct'
             :
           reimbursements
             ? 'Payments are recorded manually; this application does not move money.'
