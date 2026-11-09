@@ -7,6 +7,12 @@ import { memberCommand, memberData, memberEvent, memberRead, ownedClaim } from '
 import type { Store } from '../domain/models';
 import type { PaymentAccount } from '../domain/member';
 import type { PayoutSnapshot } from '../domain/treasury';
+import type { ClaimDraft } from '../domain/member';
+import { demoMode } from './supabase/client';
+import { claimDestination, submitClaim } from './supabase/member-claims';
+import { loadDraft, loadReceipt } from './supabase/member-receipts';
+import { supabaseClient } from './supabase/client';
+import { projectMember } from './member-core';
 export function destinationSnapshot(account: PaymentAccount, expenseId: string): PayoutSnapshot {
   return {
     revision: crypto.randomUUID(),
@@ -23,8 +29,9 @@ export function destinationSnapshot(account: PaymentAccount, expenseId: string):
     selectedBy: account.ownerId,
   };
 }
-function context(store: Store, id: string) {
-  const { draft, task } = draftRecord(store, id),
+function context(store: Store, id: string, loadedDraft?: ClaimDraft) {
+  const { draft: storedDraft, task } = draftRecord(store, id),
+    draft = loadedDraft ?? storedDraft,
     receipt = draft.receipt;
   if (!receipt?.extraction || !receipt.file)
     throw new Error('Upload a receipt and capture its source items first.');
@@ -61,9 +68,14 @@ function context(store: Store, id: string) {
 export const memberClaimService = {
   async context(id: string) {
     const { store } = await memberRead();
-    return context(store, id);
+    return context(store, id, demoMode ? undefined : await loadDraft(id));
   },
-  submit(id: string, expected: string, taskRevision: string, accountRevision: string) {
+  submit(id: string, expected: string, taskRevision: string, accountRevision: string, submissionKey = crypto.randomUUID()) {
+    if (!demoMode) return (async () => {
+      const result = await submitClaim(id, expected, taskRevision, accountRevision, submissionKey);
+      const refreshed = await memberRead();
+      return { data: projectMember(refreshed.store), result };
+    })();
     return memberCommand((store) => {
       const { draft, task } = draftRecord(store, id, expected),
         summary = context(store, id),
@@ -126,6 +138,11 @@ export const memberClaimService = {
     });
   },
   async receipt(id: string) {
+    if (!demoMode) {
+      const { data, error } = await supabaseClient().from('claims').select('*').eq('id', id).maybeSingle();
+      if (error || !data) throw new Error('Receipt evidence is unavailable in your authorized scope.');
+      return loadReceipt(data);
+    }
     const { store } = await memberRead();
     ownedClaim(store, id);
     const receipt = store.treasury!.receipts.find((r) => r.expenseId === id);
@@ -133,6 +150,13 @@ export const memberClaimService = {
     return structuredClone(receipt);
   },
   async destination(id: string) {
+    if (!demoMode) {
+      const row = await claimDestination(id);
+      if (!row) throw new Error('No selected payment destination was retained for this claim.');
+      return { expenseId: id, ownerId: requireRole('Member').userId, label: row.label,
+        kind: row.kind as PayoutSnapshot['kind'], holder: row.holder, institution: row.institution,
+        masked: row.masked, selectedAt: row.selected_at, selectedBy: requireRole('Member').userId };
+    }
     const { store } = await memberRead();
     ownedClaim(store, id);
     const payout = store.treasury!.payouts.find((p) => p.expenseId === id);
@@ -141,6 +165,7 @@ export const memberClaimService = {
     return safe;
   },
   changeDestination(id: string, accountId: string, reason: string) {
+    if (!demoMode) throw new Error('Submitted payment destinations are immutable until Phase 04.');
     return memberCommand((store) => {
       const claim = ownedClaim(store, id);
       if (claim.state === 'Declined' || store.payments.some((p) => p.expenseId === id))

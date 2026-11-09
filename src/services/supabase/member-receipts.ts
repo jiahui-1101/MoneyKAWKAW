@@ -66,8 +66,11 @@ export async function loadReceipt(claim: ClaimRow): Promise<ReceiptEvidence> {
     originalLines, addedLines, edits: receiptEdits, totalEdits,
     submittedAt: claim.submitted_at ?? claim.created_at,
     file: { name: receipt.original_filename, mime: receipt.mime_type as 'image/png' | 'image/jpeg', size: Number(receipt.size_bytes ?? 0) },
-    extraction: { method: (extraction.method === 'manual' ? 'manual' : 'tesseract'),
-      rawText: String(extraction.rawText ?? ''), at: String(extraction.at ?? receipt.uploaded_at ?? receipt.created_at) },
+    extraction: receipt.extraction ? {
+      method: extraction.method === 'manual' ? 'manual' : 'tesseract',
+      rawText: String(extraction.rawText ?? ''),
+      at: String(extraction.at ?? receipt.uploaded_at ?? receipt.created_at),
+    } : undefined,
   };
 }
 export async function loadDraft(id: string): Promise<ClaimDraft> {

@@ -31,8 +31,8 @@ export function useMemberDraft(id: string) {
     setRefreshing(true);
     try {
       await run(operation, message);
-      setDraft(await draftService.load(id));
     } finally {
+      try { setDraft(await draftService.load(id)); } catch { /* Keep the original operation error visible. */ }
       setRefreshing(false);
     }
   };

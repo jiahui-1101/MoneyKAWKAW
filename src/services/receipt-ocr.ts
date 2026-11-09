@@ -89,7 +89,9 @@ export async function recognizeReceipt(
   onProgress: (status: string, progress: number) => void,
   signal: AbortSignal,
 ): Promise<OcrSuggestion> {
-  validateReceiptFile(file);
+  if (file.dataUrl.startsWith('data:')) validateReceiptFile(file);
+  else if (!['image/png', 'image/jpeg'].includes(file.mime) || file.size > 1_048_576 || !file.name)
+    throw new Error('Receipt metadata is invalid. Reload the private original and retry.');
   const { createWorker } = await import('tesseract.js');
   let worker: Awaited<ReturnType<typeof createWorker>> | undefined;
   let rejectOperation: (error: Error) => void = () => {};

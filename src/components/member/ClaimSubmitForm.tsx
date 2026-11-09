@@ -27,6 +27,7 @@ export function ClaimSubmitForm({
     [reason, setReason] = useState(draft.justification),
     [summary, setSummary] = useState<Summary | null>(null),
     [confirm, setConfirm] = useState<Summary | null>(null),
+    [submissionKey] = useState(() => crypto.randomUUID()),
     [error, setError] = useState(''),
     [loading, setLoading] = useState(true);
   useEffect(() => {
@@ -81,13 +82,13 @@ export function ClaimSubmitForm({
             confirm.draftUpdatedAt,
             confirm.taskUpdatedAt,
             confirm.accountUpdatedAt,
+            submissionKey,
           ),
         'Claim submitted for Treasurer review. No approval or payment has occurred.',
       );
       navigate(`/member/claims/${claimId}`);
     } catch (e) {
       setError(e instanceof Error ? e.message : 'Unable to submit claim.');
-      setConfirm(null);
     }
   };
   return (
@@ -219,6 +220,7 @@ export function ClaimSubmitForm({
               silently edited. The Treasurer will review; approval and payment are separate.
             </p>
             {reason && <p className="member-quote">{reason}</p>}
+            {error && <p className="form-error" role="alert">{error}</p>}
             <div className="form-actions">
               <button className="btn" disabled={busy} onClick={() => setConfirm(null)}>
                 Keep reviewing
