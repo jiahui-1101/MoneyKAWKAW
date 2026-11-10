@@ -5,6 +5,20 @@ import { admin, anonymous, signIn, syntheticEmails, userId } from './helpers.mjs
 import { createFinancialClaim, ok } from './phase04-fixture.mjs';
 import { loadWorkflow } from './business-fixture.mjs';
 const context = (client, role, kind, id=null) => client.rpc('assistant_context',{p_role:role,p_kind:kind,p_record:id});
+
+test('assistant preserves claimant-only draft privacy even for independent Treasurers',async()=>{
+  const w=await loadWorkflow(),{client:hod}=await signIn(syntheticEmails.multimediaHod);
+  const {client:member}=await signIn(syntheticEmails.multimediaMember),{client:t}=await signIn(syntheticEmails.treasurer);
+  let task=ok(await hod.rpc('save_purchase_task',{p_id:null,p_request_key:randomUUID(),p_activity_id:w.activityId,
+    p_department_id:w.multimediaId,p_item_name:'Private draft context',p_description:'Draft privacy fixture',
+    p_assigned_member_id:await userId(syntheticEmails.multimediaMember),p_estimated_budget_sen:1,
+    p_due_date:'2026-12-20',p_priority:'Medium',p_expected_updated_at:null}));
+  task=ok(await member.rpc('update_my_purchase_progress',{p_task_id:task.id,p_status:'Purchased',p_expected_updated_at:task.updated_at}));
+  const id=ok(await member.rpc('begin_my_claim',{p_task_id:task.id,p_request_key:randomUUID()}));
+  assert.equal(ok(await context(member,'Member','CLAIM',id)).values.status,'Draft');
+  for(const kind of ['CLAIM','RISK','LIGHTGBM'])assert.ok((await context(t,'Treasurer',kind,id)).error);
+  assert.deepEqual(ok(await t.from('claims').select('id').eq('id',id)),[]);
+});
 test('assistant context preserves four-role privacy and canonical source facts',async()=>{
   const w=await loadWorkflow(),{claim,member}=await createFinancialClaim('Phase07 context');
   const {client:director}=await signIn(syntheticEmails.director),{client:treasurer}=await signIn(syntheticEmails.treasurer);

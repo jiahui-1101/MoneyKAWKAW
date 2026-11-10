@@ -5,7 +5,7 @@ begin
   select * into c from public.claims where id=p_id;
   if not found or not ((p_role='Member' and c.claimant_user_id=(select auth.uid())
     and private.has_department_role(c.department_id,'Member') and p_kind='CLAIM') or
-    (p_role='Treasurer' and c.claimant_user_id<>(select auth.uid()) and private.is_claim_treasurer(c.id))) then
+    (p_role='Treasurer' and c.status<>'Draft' and c.claimant_user_id<>(select auth.uid()) and private.is_claim_treasurer(c.id))) then
     raise exception 'Claim context unavailable' using errcode='42501'; end if;
   values_json:=jsonb_build_object('status',c.status,'claim_sen',c.claimed_amount_sen,
     'estimate_sen',c.item_budget_sen_snapshot,'approved_sen',c.approved_amount_sen,
