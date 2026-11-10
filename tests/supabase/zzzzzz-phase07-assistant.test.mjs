@@ -21,6 +21,7 @@ test('assistant context preserves four-role privacy and canonical source facts',
     [other,'Member','CLAIM',claim.id],[member,'Member','RISK',claim.id],[hod,'HOD','DEPARTMENT',w.marketingId],
     [member,'Director','ACTIVITY',w.activityId],[anonymous,'Member','HELP',null]])
     assert.ok((await context(client,role,kind,id)).error);
+  for(const role of [null,'','Administrator']) assert.ok((await context(member,role,'ACTIVITY',w.activityId)).error);
   const uninvited=(await signIn(syntheticEmails.uninvited)).client;
   assert.ok((await context(uninvited,'Member','HELP')).error);
   for(const value of [c,risk,budget,dep]){

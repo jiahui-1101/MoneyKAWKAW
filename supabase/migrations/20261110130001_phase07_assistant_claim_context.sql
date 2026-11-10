@@ -36,7 +36,9 @@ returns jsonb language plpgsql stable security definer set search_path='' as $$
 declare profile jsonb; payload jsonb;
 begin
   profile:=public.current_club_session();
-  if (select auth.uid()) is null or profile is null or not(coalesce(profile->'roles','[]'::jsonb) ? p_role) then
+  if (select auth.uid()) is null or profile is null or p_role is null
+    or p_role not in ('Director','Treasurer','HOD','Member')
+    or not coalesce((profile->'roles') ? p_role,false) then
     raise exception 'Active assigned club role required' using errcode='42501'; end if;
   if p_kind='HELP' and p_record is null then payload:=jsonb_build_object('values','{}'::jsonb);
   elsif p_kind in ('ACTIVITY','DEPARTMENT','TASKS') and p_record is not null then
