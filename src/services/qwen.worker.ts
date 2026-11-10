@@ -10,6 +10,9 @@ wasm.numThreads = 1;
 wasm.proxy = false;
 let generator: TextGenerationPipeline | undefined;
 let version = '', device = '';
+const createGenerator = pipeline as (task: 'text-generation', directory: string, options: {
+  dtype: 'q4f16'; device: 'wasm' | 'webgpu'; progress_callback: (p: Record<string, unknown>) => void;
+}) => Promise<TextGenerationPipeline>;
 export interface QwenRequest { id: string; system: string; user: string; device: 'wasm' | 'webgpu' }
 self.onmessage = async ({ data }: MessageEvent<QwenRequest>) => {
   const { id, system, user } = data;
@@ -27,13 +30,13 @@ self.onmessage = async ({ data }: MessageEvent<QwenRequest>) => {
       throw new Error('Incompatible Qwen manifest.');
     if (generator && (version !== m.version || device !== data.device)) { await generator.dispose(); generator = undefined; }
     if (!generator) {
-      generator = await pipeline('text-generation', m.directory, { dtype: 'q4f16', device: data.device,
+      generator = await createGenerator('text-generation', m.directory, { dtype: 'q4f16', device: data.device,
         progress_callback: (p) => self.postMessage({ id, phase: 'loading', progress: 'progress' in p ? p.progress : undefined }) });
       version = m.version; device = data.device;
     }
     const initializedMs = performance.now() - start;
-    const prompt = generator.tokenizer.apply_chat_template([{ role: 'system', content: system }, { role: 'user', content: user }],
-      { tokenize: false, add_generation_prompt: true, enable_thinking: false }) as string;
+    const templateOptions = { tokenize: false, add_generation_prompt: true, enable_thinking: false };
+    const prompt = generator.tokenizer.apply_chat_template([{ role: 'system', content: system }, { role: 'user', content: user }], templateOptions) as string;
     if (generator.tokenizer.encode(prompt).length > 1024) throw new Error('Qwen context exceeds token limit.');
     let firstTokenMs: number | undefined, tokens = 0;
     const streamer = new TextStreamer(generator.tokenizer, { skip_prompt: true, skip_special_tokens: true,
