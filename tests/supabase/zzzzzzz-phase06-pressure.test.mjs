@@ -22,7 +22,7 @@ test('pressure snapshots require independent current Treasurer grants and expose
   assert.equal(value.raw.available_sen, finance.available);
   assert.equal(value.raw.pending_sen, finance.pending);
   assert.deepEqual(Object.keys(value).sort(), ['schema','claimId','revision','updatedAt','asOf','horizonEnd','raw'].sort());
-  assert.equal(Object.keys(value.raw).length, 15);
+  assert.equal(Object.keys(value.raw).length, 14);
   assert.ok(Object.values(value.raw).every(Number.isSafeInteger));
   assert.deepEqual(ok(await treasurer.rpc('financial_summaries')), before);
   assert.equal(ok(await member.from('claims').select('status').eq('id', claim.id).single()).status, 'Pending');
