@@ -1,0 +1,12 @@
+.assistant-entry { position: fixed; right: var(--space-5); bottom: var(--space-5); z-index: 35; box-shadow: var(--shadow-popover); }
+.assistant-panel { max-width: 100%; overflow-wrap: anywhere; }
+.assistant-panel textarea { width: 100%; resize: vertical; }
+.assistant-panel select { width: 100%; min-width: 0; }
+.assistant-messages { display: grid; gap: var(--space-4); }
+.assistant-answer { padding: var(--space-4); border: 1px solid var(--line); border-radius: var(--radius); background: var(--surface-soft); }
+.assistant-prose { white-space: pre-wrap; line-height: 1.7; }
+.assistant-panel summary { cursor: pointer; font-weight: 600; }
+@media (max-width: 600px) {
+  .assistant-entry { right: var(--space-3); bottom: var(--space-3); }
+  .assistant-panel .row > .btn { max-width: 100%; white-space: normal; text-align: left; }
+}

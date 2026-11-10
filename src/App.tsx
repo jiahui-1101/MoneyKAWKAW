@@ -12,6 +12,7 @@ import { SessionProvider } from './context/Session';
 import { useSession } from './context/session-context';
 import { DemoAccess, RoleGate } from './components/DemoAccess';
 import { roleHome } from './domain/session';
+import { AssistantHost } from './components/assistant/AssistantHost';
 const MemberRoutes = lazy(() =>
   import('./pages/member/MemberRoutes').then((m) => ({ default: m.MemberRoutes })),
 );
@@ -128,6 +129,7 @@ export default function App() {
             </Route>
             <Route path="*" element={<LandingRedirect missing />} />
           </Routes>
+          <AssistantHost />
         </SessionProvider>
       </BrowserRouter>
     </ErrorBoundary>

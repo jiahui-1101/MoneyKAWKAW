@@ -2,7 +2,7 @@ import { supabaseClient, demoMode } from './supabase/client';
 import { checked } from './supabase/finance';
 import { validateAssistantContext, type AssistantContext, type AssistantIntent } from '../domain/assistant';
 import type { DemoActor } from '../domain/session';
-export interface AssistantChoice { id: string; label: string; type: 'ACTIVITY' | 'DEPARTMENT' | 'CLAIM' }
+export interface AssistantChoice { id: string; label: string; activityId?: string; type: 'ACTIVITY' | 'DEPARTMENT' | 'CLAIM' }
 export async function assistantContext(actor: DemoActor, kind: AssistantIntent, id: string | null, signal: AbortSignal) {
   if (demoMode) throw new Error('Use an authenticated local or Supabase workspace for financial context.');
   const client = supabaseClient();
@@ -29,8 +29,8 @@ export async function assistantChoices(actor: DemoActor, signal: AbortSignal): P
     departmentScopes: { departmentId: string; role: string }[] };
   const ids = profile.departmentScopes.filter((s) => s.role === actor.role).map((s) => s.departmentId);
   if (!ids.length) throw new Error('Your department assignment changed.');
-  const departments = checked(await client.from('departments').select('id,name').in('id',ids).limit(30).abortSignal(signal));
-  const result: AssistantChoice[] = departments.map((d) => ({ id: d.id, label: d.name, type: 'DEPARTMENT' }));
+  const departments = checked(await client.from('departments').select('id,name,activity_id').in('id',ids).limit(30).abortSignal(signal));
+  const result: AssistantChoice[] = departments.map((d) => ({ id: d.id, label: d.name, activityId:d.activity_id, type: 'DEPARTMENT' }));
   if (actor.role === 'Member') {
     const claims = checked(await client.from('claims').select('id,status,claimed_amount_sen')
       .eq('claimant_user_id',actor.userId).in('department_id',ids).order('created_at',{ascending:false}).limit(30).abortSignal(signal));
