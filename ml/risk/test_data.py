@@ -56,6 +56,14 @@ class DataTests(unittest.TestCase):
         self.assertTrue(advance(tasks[0], tasks, 10000, rng, .2))
         self.assertEqual(tasks[0].status, 'pending')
 
+    def test_renamed_or_scaled_trajectory_cannot_cross_splits(self):
+        data = copy.deepcopy(self.data)
+        clone = copy.deepcopy(data['rows'][0])
+        clone.update(activity='SYNTHETIC-copy', family=999, split='test', trajectory='0' * 64)
+        data['rows'].append(clone)
+        with self.assertRaisesRegex(AssertionError, 'Near-duplicate'):
+            validate(data)
+
 
 if __name__ == '__main__':
     unittest.main()

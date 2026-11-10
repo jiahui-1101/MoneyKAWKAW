@@ -9,7 +9,7 @@ from schema import SCHEMA, vector
 def validate(data):
     assert data['provenance'] == 'SYNTHETIC' and data['version'] == VERSION
     assert data['schema'] == SCHEMA['version']
-    activities, families, trajectories = {}, {}, set()
+    activities, families, trajectories, normalized = {}, {}, set(), {}
     for row in data['rows']:
         split = row['split']
         assert split in ('train', 'validation', 'test', 'challenge')
@@ -18,6 +18,15 @@ def validate(data):
             groups[row[key]] = split
         assert row['trajectory'] not in trajectories, 'Duplicate trajectory'
         trajectories.add(row['trajectory'])
+        # Detect scaled / minimally rounded copies even when activity IDs differ.
+        # Check observed+label-window event shape and dimensionless financial state.
+        allocation = row['raw']['allocation_sen']
+        signature = json.dumps([
+            [round(v, 3) for v in row['features'][1:]],
+            [(e['day'], e['kind'], e['blocked'], round(e['amount_sen'] / allocation, 3))
+             for e in row['observed_events'] + row['future_events']]], sort_keys=True)
+        assert signature not in normalized or normalized[signature] == split, 'Near-duplicate split leakage'
+        normalized[signature] = split
         assert row['features'] == vector(row['raw']), 'Outcome/future-derived feature'
         assert row['feature_day'] <= row['prediction_day'] < row['horizon_day']
         assert row['horizon_day'] <= row['prediction_day'] + SCHEMA['horizonDays']
