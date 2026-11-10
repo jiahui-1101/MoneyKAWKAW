@@ -8,6 +8,7 @@ import { BudgetLifecycle, Metrics, Overspending, RecentActivity } from '../compo
 import { Departments } from '../components/Departments';
 import { SharedPurchasingPlans } from '../components/SharedPurchasingPlans';
 import { Empty, Panel, Progress, Status, TextLink, useFormat } from '../components/ui';
+import { demoMode } from '../services/supabase/client';
 
 export function ActivityDetail({
   tab = 'overview',
@@ -215,6 +216,10 @@ function DepartmentBreakdown({ store, activity }: { store: Store; activity: Acti
 function ExpenseRecords({ store, activity }: { store: Store; activity: Activity }) {
   const { money, date } = useFormat();
   const [state, setState] = useState('');
+  if (!demoMode) return <Panel title="Private claim records" subtitle="Director access uses authorized financial aggregates">
+    <p className="data-note">The department totals above include recorded reimbursements. Individual claims,
+      receipts, payment destinations and proof remain private to their claimant and authorized Treasurer.</p>
+  </Panel>;
   const expenses = store.expenses.filter(
     (e) => e.activityId === activity.id && (!state || e.state === state),
   );
