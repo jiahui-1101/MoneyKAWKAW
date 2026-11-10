@@ -20,6 +20,8 @@ export function routeAssistant(question: string, role: Role, previous?: Assistan
   if (/lightgbm|model.*disagree|模型.*分歧|模型.*不一致/i.test(question)) return role === 'Treasurer' ? 'LIGHTGBM' : 'REFUSE';
   if (/risk|variance|over.?budget|exceed|风险|超支|lebihan/i.test(question)) return role === 'Treasurer' ? 'RISK' : 'HELP';
   if (/difference between|what does|explain.*mean|什么意思|如何|怎么|bagaimana/i.test(question)) return 'HELP';
+  if (/task|purchase|overdue|tugas|采购|任务/i.test(question) && ['HOD','Member'].includes(role)) return 'TASKS';
+  if (role === 'Director' && /paid|obligations|已付|bayaran/i.test(question) && !/claim|索赔|tuntutan/i.test(question)) return 'ACTIVITY';
   if (/claim|pending|paid|received|rejected|tuntutan|bayaran|索赔|报销|收款|审批/i.test(question)) return ['Member','Treasurer'].includes(role) ? 'CLAIM' : 'HELP';
   if (/task|purchase|overdue|tugas|采购|任务/i.test(question)) return ['HOD','Member'].includes(role) ? 'TASKS' : 'HELP';
   if (/budget|available|spending|allocation|bajet|预算|支出|余额/i.test(question)) return ['Director','Treasurer'].includes(role) ? 'ACTIVITY' : 'DEPARTMENT';

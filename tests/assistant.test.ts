@@ -11,6 +11,8 @@ it('routes multilingual fixed intents without granting extra access', () => {
   expect(routeAssistant('What is the status of my claim?','Member')).toBe('CLAIM');
   expect(routeAssistant('Why?','Member','CLAIM')).toBe('CLAIM');
   expect(routeAssistant('How much purchasing budget is available?','HOD')).toBe('DEPARTMENT');
+  expect(routeAssistant('Which tasks are pending in my department?','HOD')).toBe('TASKS');
+  expect(routeAssistant('How much has been paid?','Director')).toBe('ACTIVITY');
   expect(routeAssistant('请解释预算余额','Director')).toBe('ACTIVITY');
   expect(routeAssistant('Apakah status tuntutan saya?','Member')).toBe('CLAIM');
   expect(routeAssistant('Why is the risk High?','Treasurer')).toBe('RISK');
