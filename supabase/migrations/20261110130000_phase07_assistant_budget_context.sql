@@ -24,13 +24,13 @@ begin
     'unclaimed_sen',(f->>'unclaimed')::bigint,'pending_sen',(f->>'pending')::bigint,
     'liability_sen',(f->>'liability')::bigint,'paid_sen',(f->>'paid')::bigint);
   if p_kind='TASKS' then
-    select totals||jsonb_build_object('open_tasks',count(*) filter(where status not in ('Completed','Cancelled')),
-      'overdue_tasks',count(*) filter(where status not in ('Completed','Cancelled') and due_date<current_date))
+    select totals||jsonb_build_object('open_tasks',count(*) filter(where status in ('Not Started','In Progress')),
+      'overdue_tasks',count(*) filter(where status in ('Not Started','In Progress') and due_date<current_date))
       into totals from public.purchase_tasks where department_id=d.id;
     return jsonb_build_object('values',totals,'details',jsonb_build_object('tasks',coalesce((
       select jsonb_agg(jsonb_build_object('id',x.id,'item',left(x.item_name,120),'status',x.status,'due',x.due_date))
       from (select id,item_name,status,due_date from public.purchase_tasks where department_id=d.id
-        and status not in ('Completed','Cancelled') order by due_date,id limit 10) x),'[]'::jsonb)));
+        and status in ('Not Started','In Progress') order by due_date,id limit 10) x),'[]'::jsonb)));
   end if;
   return jsonb_build_object('values',totals);
 end;
