@@ -33,11 +33,15 @@ def export():
     out.mkdir(parents=True, exist_ok=True)
     (out / f'{digest}.json').write_bytes(encoded)
     training = json.loads((ROOT / 'training.json').read_text())
+    evaluation = json.loads((ROOT / 'evaluation.json').read_text())
     manifest = dict(name='LightGBM future budget pressure', version=f'pressure-v1:{digest[:12]}',
                     sha256=digest, file=f'{digest}.json', featureSchema=SCHEMA['version'],
                     trainedAt=training['trained_at'], dataset='SYNTHETIC', experimental=True,
                     horizonDays=30, target='Future demand or approval blocked by department budget',
-                    realWorldValidation=False, iterations=model.current_iteration(), bytes=len(encoded))
+                    realWorldValidation=False, iterations=model.current_iteration(), bytes=len(encoded),
+                    datasetSha256=training['dataset_sha256'],
+                    evaluation={s: {k: v for k, v in evaluation[s]['lightgbm'].items() if k != 'calibration'}
+                                for s in ('test', 'challenge')})
     (out / 'manifest.json').write_text(json.dumps(manifest, indent=2))
     (ROOT / 'export.json').write_text(json.dumps(manifest, indent=2))
     # ONNX uses ai.onnx.ml tree operators; evaluate separately from JS deployment.

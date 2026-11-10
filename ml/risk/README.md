@@ -41,3 +41,54 @@ boundary. No personal names, bank identifiers, files or user tokens are inputs.
 Runtime is lazy, local browser decision support. The authoritative SQL rule
 assessment, financial locks, role checks and approval constraints remain intact.
 No Qwen, archiving, hosted release, paid services or BERT changes are included.
+
+## Reproduce locally (Python 3.11, CPU)
+
+```powershell
+py -3.11 -m venv .local/phase06/venv
+.local/phase06/venv/Scripts/python.exe -m pip install -r ml/risk/requirements.lock.txt
+.local/phase06/venv/Scripts/python.exe ml/risk/simulate.py
+.local/phase06/venv/Scripts/python.exe ml/risk/validate.py
+.local/phase06/venv/Scripts/python.exe -m unittest discover -s ml/risk -p test_data.py
+.local/phase06/venv/Scripts/python.exe ml/risk/train.py
+.local/phase06/venv/Scripts/python.exe ml/risk/evaluate.py
+.local/phase06/venv/Scripts/python.exe ml/risk/export.py
+.local/phase06/venv/Scripts/python.exe ml/risk/parity.py
+node ml/risk/parity.mjs
+.local/phase06/venv/Scripts/python.exe ml/risk/onnx-parity.py
+.local/phase06/venv/Scripts/python.exe -m unittest discover -s ml/risk -p 'test_*.py'
+```
+
+Artifacts, reports and datasets are ignored. To package the browser feature,
+include only `public/models/budget-pressure/manifest.json` and the JSON tree file
+it names. No Python dependencies or test trajectories belong in the browser.
+Missing model assets produce an honest nonblocking unavailable state. Set
+`VITE_PRESSURE_MODEL=off` to disable inference; no server data is sent to a model
+host. Only independent authorized Treasurers can fetch current claim features.
+
+## Export choice and explanation
+
+ONNX export succeeds and native/WASM inference runs with `zipmap=False`. Default
+ZipMap output is not readable by the existing web runtime. More significantly,
+float32 conversion changes some threshold-neighbour predictions. We retain that
+measured evidence, and deploy the actual numeric trees with JavaScript double
+precision instead. `parity.mjs` tests the exact application evaluator against
+native LightGBM over random, boundary, missing, held-out and challenge inputs.
+It also compares every prepared feature vector with the application transformer.
+
+The exporter rejects categorical splits or unsupported missing modes. Each local
+explanation attributes child-minus-parent expected leaf values to the visited
+feature. Contributions plus the training-weighted base equal the raw logit.
+These are tree-path associations, **not SHAP or causal explanations**. They
+faithfully describe this trained simulator model, not reliable financial causes.
+The UI shows a timestamped transient snapshot; it does not write ML results to
+the claim or pretend they formed part of the immutable SQL decision assessment.
+
+Training uses unweighted binary log loss because the generated training class
+balance is moderate; the observed class counts and minority recall are reported.
+Two predeclared tree sizes are selected by validation loss with early stopping.
+Test/challenge results must not be used to tune a replacement model without a
+new independent evaluation set. Missing historical features are omitted from
+this schema; missing required current values reject inference rather than using
+invented zeroes. The low-level evaluator supports model-native missing branches
+for parity testing, not silent imputation of unavailable financial records.
