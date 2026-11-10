@@ -1,4 +1,4 @@
-import { useEffect, useState, type FormEvent } from 'react';
+import { useEffect, useMemo, useState, type FormEvent } from 'react';
 import { useLocation } from 'react-router-dom';
 import { useSession } from '../../context/session-context';
 import { roleHome } from '../../domain/session';
@@ -9,7 +9,8 @@ import { workflowHelp } from '../../domain/assistant-answer';
 import { useAssistant } from './useAssistant';
 import { AssistantAnswers } from './AssistantAnswers';
 export default function AssistantPanel({ onClose }: { onClose: () => void }) {
-  const { actor } = useSession(), location = useLocation();
+  const { actor: sessionActor } = useSession(), location = useLocation();
+  const actor = useMemo(() => ({ ...sessionActor }), [sessionActor]);
   const [choices, setChoices] = useState<AssistantChoice[]>([]), [selected, setSelected] = useState('');
   const [question, setQuestion] = useState(''), [error, setError] = useState('');
   const choice = choices.find((c) => c.id === selected);
@@ -20,7 +21,7 @@ export default function AssistantPanel({ onClose }: { onClose: () => void }) {
       if (!control.signal.aborted) { setChoices(data); setSelected(data.find((c) => location.pathname.includes(c.id))?.id ?? ''); }
     }).catch(() => { if (!control.signal.aborted) setError('Authorized record list unavailable. Workflow help remains available.'); });
     return () => control.abort();
-  }, [actor.userId, actor.role, location.pathname]);
+  }, [actor, location.pathname]);
   const questions = actor.role === 'Director' ? ['What is the activity budget?', 'How much has been paid?'] :
     actor.role === 'Treasurer' ? ['What is the status of this claim?', 'Why is this claim High Risk?', 'Explain LightGBM disagreement'] :
     actor.role === 'HOD' ? ['Which tasks are pending in my department?', 'How much purchasing budget is available?'] :

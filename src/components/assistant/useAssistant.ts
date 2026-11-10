@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import type { DemoActor } from '../../domain/session';
 import { assistantLanguage, routeAssistant, type AssistantContext, type AssistantIntent } from '../../domain/assistant';
 import { deterministicAnswer, qwenPrompt, validateQwenAnswer } from '../../domain/assistant-answer';
@@ -11,16 +11,16 @@ export function useAssistant(actor: DemoActor, selected: string, selectedType: s
   const [enabled, setEnabled] = useState(false), [device, setDevice] = useState<'wasm' | 'webgpu'>('wasm');
   const model = useRef(new QwenSession()), active = useRef<AbortController | null>(null);
   const previous = useRef<AssistantIntent | undefined>(undefined);
-  const clear = () => {
-    active.current?.abort(); model.current.cancel(); previous.current = undefined;
+  const stop = useCallback(() => { active.current?.abort(); model.current.cancel(); }, []);
+  const clear = useCallback(() => {
+    stop(); previous.current = undefined;
     setMessages([]); setFacts(undefined); setBusy(false);
-  };
+  }, [stop]);
   useEffect(() => {
     clear();
-    return () => { active.current?.abort(); model.current.cancel(); };
+    return stop;
     // Identity and route are keyed by the host; scope changes clear private state.
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [selected]);
+  }, [selected, clear, stop]);
   useEffect(() => {
     if (!facts) return;
     const control = new AbortController();
@@ -33,7 +33,7 @@ export function useAssistant(actor: DemoActor, selected: string, selectedType: s
     const timer = setInterval(() => void check(), 30000);
     window.addEventListener('focus', check);
     return () => { clearInterval(timer); control.abort(); window.removeEventListener('focus', check); };
-  }, [facts, actor.userId, actor.role]);
+  }, [facts, actor, clear]);
   const send = async (question: string) => {
     if (busy) return;
     const kind = routeAssistant(question, actor.role, previous.current);
