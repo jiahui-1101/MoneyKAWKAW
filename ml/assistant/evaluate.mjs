@@ -13,7 +13,9 @@ const manifest=JSON.parse(readFileSync('public/models/qwen-assistant/manifest.js
 env.allowRemoteModels=false;env.localModelPath=resolve('public/models')+'/';
 const started=performance.now();
 const model=await pipeline('text-generation',manifest.directory,{dtype:'q4f16',device:'cpu'});
-const initializedMs=performance.now()-started, rows=[];
+const initializedMs=performance.now()-started;
+const prior=process.argv.includes('--append-only')?JSON.parse(readFileSync('.local/phase07/evaluation.json')):null;
+const rows=prior?.rows??[];
 const score=(text,context)=>{
   if(!context)return {statusMentioned:null,unsupportedNumbers:null,validated:null};
   const reference=deterministicAnswer(context), nums=s=>(s.replace(/(?<=\d),(?=\d)/g,'').match(/-?\d+(?:\.\d+)?/g)??[]).map(Number);
@@ -22,6 +24,7 @@ const score=(text,context)=>{
     unsupportedNumbers:nums(text).filter(n=>!allowed.has(n)),validated:Boolean(validateQwenAnswer(text,context))};
 };
 for(const c of data){
+  if(rows.some(r=>r.id===c.id))continue;
   const outputs={};
   for(const mode of ['withoutContext','withContext']){
     if(mode==='withContext'&&c.denied)continue;
@@ -41,7 +44,8 @@ for(const c of data){
   rows.push({id:c.id,role:c.role,language:assistantLanguage(c.question),denied:Boolean(c.denied),context:c.context,
     deterministic,outputs,hybrid:{text:accepted??deterministic,method:accepted?'Qwen':'Deterministic fallback'},
     note:'Automated checks are limited; use the documented human financial-grounding rubric.'});
-  writeFileSync('.local/phase07/evaluation.json',JSON.stringify({model:manifest.version,initializedMs,rssBytes:process.memoryUsage().rss,rows},null,2));
+  writeFileSync('.local/phase07/evaluation.json',JSON.stringify({model:manifest.version,initializedMs:prior?.initializedMs??initializedMs,
+    appendedInitializationMs:prior?initializedMs:undefined,rssBytes:Math.max(prior?.rssBytes??0,process.memoryUsage().rss),rows},null,2));
   console.log(c.id,'completed',accepted?'Qwen accepted':'deterministic retained');
 }
 await model.dispose();
