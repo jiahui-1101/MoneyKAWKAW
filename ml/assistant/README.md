@@ -49,3 +49,82 @@ injection attempts. Record exact counts and a human rubric for prose quality.
 Run existing financial/RLS/BERT/LightGBM regressions and the complete real-local
 browser lifecycle, cancellation/revocation/failure and measured responsive QA.
 Internal reports/transcripts stay ignored under .local/phase07.
+
+## Reproduce the selected runtime
+
+Selected: Qwen3-0.6B, Apache-2.0, ONNX q4f16, version
+`qwen3:9e33a5911974`. The downloader pins upstream revisions, verifies each
+artifact's SHA-256 and retains the original license. No fine-tuning is claimed.
+
+```sh
+python ml/assistant/download.py --help
+python ml/assistant/download.py --activate
+npm run prepare:receipt-model
+npm run dev
+```
+
+Use the downloader's documented candidate argument if comparing Qwen2.5.
+The selected model requires 578,918,903 bytes including tokenizer assets.
+Only package the selected manifest and its referenced directory; comparison
+weights and temporary probe pages are not release assets. Existing receipt JSEP
+runtime files are reused without changing BERT. All models stay outside Git.
+The model is optional: `VITE_QWEN_MODEL=off` disables it; otherwise the checkbox
+still defaults off. No automatic model download occurs at login.
+
+The locked Transformers.js 3.8.1 native Node runtime requires disabling Node's
+new native Float16Array when benchmarking this q4f16 graph:
+
+```sh
+node --no-js-float16array ml/assistant/benchmark.mjs
+node ml/assistant/capture.mjs
+node --no-js-float16array ml/assistant/evaluate.mjs
+```
+
+This flag is for the native CPU benchmark only. Browser WASM and WebGPU have
+both executed the actual graph. WebGPU requires a compatible device; WASM is
+available explicitly and can be much slower. The worker uses one WASM thread,
+at most 1,024 input tokens and 128 generated tokens, greedy decoding and a
+120-second deadline. Cancellation destroys its worker and model allocation.
+Browser/model caches may retain public weights; private context is not saved
+there by this application. Network-offline operation is not guaranteed.
+
+## Evaluation rubric and interpretation
+
+A = deterministic database explanation; B = actual Qwen without club context;
+C = actual Qwen with authorized minimized context; D = validated C or A.
+Capture uses authenticated loopback Supabase fixtures, never model-generated
+expected answers. Historical state snapshots remain evaluation fixtures after
+the live claim changes state. These are correlated synthetic examples, not a
+held-out representative user population or an independent model accuracy study.
+
+Review every raw output for invented facts, amount-to-label correctness,
+current status versus workflow guidance, authority/settlement confusion,
+language compliance, completeness and usefulness. Count an incorrect assertion
+as a failure even if other parts are correct. An honest unknown answer is
+preferable to fabrication. Unauthorized cases must expose no private context;
+their B-only answers do not test database authorization. RLS/RPC tests do that.
+Report sample counts, failures and fallback frequency separately. Automatic
+number/status checks and validation acceptance are not semantic accuracy scores.
+
+The validator rejects important numeric/status errors and truncated runtime
+outputs, but it is a heuristic and cannot prove all paraphrases correct. Always
+retain the expandable canonical facts/source panel. Deterministic fallback is
+currently English even when Qwen is asked to use Malay or Chinese.
+
+## Availability and scope limits
+
+Qwen: **Local Demo Verified — Hosted Availability Unresolved**.
+No deployment or hosted capacity has been verified. One fresh selected-model
+download is about 579 MB: 10/50/100 clients imply approximately 5.79/28.95/57.89
+GB before runtime assets, cache misses or model updates. No free hosting quota
+or zero-cost multi-user availability is assumed. Desktop CPU benchmark RSS is
+roughly 2.2 GB; peak browser/mobile memory remains unmeasured. Responsive desktop
+browser emulation does not establish physical-phone inference feasibility.
+
+Retrieval is selected-record based, with at most 30 record choices and 10 task
+details. Open-ended SQL, bulk analytics, autonomous actions, financial writes,
+bank validation, archive operations and production hosting are unsupported.
+Every answer rechecks authorization before and after inference. Open history
+is rechecked on focus and every 30 seconds; remote revocation while idle can
+therefore leave already-visible text until the next check. Closing, changing
+scope/route/identity or clearing the conversation removes its in-memory history.
