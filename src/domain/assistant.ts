@@ -31,8 +31,18 @@ export function validateAssistantContext(c: AssistantContext, role: Role, kind: 
       !/^[a-f0-9]{64}$/.test(c.revision) || !Number.isFinite(Date.parse(c.asOf)) || !c.values ||
       Object.keys(c.values).length > 30 || Object.entries(c.values).some(([k,v]) =>
         !/^[a-z_]+$/.test(k) || /bank|account|token|password|identifier|url|holder/.test(k) ||
-        !(v === null || (typeof v === 'string' && v.length <= 80) || (typeof v === 'number' && Number.isFinite(v)))))
+        !(v === null || (typeof v === 'string' && v.length <= 80) || (typeof v === 'number' && Number.isFinite(v))) ||
+        (k.endsWith('_sen') && v !== null && !Number.isSafeInteger(v))))
     throw new Error('Incompatible or restricted assistant context.');
   if (JSON.stringify(c).length > 12000) throw new Error('Assistant context exceeds its limit.');
+  if (c.details?.reason !== undefined && (typeof c.details.reason !== 'string' || c.details.reason.length > 300))
+    throw new Error('Invalid source reason.');
+  if (c.details?.tasks && (!Array.isArray(c.details.tasks) || c.details.tasks.length > 10 || c.details.tasks.some((t) =>
+    typeof t.id !== 'string' || typeof t.item !== 'string' || t.item.length > 120 || typeof t.status !== 'string' || !/^\d{4}-\d{2}-\d{2}$/.test(t.due))))
+    throw new Error('Invalid task source.');
+  if (c.ml && (c.ml.version !== 'pressure-v1:a711a680f94c' || !Number.isFinite(c.ml.score) || c.ml.score < 0 || c.ml.score > 1 ||
+    c.ml.provenance !== 'unverified_client_advisory' || !Array.isArray(c.ml.contributions) || c.ml.contributions.length !== 14 ||
+    !c.ml.contributions.every(Number.isFinite) || !Number.isFinite(Date.parse(c.ml.horizon))))
+    throw new Error('Incompatible experimental model advice.');
   return c;
 }

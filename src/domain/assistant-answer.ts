@@ -50,11 +50,10 @@ export function validateQwenAnswer(text: string, c: AssistantContext): string | 
     ['(?:submitted |claimed )?(?:claim amount|claim)|索赔金额|jumlah tuntutan','claim_sen'],
     ['difference|over-budget amount|差额|超支金额','variance_sen'], ['paid amount|paid expenditure|已付款金额','paid_sen']];
   for (const [label, key] of bindings) {
-    if (typeof c.values[key] !== 'number') continue;
     const expected = Number(c.values[key]) / 100;
     for (const regex of [new RegExp(`(?:${label})\\s*[:=-]?\\s*(?:is\\s+)?(?:RM|MYR)\\s*([\\d,.]+)`, 'ig'),
       new RegExp(`(?:RM|MYR)\\s*([\\d,.]+)\\s*[:=-]\\s*(?:${label})`, 'ig')]) {
-      for (const match of plain.matchAll(regex)) if (Number(match[1].replace(/,/g,'')) !== expected) return null;
+      for (const match of plain.matchAll(regex)) if (typeof c.values[key] !== 'number' || Number(match[1].replace(/,/g,'')) !== expected) return null;
     }
   }
   if (/has decided|has approved|has paid|already approved|automatically approve|bank has verified|payment succeeded|settlement confirmed|guaranteed|real.world accuracy|caused by|已经批准|已经付款|银行已核实|保证|telah diluluskan|bayaran berjaya/i.test(clean)) return null;
