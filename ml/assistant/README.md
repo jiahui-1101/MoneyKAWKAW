@@ -132,15 +132,16 @@ scope/route/identity or clearing the conversation removes its in-memory history.
 
 ## Observed local evaluation (2026-11-10)
 
-Twenty-nine saved real generations cover 24 authorized synthetic contexts and
-five denied/unsupported cases. B ran 29 times; C ran only for the 24 authorized
-cases. Final validation retained 15 C outputs and rejected nine; the other five
+Thirty-one cases cover 26 authorized synthetic contexts and five denied or
+unsupported cases. B ran 31 times; C ran only for the 26 authorized
+cases. Final validation retained 16 C outputs and rejected ten; the other five
 cases receive deterministic denial/clarification without model context. A later
 validation-only reassessment preserves original generation text and timing.
 
 Human review found materially incorrect, unsupported or misleading financial /
-workflow assertions in 19/24 authorized B answers and 8/24 C answers. Current D
-rejected those eight plus one incomplete risk explanation. This small reviewed
+workflow assertions in 21/26 authorized B answers and 9/26 C answers. Current D
+rejected those nine plus one incomplete risk explanation. Deficit explanations
+retain deterministic approval blockers. This small reviewed
 sample is not proof that the validator handles unseen paraphrases. Accepted
 short answers still omit useful detail; always inspect the canonical source.
 The six Malay/Chinese C questions all received English prose: multilingual
@@ -148,7 +149,7 @@ quality is **not verified**, and English fallback is an explicit limitation.
 No measured advantage over deterministic A in factual reliability or user effort
 has been demonstrated. Keep Qwen experimental and optional.
 
-CPU evaluation C median was 4.26 seconds, p95 7.90 seconds, excluding initial
+CPU evaluation C median was 4.24 seconds, p95 7.90 seconds, excluding initial
 model loading. One browser synthetic 65-token test took 50.3 seconds on WASM
 and 5.9 seconds on WebGPU. An actual integrated Member response generated ten
 tokens in 4.9 seconds cold / 0.9 seconds warm on the tested desktop WebGPU.
