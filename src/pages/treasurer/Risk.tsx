@@ -8,6 +8,7 @@ import { treasuryService } from '../../services/treasury';
 import { RiskRulesForm } from '../../components/treasurer/RiskRulesForm';
 import { Badge, Empty, PageHeader, Panel, useFormat } from '../../components/ui';
 import { PressureAnalysis } from '../../components/treasurer/PressureAnalysis';
+import { PressureHistory } from '../../components/treasurer/PressureHistory';
 export function TreasuryRisk() {
   const { id } = useParams();
   const { data, busy, run } = useTreasury();
@@ -194,6 +195,7 @@ export function TreasuryRisk() {
         </Panel>
       )}
       {!final && <PressureAnalysis key={claim.id} claimId={claim.id} revision={claim.review?.updatedAt ?? ''} />}
+      {final && <PressureHistory key={claim.id} claimId={claim.id} />}
       <Link className="btn" to={`/treasurer/claims/${id}`}>
         Return to claim review
       </Link>

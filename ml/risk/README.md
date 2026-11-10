@@ -85,8 +85,11 @@ explanation attributes child-minus-parent expected leaf values to the visited
 feature. Contributions plus the training-weighted base equal the raw logit.
 These are tree-path associations, **not SHAP or causal explanations**. They
 faithfully describe this trained simulator model, not reliable financial causes.
-The UI shows a timestamped transient snapshot; it does not write ML results to
-the claim or pretend they formed part of the immutable SQL decision assessment.
+The UI retains advice in a separate private, append-only table linked to claim,
+revision, actor, model and a server-computed feature hash. The server rejects a
+changed input snapshot. Outputs are explicitly unverified client-reported advice,
+never inputs to a financial RPC or replacements for the SQL decision assessment.
+Authorized Treasurers can review the latest five retained snapshots after decision.
 
 Training uses unweighted binary log loss because the generated training class
 balance is moderate; the observed class counts and minority recall are reported.
