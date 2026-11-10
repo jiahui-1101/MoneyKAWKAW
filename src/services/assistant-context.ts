@@ -6,8 +6,8 @@ export interface AssistantChoice { id: string; label: string; type: 'ACTIVITY' |
 export async function assistantContext(actor: DemoActor, kind: AssistantIntent, id: string | null, signal: AbortSignal) {
   if (demoMode) throw new Error('Use an authenticated local or Supabase workspace for financial context.');
   const client = supabaseClient();
-  const user = checked(await client.auth.getUser()).user;
-  if (user?.id !== actor.userId) throw new Error('Session changed. Reopen the assistant.');
+  const { data: auth, error: authError } = await client.auth.getUser();
+  if (authError || auth.user?.id !== actor.userId) throw new Error('Session changed. Reopen the assistant.');
   const data = checked(await client.rpc('assistant_context', { p_role: actor.role, p_kind: kind,
     p_record: id as unknown as string }).abortSignal(signal));
   return validateAssistantContext(data as unknown as AssistantContext, actor.role, kind, id);

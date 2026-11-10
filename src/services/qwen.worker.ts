@@ -5,7 +5,7 @@ env.allowLocalModels = true;
 env.useBrowserCache = true;
 env.localModelPath = `${self.location.origin}/models/`;
 const wasm = env.backends.onnx.wasm!;
-wasm.wasmPaths = { mjs: '/receipt-runtime/ort-wasm-simd-threaded.jsep.mjs', wasm: '/receipt-runtime/ort-wasm-simd-threaded.jsep.wasm' };
+wasm.wasmPaths = { mjs: `${self.location.origin}/receipt-runtime/ort-wasm-simd-threaded.jsep.mjs`, wasm: `${self.location.origin}/receipt-runtime/ort-wasm-simd-threaded.jsep.wasm` };
 wasm.numThreads = 1;
 wasm.proxy = false;
 let generator: TextGenerationPipeline | undefined;
@@ -46,7 +46,9 @@ self.onmessage = async ({ data }: MessageEvent<QwenRequest>) => {
     const text = (output[0] as { generated_text: string }).generated_text;
     self.postMessage({ id, phase: 'complete', text, version, device, tokens, initializedMs,
       firstTokenMs, milliseconds: performance.now() - start });
-  } catch {
+  } catch (error) {
     self.postMessage({ id, phase: 'error', error: 'Local Qwen unavailable. Deterministic help remains available.' });
+    // Error category only; never include prompts, token IDs, feeds or financial context.
+    self.postMessage({ id, phase: 'diagnostic', category: error instanceof Error ? error.message.slice(0,300) : 'Runtime failure' });
   }
 };
