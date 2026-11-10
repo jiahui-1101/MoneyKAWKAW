@@ -52,8 +52,12 @@ begin
     feature_hash,feature_snapshot,score,contributions)
     values(p_claim_id,(s->>'revision')::integer,(select auth.uid()),p_model_version,v_hash,s,p_score,p_contributions)
     on conflict(claim_id,claim_revision,model_version,feature_hash) do nothing returning id into v_id;
-  if v_id is null then select id into v_id from public.claim_pressure_advice where claim_id=p_claim_id
-    and claim_revision=(s->>'revision')::integer and model_version=p_model_version and feature_hash=v_hash; end if;
+  if v_id is null then
+    select id into v_id from public.claim_pressure_advice where claim_id=p_claim_id
+      and claim_revision=(s->>'revision')::integer and model_version=p_model_version and feature_hash=v_hash
+      and score=p_score and contributions=p_contributions;
+    if v_id is null then raise exception 'Different advice already retained for this snapshot' using errcode='22023'; end if;
+  end if;
   return v_id;
 end;
 $$;

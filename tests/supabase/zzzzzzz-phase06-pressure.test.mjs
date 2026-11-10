@@ -26,12 +26,29 @@ test('pressure snapshots require independent current Treasurer grants and expose
   assert.ok(Object.values(value.raw).every(Number.isSafeInteger));
   assert.deepEqual(ok(await treasurer.rpc('financial_summaries')), before);
   assert.equal(ok(await member.from('claims').select('status').eq('id', claim.id).single()).status, 'Pending');
+  const advice = { p_claim_id: claim.id, p_expected_updated_at: claim.updated_at,
+    p_model_version: 'pressure-v1:000000000000', p_score: .01, p_contributions: Array(14).fill(0), p_raw: value.raw };
+  for (const client of [member, anonymous, (await signIn(syntheticEmails.multimediaHod)).client])
+    assert.ok((await client.rpc('retain_claim_pressure_advice', advice)).error);
+  const retained = ok(await treasurer.rpc('retain_claim_pressure_advice', advice));
+  assert.equal(ok(await treasurer.rpc('retain_claim_pressure_advice', advice)), retained);
+  assert.ok((await treasurer.rpc('retain_claim_pressure_advice', { ...advice, p_score: .9 })).error);
+  assert.equal((await treasurer.rpc('retain_claim_pressure_advice', {
+    ...advice, p_raw: { ...value.raw, claim_sen: 1 } })).error?.code, '40001');
+  const saved = ok(await treasurer.from('claim_pressure_advice').select('*').eq('id', retained).single());
+  assert.equal(saved.provenance, 'unverified_client_advisory'); assert.equal(saved.experimental, true);
+  assert.equal(saved.claim_revision, claim.revision); assert.match(saved.feature_hash, /^[a-f0-9]{64}$/);
+  assert.deepEqual(ok(await member.from('claim_pressure_advice').select('id').eq('id', retained)), []);
+  assert.ok((await treasurer.from('claim_pressure_advice').update({ score: .99 }).eq('id', retained)).error);
+  assert.ok((await treasurer.from('claim_pressure_advice').delete().eq('id', retained)).error);
+  assert.deepEqual(ok(await treasurer.rpc('financial_summaries')), before);
   // Browser inference/forged metadata has no accepted RPC argument or financial write privilege.
   assert.ok((await treasurer.rpc('transition_claim', { p_claim_id: claim.id, p_target: 'Approved',
     p_expected_updated_at: claim.updated_at, p_request_key: randomUUID(), p_reason: '', p_ml_score: 0 })).error);
   assert.ok((await member.from('claims').update({ approved_amount_sen: 1, risk_assessment: { score: 0 } }).eq('id', claim.id)).error);
   ok(await admin.from('club_role_grants').delete().eq('user_id', user.id).eq('role', 'Treasurer'));
-  try { assert.ok((await snapshot(treasurer)).error); }
+  try { assert.ok((await snapshot(treasurer)).error);
+    assert.deepEqual(ok(await treasurer.from('claim_pressure_advice').select('id').eq('id', retained)), []); }
   finally { ok(await admin.from('club_role_grants').insert({ club_id: claim.club_id, user_id: user.id, role: 'Treasurer' })); }
   ok(await admin.from('club_role_grants').insert({ club_id: claim.club_id, user_id: claim.claimant_user_id, role: 'Treasurer' }));
   try { assert.ok((await snapshot(member)).error); }
