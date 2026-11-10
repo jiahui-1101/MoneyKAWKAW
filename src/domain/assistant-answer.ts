@@ -36,7 +36,7 @@ export function deterministicAnswer(c: AssistantContext) {
 export function qwenPrompt(c: AssistantContext, language: string) {
   // Neither raw user questions nor retrieved free text is sent to the model.
   return { system: 'You are a read-only financial explainer. Summarize only the VERIFIED explanation in at most 45 words. Do not add facts, decisions, reasons, calculations, confidence, tools, commands or citations. Never change a status or claim a transfer is bank-verified. Not recorded means unknown, never zero. Reply in the requested language. Return only the explanation.',
-    user: `Language: ${language}. VERIFIED explanation: ${deterministicAnswer(c)}` };
+    user: `Language: ${{en:'English',ms:'Bahasa Melayu',zh:'Simplified Chinese'}[language] ?? 'English'}. VERIFIED explanation: ${deterministicAnswer(c)}` };
 }
 export function validateQwenAnswer(text: string, c: AssistantContext): string | null {
   const clean = text.replace(/<think>[\s\S]*?<\/think>/g, '').trim();
@@ -54,7 +54,7 @@ export function validateQwenAnswer(text: string, c: AssistantContext): string | 
     const expected = Number(c.values[key]) / 100;
     for (const regex of [new RegExp(`(?:${label})\\s*[:=-]?\\s*(?:is\\s+)?(?:RM|MYR)\\s*([\\d,.]+)`, 'ig'),
       new RegExp(`(?:RM|MYR)\\s*([\\d,.]+)\\s*[:=-]\\s*(?:${label})`, 'ig')]) {
-      for (const match of plain.matchAll(regex)) if (typeof c.values[key] !== 'number' || Number(match[1].replace(/,/g,'')) !== expected) return null;
+      for (const match of plain.matchAll(regex)) if (typeof c.values[key] !== 'number' || Number(match[1].replace(/,/g,'').replace(/\.$/,'')) !== expected) return null;
     }
   }
   if (/has decided|has approved|has paid|already approved|automatically approve|bank has verified|payment succeeded|settlement confirmed|guaranteed|real.world accuracy|caused by|已经批准|已经付款|银行已核实|保证|telah diluluskan|bayaran berjaya/i.test(clean)) return null;
@@ -65,5 +65,10 @@ export function validateQwenAnswer(text: string, c: AssistantContext): string | 
     if (c.values.risk_band === 'High' && /risk (is |level is )?(low|medium)|风险.*(低|中)|risiko rendah/i.test(clean)) return null;
   }
   if (c.values.status === 'Rejected' && /because|due to|因为|kerana/i.test(clean)) return null;
+  if (/received adds (?:an? |another |additional )?expense|received.*creates.*expense|收到.*增加.*支出/i.test(clean)) return null;
+  if (c.kind === 'RISK' && c.values.risk_band === 'High' && !/high|高|tinggi/i.test(clean)) return null;
+  if (c.kind === 'TASKS' && (!/task|任务|tugas/i.test(clean) || !/open|pending|未完成|待|belum/i.test(clean))) return null;
+  if (c.kind === 'LIGHTGBM' && c.ml && (!/simulation|模拟|simulasi/i.test(clean) ||
+    !/authoritative|权威|berkuasa/i.test(clean) || !/future|未来|masa depan/i.test(clean))) return null;
   return clean;
 }

@@ -34,6 +34,8 @@ it('minimizes prompt to trusted facts and fixed instructions', () => {
 });
 it('rejects invented amounts, swapped labels, decisions and inflated model claims', () => {
   expect(validateQwenAnswer('Claim RM110, estimate RM80; variance 37.5%. Risk is High.',context)).toBeTruthy();
+  expect(validateQwenAnswer('Paid expenditure: RM 0.00. Claim amount: RM110.00. Risk is High.',context)).toBeTruthy();
+  expect(validateQwenAnswer('Received adds expense.',{...context,kind:'HELP'})).toBeNull();
   for (const text of ['Claim is RM90.','RM110: Estimate','Claim amount RM80.','The Treasurer has decided on this.',
     'Risk is low.','Approved amount RM0.','The bank has verified the transfer.','Real-world accuracy is 99%.','Status: Received.'])
     expect(validateQwenAnswer(text,context)).toBeNull();
