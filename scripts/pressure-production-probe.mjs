@@ -10,16 +10,18 @@ writeFileSync('dist/__pressure-test.html', `<!doctype html><html lang="en"><meta
 <button id="run">Run compiled model</button><pre id="result">Not run</pre><script type="module">
 const worker = new Worker('/assets/${worker}', {type:'module'});
 const values = ${JSON.stringify(values)}, expected = ${expected};
-let cold, warm=[], next=0, started;
-document.querySelector('#run').onclick=()=>{cold=undefined;warm=[];next=0;started=performance.now();worker.postMessage({id:'0',values})};
+let cold, warm=[], roundTrips=[], next=0, started;
+document.querySelector('#run').onclick=()=>{cold=undefined;warm=[];roundTrips=[];next=0;started=performance.now();worker.postMessage({id:'0',values})};
 worker.onmessage=({data})=>{
  if(data.error){document.querySelector('#result').textContent=JSON.stringify(data);return}
  const delta=Math.abs(data.score-expected);
  if(delta>1e-10)throw new Error('Compiled parity failure');
- if(cold===undefined)cold=performance.now()-started;else warm.push(data.milliseconds);
+ if(cold===undefined)cold=performance.now()-started;else {warm.push(data.milliseconds);roundTrips.push(performance.now()-started)}
  document.querySelector('#result').textContent=JSON.stringify({model:data.version,score:data.score,expected,delta,coldMs:cold,
- warmCount:warm.length,warmMedianMs:[...warm].sort((a,b)=>a-b)[Math.floor(warm.length/2)],contributions:data.contributions},null,2);
- if(++next<101)worker.postMessage({id:String(next),values});
+ warmCount:warm.length,warmMedianMs:[...warm].sort((a,b)=>a-b)[Math.floor(warm.length/2)],
+ warmRoundTripMedianMs:[...roundTrips].sort((a,b)=>a-b)[Math.floor(roundTrips.length/2)],
+ warmRoundTripTotalMs:roundTrips.reduce((a,b)=>a+b,0),contributions:data.contributions},null,2);
+ if(++next<101){started=performance.now();worker.postMessage({id:String(next),values})}
 };
 </script></body></html>`);
 console.log('Created disposable compiled pressure verification page in ignored dist.');
