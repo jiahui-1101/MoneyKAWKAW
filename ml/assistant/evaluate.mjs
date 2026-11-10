@@ -1,5 +1,5 @@
 // Run with Node --no-js-float16array for the locked native ORT prerelease.
-import { pipeline, env } from '@huggingface/transformers';
+import { pipeline, env, TextStreamer } from '@huggingface/transformers';
 import { build } from 'esbuild';
 import { readFileSync, writeFileSync } from 'node:fs';
 import { resolve } from 'node:path';
@@ -30,12 +30,14 @@ for(const c of data){
     const formatted=model.tokenizer.apply_chat_template([{role:'system',content:prompt.system},{role:'user',content:prompt.user}],
       {tokenize:false,add_generation_prompt:true,enable_thinking:false});
     const start=performance.now();
-    const result=await model(formatted,{max_new_tokens:96,do_sample:false,return_full_text:false});
+    let tokens=0;
+    const streamer=new TextStreamer(model.tokenizer,{skip_prompt:true,callback_function:()=>{},token_callback_function:()=>tokens++});
+    const result=await model(formatted,{max_new_tokens:128,do_sample:false,return_full_text:false,streamer});
     const text=result[0].generated_text;
-    outputs[mode]={text,milliseconds:performance.now()-start,...score(text,c.context)};
+    outputs[mode]={text,tokens,milliseconds:performance.now()-start,...score(text,c.context)};
   }
   const deterministic=c.denied?'No authorized context is available. Private records and financial actions cannot be requested through this assistant.':deterministicAnswer(c.context);
-  const accepted=!c.denied?validateQwenAnswer(outputs.withContext.text,c.context):null;
+  const accepted=!c.denied&&outputs.withContext.tokens<128?validateQwenAnswer(outputs.withContext.text,c.context):null;
   rows.push({id:c.id,role:c.role,language:assistantLanguage(c.question),denied:Boolean(c.denied),context:c.context,
     deterministic,outputs,hybrid:{text:accepted??deterministic,method:accepted?'Qwen':'Deterministic fallback'},
     note:'Automated checks are limited; use the documented human financial-grounding rubric.'});
