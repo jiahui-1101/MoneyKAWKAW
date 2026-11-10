@@ -1,9 +1,6 @@
 import { pressureSchema } from '../domain/pressure-features';
 import { predictPressure, validatePressureModel, type PressureModel } from '../domain/pressure-trees';
-import * as ort from 'onnxruntime-web';
-ort.env.wasm.numThreads = 1;
-ort.env.wasm.wasmPaths = '/pressure-runtime/';
-let cached: { model: PressureModel; version: string; session: ort.InferenceSession } | undefined;
+let cached: { model: PressureModel; version: string } | undefined;
 export async function loadPressureModel() {
   if (cached) return cached;
   const base = '/models/budget-pressure/';
@@ -25,29 +22,15 @@ export async function loadPressureModel() {
   if (digest !== m.sha256) throw new Error('LightGBM checksum failed.');
   const model = validatePressureModel(JSON.parse(new TextDecoder().decode(bytes)));
   if (model.trees.length !== m.iterations) throw new Error('LightGBM iteration mismatch.');
-  if (!/^[a-f0-9]{64}$/.test(m.onnxSha256) || m.onnxFile !== `${m.onnxSha256}.onnx`)
-    throw new Error('Incompatible LightGBM ONNX manifest.');
-  const graphResponse = await fetch(base + m.onnxFile);
-  if (!graphResponse.ok) throw new Error('LightGBM ONNX unavailable.');
-  const graph = await graphResponse.arrayBuffer();
-  const graphHash = [...new Uint8Array(await crypto.subtle.digest('SHA-256', graph))]
-    .map((b) => b.toString(16).padStart(2, '0')).join('');
-  if (graph.byteLength > 2_000_000 || graphHash !== m.onnxSha256) throw new Error('LightGBM ONNX checksum failed.');
-  const session = await ort.InferenceSession.create(graph, { executionProviders: ['wasm'] });
-  cached = { model, version: m.version, session };
+  cached = { model, version: m.version };
   return cached;
 }
 self.onmessage = async (event: MessageEvent<{ id: string; values: number[] }>) => {
   const { id, values } = event.data;
   try {
     const start = performance.now();
-    const { model, version, session } = await loadPressureModel();
-    const explained = predictPressure(model, values);
-    const result = await session.run({ features: new ort.Tensor('float32', Float32Array.from(values), [1, values.length]) });
-    const score = Number(result.probabilities.data[1]);
-    if (!Number.isFinite(score) || Math.abs(score - explained.score) > 1e-4)
-      throw new Error('LightGBM ONNX/tree explanation parity failed.');
-    self.postMessage({ id, ...explained, score, version, milliseconds: performance.now() - start });
+    const { model, version } = await loadPressureModel();
+    self.postMessage({ id, ...predictPressure(model, values), version, milliseconds: performance.now() - start });
   } catch {
     self.postMessage({ id, error: 'Experimental LightGBM unavailable. Financial rules remain available.' });
   }
