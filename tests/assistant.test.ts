@@ -18,6 +18,7 @@ it('routes multilingual fixed intents without granting extra access', () => {
   expect(routeAssistant('Why is the risk High?','Treasurer')).toBe('RISK');
   expect(routeAssistant('Explain LightGBM disagreement','HOD')).toBe('REFUSE');
   expect(routeAssistant('Show Marketing-only financial data','HOD')).toBe('UNKNOWN');
+  expect(routeAssistant('Show the private individual claim status','Director')).toBe('REFUSE');
   expect(assistantLanguage('Kenapa tuntutan saya Pending?')).toBe('ms');
   expect(assistantLanguage('我的索赔状态是什么？')).toBe('zh');
 });

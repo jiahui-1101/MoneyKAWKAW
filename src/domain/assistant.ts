@@ -15,6 +15,7 @@ export function routeAssistant(question: string, role: Role, previous?: Assistan
   if (question.length > 500 || !question.trim()) return 'UNKNOWN';
   if (/ignore|system prompt|secret|token|password|bank account|wallet identifier|another member|other member|reveal|忽略|密码|银行|账户|其他成员|akaun|rahsia/i.test(question)) return 'REFUSE';
   if (/\b(approve|reject|pay|transfer|confirm received)\s+(this|the|my|claim|now)|帮我批准|替我付款|luluskan.*sekarang/i.test(question)) return 'REFUSE';
+  if (['Director','HOD'].includes(role) && /private.*claim|individual claim|个人.*索赔|个人.*报销/i.test(question)) return 'REFUSE';
   if (/^(why\??|why is it pending\??|kenapa\??|为什么[？?]?)$/i.test(question.trim())) return previous ?? 'UNKNOWN';
   if (/marketing|another department|other department|其他部门|jabatan lain/i.test(question)) return 'UNKNOWN';
   if (/lightgbm|model.*disagree|模型.*分歧|模型.*不一致/i.test(question)) return role === 'Treasurer' ? 'LIGHTGBM' : 'REFUSE';
