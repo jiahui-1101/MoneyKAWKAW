@@ -7,6 +7,7 @@ import { claimContext } from '../../domain/risk';
 import { treasuryService } from '../../services/treasury';
 import { RiskRulesForm } from '../../components/treasurer/RiskRulesForm';
 import { Badge, Empty, PageHeader, Panel, useFormat } from '../../components/ui';
+import { PressureAnalysis } from '../../components/treasurer/PressureAnalysis';
 export function TreasuryRisk() {
   const { id } = useParams();
   const { data, busy, run } = useTreasury();
@@ -68,7 +69,7 @@ export function TreasuryRisk() {
         </p>
       )}
       <Panel
-        title="Budget context"
+        title="Financial safety assessment — Authoritative"
         subtitle="Current shared balances · amounts below already reserve this submitted claim"
       >
         <dl className="treasury-facts">
@@ -192,6 +193,7 @@ export function TreasuryRisk() {
           </Empty>
         </Panel>
       )}
+      {!final && <PressureAnalysis key={claim.id} claimId={claim.id} revision={claim.review?.updatedAt ?? ''} />}
       <Link className="btn" to={`/treasurer/claims/${id}`}>
         Return to claim review
       </Link>
