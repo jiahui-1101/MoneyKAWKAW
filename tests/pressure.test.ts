@@ -43,7 +43,8 @@ describe('experimental pressure boundary', () => {
     let worker!: { onmessage: (e: { data: unknown }) => void; terminate: ReturnType<typeof vi.fn>; postMessage: ReturnType<typeof vi.fn> };
     vi.stubGlobal('Worker', class {
       terminate = vi.fn(); postMessage = vi.fn(); onmessage = () => {};
-      constructor() { worker = this; }
+      constructor() { worker = { onmessage: this.onmessage, terminate: this.terminate, postMessage: this.postMessage };
+        Object.defineProperty(worker, 'onmessage', { get: () => this.onmessage }); }
     });
     const control = new AbortController();
     const result = runPressureModel(pressureFeatures(raw), control.signal);
