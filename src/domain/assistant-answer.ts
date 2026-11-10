@@ -64,7 +64,8 @@ export function validateQwenAnswer(text: string, c: AssistantContext): string | 
     }
     if (c.values.risk_band === 'High' && /risk (is |level is )?(low|medium)|风险.*(低|中)|risiko rendah/i.test(clean)) return null;
   }
-  if (c.values.status === 'Rejected' && /because|due to|因为|kerana/i.test(clean)) return null;
+  if (c.values.status === 'Rejected' && /because|due to|no further action|因为|kerana/i.test(clean)) return null;
+  if (c.kind === 'HELP' && !/approval is not payment|批准.*不.*付款|kelulusan.*bukan.*bayaran/i.test(clean)) return null;
   if (/received adds (?:an? |another |additional )?expense|received.*creates.*expense|收到.*增加.*支出/i.test(clean)) return null;
   if (c.kind === 'RISK' && c.values.risk_band === 'High' && !/high|高|tinggi/i.test(clean)) return null;
   if (c.kind === 'TASKS' && (!/task|任务|tugas/i.test(clean) || !/open|pending|未完成|待|belum/i.test(clean))) return null;
