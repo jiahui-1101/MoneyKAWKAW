@@ -28,7 +28,7 @@ export function deterministicAnswer(c: AssistantContext) {
   const facts = Object.entries(c.values).map(([k,v]) => `${factLabels[k] ?? k}: ${factValue(k,v)}.`).join(' ');
   if (c.kind === 'HELP') return workflowHelp;
   if (c.kind === 'CLAIM') return `${facts} ${statusHelp[String(c.values.status)] ?? 'Refresh the source record for its current status.'}`;
-  if (c.kind === 'RISK' || c.kind === 'LIGHTGBM') return `${facts} The SQL rule assessment remains authoritative. Pending exposure already replaces the task reservation, so approval does not add it again. The Treasurer decides independently.${c.kind === 'LIGHTGBM' ? c.ml
+  if (c.kind === 'RISK' || c.kind === 'LIGHTGBM') return `${facts} The SQL rule assessment remains authoritative. Pending exposure already replaces the task reservation, so approval does not add it again. The Treasurer decides independently.${Number(c.values.department_available_sen)<0 || Number(c.values.activity_available_sen)<0 ? ' Approval is blocked while current budget headroom is negative.' : ''}${c.kind === 'LIGHTGBM' ? c.ml
     ? ` Saved LightGBM score: ${(c.ml.score * 100).toFixed(1)} / 100. Model ${c.ml.version}; recorded horizon ends ${c.ml.horizon}. It estimates future budget pressure; simulation-trained and not calibrated on real outcomes. Top learned associations: ${c.ml.contributions.map((value,index) => ({value,index})).sort((a,b) => Math.abs(b.value)-Math.abs(a.value)).slice(0,4).map(({value,index}) => `${pressureSchema.features[index]?.label ?? 'Unavailable feature'} ${value.toFixed(3)} log-odds`).join('; ')}. Contributions are associations, not causes. Saved output is unverified client-reported advice and cannot override financial constraints.`
     : ' No saved LightGBM advice is available; no score is invented.' : ''}`;
   return `${facts} Available to plan subtracts open reservations, pending claims, approved unpaid liabilities and paid expenditure once. Approval and payment remain separate; Received adds no expense.`;
@@ -39,6 +39,8 @@ export function qwenPrompt(c: AssistantContext, language: string) {
     user: `Language: ${{en:'English',ms:'Bahasa Melayu',zh:'Simplified Chinese'}[language] ?? 'English'}. VERIFIED explanation: ${deterministicAnswer(c)}` };
 }
 export function validateQwenAnswer(text: string, c: AssistantContext): string | null {
+  // The deficit category keeps the complete deterministic warning until quality improves.
+  if (Number(c.values.department_available_sen)<0 || Number(c.values.activity_available_sen)<0) return null;
   const clean = text.replace(/<think>[\s\S]*?<\/think>/g, '').trim();
   if (!clean || clean.length > 2000 || /<\/?think>|https?:|```|system prompt|password|bank account|\bOTP\b|service.role/i.test(clean)) return null;
   const reference = deterministicAnswer(c);

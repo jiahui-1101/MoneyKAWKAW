@@ -6,10 +6,12 @@ import { resolve } from 'node:path';
 import { pathToFileURL } from 'node:url';
 await build({entryPoints:['src/domain/assistant-answer.ts'],outdir:'.local/phase07/assessment-runtime',
   bundle:true,format:'esm',platform:'node'});
-const {validateQwenAnswer}=await import(pathToFileURL(resolve('.local/phase07/assessment-runtime/assistant-answer.js')));
+const {validateQwenAnswer,deterministicAnswer}=await import(pathToFileURL(resolve('.local/phase07/assessment-runtime/assistant-answer.js')));
 const data=JSON.parse(readFileSync('.local/phase07/evaluation.json'));
 for(const row of data.rows){
   const output=row.outputs.withContext;
+  row.generationReference=row.deterministic;
+  if(!row.denied)row.deterministic=deterministicAnswer(row.context);
   const accepted=!row.denied&&output.tokens<128?validateQwenAnswer(output.text,row.context):null;
   row.hybrid={text:accepted??row.deterministic,method:accepted?'Qwen':'Deterministic fallback'};
   if(output)output.validated=Boolean(accepted);

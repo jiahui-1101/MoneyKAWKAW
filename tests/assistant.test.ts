@@ -40,6 +40,9 @@ it('rejects invented amounts, swapped labels, decisions and inflated model claim
   expect(validateQwenAnswer('The claim was rejected. No further action is taken.',
     {...context,values:{...context.values,status:'Rejected'}})).toBeNull();
   expect(validateQwenAnswer('An HOD assigns purchases. Payment is not made.',{...context,kind:'HELP'})).toBeNull();
+  const deficit={...context,values:{...context.values,department_available_sen:-100}};
+  expect(validateQwenAnswer('Task approved. Risk high.',deficit)).toBeNull();
+  expect(deterministicAnswer(deficit)).toContain('Approval is blocked');
   for (const text of ['Claim is RM90.','RM110: Estimate','Claim amount RM80.','The Treasurer has decided on this.',
     'Risk is low.','Approved amount RM0.','The bank has verified the transfer.','Real-world accuracy is 99%.','Status: Received.'])
     expect(validateQwenAnswer(text,context)).toBeNull();
