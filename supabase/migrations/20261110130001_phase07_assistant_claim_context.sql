@@ -20,7 +20,9 @@ begin
   if p_kind='LIGHTGBM' then
     select jsonb_build_object('version',a.model_version,'score',a.score,'at',a.created_at,
       'horizon',a.feature_snapshot->>'horizonEnd','contributions',a.contributions,'provenance',a.provenance)
-      into ml_json from public.claim_pressure_advice a where a.claim_id=c.id order by a.created_at desc limit 1;
+      into ml_json from public.claim_pressure_advice a where a.claim_id=c.id
+        and a.feature_schema='budget-pressure-v1' and a.model_version='pressure-v1:a711a680f94c'
+      order by a.created_at desc limit 1;
   end if;
   return jsonb_build_object('values',values_json,'recordRevision',c.revision,
     'details',jsonb_build_object('reason',case when c.status='Rejected' then left(c.decision_reason,300) else '' end),

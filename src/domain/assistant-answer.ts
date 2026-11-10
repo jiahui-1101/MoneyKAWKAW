@@ -1,4 +1,5 @@
 import type { AssistantContext } from './assistant';
+import { pressureSchema } from './pressure-features';
 export const factLabels: Record<string, string> = {
   budget_sen: 'Budget', allocated_sen: 'Department allocations', available_sen: 'Available to plan',
   unclaimed_sen: 'Open task reservations', pending_sen: 'Pending claim exposure', liability_sen: 'Approved unpaid liability',
@@ -28,7 +29,7 @@ export function deterministicAnswer(c: AssistantContext) {
   if (c.kind === 'HELP') return workflowHelp;
   if (c.kind === 'CLAIM') return `${facts} ${statusHelp[String(c.values.status)] ?? 'Refresh the source record for its current status.'}`;
   if (c.kind === 'RISK' || c.kind === 'LIGHTGBM') return `${facts} The SQL rule assessment remains authoritative. Pending exposure already replaces the task reservation, so approval does not add it again. The Treasurer decides independently.${c.kind === 'LIGHTGBM' ? c.ml
-    ? ` Saved LightGBM score: ${(c.ml.score * 100).toFixed(1)} / 100. It estimates future budget pressure within its recorded horizon; simulation-trained and not calibrated on real outcomes. Contributions are associations, not causes. Client-reported advice cannot override financial constraints.`
+    ? ` Saved LightGBM score: ${(c.ml.score * 100).toFixed(1)} / 100. Model ${c.ml.version}; recorded horizon ends ${c.ml.horizon}. It estimates future budget pressure; simulation-trained and not calibrated on real outcomes. Top learned associations: ${c.ml.contributions.map((value,index) => ({value,index})).sort((a,b) => Math.abs(b.value)-Math.abs(a.value)).slice(0,4).map(({value,index}) => `${pressureSchema.features[index]?.label ?? 'Unavailable feature'} ${value.toFixed(3)} log-odds`).join('; ')}. Contributions are associations, not causes. Saved output is unverified client-reported advice and cannot override financial constraints.`
     : ' No saved LightGBM advice is available; no score is invented.' : ''}`;
   return `${facts} Available to plan subtracts open reservations, pending claims, approved unpaid liabilities and paid expenditure once. Approval and payment remain separate; Received adds no expense.`;
 }
