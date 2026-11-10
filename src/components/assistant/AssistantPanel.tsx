@@ -10,7 +10,8 @@ import { useAssistant } from './useAssistant';
 import { AssistantAnswers } from './AssistantAnswers';
 export default function AssistantPanel({ onClose }: { onClose: () => void }) {
   const { actor: sessionActor } = useSession(), location = useLocation();
-  const actor = useMemo(() => ({ ...sessionActor }), [sessionActor]);
+  const actor = useMemo(() => ({ userId:sessionActor.userId, role:sessionActor.role, name:sessionActor.name }),
+    [sessionActor.userId, sessionActor.role, sessionActor.name]);
   const [choices, setChoices] = useState<AssistantChoice[]>([]), [selected, setSelected] = useState('');
   const [question, setQuestion] = useState(''), [error, setError] = useState('');
   const choice = choices.find((c) => c.id === selected);

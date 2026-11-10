@@ -19,10 +19,11 @@ export function routeAssistant(question: string, role: Role, previous?: Assistan
   if (/marketing|another department|other department|其他部门|jabatan lain/i.test(question)) return 'UNKNOWN';
   if (/lightgbm|model.*disagree|模型.*分歧|模型.*不一致/i.test(question)) return role === 'Treasurer' ? 'LIGHTGBM' : 'REFUSE';
   if (/risk|variance|over.?budget|exceed|风险|超支|lebihan/i.test(question)) return role === 'Treasurer' ? 'RISK' : 'HELP';
-  if (/how|difference|what does|explain.*mean|如何|怎么|什么意思|bagaimana|apakah/i.test(question)) return 'HELP';
+  if (/difference between|what does|explain.*mean|什么意思|如何|怎么|bagaimana/i.test(question)) return 'HELP';
   if (/claim|pending|paid|received|rejected|tuntutan|bayaran|索赔|报销|收款|审批/i.test(question)) return ['Member','Treasurer'].includes(role) ? 'CLAIM' : 'HELP';
   if (/task|purchase|overdue|tugas|采购|任务/i.test(question)) return ['HOD','Member'].includes(role) ? 'TASKS' : 'HELP';
   if (/budget|available|spending|allocation|bajet|预算|支出|余额/i.test(question)) return ['Director','Treasurer'].includes(role) ? 'ACTIVITY' : 'DEPARTMENT';
+  if (/how|difference|apakah/i.test(question)) return 'HELP';
   return 'UNKNOWN';
 }
 export function validateAssistantContext(c: AssistantContext, role: Role, kind: AssistantIntent, id: string | null) {
