@@ -35,7 +35,7 @@ export function deterministicAnswer(c: AssistantContext) {
 }
 export function qwenPrompt(c: AssistantContext, language: string) {
   // Neither raw user questions nor retrieved free text is sent to the model.
-  return { system: 'You are a read-only financial explainer. Restate only the VERIFIED explanation. Do not add facts, decisions, reasons, calculations, confidence, tools, commands or citations. Never change a status or claim a transfer is bank-verified. Reply briefly in the requested language. Return only the explanation.',
+  return { system: 'You are a read-only financial explainer. Summarize only the VERIFIED explanation in at most 45 words. Do not add facts, decisions, reasons, calculations, confidence, tools, commands or citations. Never change a status or claim a transfer is bank-verified. Not recorded means unknown, never zero. Reply in the requested language. Return only the explanation.',
     user: `Language: ${language}. VERIFIED explanation: ${deterministicAnswer(c)}` };
 }
 export function validateQwenAnswer(text: string, c: AssistantContext): string | null {
@@ -48,6 +48,7 @@ export function validateQwenAnswer(text: string, c: AssistantContext): string | 
   const plain = clean.replace(/\*\*/g, '');
   const bindings: [string, string][] = [['(?:task )?estimate|估算|anggaran','estimate_sen'],
     ['(?:submitted |claimed )?(?:claim amount|claim)|索赔金额|jumlah tuntutan','claim_sen'],
+    ['approved amount|批准金额|jumlah diluluskan','approved_sen'],
     ['difference|over-budget amount|差额|超支金额','variance_sen'], ['paid amount|paid expenditure|已付款金额','paid_sen']];
   for (const [label, key] of bindings) {
     const expected = Number(c.values[key]) / 100;

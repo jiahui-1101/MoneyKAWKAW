@@ -55,7 +55,7 @@ export function useAssistant(actor: DemoActor, selected: string, selectedType: s
         try {
           const prompt = qwenPrompt(context, assistantLanguage(question));
           result = await model.current.generate({ ...prompt, device }, control.signal, setProgress);
-          const validated = validateQwenAnswer(result.text, context);
+          const validated = result.tokens < 128 ? validateQwenAnswer(result.text, context) : null;
           if (validated) { text = validated; method = 'Qwen-generated explanation · validated hybrid'; }
           else { method = 'Deterministic fallback · Qwen output rejected'; result = undefined; }
         } catch (error) {
