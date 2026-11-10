@@ -205,6 +205,26 @@ isOneToOne: true
       referencedColumns: ["id"]
     }
                   ]
+                },"claim_pressure_advice": {
+                  Row: {
+                    "actor_uid": string,"claim_id": string,"claim_revision": number,"contributions": NonNullable<Json>,"created_at": string,"experimental": boolean,"feature_hash": string,"feature_schema": string,"feature_snapshot": NonNullable<Json>,"id": string,"model_version": string,"provenance": string,"score": number
+                  }
+                  ComputedFields: never
+                  Insert: {
+                    "actor_uid": string,"claim_id": string,"claim_revision": number,"contributions": NonNullable<Json>,"created_at"?: string,"experimental"?: boolean,"feature_hash": string,"feature_schema"?: string,"feature_snapshot": NonNullable<Json>,"id"?: string,"model_version": string,"provenance"?: string,"score": number
+                  }
+                  Update: {
+                    "actor_uid"?: string,"claim_id"?: string,"claim_revision"?: number,"contributions"?: NonNullable<Json>,"created_at"?: string,"experimental"?: boolean,"feature_hash"?: string,"feature_schema"?: string,"feature_snapshot"?: NonNullable<Json>,"id"?: string,"model_version"?: string,"provenance"?: string,"score"?: number
+                  }
+                  Relationships: [
+                    {
+      foreignKeyName: "claim_pressure_advice_claim_id_fkey"
+      columns: ["claim_id"]
+isOneToOne: false
+      referencedRelation: "claims"
+      referencedColumns: ["id"]
+    }
+                  ]
                 },"claim_receipts": {
                   Row: {
                     "claim_id": string,"created_at": string,"extraction": Json | null,"id": string,"is_current": boolean,"merchant": string | null,"mime_type": string,"ocr_engine": string | null,"ocr_status": string,"ocr_version": string | null,"original_filename": string,"original_total_sen": number | null,"purchase_date": string | null,"reviewed_total_sen": number | null,"sha256": string | null,"size_bytes": number | null,"storage_path": string,"upload_status": Database["public"]['Enums']["receipt_upload_status"],"uploaded_at": string | null,"uploaded_by": string
@@ -740,6 +760,9 @@ isOneToOne: false
                            },
 "resolve_payment_issue":
 { Args: { "p_note": string,"p_payment_id": string,"p_request_key": string }; Returns: undefined
+                           },
+"retain_claim_pressure_advice":
+{ Args: { "p_claim_id": string,"p_contributions": Json,"p_expected_updated_at": string,"p_model_version": string,"p_raw": Json,"p_score": number }; Returns: string
                            },
 "save_activity":
 { Args: { "p_budget_sen": number,"p_description": string,"p_end_date": string,"p_id": string,"p_name": string,"p_start_date": string,"p_status": Database["public"]['Enums']["activity_status"],"p_type": Database["public"]['Enums']["activity_type"] }; Returns: {

@@ -25,7 +25,7 @@ create policy pressure_advice_treasurer_read on public.claim_pressure_advice for
 create index claim_pressure_advice_time_idx on public.claim_pressure_advice(claim_id,created_at desc);
 
 create function public.retain_claim_pressure_advice(p_claim_id uuid,p_expected_updated_at timestamptz,
-  p_model_version text,p_score numeric,p_contributions jsonb)
+  p_model_version text,p_score numeric,p_contributions jsonb,p_raw jsonb)
 returns uuid language plpgsql security definer set search_path='' as $$
 declare s jsonb; v_hash text; v_id uuid;
 begin
@@ -34,6 +34,9 @@ begin
   s:=public.claim_pressure_snapshot(p_claim_id);
   if (s->>'updatedAt')::timestamptz is distinct from p_expected_updated_at then
     raise exception 'Claim changed. Refresh before retaining advice.' using errcode='40001';
+  end if;
+  if s->'raw' is distinct from p_raw then
+    raise exception 'Financial context changed. Run the model again.' using errcode='40001';
   end if;
   if p_model_version is null or p_model_version !~ '^pressure-v1:[a-f0-9]{12}$'
     or p_score is null or not(p_score between 0 and 1) or p_contributions is null
@@ -54,5 +57,5 @@ begin
   return v_id;
 end;
 $$;
-revoke all on function public.retain_claim_pressure_advice(uuid,timestamptz,text,numeric,jsonb) from public,anon;
-grant execute on function public.retain_claim_pressure_advice(uuid,timestamptz,text,numeric,jsonb) to authenticated;
+revoke all on function public.retain_claim_pressure_advice(uuid,timestamptz,text,numeric,jsonb,jsonb) from public,anon;
+grant execute on function public.retain_claim_pressure_advice(uuid,timestamptz,text,numeric,jsonb,jsonb) to authenticated;

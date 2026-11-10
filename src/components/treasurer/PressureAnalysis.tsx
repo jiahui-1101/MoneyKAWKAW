@@ -22,6 +22,10 @@ export function PressureAnalysis({ claimId, revision }: { claimId: string; revis
         const current = checked(await supabaseClient().rpc('claim_pressure_snapshot', { p_claim_id: claimId })) as unknown as PressureSnapshot;
         validatePressureSnapshot(current, claimId, revision);
         if (JSON.stringify(current.raw) !== JSON.stringify(snapshot.raw)) throw new Error('Financial context changed. Run again.');
+        if (control.signal.aborted) return;
+        checked(await supabaseClient().rpc('retain_claim_pressure_advice', { p_claim_id: claimId,
+          p_expected_updated_at: revision, p_model_version: result.version, p_score: result.score,
+          p_contributions: result.contributions, p_raw: snapshot.raw }));
         if (!control.signal.aborted) setState({ key, result, snapshot });
       } catch (error) {
         if (!control.signal.aborted) setState({ key, error: error instanceof Error ? error.message : 'Experimental LightGBM unavailable.' });
@@ -55,8 +59,8 @@ export function PressureAnalysis({ claimId, revision }: { claimId: string; revis
         </dl>
         <p className="field-hint">Learned tree-path contributions relative to training-leaf expectations;
           positive values raise the model score. These are associations, not causes or SHAP values.
-          No real historical club outcomes were available for calibration. Advice is transient;
-          the saved financial rule assessment remains the decision audit.</p>
+          No real historical club outcomes were available for calibration. This experimental advice is
+          retained separately as client-reported evidence; the SQL rule assessment remains the decision authority.</p>
       </>}
     </div>
   </Panel>;
