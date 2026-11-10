@@ -660,6 +660,9 @@ isOneToOne: false
 "begin_my_claim":
 { Args: { "p_request_key": string,"p_task_id": string }; Returns: string
                            },
+"claim_pressure_snapshot":
+{ Args: { "p_claim_id": string }; Returns: Json
+                           },
 "correct_my_claim_receipt_total":
 { Args: { "p_claim_id": string,"p_expected_updated_at": string,"p_reason": string,"p_total_sen": number }; Returns: string
                            },
