@@ -52,6 +52,7 @@ py -3.11 -m venv .local/phase06/venv
 .local/phase06/venv/Scripts/python.exe -m unittest discover -s ml/risk -p test_data.py
 .local/phase06/venv/Scripts/python.exe ml/risk/train.py
 .local/phase06/venv/Scripts/python.exe ml/risk/evaluate.py
+.local/phase06/venv/Scripts/python.exe ml/risk/stress.py
 .local/phase06/venv/Scripts/python.exe ml/risk/export.py
 .local/phase06/venv/Scripts/python.exe ml/risk/parity.py
 node ml/risk/parity.mjs
@@ -65,6 +66,9 @@ it names. No Python dependencies or test trajectories belong in the browser.
 Missing model assets produce an honest nonblocking unavailable state. Set
 `VITE_PRESSURE_MODEL=off` to disable inference; no server data is sent to a model
 host. Only independent authorized Treasurers can fetch current claim features.
+Training options: `--seed`, `--threads`, `--rounds`, `--leaves`; retain the
+recorded defaults to reproduce this experiment. A different experiment needs
+a new held-out evaluation, not repeated optimization against these test scores.
 
 ## Export choice and explanation
 
