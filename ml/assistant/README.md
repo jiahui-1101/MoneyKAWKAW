@@ -78,6 +78,7 @@ new native Float16Array when benchmarking this q4f16 graph:
 node --no-js-float16array ml/assistant/benchmark.mjs
 node ml/assistant/capture.mjs
 node --no-js-float16array ml/assistant/evaluate.mjs
+node ml/assistant/assess.mjs
 ```
 
 This flag is for the native CPU benchmark only. Browser WASM and WebGPU have
@@ -117,8 +118,8 @@ Qwen: **Local Demo Verified — Hosted Availability Unresolved**.
 No deployment or hosted capacity has been verified. One fresh selected-model
 download is about 579 MB: 10/50/100 clients imply approximately 5.79/28.95/57.89
 GB before runtime assets, cache misses or model updates. No free hosting quota
-or zero-cost multi-user availability is assumed. Desktop CPU benchmark RSS is
-roughly 2.2 GB; peak browser/mobile memory remains unmeasured. Responsive desktop
+or zero-cost multi-user availability is assumed. Desktop CPU process RSS was
+roughly 2.2–3.1 GB across benchmarks; peak browser/mobile memory remains unmeasured. Responsive desktop
 browser emulation does not establish physical-phone inference feasibility.
 
 Retrieval is selected-record based, with at most 30 record choices and 10 task
@@ -128,3 +129,27 @@ Every answer rechecks authorization before and after inference. Open history
 is rechecked on focus and every 30 seconds; remote revocation while idle can
 therefore leave already-visible text until the next check. Closing, changing
 scope/route/identity or clearing the conversation removes its in-memory history.
+
+## Observed local evaluation (2026-11-10)
+
+Twenty-nine saved real generations cover 24 authorized synthetic contexts and
+five denied/unsupported cases. B ran 29 times; C ran only for the 24 authorized
+cases. Final validation retained 15 C outputs and rejected nine; the other five
+cases receive deterministic denial/clarification without model context. A later
+validation-only reassessment preserves original generation text and timing.
+
+Human review found materially incorrect, unsupported or misleading financial /
+workflow assertions in 19/24 authorized B answers and 8/24 C answers. Current D
+rejected those eight plus one incomplete risk explanation. This small reviewed
+sample is not proof that the validator handles unseen paraphrases. Accepted
+short answers still omit useful detail; always inspect the canonical source.
+The six Malay/Chinese C questions all received English prose: multilingual
+quality is **not verified**, and English fallback is an explicit limitation.
+No measured advantage over deterministic A in factual reliability or user effort
+has been demonstrated. Keep Qwen experimental and optional.
+
+CPU evaluation C median was 4.26 seconds, p95 7.90 seconds, excluding initial
+model loading. One browser synthetic 65-token test took 50.3 seconds on WASM
+and 5.9 seconds on WebGPU. An actual integrated Member response generated ten
+tokens in 4.9 seconds cold / 0.9 seconds warm on the tested desktop WebGPU.
+These are individual local measurements, not capacity or mobile guarantees.
