@@ -45,8 +45,14 @@ def export():
         import onnxmltools
         from onnxmltools.convert.common.data_types import FloatTensorType
         import onnxruntime as ort
-        graph = onnxmltools.convert_lightgbm(model, initial_types=[('features', FloatTensorType([None, len(NAMES)]))])
+        graph = onnxmltools.convert_lightgbm(model, initial_types=[('features', FloatTensorType([None, len(NAMES)]))], zipmap=False)
         onnxmltools.utils.save_model(graph, str(ROOT / 'model.onnx'))
+        graph_bytes = (ROOT / 'model.onnx').read_bytes()
+        graph_hash = hashlib.sha256(graph_bytes).hexdigest()
+        (out / f'{graph_hash}.onnx').write_bytes(graph_bytes)
+        manifest.update(onnxFile=f'{graph_hash}.onnx', onnxSha256=graph_hash, onnxBytes=len(graph_bytes))
+        (out / 'manifest.json').write_text(json.dumps(manifest, indent=2))
+        (ROOT / 'export.json').write_text(json.dumps(manifest, indent=2))
         session = ort.InferenceSession(str(ROOT / 'model.onnx'), providers=['CPUExecutionProvider'])
         x = np.array([r['features'] for r in json.loads((ROOT / 'dataset.json').read_text())['rows'][:200]], dtype=np.float32)
         output = session.run(None, {'features': x})[1]

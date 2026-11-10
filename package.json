@@ -5,8 +5,8 @@
   "type": "module",
   "scripts": {
     "prepare:ocr": "node scripts/prepare-ocr.mjs",
-    "predev": "npm run prepare:ocr && npm run prepare:receipt-model",
-    "prebuild": "npm run prepare:ocr && npm run prepare:receipt-model",
+    "predev": "npm run prepare:ocr && npm run prepare:receipt-model && npm run prepare:pressure-model",
+    "prebuild": "npm run prepare:ocr && npm run prepare:receipt-model && npm run prepare:pressure-model",
     "dev": "vite --host 127.0.0.1",
     "build": "tsc --noEmit && vite build",
     "preview": "vite preview --host 127.0.0.1",
@@ -19,7 +19,8 @@
     "test:supabase": "node scripts/test-supabase.mjs",
     "lint": "oxlint --react-plugin --jsx-a11y-plugin --deny-warnings src tests",
     "typecheck": "tsc --noEmit",
-    "prepare:receipt-model": "node scripts/prepare-receipt-runtime.mjs"
+    "prepare:receipt-model": "node scripts/prepare-receipt-runtime.mjs",
+    "prepare:pressure-model": "node scripts/prepare-pressure-runtime.mjs"
   },
   "dependencies": {
     "@fontsource-variable/dm-sans": "^5.2.8",
@@ -28,6 +29,7 @@
     "@supabase/supabase-js": "2.119.0",
     "@tesseract.js-data/eng": "^1.0.0",
     "lucide-react": "^0.544.0",
+    "onnxruntime-web": "1.22.0-dev.20250409-89f8206ba4",
     "react": "^19.1.1",
     "react-dom": "^19.1.1",
     "react-router-dom": "^7.9.1",

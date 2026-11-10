@@ -12,6 +12,7 @@ playwright-report/
 /public/ocr/
 /public/models/
 /public/receipt-runtime/
+/public/pressure-runtime/
 __pycache__/
 *.pyc
 # Legacy local build output; no current source or deployment uses it.
