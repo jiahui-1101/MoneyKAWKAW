@@ -1,0 +1,20 @@
+{
+  "version": "budget-pressure-v1",
+  "horizonDays": 30,
+  "features": [
+    { "name": "allocation_rm", "source": "allocation_sen", "scale": 100, "label": "Department allocation (RM)" },
+    { "name": "allocation_share", "source": "allocation_sen", "denominator": "activity_budget_sen", "label": "Department share of activity budget" },
+    { "name": "available_ratio", "source": "available_sen", "denominator": "allocation_sen", "label": "Department available headroom" },
+    { "name": "activity_available_ratio", "source": "activity_available_sen", "denominator": "activity_budget_sen", "label": "Activity available headroom" },
+    { "name": "claim_ratio", "source": "claim_sen", "denominator": "allocation_sen", "label": "Current claim relative to allocation" },
+    { "name": "estimate_ratio", "source": "estimate_sen", "denominator": "allocation_sen", "label": "Task estimate relative to allocation" },
+    { "name": "unclaimed_ratio", "source": "unclaimed_sen", "denominator": "allocation_sen", "label": "Outstanding task reservations" },
+    { "name": "pending_ratio", "source": "pending_sen", "denominator": "allocation_sen", "label": "Pending claim exposure" },
+    { "name": "liability_ratio", "source": "liability_sen", "denominator": "allocation_sen", "label": "Approved unpaid liabilities" },
+    { "name": "paid_ratio", "source": "paid_sen", "denominator": "allocation_sen", "label": "Paid expenditure" },
+    { "name": "unclaimed_count", "source": "unclaimed_count", "label": "Active unclaimed tasks" },
+    { "name": "pending_count", "source": "pending_count", "label": "Pending claims" },
+    { "name": "days_elapsed", "source": "days_elapsed", "label": "Days since activity start" },
+    { "name": "days_remaining", "source": "days_remaining", "label": "Days until activity end" }
+  ]
+}
