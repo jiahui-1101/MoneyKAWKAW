@@ -677,6 +677,9 @@ isOneToOne: false
 "assess_claim_risk":
 { Args: { "p_claim_id": string }; Returns: Json
                            },
+"assistant_context":
+{ Args: { "p_kind": string,"p_record"?: string,"p_role": string }; Returns: Json
+                           },
 "begin_my_claim":
 { Args: { "p_request_key": string,"p_task_id": string }; Returns: string
                            },
