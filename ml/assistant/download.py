@@ -13,7 +13,7 @@ CANDIDATES = {
 }
 
 
-def download(candidate, dtype='q4f16'):
+def download(candidate, dtype='q4f16', activate=False):
     repo, revision, base, base_revision = CANDIDATES[candidate]
     metadata = requests.get(f'https://huggingface.co/api/models/{repo}/revision/{revision}?blobs=true', timeout=60)
     metadata.raise_for_status()
@@ -55,6 +55,10 @@ def download(candidate, dtype='q4f16'):
     (out / 'manifest.json').write_text(json.dumps(manifest, indent=2))
     Path('.local/phase07').mkdir(parents=True, exist_ok=True)
     Path(f'.local/phase07/{candidate}-{dtype}-manifest.json').write_text(json.dumps(manifest, indent=2))
+    if activate:
+        if candidate != 'qwen3' or dtype != 'q4f16':
+            raise ValueError('Only the verified Qwen3 q4f16 artifact can be activated')
+        (Path('public/models/qwen-assistant') / 'manifest.json').write_text(json.dumps(manifest, indent=2))
     print(json.dumps({'candidate': candidate, 'bytes': manifest['totalBytes'], 'version': manifest['version']}))
 
 
@@ -62,5 +66,6 @@ if __name__ == '__main__':
     parser = argparse.ArgumentParser()
     parser.add_argument('--candidate', choices=CANDIDATES, default='qwen3')
     parser.add_argument('--dtype', choices=['q4f16', 'q4'], default='q4f16')
+    parser.add_argument('--activate', action='store_true')
     args = parser.parse_args()
-    download(args.candidate, args.dtype)
+    download(args.candidate, args.dtype, args.activate)

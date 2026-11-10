@@ -2,6 +2,7 @@ import { Link } from 'react-router-dom';
 import { Badge } from '../ui';
 import { factLabels, factValue } from '../../domain/assistant-answer';
 import type { AssistantMessage } from './useAssistant';
+import { roleHome } from '../../domain/session';
 export function AssistantAnswers({ messages, sourcePath }: { messages: AssistantMessage[]; sourcePath: string }) {
   return <div className="assistant-messages" aria-label="Assistant conversation">
     {messages.map((m, index) => <article className="assistant-answer" key={index}>
@@ -19,7 +20,7 @@ export function AssistantAnswers({ messages, sourcePath }: { messages: Assistant
           {m.context.ml && <p className="data-note">Saved LightGBM: {(m.context.ml.score * 100).toFixed(1)} / 100 · {m.context.ml.version}.
             Experimental, simulation-trained, client-reported advice. Not calibrated on real outcomes; cannot override SQL rules.</p>}
           <p className="field-hint">Source: {m.context.kind === 'HELP' ? 'MoneyKAWKAW workflow guide' : `${m.context.kind} · ${m.context.recordId}`} · retrieved {new Date(m.context.asOf).toLocaleString()}</p>
-          <Link className="text-link" to={sourcePath}>Open permitted source page</Link>
+          <Link className="text-link" to={m.context.kind === 'HELP' ? roleHome(m.context.role) : sourcePath}>Open permitted source page</Link>
         </details>
       </>}
     </article>)}
