@@ -3,8 +3,8 @@ import { createHash, randomUUID } from 'node:crypto';
 import { signIn, syntheticEmails, userId } from './helpers.mjs';
 import { loadWorkflow } from './business-fixture.mjs';
 export const ok = (r) => { assert.ifError(r.error); return r.data; };
-export async function createFinancialClaim(name, amount=11000, estimate=8000) {
-  const w=await loadWorkflow();
+export async function createFinancialClaim(name, amount=11000, estimate=8000, workflow) {
+  const w=workflow??await loadWorkflow();
   const {client:hod}=await signIn(syntheticEmails.multimediaHod);
   const {client:member}=await signIn(syntheticEmails.multimediaMember);
   let task=ok(await hod.rpc('save_purchase_task',{
