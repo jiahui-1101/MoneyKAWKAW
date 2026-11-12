@@ -70,16 +70,19 @@ with restored as (
   union all select 'audit',data from restored_audit
   union all select kind,data from restored_membership
 ), differences as (
-  select e.key,e.value as data from source_package
+  select g.key,e.value as data from source_package
     cross join lateral jsonb_each(document->'records') g
     cross join lateral jsonb_array_elements(g.value) e(value)
-    cross join lateral (select g.key as key) unused
 )
 select jsonb_build_object(
   'budget',(select budget from restored_activity),
   'allocated',(select coalesce(sum(allocation),0) from restored_departments),
   'paid',(select coalesce(sum(amount),0) from restored_payments),
   'paymentCount',(select count(*) from restored_payments),
+  'departments',(select coalesce(jsonb_agg(jsonb_build_object('id',d.id,'allocated',d.allocation,
+    'paid',coalesce(p.paid,0),'unspent',d.allocation-coalesce(p.paid,0)) order by d.id),'[]')
+    from restored_departments d left join lateral (select sum(r.amount) as paid from restored_payments r
+      join restored_claims c on c.id=r.claim_id where c.department_id=d.id) p on true),
   'evidenceCount',(select count(*) from restored_manifest),
   'auditCount',(select count(*) from restored_audit),
   'sourceRows',(select count(*) from differences),
