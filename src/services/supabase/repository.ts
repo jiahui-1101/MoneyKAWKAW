@@ -39,8 +39,8 @@ export const supabaseRepository: WorkspaceRepository = {
       client.from('claims').select('*').order('updated_at', { ascending: false }),
       client.from('audit_events').select('id,actor_uid,action,record_type,record_id,activity_id,department_id,changes,created_at').order('created_at', { ascending: false }).limit(250),
       client.rpc('financial_summaries'),
-      client.from('reimbursement_payments').select('*'),
-      client.from('payment_proofs').select('*').eq('upload_status', 'retained'),
+      client.from('reimbursement_payments').select('*').order('claim_id'),
+      client.from('payment_proofs').select('*').eq('upload_status', 'retained').order('claim_id'),
       client.from('financial_notifications').select('*').order('created_at', { ascending: false }).limit(100),
     ]);
     if (results.some(({ error }) => error)) fail();
@@ -127,11 +127,13 @@ export const supabaseRepository: WorkspaceRepository = {
         reason: claim.decision_reason, analysis: claim.risk_assessment as unknown as RiskResult | undefined,
         decisionAnalysis: claim.decision_risk as unknown as RiskResult | undefined },
     }));
-    const payments: Payment[] = await Promise.all((paymentRows ?? []).map(async (p) => {
-      const destination = await client.rpc('my_claim_destination', { p_claim_id: p.claim_id });
-      if (destination.error || !destination.data?.[0]) fail();
-      const d = destination.data[0], proof = proofRows.find((r) => r.id === p.proof_id);
-      if (!proof) fail();
+    const destinationResult = paymentRows.length ? await client.rpc('recorded_payment_destinations') : { data: [], error: null };
+    if (destinationResult.error || !destinationResult.data) fail();
+    const destinations = new Map(destinationResult.data.map((row) => [row.claim_id, row]));
+    const proofs = new Map(proofRows.map((row) => [row.id, row]));
+    const payments: Payment[] = paymentRows.map((p) => {
+      const d = destinations.get(p.claim_id), proof = proofs.get(p.proof_id);
+      if (!d || !proof) fail();
       return { id: p.id, expenseId: p.claim_id, amount: Number(p.amount_sen), date: p.payment_date,
         manual: { reference: p.reference, recordedAt: p.recorded_at, recordedBy: p.recorded_by,
           payout: { label: d.label, kind: d.kind as 'Bank' | 'TNG', holder: d.holder, institution: d.institution, masked: d.masked },
@@ -141,7 +143,7 @@ export const supabaseRepository: WorkspaceRepository = {
             reportedBy: claims.find((c) => c.id === p.claim_id)?.claimant_user_id ?? '',
             receivedAmount: p.discrepancy_amount_sen ?? undefined, resolvedAt: p.resolved_at ?? undefined,
             resolutions: p.resolution_note ? [{ note: p.resolution_note, at: p.resolved_at ?? p.recorded_at, by: p.recorded_by }] : [] } : undefined } };
-    }));
+    });
     const accountRows = getDemoActor().role === 'Member' ? await listAccounts() : [];
     const accountData = accountRows.map((account) => ({ ...account, identifier: '' }));
     return {

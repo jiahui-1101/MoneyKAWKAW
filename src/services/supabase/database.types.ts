@@ -845,6 +845,11 @@ isOneToOne: false
 "record_reimbursement":
 { Args: { "p_amount_sen": number,"p_claim_id": string,"p_confirmed": boolean,"p_destination_revision": string,"p_expected_updated_at": string,"p_payment_date": string,"p_proof_id": string,"p_reference": string,"p_request_key": string }; Returns: string
                            },
+"recorded_payment_destinations":
+{ Args: Record<PropertyKey, never>; Returns: {
+              "claim_id": string,"holder": string,"institution": string,"kind": string,"label": string,"masked": string
+            }[]
+                           },
 "remove_my_payment_account":
 { Args: { "p_account_id": string }; Returns: undefined
                            },
