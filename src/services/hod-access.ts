@@ -31,6 +31,7 @@ export function projectHod(store: Store): HodSnapshot {
       .filter((d) => allowed(a.id, d.id) && d.hodUserId === actor.userId)
       .map((d) => ({
         activity: {
+          ...(a.financialState ? { financialState: a.financialState } : {}),
           id: a.id,
           name: a.name,
           startDate: a.startDate,

@@ -13,7 +13,7 @@ import type { DemoActor } from './session';
 import { isPending, isRecorded, isReservation } from './claim-balances';
 
 export interface HodScope {
-  activity: Pick<Activity, 'id' | 'name' | 'startDate' | 'endDate' | 'status'>;
+  activity: Pick<Activity, 'id' | 'name' | 'startDate' | 'endDate' | 'status' | 'financialState'>;
   department: Department;
 }
 export interface HodSnapshot {

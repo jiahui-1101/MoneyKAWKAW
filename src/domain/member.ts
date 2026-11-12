@@ -47,7 +47,7 @@ export interface MemberData {
 export interface MemberScope {
   activity: Pick<
     Activity,
-    'id' | 'name' | 'description' | 'type' | 'status' | 'startDate' | 'endDate'
+    'id' | 'name' | 'description' | 'type' | 'status' | 'startDate' | 'endDate' | 'financialState'
   >;
   department: Pick<Department, 'id' | 'name' | 'description' | 'head' | 'hodUserId' | 'allocation'>;
 }

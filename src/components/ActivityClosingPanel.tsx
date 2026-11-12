@@ -8,8 +8,8 @@ import { ActivityArchiveDetails } from './ActivityArchiveDetails';
 import { ActivityArchiveRetention } from './ActivityArchiveRetention';
 import { Panel, Status } from './ui';
 
-export function ActivityClosingPanel({ activity, role, reload }: {
-  activity: Activity; role: ClosingRole; reload: () => Promise<void>;
+export function ActivityClosingPanel({ activity, workspaceRole: role, reload }: {
+  activity: Activity; workspaceRole: ClosingRole; reload: () => Promise<void>;
 }) {
   const [report, setReport] = useState<ClosingReport>();
   const [error, setError] = useState('');

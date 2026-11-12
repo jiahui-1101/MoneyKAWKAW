@@ -186,8 +186,8 @@ export function TreasuryActivityDetail({ closing = false }: { closing?: boolean 
   if (closing && !demoMode) return (
     <div className="stack">
       <Link className="back-link" to={`/treasurer/activities/${activity.id}`}>← Activity financial dashboard</Link>
-      <PageHeader eyebrow="ACTIVITY RECONCILIATION" title={activity.name} />
-      <ActivityClosingPanel key={activity.id} activity={activity} role="Treasurer" reload={reload} />
+      <PageHeader eyebrow="ACTIVITY RECONCILIATION" title={activity.name} description={activity.description} />
+      <ActivityClosingPanel key={activity.id} activity={activity} workspaceRole="Treasurer" reload={reload} />
     </div>
   );
   const scope = {

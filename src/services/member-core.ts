@@ -56,6 +56,7 @@ export function projectMember(store: Store): MemberSnapshot {
       .filter((d) => allowed(a.id, d.id))
       .map((d) => ({
         activity: {
+          ...(a.financialState ? { financialState: a.financialState } : {}),
           id: a.id,
           name: a.name,
           description: a.description,

@@ -82,7 +82,7 @@ export function ActivityDetail({
       </nav>
       <Overspending store={store} activityId={a.id} />
       {tab === 'closing' && !demoMode ? (
-        <ActivityClosingPanel key={a.id} activity={a} role="Director" reload={reload} />
+        <ActivityClosingPanel key={a.id} activity={a} workspaceRole="Director" reload={reload} />
       ) : tab === 'departments' ? (
         <>
           <div className="section-intro">
