@@ -64,8 +64,8 @@ Deno.serve(async (request) => {
     }
     const verified = await verifyArchive(backend, material, create);
     if (create) {
-      await backend.rpc('finalize_activity_archive', {
-        p_archive: archiveId, p_actor: actor, p_revision: material.source_revision,
+      await backend.rpc('finalize_activity_archive_object', {
+        p_archive: archiveId, p_actor: actor, p_object_path: material.object_path, p_revision: material.source_revision,
         p_logical_sha: material.logical_sha256, p_compressed_sha: verified.compressedHash,
         p_compressed_bytes: verified.compressed.length, p_evidence_count: verified.evidenceCount,
         p_evidence_bytes: verified.evidenceBytes,
