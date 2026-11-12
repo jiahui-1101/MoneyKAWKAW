@@ -25,14 +25,14 @@ export type Database = {
           Tables: {
             "activities": {
                   Row: {
-                    "archived_at": string | null,"archived_by": string | null,"budget_sen": number,"club_id": string,"created_at": string,"currency": Database["public"]['Enums']["currency_code"],"description": string,"end_date": string,"id": string,"legal_hold": boolean,"name": string,"retain_until": string | null,"start_date": string,"status": Database["public"]['Enums']["activity_status"],"type": Database["public"]['Enums']["activity_type"],"updated_at": string
+                    "archived_at": string | null,"archived_by": string | null,"budget_sen": number,"closing_revision": number,"club_id": string,"created_at": string,"currency": Database["public"]['Enums']["currency_code"],"description": string,"end_date": string,"financial_state": string,"id": string,"legal_hold": boolean,"name": string,"retain_until": string | null,"start_date": string,"status": Database["public"]['Enums']["activity_status"],"type": Database["public"]['Enums']["activity_type"],"updated_at": string
                   }
                   ComputedFields: never
                   Insert: {
-                    "archived_at"?: string | null,"archived_by"?: string | null,"budget_sen": number,"club_id": string,"created_at"?: string,"currency"?: Database["public"]['Enums']["currency_code"],"description"?: string,"end_date": string,"id"?: string,"legal_hold"?: boolean,"name": string,"retain_until"?: string | null,"start_date": string,"status"?: Database["public"]['Enums']["activity_status"],"type": Database["public"]['Enums']["activity_type"],"updated_at"?: string
+                    "archived_at"?: string | null,"archived_by"?: string | null,"budget_sen": number,"closing_revision"?: number,"club_id": string,"created_at"?: string,"currency"?: Database["public"]['Enums']["currency_code"],"description"?: string,"end_date": string,"financial_state"?: string,"id"?: string,"legal_hold"?: boolean,"name": string,"retain_until"?: string | null,"start_date": string,"status"?: Database["public"]['Enums']["activity_status"],"type": Database["public"]['Enums']["activity_type"],"updated_at"?: string
                   }
                   Update: {
-                    "archived_at"?: string | null,"archived_by"?: string | null,"budget_sen"?: number,"club_id"?: string,"created_at"?: string,"currency"?: Database["public"]['Enums']["currency_code"],"description"?: string,"end_date"?: string,"id"?: string,"legal_hold"?: boolean,"name"?: string,"retain_until"?: string | null,"start_date"?: string,"status"?: Database["public"]['Enums']["activity_status"],"type"?: Database["public"]['Enums']["activity_type"],"updated_at"?: string
+                    "archived_at"?: string | null,"archived_by"?: string | null,"budget_sen"?: number,"closing_revision"?: number,"club_id"?: string,"created_at"?: string,"currency"?: Database["public"]['Enums']["currency_code"],"description"?: string,"end_date"?: string,"financial_state"?: string,"id"?: string,"legal_hold"?: boolean,"name"?: string,"retain_until"?: string | null,"start_date"?: string,"status"?: Database["public"]['Enums']["activity_status"],"type"?: Database["public"]['Enums']["activity_type"],"updated_at"?: string
                   }
                   Relationships: [
                     {
@@ -40,6 +40,26 @@ export type Database = {
       columns: ["club_id"]
 isOneToOne: false
       referencedRelation: "clubs"
+      referencedColumns: ["id"]
+    }
+                  ]
+                },"activity_closing_decisions": {
+                  Row: {
+                    "approved": boolean,"closing_revision": number,"decided_at": string,"decided_by": string,"decided_name": string,"id": string,"reason": string,"reconciliation_id": string,"request_key": string
+                  }
+                  ComputedFields: never
+                  Insert: {
+                    "approved": boolean,"closing_revision": number,"decided_at"?: string,"decided_by": string,"decided_name": string,"id"?: string,"reason": string,"reconciliation_id": string,"request_key": string
+                  }
+                  Update: {
+                    "approved"?: boolean,"closing_revision"?: number,"decided_at"?: string,"decided_by"?: string,"decided_name"?: string,"id"?: string,"reason"?: string,"reconciliation_id"?: string,"request_key"?: string
+                  }
+                  Relationships: [
+                    {
+      foreignKeyName: "activity_closing_decisions_reconciliation_id_fkey"
+      columns: ["reconciliation_id"]
+isOneToOne: true
+      referencedRelation: "activity_reconciliations"
       referencedColumns: ["id"]
     }
                   ]
@@ -69,6 +89,26 @@ isOneToOne: false
       referencedColumns: ["club_id","user_id"]
     }
                   ]
+                },"activity_reconciliations": {
+                  Row: {
+                    "activity_id": string,"closing_revision": number,"facts": NonNullable<Json>,"id": string,"request_key": string,"signed_at": string,"signed_by": string,"signed_name": string,"version": number
+                  }
+                  ComputedFields: never
+                  Insert: {
+                    "activity_id": string,"closing_revision": number,"facts": NonNullable<Json>,"id"?: string,"request_key": string,"signed_at"?: string,"signed_by": string,"signed_name": string,"version": number
+                  }
+                  Update: {
+                    "activity_id"?: string,"closing_revision"?: number,"facts"?: NonNullable<Json>,"id"?: string,"request_key"?: string,"signed_at"?: string,"signed_by"?: string,"signed_name"?: string,"version"?: number
+                  }
+                  Relationships: [
+                    {
+      foreignKeyName: "activity_reconciliations_activity_id_fkey"
+      columns: ["activity_id"]
+isOneToOne: false
+      referencedRelation: "activities"
+      referencedColumns: ["id"]
+    }
+                  ]
                 },"activity_role_grants": {
                   Row: {
                     "activity_id": string,"club_id": string,"created_at": string,"created_by": string | null,"role": Database["public"]['Enums']["activity_role"],"user_id": string
@@ -91,14 +131,14 @@ isOneToOne: false
                   ]
                 },"archive_records": {
                   Row: {
-                    "activity_id": string | null,"archived_at": string,"archived_by": string | null,"club_id": string,"created_at": string,"department_id": string | null,"entity_id": string,"entity_type": string,"id": string,"legal_hold": boolean,"retain_until": string | null
+                    "activity_id": string | null,"approval_id": string | null,"archive_state": string,"archived_at": string,"archived_by": string | null,"checked_at": string | null,"club_id": string,"compressed_bytes": number | null,"compressed_sha256": string | null,"created_at": string,"department_id": string | null,"entity_id": string,"entity_type": string,"evidence_bytes": number | null,"failure_code": string | null,"format_version": number | null,"id": string,"legal_hold": boolean,"logical_bytes": number | null,"logical_sha256": string | null,"object_path": string | null,"reconciliation_id": string | null,"retain_until": string | null,"retention_policy": Json | null,"source_revision": number | null,"source_text": string | null,"verification_state": string,"verified_evidence_count": number | null
                   }
                   ComputedFields: never
                   Insert: {
-                    "activity_id"?: string | null,"archived_at"?: string,"archived_by"?: string | null,"club_id": string,"created_at"?: string,"department_id"?: string | null,"entity_id": string,"entity_type": string,"id"?: string,"legal_hold"?: boolean,"retain_until"?: string | null
+                    "activity_id"?: string | null,"approval_id"?: string | null,"archive_state"?: string,"archived_at"?: string,"archived_by"?: string | null,"checked_at"?: string | null,"club_id": string,"compressed_bytes"?: number | null,"compressed_sha256"?: string | null,"created_at"?: string,"department_id"?: string | null,"entity_id": string,"entity_type": string,"evidence_bytes"?: number | null,"failure_code"?: string | null,"format_version"?: number | null,"id"?: string,"legal_hold"?: boolean,"logical_bytes"?: number | null,"logical_sha256"?: string | null,"object_path"?: string | null,"reconciliation_id"?: string | null,"retain_until"?: string | null,"retention_policy"?: Json | null,"source_revision"?: number | null,"source_text"?: string | null,"verification_state"?: string,"verified_evidence_count"?: number | null
                   }
                   Update: {
-                    "activity_id"?: string | null,"archived_at"?: string,"archived_by"?: string | null,"club_id"?: string,"created_at"?: string,"department_id"?: string | null,"entity_id"?: string,"entity_type"?: string,"id"?: string,"legal_hold"?: boolean,"retain_until"?: string | null
+                    "activity_id"?: string | null,"approval_id"?: string | null,"archive_state"?: string,"archived_at"?: string,"archived_by"?: string | null,"checked_at"?: string | null,"club_id"?: string,"compressed_bytes"?: number | null,"compressed_sha256"?: string | null,"created_at"?: string,"department_id"?: string | null,"entity_id"?: string,"entity_type"?: string,"evidence_bytes"?: number | null,"failure_code"?: string | null,"format_version"?: number | null,"id"?: string,"legal_hold"?: boolean,"logical_bytes"?: number | null,"logical_sha256"?: string | null,"object_path"?: string | null,"reconciliation_id"?: string | null,"retain_until"?: string | null,"retention_policy"?: Json | null,"source_revision"?: number | null,"source_text"?: string | null,"verification_state"?: string,"verified_evidence_count"?: number | null
                   }
                   Relationships: [
                     {
@@ -107,6 +147,12 @@ isOneToOne: false
 isOneToOne: false
       referencedRelation: "activities"
       referencedColumns: ["id","club_id"]
+    },{
+      foreignKeyName: "archive_records_approval_id_fkey"
+      columns: ["approval_id"]
+isOneToOne: false
+      referencedRelation: "activity_closing_decisions"
+      referencedColumns: ["id"]
     },{
       foreignKeyName: "archive_records_club_id_fkey"
       columns: ["club_id"]
@@ -119,6 +165,12 @@ isOneToOne: false
 isOneToOne: false
       referencedRelation: "departments"
       referencedColumns: ["id","activity_id","club_id"]
+    },{
+      foreignKeyName: "archive_records_reconciliation_id_fkey"
+      columns: ["reconciliation_id"]
+isOneToOne: false
+      referencedRelation: "activity_reconciliations"
+      referencedColumns: ["id"]
     }
                   ]
                 },"audit_events": {
@@ -565,14 +617,14 @@ isOneToOne: false
                   ]
                 },"purchase_tasks": {
                   Row: {
-                    "activity_id": string,"assigned_member_id": string,"club_id": string,"completed_at": string | null,"created_at": string,"created_by_hod": string,"department_id": string,"description": string,"due_date": string,"estimated_budget_sen": number,"id": string,"item_name": string,"priority": Database["public"]['Enums']["purchase_priority"],"request_key": string,"status": Database["public"]['Enums']["purchase_task_status"],"updated_at": string
+                    "activity_id": string,"assigned_member_id": string,"closing_resolution": Json | null,"club_id": string,"completed_at": string | null,"created_at": string,"created_by_hod": string,"department_id": string,"description": string,"due_date": string,"estimated_budget_sen": number,"id": string,"item_name": string,"priority": Database["public"]['Enums']["purchase_priority"],"request_key": string,"status": Database["public"]['Enums']["purchase_task_status"],"updated_at": string
                   }
                   ComputedFields: never
                   Insert: {
-                    "activity_id": string,"assigned_member_id": string,"club_id": string,"completed_at"?: string | null,"created_at"?: string,"created_by_hod": string,"department_id": string,"description": string,"due_date": string,"estimated_budget_sen": number,"id"?: string,"item_name": string,"priority"?: Database["public"]['Enums']["purchase_priority"],"request_key": string,"status"?: Database["public"]['Enums']["purchase_task_status"],"updated_at"?: string
+                    "activity_id": string,"assigned_member_id": string,"closing_resolution"?: Json | null,"club_id": string,"completed_at"?: string | null,"created_at"?: string,"created_by_hod": string,"department_id": string,"description": string,"due_date": string,"estimated_budget_sen": number,"id"?: string,"item_name": string,"priority"?: Database["public"]['Enums']["purchase_priority"],"request_key": string,"status"?: Database["public"]['Enums']["purchase_task_status"],"updated_at"?: string
                   }
                   Update: {
-                    "activity_id"?: string,"assigned_member_id"?: string,"club_id"?: string,"completed_at"?: string | null,"created_at"?: string,"created_by_hod"?: string,"department_id"?: string,"description"?: string,"due_date"?: string,"estimated_budget_sen"?: number,"id"?: string,"item_name"?: string,"priority"?: Database["public"]['Enums']["purchase_priority"],"request_key"?: string,"status"?: Database["public"]['Enums']["purchase_task_status"],"updated_at"?: string
+                    "activity_id"?: string,"assigned_member_id"?: string,"closing_resolution"?: Json | null,"club_id"?: string,"completed_at"?: string | null,"created_at"?: string,"created_by_hod"?: string,"department_id"?: string,"description"?: string,"due_date"?: string,"estimated_budget_sen"?: number,"id"?: string,"item_name"?: string,"priority"?: Database["public"]['Enums']["purchase_priority"],"request_key"?: string,"status"?: Database["public"]['Enums']["purchase_task_status"],"updated_at"?: string
                   }
                   Relationships: [
                     {
@@ -674,11 +726,23 @@ isOneToOne: false
 "accept_club_invitation":
 { Args: Record<PropertyKey, never>; Returns: boolean
                            },
+"activity_archive_material":
+{ Args: { "p_archive": string }; Returns: Json
+                           },
+"activity_closing_readiness":
+{ Args: { "p_activity": string,"p_role": string }; Returns: Json
+                           },
+"activity_closing_report":
+{ Args: { "p_activity": string,"p_role": string }; Returns: Json
+                           },
 "assess_claim_risk":
 { Args: { "p_claim_id": string }; Returns: Json
                            },
 "assistant_context":
 { Args: { "p_kind": string,"p_record"?: string,"p_role": string }; Returns: Json
+                           },
+"authorize_activity_archive":
+{ Args: { "p_activity": string,"p_download": boolean,"p_role": string }; Returns: string
                            },
 "begin_my_claim":
 { Args: { "p_request_key": string,"p_task_id": string }; Returns: string
@@ -692,8 +756,14 @@ isOneToOne: false
 "current_club_session":
 { Args: Record<PropertyKey, never>; Returns: Json
                            },
+"decide_activity_reconciliation":
+{ Args: { "p_activity": string,"p_approved": boolean,"p_reason": string,"p_reconciliation": string,"p_request_key": string,"p_revision": number }; Returns: string
+                           },
 "edit_my_claim_item":
 { Args: { "p_claim_id": string,"p_excluded": boolean,"p_expected_updated_at": string,"p_item_id": string,"p_line": Json,"p_modification_type": Database["public"]['Enums']["receipt_modification_type"],"p_reason": string }; Returns: string
+                           },
+"finalize_activity_archive":
+{ Args: { "p_actor": string,"p_archive": string,"p_compressed_bytes": number,"p_compressed_sha": string,"p_evidence_bytes": number,"p_evidence_count": number,"p_logical_sha": string,"p_revision": number }; Returns: undefined
                            },
 "finalize_claim_receipt":
 { Args: { "p_receipt_id": string }; Returns: string
@@ -749,8 +819,14 @@ isOneToOne: false
         isOneToOne: true
         isSetofReturn: false
       } },
+"preview_activity_archive_cleanup":
+{ Args: { "p_activity": string }; Returns: Json
+                           },
 "read_financial_notification":
 { Args: { "p_notification_id": string }; Returns: undefined
+                           },
+"record_activity_archive_check":
+{ Args: { "p_actor": string,"p_archive": string,"p_compressed_sha": string,"p_failure": string,"p_operation": string,"p_role": string }; Returns: undefined
                            },
 "record_reimbursement":
 { Args: { "p_amount_sen": number,"p_claim_id": string,"p_confirmed": boolean,"p_destination_revision": string,"p_expected_updated_at": string,"p_payment_date": string,"p_proof_id": string,"p_reference": string,"p_request_key": string }; Returns: string
@@ -758,8 +834,20 @@ isOneToOne: false
 "remove_my_payment_account":
 { Args: { "p_account_id": string }; Returns: undefined
                            },
+"reopen_activity_closing":
+{ Args: { "p_activity": string,"p_reason": string,"p_revision": number }; Returns: undefined
+                           },
 "report_payment_issue":
 { Args: { "p_payment_id": string,"p_reason": string,"p_received_sen"?: number,"p_request_key": string }; Returns: undefined
+                           },
+"request_activity_close":
+{ Args: { "p_activity": string }; Returns: number
+                           },
+"reserve_activity_archive":
+{ Args: { "p_activity": string }; Returns: string
+                           },
+"resolve_closing_purchase":
+{ Args: { "p_reason": string,"p_task": string }; Returns: undefined
                            },
 "resolve_payment_issue":
 { Args: { "p_note": string,"p_payment_id": string,"p_request_key": string }; Returns: undefined
@@ -772,11 +860,13 @@ isOneToOne: false
               "archived_at": string | null,
 "archived_by": string | null,
 "budget_sen": number,
+"closing_revision": number,
 "club_id": string,
 "created_at": string,
 "currency": Database["public"]['Enums']["currency_code"],
 "description": string,
 "end_date": string,
+"financial_state": string,
 "id": string,
 "legal_hold": boolean,
 "name": string,
@@ -808,6 +898,7 @@ isOneToOne: false
 { Args: { "p_activity_id": string,"p_assigned_member_id": string,"p_department_id": string,"p_description": string,"p_due_date": string,"p_estimated_budget_sen": number,"p_expected_updated_at": string,"p_id": string,"p_item_name": string,"p_priority": Database["public"]['Enums']["purchase_priority"],"p_request_key": string }; Returns: {
               "activity_id": string,
 "assigned_member_id": string,
+"closing_resolution": Json | null,
 "club_id": string,
 "completed_at": string | null,
 "created_at": string,
@@ -829,8 +920,14 @@ isOneToOne: false
         isOneToOne: true
         isSetofReturn: false
       } },
+"set_activity_archive_retention":
+{ Args: { "p_activity": string,"p_days": number,"p_hold": boolean,"p_policy": string }; Returns: undefined
+                           },
 "set_my_payment_account_default":
 { Args: { "p_account_id": string }; Returns: undefined
+                           },
+"sign_activity_reconciliation":
+{ Args: { "p_activity": string,"p_request_key": string,"p_revision": number }; Returns: string
                            },
 "submit_my_claim":
 { Args: { "p_account_updated_at": string,"p_claim_id": string,"p_expected_updated_at": string,"p_submission_key": string,"p_task_updated_at": string }; Returns: string
@@ -842,6 +939,7 @@ isOneToOne: false
 { Args: { "p_expected_updated_at": string,"p_status": Database["public"]['Enums']["purchase_task_status"],"p_task_id": string }; Returns: {
               "activity_id": string,
 "assigned_member_id": string,
+"closing_resolution": Json | null,
 "club_id": string,
 "completed_at": string | null,
 "created_at": string,
@@ -867,6 +965,7 @@ isOneToOne: false
 { Args: { "p_expected_updated_at": string,"p_status": Database["public"]['Enums']["purchase_task_status"],"p_task_id": string }; Returns: {
               "activity_id": string,
 "assigned_member_id": string,
+"closing_resolution": Json | null,
 "club_id": string,
 "completed_at": string | null,
 "created_at": string,

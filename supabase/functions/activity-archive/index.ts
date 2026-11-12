@@ -72,7 +72,7 @@ Deno.serve(async (request) => {
       }, true);
     }
     if (operation === 'download') return new Response(verified.compressed, {
-      headers: { ...headers, 'Content-Type': 'application/gzip',
+      headers: { ...headers, 'Content-Type': 'application/octet-stream',
         'Content-Disposition': 'attachment; filename="activity-' + activity + '.json.gz"' },
     });
     return json({ id: archiveId, verification: 'Verified', logicalBytes: material.logical_bytes,
