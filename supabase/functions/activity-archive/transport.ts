@@ -21,6 +21,7 @@ export interface ArchiveMaterial {
   compressed_bytes: number | null;
   compressed_sha256: string | null;
   object_path: string;
+  failure_code: string | null;
 }
 
 export function archiveBackend(config: ArchiveConfig, authorization: string) {

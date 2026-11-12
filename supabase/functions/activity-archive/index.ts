@@ -57,6 +57,11 @@ Deno.serve(async (request) => {
     if (!material || material.activity_id !== activity) throw new ArchiveFault('FINALIZATION_FAILED');
 
     const create = operation === 'generate' && material.archive_state === 'Staging';
+    if (create && material.failure_code === 'ARCHIVE_MISMATCH') {
+      material.object_path = await backend.rpc<string>('replace_corrupt_archive_stage', {
+        p_archive: archiveId, p_actor: actor, p_expected_path: material.object_path,
+      }, true);
+    }
     const verified = await verifyArchive(backend, material, create);
     if (create) {
       await backend.rpc('finalize_activity_archive', {
