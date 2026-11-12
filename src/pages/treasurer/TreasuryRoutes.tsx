@@ -17,6 +17,7 @@ export function TreasuryRoutes() {
           <Route index element={<TreasuryDashboard />} />
           <Route path="activities" element={<TreasuryActivities />} />
           <Route path="activities/:id" element={<TreasuryActivityDetail />} />
+          <Route path="activities/:id/closing" element={<TreasuryActivityDetail closing />} />
           <Route path="claims" element={<TreasuryClaims />} />
           <Route path="claims/:id" element={<TreasuryClaimDetail />} />
           <Route path="claims/:id/risk" element={<TreasuryRisk />} />

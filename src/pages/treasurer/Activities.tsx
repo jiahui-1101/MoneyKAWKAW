@@ -6,6 +6,9 @@ import { summarize } from '../../domain/budget';
 import { MetricCards } from '../../components/MetricCards';
 import { ClaimList } from '../../components/treasurer/ClaimList';
 import { FinancialAlerts, TreasuryLifecycle } from '../../components/treasurer/FinancialCharts';
+import { ActivityClosingPanel } from '../../components/ActivityClosingPanel';
+import { financialStateLabel } from '../../domain/activity-closing';
+import { demoMode } from '../../services/supabase/client';
 import {
   Badge,
   Empty,
@@ -20,10 +23,13 @@ export function TreasuryActivities() {
   const { data } = useTreasury();
   const { money } = useFormat();
   const [query, setQuery] = useState(''),
-    [type, setType] = useState('');
+    [type, setType] = useState(''),
+    [stage, setStage] = useState('');
   if (!data) return null;
   const activities = data.activities.filter(
-    (a) => a.name.toLowerCase().includes(query.toLowerCase()) && (!type || a.type === type),
+    (a) => a.name.toLowerCase().includes(query.toLowerCase()) && (!type || a.type === type) &&
+      (!stage || (stage === 'Closing' ? !!a.financialState && !['Open', 'Archived'].includes(a.financialState)
+        : (a.financialState ?? 'Open') === stage)),
   );
   return (
     <div className="stack">
@@ -57,6 +63,10 @@ export function TreasuryActivities() {
               <option key={t}>{t}</option>
             ))}
           </select>
+          {!demoMode && <select className="compact-select" aria-label="Financial stage" value={stage} onChange={(event) => setStage(event.target.value)}>
+            <option value="">All financial stages</option>
+            <option>Open</option><option>Closing</option><option>Archived</option>
+          </select>}
         </div>
         {activities.length ? (
           <div
@@ -92,7 +102,7 @@ export function TreasuryActivities() {
                           {a.name}
                         </Link>
                         <small className="cell-sub">
-                          {a.type} · {a.status}
+                          {a.type} · {financialStateLabel(a.financialState, a.status)}
                         </small>
                       </td>
                       <td className="money">{money(s.budget)}</td>
@@ -140,6 +150,7 @@ export function TreasuryActivities() {
                 onClick={() => {
                   setQuery('');
                   setType('');
+                  setStage('');
                 }}
               >
                 Clear filters
@@ -153,9 +164,9 @@ export function TreasuryActivities() {
     </div>
   );
 }
-export function TreasuryActivityDetail() {
+export function TreasuryActivityDetail({ closing = false }: { closing?: boolean }) {
   const { id } = useParams();
-  const { data } = useTreasury();
+  const { data, reload } = useTreasury();
   const { money } = useFormat();
   if (!data) return null;
   const activity = data.activities.find((a) => a.id === id);
@@ -172,6 +183,13 @@ export function TreasuryActivityDetail() {
         This record is unavailable within your Treasurer oversight.
       </Empty>
     );
+  if (closing && !demoMode) return (
+    <div className="stack">
+      <Link className="back-link" to={`/treasurer/activities/${activity.id}`}>← Activity financial dashboard</Link>
+      <PageHeader eyebrow="ACTIVITY RECONCILIATION" title={activity.name} />
+      <ActivityClosingPanel key={activity.id} activity={activity} role="Treasurer" reload={reload} />
+    </div>
+  );
   const scope = {
     ...data,
     activities: [activity],
@@ -184,11 +202,12 @@ export function TreasuryActivityDetail() {
         ← Activities / Financial dashboard
       </Link>
       <PageHeader
-        eyebrow={`${activity.type.toUpperCase()} · ${activity.status.toUpperCase()}`}
+        eyebrow={`${activity.type.toUpperCase()} · ${financialStateLabel(activity.financialState, activity.status)}`}
         title={activity.name}
         description={activity.description}
       >
         <TextLink to={`/treasurer/history?activity=${id}`}>Payment history</TextLink>
+        {!demoMode && <TextLink to={`/treasurer/activities/${id}/closing`}>Activity closing</TextLink>}
       </PageHeader>
       <MetricCards
         items={[
