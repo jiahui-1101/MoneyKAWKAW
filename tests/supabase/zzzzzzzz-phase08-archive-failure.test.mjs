@@ -1,6 +1,6 @@
 import assert from 'node:assert/strict';
 import test from 'node:test';
-import { createHash, randomUUID } from 'node:crypto';
+import { createHash } from 'node:crypto';
 import { gzipSync } from 'node:zlib';
 import { admin } from './helpers.mjs';
 import { ok } from './phase04-fixture.mjs';
