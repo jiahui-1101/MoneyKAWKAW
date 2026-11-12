@@ -5,6 +5,7 @@ import { gunzipSync } from 'node:zlib';
 import { admin, anonymous, signIn, syntheticEmails } from './helpers.mjs';
 import { ok } from './phase04-fixture.mjs';
 import { archiveFixture, archiveClaim, archiveEdge, transition, recordSyntheticPayment } from './phase08-fixture.mjs';
+import { rehearseVerifiedArchive } from './phase08-recovery.mjs';
 
 test('closing reconciles one payment, freezes writes and archives retained evidence', async () => {
   const f = await archiveFixture('Phase 08 received and archived');
@@ -118,6 +119,8 @@ test('closing reconciles one payment, freezes writes and archives retained evide
   assert.equal(archive.records.claims[0].status, 'Received');
   assert.equal(archive.records.evidence.length, 2);
   assert.doesNotMatch(source.toString(), /"identifier"|0000000011113210|9876543210/);
+  await rehearseVerifiedArchive(f, compressed, result);
+  assert.equal((await report()).archive.recovery_report.result, 'Passed');
   const material = ok(await admin.rpc('activity_archive_material', { p_archive: result.id }));
   assert.equal(material.source_text, null);
   for (const client of [f.director, f.treasurer, f.member, anonymous])
