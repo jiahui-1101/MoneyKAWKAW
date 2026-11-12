@@ -24,9 +24,10 @@ for (const count of counts) {
   const started = performance.now();
   const allocation = count * 11000 + 100000;
   const fixture = await archiveFixture('Phase 08 benchmark ' + count, { budget: allocation + 100000, allocation });
-  const rows = scaleFixture(sample, fixture, count);
-  const hodId = ok(await fixture.hod.auth.getUser()).user.id;
-  const database = seedLocalRows(rows, fixture.activityId, hodId);
+  const [hod, director] = await Promise.all([fixture.hod.auth.getUser(), fixture.director.auth.getUser()]);
+  const actors = { hod: ok(hod).user.id, director: ok(director).user.id };
+  const rows = scaleFixture(sample, fixture, actors, count);
+  const database = seedLocalRows(rows, fixture.activityId, actors.hod);
   const evidenceRoot = join(directory, 'benchmark-evidence-' + count);
   for (let start = 0; start < rows.evidence.length; start += 10) {
     await Promise.all(rows.evidence.slice(start, start + 10).map(async (entry) => {

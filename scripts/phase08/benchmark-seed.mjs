@@ -17,7 +17,7 @@ const groups = {
 };
 const uuid = /[a-f0-9]{8}-(?:[a-f0-9]{4}-){3}[a-f0-9]{12}/g;
 
-export function scaleFixture(sample, fixture, count) {
+export function scaleFixture(sample, fixture, actors, count) {
   assert.equal(sample.records.claims.length, 1);
   assert.equal(sample.records.claims[0].status, 'Received');
   assert.equal(sample.records.evidence.length, 2);
@@ -28,6 +28,10 @@ export function scaleFixture(sample, fixture, count) {
     const ids = new Map([
       [sample.activity.id, fixture.activityId],
       [sample.records.departments[0].id, fixture.multimediaId],
+      [sample.records.claims[0].claimant_user_id, fixture.memberId],
+      [sample.records.departmentMemberships.find((row) => row.role === 'HOD').user_id, actors.hod],
+      [sample.reconciliation.signed_by, fixture.treasurerUser.id],
+      [sample.approval.decided_by, actors.director],
     ]);
     for (const records of Object.values(source)) for (const row of records) ids.set(row.id, randomUUID());
     const clone = (rows) => JSON.parse(JSON.stringify(rows).replace(uuid, (id) => ids.get(id) ?? id));
