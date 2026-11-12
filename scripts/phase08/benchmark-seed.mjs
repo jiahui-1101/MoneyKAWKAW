@@ -34,7 +34,10 @@ export function scaleFixture(sample, fixture, count) {
     output.evidence.push(...clone(sample.records.evidence));
   }
   for (const task of output.tasks) task.request_key = randomUUID();
-  for (const claim of output.claims) claim.idempotency_key = randomUUID();
+  for (const claim of output.claims) {
+    claim.idempotency_key = randomUUID();
+    claim.submission_key = randomUUID();
+  }
   for (const payment of output.payments) {
     payment.request_key = randomUUID();
     payment.reference = 'SYNTHETIC-SCALE-' + payment.id;
