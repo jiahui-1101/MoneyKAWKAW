@@ -46,7 +46,7 @@ begin
   end if;
   insert into public.activity_reconciliations(activity_id,version,closing_revision,request_key,signed_by,signed_name,facts)
     values(activity.id,(select coalesce(max(version),0)+1 from public.activity_reconciliations where activity_id=activity.id),
-      p_revision,p_request_key,auth.uid(),coalesce((select display_name from public.profiles where id=auth.uid()),auth.uid()::text),facts)
+      p_revision,p_request_key,auth.uid(),coalesce((select display_name from public.profiles where user_id=auth.uid()),auth.uid()::text),facts)
     returning * into signed;
   update public.activities set financial_state='Treasurer Reconciled',closing_revision=closing_revision+1 where id=activity.id;
   perform private.append_business_audit(activity.club_id,'Treasurer signed reconciliation','reconciliation',
