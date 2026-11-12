@@ -4,6 +4,7 @@ import { useWorkspace } from '../context/workspace-context';
 import { activityStatuses, activityTypes } from '../domain/models';
 import { ActivityTable } from '../components/Finance';
 import { Empty, PageHeader, Panel } from '../components/ui';
+import { demoMode } from '../services/supabase/client';
 
 export function Activities() {
   const { store } = useWorkspace();
@@ -23,7 +24,9 @@ export function Activities() {
     .filter(
       (a) =>
         `${a.name} ${a.description}`.toLowerCase().includes(q.toLowerCase()) &&
-        (!status || a.status === status) &&
+        (!status || (status === 'Archived' ? a.financialState === 'Archived' :
+          status === 'Closing' ? !!a.financialState && !['Open', 'Archived'].includes(a.financialState) :
+            a.status === status && (!a.financialState || a.financialState === 'Open'))) &&
         (!type || a.type === type),
     )
     .sort((a, b) =>
@@ -81,6 +84,7 @@ export function Activities() {
               {activityStatuses.map((s) => (
                 <option key={s}>{s}</option>
               ))}
+              {!demoMode && <><option>Closing</option><option>Archived</option></>}
             </select>
             <select
               aria-label="Activity type"

@@ -8,6 +8,7 @@ import {
 } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { summarize } from '../domain/budget';
+import { financialStateLabel } from '../domain/activity-closing';
 import { MetricCards } from './MetricCards';
 import type { Activity, BudgetSummary, Store } from '../domain/models';
 import { Badge, Empty, Panel, Progress, Status, TextLink, useFormat } from './ui';
@@ -133,7 +134,7 @@ export function ActivityTable({
                   </div>
                 </td>
                 <td>
-                  <Status value={a.status} />
+                  <Status value={financialStateLabel(a.financialState, a.status)} />
                 </td>
                 <td className="money">{money(a.budget, true)}</td>
                 <td className="money">{money(demoMode ? s.recorded : s.committed, true)}</td>

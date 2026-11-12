@@ -66,6 +66,11 @@ export function ActivityForm() {
       </Empty>
     );
   const cancel = () => (dirty ? setDiscard(true) : navigate(back));
+  if (existing?.financialState && existing.financialState !== 'Open') return (
+    <Empty title="Activity setup is read-only" action={<Link className="btn" to={back + '/closing'}>Activity closing</Link>}>
+      The financial closing workflow controls changes to this activity.
+    </Empty>
+  );
   const submit = async (e: FormEvent) => {
     e.preventDefault();
     const required = ['name', 'description', 'startDate', 'endDate', 'budget'] as const;

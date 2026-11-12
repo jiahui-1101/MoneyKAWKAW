@@ -19,6 +19,7 @@ export function Departments({ activity }: { activity: Activity }) {
   const [error, setError] = useState('');
   const [query, setQuery] = useState('');
   const allocated = activity.departments.reduce((s, d) => s + d.allocation, 0);
+  const editable = !activity.financialState || activity.financialState === 'Open';
   if (!store) return null;
   return (
     <div className="stack">
@@ -43,9 +44,9 @@ export function Departments({ activity }: { activity: Activity }) {
       </div>
       <Panel
         title="The teams behind the activity"
-        subtitle="Configure departments and give each one a clear allocation"
+        subtitle={editable ? 'Configure departments and give each one a clear allocation' : 'Read-only department allocations'}
         action={
-          <button
+          editable && <button
             className="btn primary"
             onClick={() => {
               setError('');
@@ -158,7 +159,7 @@ export function Departments({ activity }: { activity: Activity }) {
           <Empty
             title="Every great activity needs a team"
             action={
-              <button className="btn" onClick={() => setEditing('new')}>
+              editable && <button className="btn" onClick={() => setEditing('new')}>
                 <Plus size={15} />
                 Create your first department
               </button>
@@ -173,7 +174,7 @@ export function Departments({ activity }: { activity: Activity }) {
             `${d.name} ${d.head}`.toLowerCase().includes(query.toLowerCase()),
           ) && <Empty title="No departments match">Try another department name or lead.</Empty>}
       </Panel>
-      {editing && (
+      {editable && editing && (
         <DepartmentForm
           key={typeof editing === 'string' ? 'new' : editing.id}
           activity={activity}
