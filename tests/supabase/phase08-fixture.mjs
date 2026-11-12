@@ -11,7 +11,7 @@ export async function archiveFixture(name) {
     p_id: null, p_name: name, p_description: 'Synthetic archive verification fixture',
     p_type: 'Small Event', p_status: 'Active', p_start_date: '2026-11-01',
     p_end_date: '2026-12-31', p_budget_sen: 1000000,
-  }));
+  })).id;
   const memberId = await userId(syntheticEmails.multimediaMember);
   const multimediaId = ok(await director.rpc('save_department_setup', {
     p_activity_id: activityId, p_department_id: null, p_name: 'Multimedia',
