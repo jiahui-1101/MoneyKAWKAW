@@ -124,7 +124,7 @@ export function HodShell() {
               Confident teams.
             </h3>
             <p>A thoughtful purchase starts with a clear responsibility.</p>
-            {scope && (
+            {scope && (!scope.activity.financialState || scope.activity.financialState === 'Open') && (
               <Link to={`${base}/tasks/new`} onClick={() => nav.setOpen(false)}>
                 Plan a purchase <ArrowUpRight size={15} />
               </Link>

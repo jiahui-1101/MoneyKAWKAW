@@ -8,6 +8,7 @@ import {
 } from '../../components/hod/HodWidgets';
 import { Empty, PageHeader, Panel, Progress, useFormat } from '../../components/ui';
 import { isReservation } from '../../domain/claim-balances';
+import { canPlanActivity, financialStateLabel } from '../../domain/activity-closing';
 
 export function HodBudget() {
   const { data, scope, tasks, base, summary } = useDepartmentScope();
@@ -20,14 +21,14 @@ export function HodBudget() {
   return (
     <div className="stack">
       <PageHeader
-        eyebrow={`${scope.department.name.toUpperCase()} · BUDGET & ALLOCATIONS`}
+        eyebrow={`${scope.department.name.toUpperCase()} · ${financialStateLabel(scope.activity.financialState, 'BUDGET & ALLOCATIONS')}`}
         title="Every purchase has a place in the plan."
         description="Track item estimates alongside actual expenses without counting the same purchase twice."
       >
-        <Link className="btn primary" to={`${base}/tasks/new`}>
+        {canPlanActivity(scope.activity.financialState) && <Link className="btn primary" to={`${base}/tasks/new`}>
           <Plus size={15} />
           Plan a purchase
-        </Link>
+        </Link>}
       </PageHeader>
       <DepartmentMetrics data={data} scope={scope} />
       <DepartmentBalances data={data} scope={scope} />

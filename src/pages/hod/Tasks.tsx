@@ -4,6 +4,7 @@ import { departmentToday, isOverdue } from '../../domain/hod';
 import { priorities, purchasingStatuses } from '../../domain/models';
 import { TaskTable, useDepartmentScope } from '../../components/hod/HodWidgets';
 import { Empty, PageHeader, Panel } from '../../components/ui';
+import { canPlanActivity, financialStateLabel } from '../../domain/activity-closing';
 
 export function HodTasks() {
   const { data, scope, tasks, base } = useDepartmentScope();
@@ -39,14 +40,14 @@ export function HodTasks() {
   return (
     <div className="stack">
       <PageHeader
-        eyebrow={`${scope.department.name.toUpperCase()} · PURCHASING`}
+        eyebrow={`${scope.department.name.toUpperCase()} · ${financialStateLabel(scope.activity.financialState, 'PURCHASING')}`}
         title="Good plans become great purchases."
         description="Give every item a clear owner, a thoughtful budget, and a deadline."
       >
-        <Link className="btn primary" to={`${base}/tasks/new`}>
+        {canPlanActivity(scope.activity.financialState) && <Link className="btn primary" to={`${base}/tasks/new`}>
           <Plus size={16} />
           Create purchasing task
-        </Link>
+        </Link>}
       </PageHeader>
       <Panel
         title="Department task board"
@@ -146,7 +147,7 @@ export function HodTasks() {
                   Clear filters
                 </button>
               ) : (
-                <Link className="btn primary" to={`${base}/tasks/new`}>
+                canPlanActivity(scope.activity.financialState) && <Link className="btn primary" to={`${base}/tasks/new`}>
                   Create purchasing task
                 </Link>
               )

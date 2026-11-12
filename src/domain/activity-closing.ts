@@ -1,4 +1,5 @@
 export type FinancialActivityState = 'Open' | 'Closing' | 'Treasurer Reconciled' | 'Director Approved' | 'Archiving' | 'Archived';
+export const canPlanActivity = (state: FinancialActivityState | undefined) => !state || state === 'Open';
 
 export const financialStateLabel = (state: FinancialActivityState | undefined, fallback: string) =>
   state === 'Archived' ? 'Archived — Read Only' : state && state !== 'Open' ? state : fallback;

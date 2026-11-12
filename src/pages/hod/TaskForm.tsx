@@ -10,6 +10,7 @@ import { useDepartmentScope } from '../../components/hod/HodWidgets';
 import { Field } from '../../components/Field';
 import { DateField } from '../../components/DateField';
 import { Empty, Modal, PageHeader, useFormat } from '../../components/ui';
+import { canPlanActivity } from '../../domain/activity-closing';
 
 export function HodTaskForm() {
   const { taskId } = useParams();
@@ -41,6 +42,11 @@ export function HodTaskForm() {
     return () => window.removeEventListener('beforeunload', warn);
   }, [dirty]);
   const back = taskId ? `${base}/tasks/${taskId}` : `${base}/tasks`;
+  if (!canPlanActivity(scope.activity.financialState) || p?.resolvedAtClosure) return (
+    <Empty title="Purchasing setup is read-only" action={<Link className="btn" to={back}>Back to purchases</Link>}>
+      Use the existing purchasing records to review this activity’s commitments.
+    </Empty>
+  );
   const cancel = () => (dirty ? setDiscard(true) : navigate(back));
   const update = (key: keyof typeof form, value: string) => {
     setForm((f) => ({ ...f, [key]: value }));

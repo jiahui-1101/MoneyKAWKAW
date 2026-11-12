@@ -12,6 +12,7 @@ import {
   useDepartmentScope,
 } from '../../components/hod/HodWidgets';
 import { demoMode } from '../../services/supabase/client';
+import { canPlanActivity, financialStateLabel } from '../../domain/activity-closing';
 
 export function HodDashboard({ department = false }: { department?: boolean }) {
   const { data, scope, tasks, base, summary } = useDepartmentScope();
@@ -53,14 +54,14 @@ export function HodDashboard({ department = false }: { department?: boolean }) {
         title={department ? scope.department.name : 'A clear plan. A confident team.'}
         description={
           department
-            ? `${scope.activity.name} · Department overview`
+            ? `${scope.activity.name} · ${financialStateLabel(scope.activity.financialState, 'Department overview')}`
             : 'Keep your team’s responsibilities, purchases, and budget moving together.'
         }
       >
-        <Link className="btn primary" to={`${base}/tasks/new`}>
+        {canPlanActivity(scope.activity.financialState) && <Link className="btn primary" to={`${base}/tasks/new`}>
           <Plus size={16} />
           Create purchasing task
-        </Link>
+        </Link>}
       </PageHeader>
       {!department && (
         <div className="assigned-activities">
