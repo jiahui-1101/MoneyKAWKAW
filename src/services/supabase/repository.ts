@@ -31,11 +31,11 @@ export const supabaseRepository: WorkspaceRepository = {
 
     const results = await Promise.all([
       client.from('clubs').select('id,name,currency,timezone,warning_percent').eq('slug', 'main').maybeSingle(),
-      client.from('activities').select('id,club_id,name,description,type,status,start_date,end_date,budget_sen,currency').order('start_date'),
+      client.from('activities').select('id,club_id,name,description,type,status,financial_state,start_date,end_date,budget_sen,currency').order('start_date'),
       client.from('departments').select('id,club_id,activity_id,name,description,head_label,allocation_sen').order('name'),
       client.from('department_memberships').select('user_id,activity_id,department_id,role,status'),
       client.from('profiles').select('user_id,display_name'),
-      client.from('purchase_tasks').select('id,club_id,activity_id,department_id,item_name,description,assigned_member_id,created_by_hod,estimated_budget_sen,due_date,priority,status,updated_at'),
+      client.from('purchase_tasks').select('id,club_id,activity_id,department_id,item_name,description,assigned_member_id,created_by_hod,estimated_budget_sen,due_date,priority,status,updated_at,closing_resolution'),
       client.from('claims').select('*').order('updated_at', { ascending: false }),
       client.from('audit_events').select('id,actor_uid,action,record_type,record_id,activity_id,department_id,changes,created_at').order('created_at', { ascending: false }).limit(250),
       client.rpc('financial_summaries'),
@@ -70,6 +70,7 @@ export const supabaseRepository: WorkspaceRepository = {
     }
     const activities: Activity[] = activityResult.data.map((row) => ({
       id: row.id, name: row.name, description: row.description, type: row.type, status: row.status,
+      financialState: row.financial_state as Activity['financialState'],
       startDate: row.start_date, endDate: row.end_date, budget: Number(row.budget_sen),
       departments: departmentActivities.get(row.id) ?? [],
     }));
@@ -82,6 +83,7 @@ export const supabaseRepository: WorkspaceRepository = {
       expenseId: claim?.id,
       budget: Number(row.estimated_budget_sen),
       purchasing: {
+        resolvedAtClosure: row.closing_resolution !== null,
         name: row.item_name,
         description: row.description,
         assigneeId: row.assigned_member_id,

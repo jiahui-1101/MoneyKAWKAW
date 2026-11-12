@@ -1,5 +1,6 @@
 import type { ClaimReview, ManualPayment, TreasuryData } from './treasury';
 import type { MemberData } from './member';
+import type { FinancialActivityState } from './activity-closing';
 export const activityTypes = ['Workshop', 'Small Event', 'Large-scale event', 'Community', 'Other'] as const;
 export const activityStatuses = ['Planning', 'Active', 'Completed'] as const;
 export type ActivityType = (typeof activityTypes)[number];
@@ -19,6 +20,7 @@ export interface Activity {
   description: string;
   type: ActivityType;
   status: ActivityStatus;
+  financialState?: FinancialActivityState;
   startDate: string;
   endDate: string;
   budget: number;
@@ -114,6 +116,7 @@ export const purchasingStatuses = [
 export type PurchasingStatus = (typeof purchasingStatuses)[number];
 export const priorities = ['Low', 'Medium', 'High'] as const;
 export interface PurchasingDetails {
+  resolvedAtClosure?: boolean;
   name: string;
   description: string;
   assigneeId: string | null;
@@ -138,7 +141,7 @@ export interface ClubDirectory {
   users: ClubUser[];
   memberships: Membership[];
 }
-export type ActivityInput = Omit<Activity, 'id' | 'departments'>;
+export type ActivityInput = Omit<Activity, 'id' | 'departments' | 'financialState'>;
 export type DepartmentInput = Omit<Department, 'id'>;
 export interface BudgetSummary {
   budget: number;
