@@ -67,3 +67,16 @@ export async function archiveEdge(client, activity, role, operation) {
     body: JSON.stringify({ activity, role, operation }),
   });
 }
+
+export async function approveClosing(fixture) {
+  const p_activity = fixture.activityId;
+  const revision = ok(await fixture.director.rpc('request_activity_close', { p_activity }));
+  const reconciliation = ok(await fixture.treasurer.rpc('sign_activity_reconciliation', {
+    p_activity, p_revision: revision, p_request_key: randomUUID(),
+  }));
+  const report = ok(await fixture.director.rpc('activity_closing_report', { p_activity, p_role: 'Director' }));
+  return ok(await fixture.director.rpc('decide_activity_reconciliation', {
+    p_activity, p_reconciliation: reconciliation, p_revision: report.revision,
+    p_request_key: randomUUID(), p_approved: true, p_reason: '',
+  }));
+}
