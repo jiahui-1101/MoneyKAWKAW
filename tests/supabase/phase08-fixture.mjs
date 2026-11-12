@@ -2,7 +2,7 @@ import { createHash, randomUUID } from 'node:crypto';
 import { local, signIn, syntheticEmails, userId } from './helpers.mjs';
 import { createFinancialClaim, ok } from './phase04-fixture.mjs';
 
-export async function archiveFixture(name) {
+export async function archiveFixture(name, { budget = 1000000, allocation = 200000 } = {}) {
   const { client: director } = await signIn(syntheticEmails.director);
   const { client: treasurer, user: treasurerUser } = await signIn(syntheticEmails.treasurer);
   const { client: member } = await signIn(syntheticEmails.multimediaMember);
@@ -10,12 +10,12 @@ export async function archiveFixture(name) {
   const activityId = ok(await director.rpc('save_activity', {
     p_id: null, p_name: name, p_description: 'Synthetic archive verification fixture',
     p_type: 'Small Event', p_status: 'Active', p_start_date: '2026-11-01',
-    p_end_date: '2026-12-31', p_budget_sen: 1000000,
+    p_end_date: '2026-12-31', p_budget_sen: budget,
   })).id;
   const memberId = await userId(syntheticEmails.multimediaMember);
   const multimediaId = ok(await director.rpc('save_department_setup', {
     p_activity_id: activityId, p_department_id: null, p_name: 'Multimedia',
-    p_description: 'Synthetic assigned scope', p_head_label: '', p_allocation_sen: 200000,
+    p_description: 'Synthetic assigned scope', p_head_label: '', p_allocation_sen: allocation,
     p_hod_user_id: await userId(syntheticEmails.multimediaHod), p_member_user_ids: [memberId],
   }));
   if (!ok(await member.rpc('list_my_payment_accounts')).length) {
