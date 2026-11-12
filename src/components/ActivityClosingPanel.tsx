@@ -36,9 +36,11 @@ export function ActivityClosingPanel({ activity, workspaceRole: role, reload }: 
       setError(cause instanceof Error ? cause.message : 'The closing operation could not finish.');
     }
     try {
-      setReport(await activityClosing.report(id, role));
-      await reload();
+      const refreshed = await activityClosing.report(id, role);
+      setReport(refreshed);
+      if (refreshed.state !== activity.financialState) await reload();
     } catch {
+      setReport(undefined);
       setFeedback('');
       setError((previous) => previous || 'The current report is unavailable. Refresh to verify the latest state.');
     } finally {
