@@ -9,14 +9,16 @@ import { Departments } from '../components/Departments';
 import { SharedPurchasingPlans } from '../components/SharedPurchasingPlans';
 import { Empty, Panel, Progress, Status, TextLink, useFormat } from '../components/ui';
 import { demoMode } from '../services/supabase/client';
+import { ActivityClosingPanel } from '../components/ActivityClosingPanel';
+import { financialStateLabel } from '../domain/activity-closing';
 
 export function ActivityDetail({
   tab = 'overview',
 }: {
-  tab?: 'overview' | 'departments' | 'budget';
+  tab?: 'overview' | 'departments' | 'budget' | 'closing';
 }) {
   const { id } = useParams();
-  const { store } = useWorkspace();
+  const { store, reload } = useWorkspace();
   const { date, money } = useFormat();
   const a = store?.activities.find((a) => a.id === id);
   if (!store || !a)
@@ -34,6 +36,7 @@ export function ActivityDetail({
     );
   const summary = summarize(store, a.id);
   const path = `/director/activities/${a.id}`;
+  const editable = !a.financialState || a.financialState === 'Open';
   return (
     <div className="stack activity-detail">
       <Link className="back-link" to="/director/activities">
@@ -44,7 +47,7 @@ export function ActivityDetail({
         <div>
           <div className="row">
             <span className="eyebrow">{a.type}</span>
-            <Status value={a.status} />
+            <Status value={financialStateLabel(a.financialState, a.status)} />
           </div>
           <h1>{a.name}</h1>
           <div className="detail-meta">
@@ -59,16 +62,17 @@ export function ActivityDetail({
             </span>
           </div>
         </div>
-        <Link className="btn" to={`${path}/edit`}>
+        {editable && <Link className="btn" to={`${path}/edit`}>
           <Pencil size={14} />
           Edit activity
-        </Link>
+        </Link>}
       </div>
       <nav className="detail-tabs" aria-label="Activity sections">
         {[
           ['overview', 'Overview', path],
           ['departments', 'Departments', `${path}/departments`],
           ['budget', 'Budget dashboard', `${path}/budget`],
+          ...(!demoMode ? [['closing', 'Activity closing', `${path}/closing`]] : []),
         ].map(([key, label, to]) => (
           <NavLink key={key} to={to} end className={({ isActive }) => (isActive ? 'active' : '')}>
             {label}
@@ -77,7 +81,9 @@ export function ActivityDetail({
         ))}
       </nav>
       <Overspending store={store} activityId={a.id} />
-      {tab === 'departments' ? (
+      {tab === 'closing' && !demoMode ? (
+        <ActivityClosingPanel key={a.id} activity={a} role="Director" reload={reload} />
+      ) : tab === 'departments' ? (
         <>
           <div className="section-intro">
             <h2>A clear role. A thoughtful allocation.</h2>
