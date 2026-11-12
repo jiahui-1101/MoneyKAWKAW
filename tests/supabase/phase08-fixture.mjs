@@ -40,7 +40,7 @@ export async function transition(fixture, claim, target, reason = '') {
   }));
 }
 
-export async function recordSyntheticPayment(fixture, claim, bytes) {
+export async function recordSyntheticPayment(fixture, claim, bytes, stagedBytes) {
   const client = fixture.treasurer;
   const pending = await transition(fixture, claim, 'Payment Pending');
   const instructions = ok(await client.rpc('payment_instructions', { p_claim_id: claim }))[0];
@@ -50,13 +50,21 @@ export async function recordSyntheticPayment(fixture, claim, bytes) {
   }));
   ok(await client.storage.from('payment-proofs').upload(proof.storage_path, bytes, { contentType: 'image/png' }));
   ok(await client.rpc('finalize_payment_proof', { p_proof_id: proof.id }));
+  let staging;
+  if (stagedBytes) {
+    staging = ok(await client.rpc('prepare_payment_proof', {
+      p_claim_id: claim, p_filename: 'unused-upload.png', p_mime: 'image/png',
+      p_size: stagedBytes.length, p_sha256: createHash('sha256').update(stagedBytes).digest('hex'),
+    }));
+    ok(await client.storage.from('payment-proofs').upload(staging.storage_path, stagedBytes, { contentType: 'image/png' }));
+  }
   const args = {
     p_claim_id: claim, p_expected_updated_at: pending, p_request_key: randomUUID(),
     p_amount_sen: 11000, p_payment_date: new Date().toISOString().slice(0, 10),
     p_reference: 'SYNTHETIC-ARCHIVE-' + claim.slice(0, 8), p_proof_id: proof.id,
     p_destination_revision: instructions.revision, p_confirmed: true,
   };
-  return { payment: ok(await client.rpc('record_reimbursement', args)), proof, args };
+  return { payment: ok(await client.rpc('record_reimbursement', args)), proof, args, staging };
 }
 
 export async function archiveEdge(client, activity, role, operation) {

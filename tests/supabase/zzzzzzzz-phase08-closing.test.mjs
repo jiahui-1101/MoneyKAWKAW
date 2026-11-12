@@ -31,18 +31,32 @@ test('closing reconciles one payment, freezes writes and archives retained evide
   assert.equal(facts.liability, 11000);
   assert.equal((await sign(facts.revision)).error?.code, '23514');
 
-  const { payment, proof, args } = await recordSyntheticPayment(f, claim.id, bytes);
+  const stagedBytes = Buffer.concat([bytes, Buffer.from('synthetic unused staging')]);
+  const { payment, proof, args, staging } = await recordSyntheticPayment(f, claim.id, bytes, stagedBytes);
   ok(await f.member.rpc('report_payment_issue', {
     p_payment_id: payment, p_request_key: randomUUID(), p_reason: 'Synthetic discrepancy', p_received_sen: 0,
   }));
   const paid = await readiness();
   assert.equal(paid.blockers.unconfirmedPaid, 1);
   assert.equal(paid.blockers.openDiscrepancies, 1);
+  assert.equal(paid.blockers.stagedProofs, 1);
   assert.equal((await sign(paid.revision)).error?.code, '23514');
+  const abandon = { p_activity: id, p_proof: staging.id, p_reason: 'Unused synthetic upload.' };
+  assert.equal((await f.member.rpc('abandon_closing_proof', abandon)).error?.code, '42501');
+  assert.equal((await f.treasurer.rpc('abandon_closing_proof', { ...abandon, p_proof: proof.id })).error?.code, '23514');
+  ok(await f.treasurer.rpc('abandon_closing_proof', abandon));
   ok(await f.treasurer.rpc('resolve_payment_issue', {
     p_payment_id: payment, p_request_key: randomUUID(), p_note: 'Synthetic issue reviewed.',
   }));
   await transition(f, claim.id, 'Received');
+  ok(await admin.from('payment_proofs').update({ storage_path: proof.storage_path + '.absent' }).eq('id', proof.id));
+  try {
+    const missing = await readiness();
+    assert.equal(missing.blockers.missingEvidence, 1);
+    assert.equal((await sign(missing.revision)).error?.code, '23514');
+  } finally {
+    ok(await admin.from('payment_proofs').update({ storage_path: proof.storage_path }).eq('id', proof.id));
+  }
   const reconciled = await readiness();
   assert.equal(reconciled.payments, 1);
   assert.equal(reconciled.confirmed, 1);
@@ -110,6 +124,17 @@ test('closing reconciles one payment, freezes writes and archives retained evide
     assert.ok((await client.storage.from('financial-archive').createSignedUrl(material.object_path, 60)).error);
   assert.ok((await f.director.from('archive_records').select('*')).error);
   assert.ok((await f.director.rpc('activity_archive_material', { p_archive: result.id })).error);
+  const preview = () => f.director.rpc('preview_activity_archive_cleanup', { p_activity: id });
+  const cleanup = ok(await preview());
+  assert.equal(cleanup.candidateCount, 1);
+  assert.equal(cleanup.potentialBytes, stagedBytes.length);
+  assert.equal(cleanup.candidates[0].id, staging.id);
+  assert.equal(cleanup.eligibleForReview, false);
+  assert.equal(cleanup.deletionEnabled, false);
+  const policy = { p_activity: id, p_policy: 'SYNTHETIC TEST POLICY', p_days: 30, p_hold: true };
+  assert.equal((await f.member.rpc('set_activity_archive_retention', policy)).error?.code, '42501');
+  ok(await f.director.rpc('set_activity_archive_retention', policy));
+  assert.equal(ok(await preview()).eligibleForReview, false);
   assert.ok((await f.hod.rpc('update_hod_purchase_task_status', {
     p_task_id: task.id, p_status: 'Completed', p_expected_updated_at: task.updated_at,
   })).error);
