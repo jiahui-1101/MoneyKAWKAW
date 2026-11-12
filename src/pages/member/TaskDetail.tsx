@@ -7,6 +7,7 @@ import type { PurchasingStatus } from '../../domain/models';
 import { memberDepartmentPath } from '../../components/member/MemberTables';
 import { PurchaseBadge } from '../../components/hod/HodWidgets';
 import { Badge, Empty, PageHeader, Panel, Status, useFormat } from '../../components/ui';
+import { canPlanActivity, financialStateLabel } from '../../domain/activity-closing';
 export function MemberTaskDetail() {
   const { id } = useParams(),
     { data, busy, run } = useMember(),
@@ -34,6 +35,8 @@ export function MemberTaskDetail() {
     )!;
   const claim = data.expenses.find((e) => e.id === task.expenseId),
     draft = data.drafts.find((d) => d.taskId === task.id);
+  const open = canPlanActivity(scope.activity.financialState);
+  const closing = scope.activity.financialState === 'Closing';
   const progress = async (status: PurchasingStatus) => {
     setError('');
     try {
@@ -64,7 +67,7 @@ export function MemberTaskDetail() {
         title={p.name}
         description={p.description}
       >
-        {own && !task.expenseId && ['Purchased', 'Completed'].includes(p.status) && (
+        {own && !task.expenseId && !p.resolvedAtClosure && (open || (closing && draft)) && ['Purchased', 'Completed'].includes(p.status) && (
           <button className="btn primary" disabled={busy} onClick={() => void begin()}>
             {draft ? 'Continue claim draft' : 'Prepare reimbursement claim'}
           </button>
@@ -77,6 +80,8 @@ export function MemberTaskDetail() {
       </PageHeader>
       <div className="treasury-record-bar">
         <PurchaseBadge task={task} />
+        {!open && <Badge tone="neutral">{financialStateLabel(scope.activity.financialState, '')}</Badge>}
+        {p.resolvedAtClosure && <Badge tone="green">Resolved at closing</Badge>}
         <Badge tone={own ? 'green' : 'neutral'}>
           {own ? 'Assigned to you' : 'Read-only coordination'}
         </Badge>
@@ -131,7 +136,7 @@ export function MemberTaskDetail() {
                   : 'Update the physical purchase, then prepare a receipt-backed claim. Your HOD still controls the assignment details.'}
             </p>
             <div className="row wrap">
-              {!task.expenseId && p.status === 'Not Started' && (
+              {open && !task.expenseId && p.status === 'Not Started' && (
                 <button
                   className="btn"
                   disabled={busy}
@@ -140,7 +145,7 @@ export function MemberTaskDetail() {
                   Start purchase
                 </button>
               )}
-              {!task.expenseId && ['Not Started', 'In Progress'].includes(p.status) && (
+              {open && !task.expenseId && ['Not Started', 'In Progress'].includes(p.status) && (
                 <button
                   className="btn primary"
                   disabled={busy}
@@ -149,7 +154,7 @@ export function MemberTaskDetail() {
                   Mark purchased
                 </button>
               )}
-              {!task.expenseId && p.status === 'Purchased' && (
+              {(open || closing) && !p.resolvedAtClosure && !task.expenseId && p.status === 'Purchased' && (
                 <button className="btn" disabled={busy} onClick={() => void progress('Completed')}>
                   Complete purchase checklist
                 </button>

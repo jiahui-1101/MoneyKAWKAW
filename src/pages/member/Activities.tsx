@@ -4,6 +4,7 @@ import { Link, useParams } from 'react-router-dom';
 import { useMember } from '../../context/member-context';
 import { MemberTaskTable, memberDepartmentPath } from '../../components/member/MemberTables';
 import { Badge, Empty, PageHeader, Panel, useFormat } from '../../components/ui';
+import { financialStateLabel } from '../../domain/activity-closing';
 export function MemberActivities() {
   const { data } = useMember(),
     { date } = useFormat();
@@ -38,7 +39,7 @@ export function MemberActivities() {
                 <span className="department-icon">
                   <CalendarDays size={20} />
                 </span>
-                <Badge tone="green">Member</Badge>
+                <Badge tone="green">{financialStateLabel(s.activity.financialState, 'Member')}</Badge>
               </div>
               <h2>{s.activity.name}</h2>
               <p>
@@ -117,7 +118,7 @@ export function MemberDepartment() {
         <p>
           {tasks.length} shared purchasing tasks · {members.length} active team members
         </p>
-        <Badge tone="neutral">Coordination view</Badge>
+        <Badge tone="neutral">{financialStateLabel(scope.activity.financialState, 'Coordination view')}</Badge>
       </div>
       <Panel
         title="The people behind the plan"
