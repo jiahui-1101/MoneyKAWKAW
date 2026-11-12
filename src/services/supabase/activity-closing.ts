@@ -60,6 +60,12 @@ export const activityClosing = {
   async resolvePurchase(task: string, reason: string) {
     checked(await supabaseClient().rpc('resolve_closing_purchase', { p_task: task, p_reason: reason }));
   },
+  async stagedProofs(activity: string, signal: AbortSignal) {
+    return checked(await supabaseClient().rpc('activity_staged_proofs', { p_activity: activity }).abortSignal(signal));
+  },
+  async abandonProof(activity: string, proof: string, reason: string) {
+    checked(await supabaseClient().rpc('abandon_closing_proof', { p_activity: activity, p_proof: proof, p_reason: reason }));
+  },
   async archive(activity: string, role: ClosingRole, operation: 'generate' | 'verify') {
     await archiveAction(activity, role, operation);
   },

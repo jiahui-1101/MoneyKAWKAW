@@ -6,6 +6,7 @@ import { ActivityClosingActions, type ClosingActionRunner } from './ActivityClos
 import { ActivityReconciliation } from './ActivityReconciliation';
 import { ActivityArchiveDetails } from './ActivityArchiveDetails';
 import { ActivityArchiveRetention } from './ActivityArchiveRetention';
+import { ActivityStagedProofs } from './ActivityStagedProofs';
 import { Panel, Status } from './ui';
 
 export function ActivityClosingPanel({ activity, workspaceRole: role, reload }: {
@@ -68,6 +69,8 @@ export function ActivityClosingPanel({ activity, workspaceRole: role, reload }: 
       </Panel>
       {report && <>
         <ActivityReconciliation report={report} />
+        {role === 'Treasurer' && report.state === 'Closing' && report.facts.blockers.stagedProofs > 0 &&
+          <ActivityStagedProofs activity={id} revision={report.revision} busy={busy} run={run} />}
         <ActivityArchiveDetails activity={id} report={report} role={role} busy={busy} run={run} />
         {role === 'Director' && report.state === 'Archived' && report.archive &&
           <ActivityArchiveRetention activity={id} archive={report.archive} busy={busy} run={run} />}
