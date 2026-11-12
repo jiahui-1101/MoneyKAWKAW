@@ -9,6 +9,7 @@ const groups = {
   items: 'claim_items',
   receiptModifications: 'receipt_modifications',
   claimHistory: 'claim_status_history',
+  destinations: 'claim_payment_destinations',
   proofs: 'payment_proofs',
   payments: 'reimbursement_payments',
   notifications: 'financial_notifications',
@@ -37,6 +38,12 @@ export function scaleFixture(sample, fixture, count) {
   for (const claim of output.claims) {
     claim.idempotency_key = randomUUID();
     claim.submission_key = randomUUID();
+    output.destinations.push({
+      claim_id: claim.id, owner_uid: claim.claimant_user_id, selected_by: claim.claimant_user_id,
+      label: 'Synthetic benchmark account', kind: 'Bank', holder: 'Synthetic Member',
+      institution: 'Test Bank', identifier: '0000000011113210', masked: 'Bank •••• 3210',
+      selected_at: claim.submitted_at,
+    });
   }
   for (const payment of output.payments) {
     payment.request_key = randomUUID();
