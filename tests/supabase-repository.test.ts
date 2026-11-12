@@ -18,7 +18,8 @@ beforeEach(() => {
     activities: [activity], departments: [department],
     department_memberships: [{ user_id: 'member-a', activity_id: 'activity-a', department_id: 'department-a', role: 'Member', status: 'active' }],
     profiles: [{ user_id: 'member-a', display_name: 'A Member' }],
-    purchase_tasks: [], claims: [], audit_events: [],
+    purchase_tasks: [], claims: [], audit_events: [], reimbursement_payments: [], payment_proofs: [],
+    financial_notifications: [],
   };
   mocks.client = {
     auth: { getUser: vi.fn().mockResolvedValue({ data: { user: { id: 'member-a' } }, error: null }) },
