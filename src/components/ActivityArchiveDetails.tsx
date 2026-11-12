@@ -39,6 +39,9 @@ export function ActivityArchiveDetails({ activity, report, role, busy, run }: {
             Compressed SHA-256 <code>{archive.compressed_sha256}</code>
           </p>}
         </details>
+        {archive.recovery_report && archive.recovery_checked_at && <p className="data-note">
+          Recovery drill recorded {time(archive.recovery_checked_at)} · {archive.recovery_report.rows} reconstructed records · {archive.recovery_report.evidence} checked originals.
+        </p>}
         <p className="data-note">The package references private original receipts and payment proofs. Recovery requires those retained files.</p>
         {state === 'Archived' && <div className="row wrap">
           <button className="btn" type="button" disabled={busy}

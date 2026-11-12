@@ -46,7 +46,8 @@ export function ActivityReconciliation({ report }: { report: ClosingReport }) {
           </div>
           <div className="table-scroll" role="region" tabIndex={0} aria-label="Closing department balances">
             <table>
-              <thead><tr><th>Department</th><th>Allocated</th><th>Paid</th><th>Unspent allocation</th></tr></thead>
+              <thead><tr><th>Department</th><th>Allocated</th><th>Paid</th><th>{report.state === 'Closing' || report.state === 'Open'
+                ? 'Remaining after recorded costs' : 'Unspent allocation'}</th></tr></thead>
               <tbody>{facts.departments.map((department) => <tr key={department.departmentId}>
                 <td>{department.name}</td><td>{money(department.budget, true)}</td>
                 <td>{money(department.paid, true)}</td><td>{money(department.remaining, true)}</td>

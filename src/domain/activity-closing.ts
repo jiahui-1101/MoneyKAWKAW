@@ -51,6 +51,8 @@ export interface ClosingReport {
     logical_bytes: number; compressed_bytes: number | null; verified_evidence_count: number | null;
     evidence_bytes: number | null; legal_hold: boolean; retain_until: string | null;
     retention_policy: { id: string; days: number } | null;
+    recovery_checked_at: string | null;
+    recovery_report: { result: 'Passed'; rows: number; evidence: number } | null;
   } | null;
 }
 
