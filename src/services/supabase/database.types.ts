@@ -131,14 +131,14 @@ isOneToOne: false
                   ]
                 },"archive_records": {
                   Row: {
-                    "activity_id": string | null,"approval_id": string | null,"archive_state": string,"archived_at": string,"archived_by": string | null,"checked_at": string | null,"club_id": string,"compressed_bytes": number | null,"compressed_sha256": string | null,"created_at": string,"department_id": string | null,"entity_id": string,"entity_type": string,"evidence_bytes": number | null,"failure_code": string | null,"format_version": number | null,"id": string,"legal_hold": boolean,"logical_bytes": number | null,"logical_sha256": string | null,"object_path": string | null,"reconciliation_id": string | null,"retain_until": string | null,"retention_policy": Json | null,"source_revision": number | null,"source_text": string | null,"verification_state": string,"verified_evidence_count": number | null
+                    "activity_id": string | null,"approval_id": string | null,"archive_state": string,"archived_at": string,"archived_by": string | null,"checked_at": string | null,"club_id": string,"compressed_bytes": number | null,"compressed_sha256": string | null,"created_at": string,"department_id": string | null,"entity_id": string,"entity_type": string,"evidence_bytes": number | null,"failure_code": string | null,"format_version": number | null,"id": string,"legal_hold": boolean,"logical_bytes": number | null,"logical_sha256": string | null,"object_path": string | null,"reconciliation_id": string | null,"recovery_checked_at": string | null,"recovery_report": Json | null,"retain_until": string | null,"retention_policy": Json | null,"source_revision": number | null,"source_text": string | null,"verification_state": string,"verified_evidence_count": number | null
                   }
                   ComputedFields: never
                   Insert: {
-                    "activity_id"?: string | null,"approval_id"?: string | null,"archive_state"?: string,"archived_at"?: string,"archived_by"?: string | null,"checked_at"?: string | null,"club_id": string,"compressed_bytes"?: number | null,"compressed_sha256"?: string | null,"created_at"?: string,"department_id"?: string | null,"entity_id": string,"entity_type": string,"evidence_bytes"?: number | null,"failure_code"?: string | null,"format_version"?: number | null,"id"?: string,"legal_hold"?: boolean,"logical_bytes"?: number | null,"logical_sha256"?: string | null,"object_path"?: string | null,"reconciliation_id"?: string | null,"retain_until"?: string | null,"retention_policy"?: Json | null,"source_revision"?: number | null,"source_text"?: string | null,"verification_state"?: string,"verified_evidence_count"?: number | null
+                    "activity_id"?: string | null,"approval_id"?: string | null,"archive_state"?: string,"archived_at"?: string,"archived_by"?: string | null,"checked_at"?: string | null,"club_id": string,"compressed_bytes"?: number | null,"compressed_sha256"?: string | null,"created_at"?: string,"department_id"?: string | null,"entity_id": string,"entity_type": string,"evidence_bytes"?: number | null,"failure_code"?: string | null,"format_version"?: number | null,"id"?: string,"legal_hold"?: boolean,"logical_bytes"?: number | null,"logical_sha256"?: string | null,"object_path"?: string | null,"reconciliation_id"?: string | null,"recovery_checked_at"?: string | null,"recovery_report"?: Json | null,"retain_until"?: string | null,"retention_policy"?: Json | null,"source_revision"?: number | null,"source_text"?: string | null,"verification_state"?: string,"verified_evidence_count"?: number | null
                   }
                   Update: {
-                    "activity_id"?: string | null,"approval_id"?: string | null,"archive_state"?: string,"archived_at"?: string,"archived_by"?: string | null,"checked_at"?: string | null,"club_id"?: string,"compressed_bytes"?: number | null,"compressed_sha256"?: string | null,"created_at"?: string,"department_id"?: string | null,"entity_id"?: string,"entity_type"?: string,"evidence_bytes"?: number | null,"failure_code"?: string | null,"format_version"?: number | null,"id"?: string,"legal_hold"?: boolean,"logical_bytes"?: number | null,"logical_sha256"?: string | null,"object_path"?: string | null,"reconciliation_id"?: string | null,"retain_until"?: string | null,"retention_policy"?: Json | null,"source_revision"?: number | null,"source_text"?: string | null,"verification_state"?: string,"verified_evidence_count"?: number | null
+                    "activity_id"?: string | null,"approval_id"?: string | null,"archive_state"?: string,"archived_at"?: string,"archived_by"?: string | null,"checked_at"?: string | null,"club_id"?: string,"compressed_bytes"?: number | null,"compressed_sha256"?: string | null,"created_at"?: string,"department_id"?: string | null,"entity_id"?: string,"entity_type"?: string,"evidence_bytes"?: number | null,"failure_code"?: string | null,"format_version"?: number | null,"id"?: string,"legal_hold"?: boolean,"logical_bytes"?: number | null,"logical_sha256"?: string | null,"object_path"?: string | null,"reconciliation_id"?: string | null,"recovery_checked_at"?: string | null,"recovery_report"?: Json | null,"retain_until"?: string | null,"retention_policy"?: Json | null,"source_revision"?: number | null,"source_text"?: string | null,"verification_state"?: string,"verified_evidence_count"?: number | null
                   }
                   Relationships: [
                     {
@@ -717,7 +717,10 @@ isOneToOne: false
             [_ in never]: never
           }
           Functions: {
-            "abandon_my_claim_receipt":
+            "abandon_closing_proof":
+{ Args: { "p_activity": string,"p_proof": string,"p_reason": string }; Returns: undefined
+                           },
+"abandon_my_claim_receipt":
 { Args: { "p_receipt_id": string }; Returns: string
                            },
 "abandon_payment_proof":
@@ -734,6 +737,11 @@ isOneToOne: false
                            },
 "activity_closing_report":
 { Args: { "p_activity": string,"p_role": string }; Returns: Json
+                           },
+"activity_staged_proofs":
+{ Args: { "p_activity": string }; Returns: {
+              "created_at": string,"filename": string,"id": string,"size_bytes": number
+            }[]
                            },
 "assess_claim_risk":
 { Args: { "p_claim_id": string }; Returns: Json
@@ -764,6 +772,9 @@ isOneToOne: false
                            },
 "finalize_activity_archive":
 { Args: { "p_actor": string,"p_archive": string,"p_compressed_bytes": number,"p_compressed_sha": string,"p_evidence_bytes": number,"p_evidence_count": number,"p_logical_sha": string,"p_revision": number }; Returns: undefined
+                           },
+"finalize_activity_archive_object":
+{ Args: { "p_actor": string,"p_archive": string,"p_compressed_bytes": number,"p_compressed_sha": string,"p_evidence_bytes": number,"p_evidence_count": number,"p_logical_sha": string,"p_object_path": string,"p_revision": number }; Returns: undefined
                            },
 "finalize_claim_receipt":
 { Args: { "p_receipt_id": string }; Returns: string
@@ -828,6 +839,9 @@ isOneToOne: false
 "record_activity_archive_check":
 { Args: { "p_actor": string,"p_archive": string,"p_compressed_sha": string,"p_failure": string,"p_operation": string,"p_role": string }; Returns: undefined
                            },
+"record_activity_archive_recovery":
+{ Args: { "p_actor": string,"p_archive": string,"p_compressed_sha": string,"p_evidence_count": number,"p_milliseconds": number,"p_rows": number }; Returns: undefined
+                           },
 "record_reimbursement":
 { Args: { "p_amount_sen": number,"p_claim_id": string,"p_confirmed": boolean,"p_destination_revision": string,"p_expected_updated_at": string,"p_payment_date": string,"p_proof_id": string,"p_reference": string,"p_request_key": string }; Returns: string
                            },
@@ -836,6 +850,9 @@ isOneToOne: false
                            },
 "reopen_activity_closing":
 { Args: { "p_activity": string,"p_reason": string,"p_revision": number }; Returns: undefined
+                           },
+"replace_corrupt_archive_stage":
+{ Args: { "p_actor": string,"p_archive": string,"p_expected_path": string }; Returns: string
                            },
 "report_payment_issue":
 { Args: { "p_payment_id": string,"p_reason": string,"p_received_sen"?: number,"p_request_key": string }; Returns: undefined
