@@ -17,6 +17,9 @@ import { MetricCards } from '../../components/MetricCards';
 import { PurchaseBadge, useDepartmentScope } from '../../components/hod/HodWidgets';
 import { Badge, Empty, Modal, PageHeader, Panel, Status, useFormat } from '../../components/ui';
 import { demoMode } from '../../services/supabase/client';
+import { canPlanActivity, financialStateLabel } from '../../domain/activity-closing';
+import { activityClosing } from '../../services/supabase/activity-closing';
+import { Field } from '../../components/Field';
 
 export function HodTaskDetail() {
   const { taskId } = useParams();
@@ -25,6 +28,8 @@ export function HodTaskDetail() {
   const { money, date, time } = useFormat();
   const [error, setError] = useState('');
   const [cancel, setCancel] = useState(false);
+  const [resolve, setResolve] = useState(false);
+  const [resolutionReason, setResolutionReason] = useState('');
   const task = tasks.find((t) => t.id === taskId);
   if (!task)
     return (
@@ -45,7 +50,10 @@ export function HodTaskDetail() {
     .filter((payment) => payment.expenseId === claim?.id)
     .reduce((sum, p) => sum + p.amount, 0);
   const variance = claim ? claim.amount - task.budget : 0;
-  const editable = !task.expenseId && p.status !== 'Cancelled';
+  const open = canPlanActivity(scope.activity.financialState);
+  const closing = scope.activity.financialState === 'Closing';
+  const changeable = !task.expenseId && p.status !== 'Cancelled' && !p.resolvedAtClosure;
+  const editable = open && changeable;
   const overdue = isOverdue(task, departmentToday(data.settings.timezone));
   const events = data.events.filter((e) => e.assignmentId === task.id);
   return (
@@ -68,6 +76,8 @@ export function HodTaskDetail() {
       </PageHeader>
       <div className="row wrap">
         <PurchaseBadge task={task} />
+        {!open && <Badge tone="neutral">{financialStateLabel(scope.activity.financialState, '')}</Badge>}
+        {p.resolvedAtClosure && <Badge tone="green">Resolved at closing</Badge>}
         <Badge
           tone={p.priority === 'High' ? 'danger' : p.priority === 'Medium' ? 'gold' : 'neutral'}
         >
@@ -163,9 +173,9 @@ export function HodTaskDetail() {
                     ? 'This plan was cancelled. Its estimate is excluded from active purchasing commitments.'
                     : 'Update the purchasing stage as the work progresses. No claim or payment is created by this action.'}
             </p>
-            {editable && (
+            {changeable && (open || closing) && (
               <div className="row wrap">
-                {(nextPurchasingStates[p.status] ?? []).map((status) => (
+                {(nextPurchasingStates[p.status] ?? []).filter((status) => open || status === 'Completed').map((status) => (
                   <button
                     className="btn primary"
                     key={status}
@@ -196,7 +206,7 @@ export function HodTaskDetail() {
                 ))}
               </div>
             )}
-            {editable && (
+            {changeable && (open || closing) && ['Not Started', 'In Progress'].includes(p.status) && (
               <button
                 className="btn"
                 disabled={busy}
@@ -209,6 +219,12 @@ export function HodTaskDetail() {
                 Cancel purchasing task
               </button>
             )}
+            {closing && !p.resolvedAtClosure && ['Purchased', 'Completed'].includes(p.status) &&
+              <button type="button" className="btn" disabled={busy} onClick={() => {
+                setResolutionReason('');
+                setError('');
+                setResolve(true);
+              }}>Resolve without reimbursement</button>}
           </div>
         </Panel>
       </div>
@@ -276,6 +292,28 @@ export function HodTaskDetail() {
           )}
         </div>
       </Panel>
+      {resolve && <Modal title="Resolve without reimbursement" onClose={() => setResolve(false)}>
+        <div className="stack">
+          <p>Confirm why this purchase has no reimbursement obligation. The original task and claim history stay available.</p>
+          <Field label="Resolution reason" id="purchase-resolution" required>
+            <textarea id="purchase-resolution" maxLength={500} value={resolutionReason}
+              onChange={(event) => setResolutionReason(event.target.value)} />
+          </Field>
+          {error && <p className="form-error" role="alert">{error}</p>}
+          <button type="button" className="btn primary" disabled={busy || resolutionReason.trim().length < 3}
+            onClick={async () => {
+              try {
+                await run(async () => {
+                  await activityClosing.resolvePurchase(task.id, resolutionReason);
+                  return { data: await hodService.load() };
+                }, 'Purchase obligation resolved.');
+                setResolve(false);
+              } catch (cause) {
+                setError(cause instanceof Error ? cause.message : 'Purchase resolution could not be saved.');
+              }
+            }}>Confirm purchase resolution</button>
+        </div>
+      </Modal>}
       {cancel && (
         <Modal title="Cancel this purchasing task?" onClose={() => setCancel(false)}>
           <p>
