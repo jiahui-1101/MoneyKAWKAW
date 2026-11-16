@@ -6,9 +6,7 @@ import { activityStatuses } from '../domain/models';
 import { summarize } from '../domain/budget';
 import {
   ActivityTable,
-  BudgetComparison,
   BudgetLifecycle,
-  Distribution,
   Metrics,
   Overspending,
   RecentActivity,
@@ -87,10 +85,6 @@ export function Dashboard({ budgets = false }: { budgets?: boolean }) {
       <BudgetInsights store={store} activityIds={activities.map((a) => a.id)} />
       <Overspending store={filtered} />
       {budgets && <BudgetLifecycle summary={summary} />}
-      <div className="chart-grid">
-        <BudgetComparison activities={activities} store={store} />
-        <Distribution activities={activities} />
-      </div>
       {!budgets && <BudgetLifecycle summary={summary} />}
       <Panel
         title="Activities overview"
