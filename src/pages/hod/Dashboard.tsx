@@ -1,4 +1,4 @@
-import { ArrowUpRight, CalendarDays, Plus, ShieldCheck } from 'lucide-react';
+import { ArrowUpRight, CalendarDays, Plus } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { departmentToday, isOverdue, scopePath } from '../../domain/hod';
 import { Badge, PageHeader, Panel, Progress, TextLink, useFormat } from '../../components/ui';
@@ -11,6 +11,7 @@ import {
   UpcomingPurchases,
   useDepartmentScope,
 } from '../../components/hod/HodWidgets';
+import { HodInsights } from '../../components/charts/HodInsights';
 import { demoMode } from '../../services/supabase/client';
 import { canPlanActivity, financialStateLabel } from '../../domain/activity-closing';
 
@@ -18,11 +19,6 @@ export function HodDashboard({ department = false }: { department?: boolean }) {
   const { data, scope, tasks, base, summary } = useDepartmentScope();
   const { money, date } = useFormat();
   const today = departmentToday(data.settings.timezone);
-  const utilization = demoMode
-    ? summary.utilization
-    : summary.budget
-      ? (summary.planned / summary.budget) * 100
-      : 0;
   const counts = [
     ['Total purchasing tasks', tasks.length, ''],
     [
@@ -109,40 +105,7 @@ export function HodDashboard({ department = false }: { department?: boolean }) {
         </Panel>
       )}
       <DepartmentMetrics data={data} scope={scope} />
-      <div className="budget-pulse">
-        <div className="row">
-          <span className="pulse-icon">
-            <ShieldCheck size={21} />
-          </span>
-          <div>
-            <h2>
-              {scope.activity.name} · {scope.department.name}
-            </h2>
-            <p>
-              {demoMode
-                ? `${money(summary.remaining)} remaining after recorded expenses · ${money(summary.open)} reserved for unclaimed purchases`
-                : `${money(summary.available)} available after planned task commitments · ${money(summary.planned)} planned across ${tasks.filter((task) => task.purchasing?.status !== 'Cancelled').length} active tasks`}
-            </p>
-          </div>
-        </div>
-        <div className="pulse-progress">
-          <div className="row between">
-            <span>{demoMode ? 'Budget utilization' : 'Planned commitment utilization'}</span>
-            <strong>{utilization.toFixed(1)}%</strong>
-          </div>
-          <Progress
-            value={utilization}
-            label={demoMode ? 'Department budget utilization' : 'Planned commitment utilization'}
-            tone={
-              (demoMode ? summary.recorded : summary.planned) > summary.budget
-                ? 'danger'
-                : utilization >= data.settings.warningPercent
-                  ? 'gold'
-                  : 'green'
-            }
-          />
-        </div>
-      </div>
+      <HodInsights summary={summary} tasks={tasks} users={data.directory.users} />
       {(summary.available < 0 || summary.planned > summary.budget) && (
         <div className="form-error" role="status">
           Department budget attention:{' '}
