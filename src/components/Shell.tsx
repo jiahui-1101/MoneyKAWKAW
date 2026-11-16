@@ -148,18 +148,6 @@ export function Shell() {
           ))}
         </nav>
         <div className="sidebar-bottom">
-          <div className="sidebar-tip">
-            <span className="eyebrow">A LITTLE CLARITY.</span>
-            <h3>
-              Big ideas.
-              <br />
-              Thoughtful budgets.
-            </h3>
-            <p>Give every club activity a plan that adds up.</p>
-            <Link to="/director/activities/new" onClick={() => setOpen(false)}>
-              Plan an activity <ArrowUpRight size={15} />
-            </Link>
-          </div>
           <NavLink
             to="/director/settings"
             className={({ isActive }) => `nav-item ${isActive ? 'selected' : ''}`}

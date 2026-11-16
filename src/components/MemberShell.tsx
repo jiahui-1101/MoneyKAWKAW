@@ -104,18 +104,6 @@ export function MemberShell() {
           ))}
         </nav>
         <div className="sidebar-bottom">
-          <div className="sidebar-tip">
-            <span className="eyebrow">SMALL PURCHASES. SHARED PURPOSE.</span>
-            <h3>
-              Your part,
-              <br />
-              clearly in view.
-            </h3>
-            <p>Keep your purchases, receipts, and reimbursements together.</p>
-            <Link to="/member/tasks" onClick={() => nav.setOpen(false)}>
-              See my next purchase →
-            </Link>
-          </div>
           <button
             className="nav-item"
             onClick={() => {

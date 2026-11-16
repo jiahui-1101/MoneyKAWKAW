@@ -1,6 +1,5 @@
 import {
   Activity,
-  ArrowUpRight,
   CircleHelp,
   ClipboardList,
   LayoutDashboard,
@@ -116,20 +115,6 @@ export function HodShell() {
             ))}
         </nav>
         <div className="sidebar-bottom">
-          <div className="sidebar-tip">
-            <span className="eyebrow">A SHARED PURPOSE.</span>
-            <h3>
-              Clear plans.
-              <br />
-              Confident teams.
-            </h3>
-            <p>A thoughtful purchase starts with a clear responsibility.</p>
-            {scope && (!scope.activity.financialState || scope.activity.financialState === 'Open') && (
-              <Link to={`${base}/tasks/new`} onClick={() => nav.setOpen(false)}>
-                Plan a purchase <ArrowUpRight size={15} />
-              </Link>
-            )}
-          </div>
           <button
             className="nav-item"
             onClick={() => {

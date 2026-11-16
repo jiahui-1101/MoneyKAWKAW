@@ -96,20 +96,6 @@ export function TreasuryShell() {
           ))}
         </nav>
         <div className="sidebar-bottom">
-          <div className="sidebar-tip">
-            <span className="eyebrow">EVERY AMOUNT, ACCOUNTED FOR.</span>
-            <h3>
-              Clear evidence.
-              <br />
-              Considered decisions.
-            </h3>
-            <p>{demoMode
-              ? 'Follow the record from submitted claim to reimbursement.'
-              : 'Review evidence, record independent decisions, and track documented external reimbursements.'}</p>
-            <Link to="/treasurer/claims" onClick={() => nav.setOpen(false)}>
-              {demoMode ? 'Open review queue →' : 'Open claim queue →'}
-            </Link>
-          </div>
           <button
             className="nav-item"
             onClick={() => {
