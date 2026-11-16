@@ -3,6 +3,9 @@ import { Link } from 'react-router-dom';
 import { useTreasury } from '../../context/treasury-context';
 import { summarize } from '../../domain/budget';
 import { BudgetComparison } from '../../components/Finance';
+import { ChartCard } from '../../components/charts/Charts';
+import { BudgetInsights, tones } from '../../components/charts/Insights';
+import { Pipeline } from '../../components/charts/Trends';
 import { MetricCards } from '../../components/MetricCards';
 import { PageHeader, Panel, TextLink, useFormat } from '../../components/ui';
 import {
@@ -106,6 +109,18 @@ export function TreasuryDashboard() {
             <ArrowUpRight size={14} />
           </Link>
         ))}
+      </div>
+      <BudgetInsights store={data} activityIds={data.activities.map((a) => a.id)} />
+      <div className="viz-grid">
+        <ChartCard wide title="Reimbursement flow" hint="Approved claims moving to payment and member confirmation">
+          <Pipeline
+            stages={[
+              { label: 'Approved · unpaid', count: unpaid.length, tone: tones.pending },
+              { label: 'Paid · awaiting member', count: data.payments.filter((p) => !p.manual?.receivedConfirmedAt).length, tone: tones.committed },
+              { label: 'Member confirmed', count: data.payments.filter((p) => p.manual?.receivedConfirmedAt).length, tone: tones.paid },
+            ]}
+          />
+        </ChartCard>
       </div>
       <TreasuryLifecycle data={data} />
       {!!data.notifications?.length && <Panel title="Financial notifications" subtitle="Persisted business events · no email or push delivery implied">
