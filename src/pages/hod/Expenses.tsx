@@ -15,7 +15,7 @@ export function HodExpenses() {
     [payment, setPayment] = useState('');
   if (!demoMode) return <div className="stack">
     <PageHeader eyebrow={`${scope.department.name.toUpperCase()} · FINANCIAL VISIBILITY`}
-      title="Department finances, in context."
+      title="Department finances"
       description="Authorized department totals separate purchasing plans, pending claims, approved obligations, and recorded payments." />
     <DepartmentMetrics data={data} scope={scope} />
     <DepartmentBalances data={data} scope={scope} />
@@ -41,7 +41,7 @@ export function HodExpenses() {
     <div className="stack">
       <PageHeader
         eyebrow={`${scope.department.name.toUpperCase()} · FINANCIAL VISIBILITY`}
-        title="Purchases tell one part of the story."
+        title="Expenses & claims"
         description="Monitor claim review, item variances, and reimbursement without changing financial decisions."
       />
       <MetricCards

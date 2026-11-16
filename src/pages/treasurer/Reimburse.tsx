@@ -118,7 +118,7 @@ export function TreasuryReimburse() {
       </Link>
       <PageHeader
         eyebrow="MANUAL REIMBURSEMENT"
-        title="Record the transfer, keep the evidence."
+        title="Record payment"
         description={`${claim.description} · ${money(claim.amount)} approved`}
       />
       <div className="treasury-justification">

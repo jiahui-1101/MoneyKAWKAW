@@ -23,7 +23,7 @@ export function MemberClaims() {
     <div className="stack">
       <PageHeader
         eyebrow="MY REIMBURSEMENT RECORDS"
-        title="From submitted to received, in one place."
+        title="My claims"
         description="Track your own evidence, Treasurer decisions, recorded payments, and receipt confirmation."
       />
       {!!data.drafts.length && (

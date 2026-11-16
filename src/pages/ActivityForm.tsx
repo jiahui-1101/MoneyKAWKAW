@@ -120,7 +120,7 @@ export function ActivityForm() {
       </button>
       <PageHeader
         eyebrow={id ? 'ACTIVITY SETTINGS' : 'SOMETHING GOOD STARTS HERE'}
-        title={id ? 'Refine the plan.' : 'Create your next activity.'}
+        title={id ? 'Edit activity' : 'New activity'}
         description="A clear purpose, a thoughtful budget, and a team ready to go."
       />
       {!id && (

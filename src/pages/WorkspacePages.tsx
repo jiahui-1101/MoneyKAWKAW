@@ -23,7 +23,7 @@ export function History() {
     <div className="stack">
       <PageHeader
         eyebrow="A RECORD OF THE DETAILS"
-        title="Every change has a story."
+        title="Activity log"
         description="Follow activity setup and allocation changes across the workspace."
       />
       <div className="history-filters">
@@ -83,7 +83,7 @@ export function Settings() {
     <div className="stack">
       <PageHeader
         eyebrow="MAKE IT YOUR WORKSPACE"
-        title="The details behind the clarity."
+        title="Settings"
         description="Set display preferences and understand your demo workspace."
       />
       <div className="settings-layout">

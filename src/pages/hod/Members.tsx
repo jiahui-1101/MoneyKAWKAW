@@ -16,7 +16,7 @@ export function HodMembers() {
     <div className="stack">
       <PageHeader
         eyebrow={`${scope.department.name.toUpperCase()} · PEOPLE & RESPONSIBILITIES`}
-        title="A shared purpose. Clear ownership."
+        title="Members"
         description="See your department’s eligible members, responsibilities, and purchasing workload."
       />
       <Panel

@@ -88,7 +88,7 @@ export function TreasuryHistory() {
     <div className="stack">
       <PageHeader
         eyebrow="PAYMENT HISTORY"
-        title="Every reimbursement leaves a record."
+        title="Payment history"
         description="Immutable payment amounts, references, proof, and the member’s separate receipt status."
       />
       <Panel

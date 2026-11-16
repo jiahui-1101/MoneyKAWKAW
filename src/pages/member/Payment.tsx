@@ -91,7 +91,7 @@ export function MemberPayment() {
       </Link>
       <PageHeader
         eyebrow="MY REIMBURSEMENT"
-        title="Evidence of payment. Your acknowledgment."
+        title="Payment record"
         description={claim.description}
       />
       <div className="treasury-record-bar">

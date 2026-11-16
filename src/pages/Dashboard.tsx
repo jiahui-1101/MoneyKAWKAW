@@ -34,7 +34,7 @@ export function Dashboard({ budgets = false }: { budgets?: boolean }) {
     <div className="stack dashboard">
       <PageHeader
         eyebrow="YOUR DIRECTOR WORKSPACE"
-        title={budgets ? 'Every budget. One clear picture.' : 'A little clarity. A bigger impact.'}
+        title={budgets ? 'Budget overview' : 'Overview'}
         description={
           budgets
             ? 'Follow allocations, commitments, and recorded spending across your club.'

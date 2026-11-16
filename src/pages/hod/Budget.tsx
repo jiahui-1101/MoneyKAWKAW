@@ -22,7 +22,7 @@ export function HodBudget() {
     <div className="stack">
       <PageHeader
         eyebrow={`${scope.department.name.toUpperCase()} · ${financialStateLabel(scope.activity.financialState, 'BUDGET & ALLOCATIONS')}`}
-        title="Every purchase has a place in the plan."
+        title="Budget & allocations"
         description="Track item estimates alongside actual expenses without counting the same purchase twice."
       >
         {canPlanActivity(scope.activity.financialState) && <Link className="btn primary" to={`${base}/tasks/new`}>

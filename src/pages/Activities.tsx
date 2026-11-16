@@ -40,7 +40,7 @@ export function Activities() {
     <div className="stack">
       <PageHeader
         eyebrow="PLAN WITH PURPOSE"
-        title="Good ideas start here."
+        title="Activities"
         description="Create, organize, and keep every club activity on track."
       >
         <Link className="btn primary" to="/director/activities/new">

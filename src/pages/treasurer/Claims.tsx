@@ -11,8 +11,8 @@ export function TreasuryClaims({ reimbursements = false }: { reimbursements?: bo
         eyebrow={reimbursements ? 'REIMBURSEMENTS' : 'CLAIM MANAGEMENT'}
         title={
           reimbursements
-            ? 'Approved. Ready for the next step.'
-            : 'Good decisions start with the evidence.'
+            ? 'Reimbursements'
+            : 'Claim review'
         }
         description={
           !demoMode && !reimbursements

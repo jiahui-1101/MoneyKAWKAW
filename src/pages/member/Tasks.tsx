@@ -35,7 +35,7 @@ export function MemberTasks() {
     <div className="stack">
       <PageHeader
         eyebrow="PURCHASING RESPONSIBILITIES"
-        title="Your next purchase, clearly planned."
+        title="My purchases"
         description="Follow your own assignments and coordinate with your department. Your HOD manages the purchasing plan."
       />
       <Panel

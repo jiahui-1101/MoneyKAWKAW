@@ -38,7 +38,7 @@ export function MemberAccounts() {
     <div className="stack">
       <PageHeader
         eyebrow="MY PAYMENT PREFERENCES"
-        title="The right destination, chosen by you."
+        title="Payout accounts"
         description="Save your own reimbursement instructions and select a snapshot for each claim."
       >
         <button className="btn primary" onClick={() => setEditing(null)}>

@@ -47,7 +47,7 @@ export function HodDashboard({ department = false }: { department?: boolean }) {
     <div className="stack hod-dashboard">
       <PageHeader
         eyebrow={`${scope.department.name.toUpperCase()} · HOD WORKSPACE`}
-        title={department ? scope.department.name : 'A clear plan. A confident team.'}
+        title={department ? scope.department.name : 'Department overview'}
         description={
           department
             ? `${scope.activity.name} · ${financialStateLabel(scope.activity.financialState, 'Department overview')}`

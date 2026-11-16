@@ -52,7 +52,7 @@ export function TreasuryDashboard() {
     <div className="stack dashboard">
       <PageHeader
         eyebrow="TREASURER WORKSPACE"
-        title="Every decision, in balance."
+        title="Financial overview"
         description="A considered view of club finances, from the first claim to the final record."
       >
         <Link className="btn primary" to="/treasurer/claims">

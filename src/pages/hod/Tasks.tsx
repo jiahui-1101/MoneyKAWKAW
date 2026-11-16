@@ -41,7 +41,7 @@ export function HodTasks() {
     <div className="stack">
       <PageHeader
         eyebrow={`${scope.department.name.toUpperCase()} · ${financialStateLabel(scope.activity.financialState, 'PURCHASING')}`}
-        title="Good plans become great purchases."
+        title="Purchasing tasks"
         description="Give every item a clear owner, a thoughtful budget, and a deadline."
       >
         {canPlanActivity(scope.activity.financialState) && <Link className="btn primary" to={`${base}/tasks/new`}>

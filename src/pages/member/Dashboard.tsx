@@ -31,7 +31,7 @@ export function MemberDashboard() {
     <div className="stack dashboard">
       <PageHeader
         eyebrow="COMMITTEE MEMBER WORKSPACE"
-        title={`${actor.name.split(' ')[0]}, here’s your part of the plan.`}
+        title={`Hi ${actor.name.split(' ')[0]}`}
         description={demoMode ? 'Your department’s purpose, your next purchase, and a clear path to reimbursement.' : 'Your assigned activities, purchasing tasks, and shared progress.'}
       >
         <Link className="btn primary" to="/member/tasks">

@@ -14,7 +14,7 @@ export function HodHistory() {
     <div className="stack">
       <PageHeader
         eyebrow={`${scope.department.name.toUpperCase()} · DEPARTMENT HISTORY`}
-        title="The details behind every purchase."
+        title="Department history"
         description="Creation, reassignment, budget, and progress changes stay linked to their source task."
       />
       <div className="history-filters">

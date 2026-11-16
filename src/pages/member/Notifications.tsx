@@ -26,7 +26,7 @@ export function MemberNotifications() {
     <div className="stack">
       <PageHeader
         eyebrow="MY IN-APP NOTIFICATIONS"
-        title="The updates that move your work forward."
+        title="Notifications"
         description="Actual assignment, deadline, review, payment, and receipt-confirmation updates. No push notification service is connected."
       >
         <button

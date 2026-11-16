@@ -17,7 +17,7 @@ export function MemberActivities() {
     <div className="stack">
       <PageHeader
         eyebrow="MY ACTIVITIES & DEPARTMENTS"
-        title="A shared purpose. Your own place in it."
+        title="My activities"
         description="Explore the activities and teams where you hold an explicit Member membership."
       />
       <Panel title="My department workspaces" subtitle="Only your active memberships appear here">

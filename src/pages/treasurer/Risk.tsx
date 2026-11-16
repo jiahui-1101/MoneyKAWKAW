@@ -52,7 +52,7 @@ export function TreasuryRisk() {
       </Link>
       <PageHeader
         eyebrow="RULE-BASED ADVISORY ANALYSIS"
-        title="Understand the amount beyond the plan."
+        title="Over-budget analysis"
         description={`${claim.description} · ${c.activity.name} / ${c.department.name}`}
       >
         {demoMode && <button className="btn" onClick={() => setConfigure(true)}>

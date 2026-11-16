@@ -125,7 +125,7 @@ export function HodTaskForm() {
       </button>
       <PageHeader
         eyebrow={`${scope.department.name.toUpperCase()} · PURCHASING PLAN`}
-        title={taskId ? 'Refine the purchasing plan.' : 'Give your next purchase a plan.'}
+        title={taskId ? 'Edit purchasing task' : 'New purchasing task'}
         description={`${scope.activity.name} · Clear ownership, a sensible estimate, and a deadline.`}
       />
       <div className="form-layout">

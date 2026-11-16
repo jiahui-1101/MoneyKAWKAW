@@ -35,7 +35,7 @@ export function TreasuryActivities() {
     <div className="stack">
       <PageHeader
         eyebrow="ACTIVITY FINANCES"
-        title="The plan. The spending. The balance."
+        title="Activity finances"
         description="Director-managed budgets across the activities under your oversight."
       />
       <Panel
