@@ -1,4 +1,4 @@
-import { ArrowUpRight, CalendarDays, Plus, ShieldCheck } from 'lucide-react';
+import { ArrowUpRight, CalendarDays, Plus } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { useState } from 'react';
 import { useWorkspace } from '../context/workspace-context';
@@ -13,12 +13,11 @@ import {
   Overspending,
   RecentActivity,
 } from '../components/Finance';
-import { PageHeader, Panel, Progress, TextLink, useFormat } from '../components/ui';
-import { demoMode } from '../services/supabase/client';
+import { PageHeader, Panel, TextLink } from '../components/ui';
+import { BudgetInsights } from '../components/charts/Insights';
 
 export function Dashboard({ budgets = false }: { budgets?: boolean }) {
   const { store } = useWorkspace();
-  const { money } = useFormat();
   const [status, setStatus] = useState('');
   const [activityId, setActivityId] = useState('');
   if (!store) return null;
@@ -31,12 +30,6 @@ export function Dashboard({ budgets = false }: { budgets?: boolean }) {
     events: store.events.filter((e) => activities.some((a) => a.id === e.activityId)),
   };
   const summary = summarize(filtered);
-  const active = activities.filter((a) => a.status === 'Active').length;
-  const utilization = demoMode
-    ? summary.utilization
-    : summary.budget
-      ? (summary.committed / summary.budget) * 100
-      : 0;
   return (
     <div className="stack dashboard">
       <PageHeader
@@ -91,33 +84,7 @@ export function Dashboard({ budgets = false }: { budgets?: boolean }) {
         </div>
       </div>
       <Metrics summary={summary} count={activities.length} />
-      <div className="budget-pulse">
-        <div className="row">
-          <span className="pulse-icon">
-            <ShieldCheck size={21} />
-          </span>
-          <div>
-            <h2>Your budget, at a glance.</h2>
-            <p>
-              {active} active {active === 1 ? 'activity' : 'activities'} <span>·</span>{' '}
-              {demoMode
-                ? `${money(summary.paid, true)} paid in sample records · ${money(summary.pending, true)} pending review`
-                : `${money(summary.committed, true)} outstanding commitments; submitted exposure and paid amounts are shown separately`}
-            </p>
-          </div>
-        </div>
-        <div className="pulse-progress">
-          <div className="row between">
-            <span>{demoMode ? 'Overall utilization' : 'Planned commitment utilization'}</span>
-            <strong>{utilization.toFixed(1)}%</strong>
-          </div>
-          <Progress
-            value={utilization}
-            label={demoMode ? 'Overall budget utilization' : 'Planned commitment utilization'}
-            tone={(demoMode ? summary.recorded : summary.committed) > summary.budget ? 'danger' : 'brand'}
-          />
-        </div>
-      </div>
+      <BudgetInsights store={store} activityIds={activities.map((a) => a.id)} />
       <Overspending store={filtered} />
       {budgets && <BudgetLifecycle summary={summary} />}
       <div className="chart-grid">
