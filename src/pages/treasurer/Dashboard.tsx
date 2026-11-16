@@ -2,14 +2,12 @@ import { ArrowDownLeft, ArrowUpRight, CircleDollarSign, FolderKanban, Wallet } f
 import { Link } from 'react-router-dom';
 import { useTreasury } from '../../context/treasury-context';
 import { summarize } from '../../domain/budget';
-import { BudgetComparison } from '../../components/Finance';
 import { ChartCard } from '../../components/charts/Charts';
 import { BudgetInsights, tones } from '../../components/charts/Insights';
 import { Pipeline } from '../../components/charts/Trends';
 import { MetricCards } from '../../components/MetricCards';
 import { PageHeader, Panel, TextLink, useFormat } from '../../components/ui';
 import {
-  ClaimDistribution,
   FinancialAlerts,
   SpendingChart,
   TreasuryLifecycle,
@@ -128,10 +126,6 @@ export function TreasuryDashboard() {
           <TextLink to={n.to}>{n.title}</TextLink><p>{n.detail}</p><small>{time(n.at)}</small>
         </div>)}</div>
       </Panel>}
-      <div className="chart-grid">
-        <BudgetComparison activities={data.activities} store={data} root="/treasurer" />
-        <ClaimDistribution data={data} />
-      </div>
       <div className="treasury-two-col">
         <SpendingChart data={data} />
         <SpendingChart data={data} departments />
