@@ -10,6 +10,7 @@ import './styles/hod.css';
 import './styles/treasury.css';
 import './styles/member.css';
 import './styles/assistant.css';
+import './styles/charts.css';
 
 createRoot(document.getElementById('root')!).render(
   <StrictMode>
