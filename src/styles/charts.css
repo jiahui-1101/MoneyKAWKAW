@@ -1,7 +1,7 @@
 /* Shared visualization kit (src/components/charts) */
 .viz-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(230px, 1fr));
   gap: var(--space-4);
 }
 .viz-card {
@@ -21,8 +21,8 @@
 .viz-empty { color: var(--muted); font-size: 13px; margin: 0; }
 
 .viz-donut { display: flex; align-items: center; gap: var(--space-5); flex-wrap: wrap; }
-.viz-donut svg { width: 150px; height: 150px; flex: none; transform: rotate(0deg); }
-.viz-donut-value { font: 700 5.4px var(--font-display); text-anchor: middle; fill: var(--ink); }
+.viz-donut svg { width: 130px; height: 130px; flex: none; transform: rotate(0deg); }
+.viz-donut-value { font: 700 3.6px var(--font-display); text-anchor: middle; fill: var(--ink); }
 .viz-donut-caption { font-size: 2.6px; text-anchor: middle; fill: var(--muted); }
 .viz-legend, .viz-keys, .viz-stack, .viz-pipeline { list-style: none; margin: 0; padding: 0; }
 .viz-legend { flex: 1; min-width: 160px; display: grid; gap: 8px; font-size: 13px; }
