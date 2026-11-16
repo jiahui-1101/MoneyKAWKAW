@@ -8,6 +8,7 @@ import {
   MemberTaskTable,
   memberDepartmentPath,
 } from '../../components/member/MemberTables';
+import { MemberInsights } from '../../components/charts/MemberInsights';
 import { MetricCards } from '../../components/MetricCards';
 import { Empty, PageHeader, Panel, Progress, TextLink, useFormat } from '../../components/ui';
 import { demoMode } from '../../services/supabase/client';
@@ -78,6 +79,7 @@ export function MemberDashboard() {
           ]),
         ]}
       />
+      <MemberInsights tasks={mine} claims={data.expenses} payments={data.payments} />
       <div className="member-counts">
         {[
           ['Pending purchases', pending.length, '/member/tasks'],
