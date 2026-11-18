@@ -34,23 +34,33 @@ All app tables are under the exposed `public` schema and use UUID keys. `auth.us
 | `activity_memberships`, `department_memberships` | Activity relation and explicit HOD/Member department grants |
 | `purchase_tasks` | HOD-authored purchasing plans linked to activity, department, and assigned member; estimates are integer sen |
 | `member_preferences` | Owner-only notification preference |
-| `audit_events`, `archive_records` | Scoped setup/task audit history and prepared retention metadata; archive app access is closed |
+| `claims`, `claim_items`, `claim_receipts`, `receipt_modifications` | Claims with preserved original evidence, source OCR and correction history |
+| `payment_accounts`, `claim_payment_destinations` | Private owner instructions and protected per-claim snapshots |
+| `reimbursement_payments`, `payment_proofs` | One recorded payment per claim, preserved proof and separate receipt confirmation |
+| `activity_reconciliations`, `activity_closing_decisions` | Immutable signed financial snapshots and independent Director decisions |
+| `audit_events`, `archive_records` | Scoped append-only history and private verified archive/retention metadata |
 
-Phase 02 adds the Director → HOD → Member purchasing flow. The existing `Store` remains the UI boundary: activities, department assignments, tasks, and allowed audit events load from Supabase; claim, receipt, account, payment, and notification arrays remain empty. Purchasing estimates and progress never create a claim or imply approval or payment.
+The existing `Store` remains the UI boundary. Activities, assignments, permitted claims, recorded payments, masked destinations, notifications and financial summaries load from Supabase. Receipt details load on demand. Purchasing estimates reserve funds. A submitted claim replaces that reservation, approval creates unpaid liability, and payment becomes expenditure once. Received confirms the existing payment.
 
 ## Authorization and integrity
 
 RLS is enabled on every app table. Anonymous reads are revoked. Authenticated roles receive only safe `SELECT`, plus the owner's notification-preference update. Invitation/profile RPCs are no-argument and identity-bound. Scoped helpers live in non-exposed `private`, use a fixed empty search path, and consult active database grants; no user metadata or selected UI role is authoritative.
 
-Director and Treasurer read club and activity budgets. Only Director can save activities and department setup. HOD can manage tasks in assigned departments and read their same-department roster; Committee Members see only their assignments and can update their own purchase progress. Treasurer remains read-only. Cross-department records, role grants, invitations, archive metadata, payment details, and evidence remain private. Every privileged hosted function must repeat authorization because elevated server credentials bypass RLS.
+Director saves activity/department setup and oversees aggregate finances. HOD manages assigned departments and eligible purchasing assignments. Members update their own tasks and claims and see their own payment evidence. An independent Treasurer reviews submitted claims and records reimbursements with proof. The payment-step RPC reveals full instructions only for an authorized approved unpaid claim. Every privileged Edge Function repeats authorization because elevated server credentials bypass RLS.
 
-All monetary columns use integer `bigint` sen with bounded values. Activity currency must match the club. Club currency cannot be relabeled while activities exist. Department allocation changes lock their activity row and reject totals above its budget; activity budget decreases below allocations are rejected. Task writes validate HOD scope, idempotency key, assignment membership, and active task estimates against the department allocation in database functions/triggers. Member progress updates lock the task and are limited to the assigned member's allowed transitions. Setup, task, and progress writes append scoped audit events. Claims, reimbursements, and disbursement commands are not part of Phase 02.
+All monetary columns use bounded integer `bigint` sen. Currency cannot be relabeled while activities exist. Allocations, effective task/claim exposure, allowed transitions, approved payment amounts, proof metadata and idempotency are checked in locked database transactions. Closing blocks new financial obligations. Signed reconciliation freezes financial writes, and a different authorized Director must approve the archive.
 
 ## Storage, retention and AI boundary
 
-`receipts`, `payment-proofs` and `financial-archive` are private buckets with MIME/size limits. Restrictive object policies deny client read/list/upload/replace/delete in this phase. No public URL or file operation is enabled. Future paths should use opaque IDs under club/activity/department/claim, and metadata should retain object generation and a content hash; downloads should use short-lived, server-authorized access.
+`receipts`, `payment-proofs` and `financial-archive` are private. Receipt/proof staging validates ownership, opaque path, declared MIME and size. Finalized originals cannot be overwritten or deleted by application users. Authorized evidence uses short-lived signed URLs, which remain usable until expiry. File safety scanning is incomplete. Archive access passes through the authenticated `activity-archive` Edge Function, which reads and hashes the actual gzip and referenced original bytes.
 
-Activities and `archive_records` carry archive/retention/legal-hold metadata. There is no automatic purge job. Audit/archive tables are inaccessible to clients. Receipt OCR stays in the existing Tesseract browser workflow; no BERT, LightGBM, Qwen, paid GPU, or LLM service is included in this phase. Financial status must not depend on AI inference.
+Activities and `archive_records` carry retention/hold metadata. Cleanup is a non-destructive preview of abandoned, unfinalized staging. Archive reports enforce current scope. OCR runs locally with human review. Optional BERT, synthetic-trained LightGBM and local Qwen are experimental. All are disabled in `npm run build:release`. SQL remains authoritative for financial decisions.
+
+## Static release candidate
+
+Use `npm run build:release` with the authorized hosted project URL and public key in an ignored release environment. It generates `dist` with OCR assets and a Cloudflare Pages `_headers` policy. Configure final HTTPS origin, exact Supabase redirect allowlist and real Google provider credentials separately. The Google secret belongs in Supabase provider configuration. A Google identity still requires a trusted invitation and current grants.
+
+Before real financial use, assign backup ownership and independently retain the database, original Storage bytes, configuration and encryption recovery keys. Test restore and RLS against a disposable destination. The per-activity gzip reconstructs a financial projection and depends on those originals.
 
 ## Migration boundary
 
