@@ -1,5 +1,5 @@
 import { roles as knownRoles, type Role, type SessionProfile } from '../../domain/access';
-import { supabaseClient } from './client';
+import { dataMode, supabaseClient } from './client';
 
 export type AuthState = { profile: SessionProfile | null; signedIn: boolean; error: string; loading: boolean };
 export const initialAuthState: AuthState = { profile: null, signedIn: false, error: '', loading: true };
@@ -79,6 +79,8 @@ export async function login() {
   if (error) throw error;
 }
 export async function loginLocal(email: string, password: string) {
+  if (!import.meta.env.DEV || dataMode !== 'local' || import.meta.env.VITE_LOCAL_TEST_LOGIN !== 'true')
+    throw new Error('Synthetic sign-in requires the explicitly enabled local development environment.');
   const { error } = await supabaseClient().auth.signInWithPassword({ email, password });
   if (error) throw error;
 }
