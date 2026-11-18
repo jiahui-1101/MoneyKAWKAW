@@ -194,7 +194,8 @@ export function TreasuryRisk() {
           </Empty>
         </Panel>
       )}
-      {!final && <PressureAnalysis key={claim.id} claimId={claim.id} revision={claim.review?.updatedAt ?? ''} />}
+      {!final && import.meta.env.VITE_PRESSURE_MODEL !== 'off' &&
+        <PressureAnalysis key={claim.id} claimId={claim.id} revision={claim.review?.updatedAt ?? ''} />}
       {final && <PressureHistory key={claim.id} claimId={claim.id} />}
       <Link className="btn" to={`/treasurer/claims/${id}`}>
         Return to claim review
