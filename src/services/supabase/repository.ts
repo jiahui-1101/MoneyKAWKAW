@@ -37,7 +37,7 @@ export const supabaseRepository: WorkspaceRepository = {
       client.from('department_memberships').select('user_id,activity_id,department_id,role,status'),
       client.from('profiles').select('user_id,display_name'),
       readPages(() => client.from('purchase_tasks').select('id,club_id,activity_id,department_id,item_name,description,assigned_member_id,created_by_hod,estimated_budget_sen,due_date,priority,status,updated_at,closing_resolution').order('id')),
-      readPages(() => client.from('claims').select('*').order('updated_at', { ascending: false }).order('id')),
+      readPages(() => client.from('claims').select('*').order('id')),
       client.from('audit_events').select('id,actor_uid,action,record_type,record_id,activity_id,department_id,changes,created_at').order('created_at', { ascending: false }).limit(250),
       client.rpc('financial_summaries'),
       readPages(() => client.from('reimbursement_payments').select('*').order('claim_id').order('id')),
@@ -47,7 +47,9 @@ export const supabaseRepository: WorkspaceRepository = {
     if (results.some(({ error }) => error)) fail();
     const [clubResult, activityResult, departmentResult, membershipResult, profileResult, taskResult, claimResult, eventResult] = results;
     if (!clubResult.data || !activityResult.data || !departmentResult.data || !membershipResult.data || !profileResult.data || !taskResult.data || !claimResult.data || !eventResult.data) fail();
-    const claims = claimResult.data, tasks = taskResult.data;
+    // Status updates must not move an existing row between pages while loading.
+    const claims = claimResult.data.sort((left, right) => right.updated_at.localeCompare(left.updated_at));
+    const tasks = taskResult.data;
     const [summaryResult, paymentResult, proofResult, notificationResult] = results.slice(8);
     const notificationRows = notificationResult.data as unknown as Database['public']['Tables']['financial_notifications']['Row'][];
     const financialSummaries = summaryResult.data as unknown as FinancialSummary[];
