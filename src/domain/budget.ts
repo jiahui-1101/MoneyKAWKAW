@@ -10,7 +10,9 @@ import { isPending, isRecorded, isReservation } from './claim-balances';
 
 export function summarize(store: Store, activityId?: string, departmentId?: string): BudgetSummary {
   if (store.financialSummaries) {
-    const rows = store.financialSummaries.filter((r) => (!activityId || r.activityId === activityId) && (!departmentId || r.departmentId === departmentId));
+    const visibleActivities = new Set(store.activities.map((activity) => activity.id));
+    const rows = store.financialSummaries.filter((r) => visibleActivities.has(r.activityId) &&
+      (!activityId || r.activityId === activityId) && (!departmentId || r.departmentId === departmentId));
     const sum = (key: 'budget' | 'pending' | 'unclaimed' | 'liability' | 'paid') => rows.reduce((s, r) => s + r[key], 0);
     const allocated = sum('budget');
     const budget = departmentId ? allocated : store.activities.filter((a) => !activityId || a.id === activityId).reduce((s, a) => s + a.budget, 0);
