@@ -1,5 +1,5 @@
 import { summarize } from '../../domain/budget';
-import type { Expense, Store } from '../../domain/models';
+import type { Expense, Payment, Store } from '../../domain/models';
 import { useFormat } from '../ui';
 import { ChartCard, Donut, Gauge, Legend, StackedBars, type Slice } from './Charts';
 import { Pipeline, TrendArea } from './Trends';
@@ -39,14 +39,23 @@ export function monthlyTrend(expenses: Expense[], months = 6) {
 }
 
 /** Counts claims in each review stage. */
-export function claimStages(expenses: Expense[]) {
-  const count = (state: Expense['state']) => expenses.filter((e) => e.state === state).length;
+export function claimStages(expenses: Expense[], payments: Payment[] = []) {
+  const stages = expenses.map((expense) => {
+    if (expense.lifecycle) return expense.lifecycle;
+    const payment = payments.find((row) => row.expenseId === expense.id);
+    if (payment) return payment.manual?.receivedConfirmedAt ? 'Received' : 'Paid';
+    return expense.state === 'Pending review' ? 'Pending' : expense.state === 'In review'
+      ? 'Under Review' : expense.state === 'Declined' ? 'Rejected' : 'Approved';
+  });
   return [
-    { label: 'Pending', count: count('Pending review'), tone: tones.pending },
-    { label: 'In review', count: count('In review'), tone: tones.review },
-    { label: 'Approved', count: count('Approved'), tone: tones.paid },
-    { label: 'Declined', count: count('Declined'), tone: tones.declined },
-  ];
+    { label: 'Pending', tone: tones.pending },
+    { label: 'Under Review', tone: tones.review },
+    { label: 'Approved', tone: tones.committed },
+    { label: 'Payment Pending', tone: tones.committed },
+    { label: 'Paid', tone: tones.paid },
+    { label: 'Received', tone: tones.paid },
+    { label: 'Rejected', tone: tones.declined },
+  ].map((stage) => ({ ...stage, count: stages.filter((value) => value === stage.label).length }));
 }
 
 const stackKeys = [
@@ -61,9 +70,11 @@ export function BudgetInsights({ store, activityIds }: { store: Store; activityI
   const scoped: Store = { ...store, activities: store.activities.filter((a) => activityIds.includes(a.id)) };
   const s = summarize(scoped);
   const expenses = store.expenses.filter((e) => activityIds.includes(e.activityId));
+  const restrictedRecords = !expenses.length && s.recorded + s.pending > 0;
   const rows = scoped.activities.map((a) => {
     const x = summarize(store, a.id);
     return {
+      id: a.id,
       label: a.name,
       total: a.budget,
       parts: [
@@ -82,10 +93,12 @@ export function BudgetInsights({ store, activityIds }: { store: Store; activityI
       <ChartCard title="Where the money is" hint="Every ringgit of budget, by stage">
         <Donut slices={budgetSlices(scoped)} centre={compact(s.budget)} caption="budget" format={compact} />
       </ChartCard>
-      <ChartCard title="Claim pipeline" hint="Claims at each review stage">
-        <Pipeline stages={claimStages(expenses)} />
+      <ChartCard title="Visible claim pipeline" hint="Individual claims available in this workspace">
+        {restrictedRecords
+          ? <p className="viz-empty">Individual claim records are restricted here. Refer to the authoritative budget balances.</p>
+          : <Pipeline stages={claimStages(expenses, store.payments)} />}
       </ChartCard>
-      <ChartCard wide title="Spending trend" hint="Recorded claim amounts per month">
+      <ChartCard wide title="Claim amount trend" hint="Visible recorded claim amounts per month">
         <TrendArea points={monthlyTrend(expenses)} format={compact} label="Monthly claim amounts" />
       </ChartCard>
       <ChartCard wide title="Budget by activity" hint="Bar = used; grey track = activity budget">

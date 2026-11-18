@@ -11,9 +11,10 @@ const activity = { id: 'activity-a', club_id: 'club-a', name: 'Showcase', descri
 const department = { id: 'department-a', club_id: 'club-a', activity_id: 'activity-a', name: 'Multimedia',
   description: '', head_label: 'Noor HOD', allocation_sen: 70000 };
 let errors: string[];
+let data: Record<string, unknown>;
 beforeEach(() => {
   errors = [];
-  const data: Record<string, unknown> = {
+  data = {
     clubs: { id: 'club-a', name: 'Synthetic Club', currency: 'MYR', timezone: 'Asia/Kuala_Lumpur', warning_percent: 80 },
     activities: [activity], departments: [department],
     department_memberships: [{ user_id: 'member-a', activity_id: 'activity-a', department_id: 'department-a', role: 'Member', status: 'active' }],
@@ -26,7 +27,7 @@ beforeEach(() => {
     rpc: vi.fn((name: string) => Promise.resolve({ data: name === 'current_club_session' ? profile : name === 'list_my_payment_accounts' ? [] : true, error: null })),
     from: vi.fn((table: string) => {
       const query = {
-        select() { return this; }, eq() { return this; }, order() { return this; }, limit() { return this; },
+        select() { return this; }, eq() { return this; }, order() { return this; }, limit() { return this; }, range() { return this; },
         maybeSingle: async () => ({ data: data[table], error: null }),
         update() { return this; },
         then: (resolve: (value: unknown) => unknown, reject: (reason: unknown) => unknown) =>
@@ -50,4 +51,15 @@ it('never falls back to browser data on a Supabase request error', async () => {
   errors = ['activities'];
   await expect(supabaseRepository.load()).rejects.toThrow('could not be loaded');
   await expect(supabaseRepository.save({} as never)).rejects.toThrow('No changes were saved');
+});
+
+it('preserves newest-first claim presentation after stable database paging', async () => {
+  const base = { activity_id: activity.id, department_id: department.id,
+    status: 'Pending', claimant_user_id: profile.uid, claimed_amount_sen: 11000 };
+  data.claims = [
+    { ...base, id: 'a', updated_at: '2026-11-17T00:00:00Z', created_at: '2026-11-17T00:00:00Z' },
+    { ...base, id: 'b', updated_at: '2026-11-18T00:00:00Z', created_at: '2026-11-18T00:00:00Z' },
+  ];
+  const store = await supabaseRepository.load();
+  expect(store.expenses.map((claim) => claim.id)).toEqual(['b', 'a']);
 });

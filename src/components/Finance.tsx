@@ -25,17 +25,17 @@ export function Metrics({ summary, count }: { summary: BudgetSummary; count?: nu
       tone: 'brand',
     },
     {
-      label: demoMode ? 'Recorded expenses' : 'Approved claims',
+      label: demoMode ? 'Recorded expenses' : 'Recorded costs',
       value: money(summary.recorded, true),
       icon: CircleDollarSign,
-      note: demoMode ? 'Pending + approved claims' : 'Pending claims stay separate from planned task budgets',
+      note: demoMode ? 'Pending + approved claims' : 'Paid expenditure + approved unpaid liability',
       tone: 'violet',
     },
     {
       label: demoMode ? 'Remaining budget' : 'Available to plan',
       value: money(demoMode ? summary.remaining : summary.available, true),
       icon: ArrowDownLeft,
-      note: demoMode ? 'Budget less recorded expenses' : 'After planned purchasing commitments',
+      note: demoMode ? 'Budget less recorded expenses' : 'After paid costs and all open obligations',
       tone: (demoMode ? summary.remaining : summary.available) < 0 ? 'danger' : 'green',
     },
     {
@@ -57,7 +57,7 @@ export function BudgetLifecycle({ summary }: { summary: BudgetSummary }) {
     <div className="lifecycle">
       {[
         ['Department allocations', summary.allocated, 'Portion assigned to departments'],
-        [demoMode ? 'Committed' : 'Planned purchasing commitments', summary.committed, demoMode ? 'Open assignments + approved unpaid' : 'Active task estimates · cancelled tasks excluded'],
+        ['Committed', summary.committed, 'Open purchase reservations + approved unpaid liabilities'],
         ['Pending claim exposure', summary.pending, 'Submitted requests · not paid expenditure'],
         ['Approved unpaid liability', Math.max(0, summary.recorded - summary.paid - (demoMode ? summary.pending : 0)), 'Authorized amounts awaiting a transfer record'],
         ['Paid reimbursements', summary.paid, 'Recorded external transfers · confirmation is separate'],
@@ -104,7 +104,7 @@ export function ActivityTable({
             <th>ACTIVITY</th>
             <th>STATUS</th>
             <th>BUDGET</th>
-            <th>{demoMode ? 'EXPENSES' : 'PLANNED TASKS'}</th>
+            <th>{demoMode ? 'EXPENSES' : 'RECORDED COSTS'}</th>
             <th>UTILIZATION</th>
             <th aria-label="Activity details">
               <span className="sr-only">Details</span>
@@ -114,7 +114,7 @@ export function ActivityTable({
         <tbody>
           {activities.slice(0, limit).map((a, i) => {
             const s = summarize(store, a.id);
-            const utilization = demoMode ? s.utilization : (a.budget ? (s.committed / a.budget) * 100 : 0);
+            const utilization = s.utilization;
             const warning = utilization >= store.settings.warningPercent;
             return (
               <tr key={a.id}>
@@ -137,7 +137,7 @@ export function ActivityTable({
                   <Status value={financialStateLabel(a.financialState, a.status)} />
                 </td>
                 <td className="money">{money(a.budget, true)}</td>
-                <td className="money">{money(demoMode ? s.recorded : s.committed, true)}</td>
+                <td className="money">{money(s.recorded, true)}</td>
                 <td>
                   <div className="utilization-cell">
                     <span className={utilization > 100 ? 'danger-text' : ''}>

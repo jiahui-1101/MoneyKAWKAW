@@ -40,9 +40,9 @@ export default function AssistantPanel({ onClose }: { onClose: () => void }) {
         {choices.map((c) => <option key={c.id} value={c.id}>{c.type} · {c.label}</option>)}</select></Field>
       {(error || assistant.notice) && <p role="status" className="data-note">{assistant.notice || error}</p>}
       <div className="row wrap">{questions.map((q) => <button className="btn" key={q} disabled={assistant.busy} onClick={() => setQuestion(q)}>{q}</button>)}</div>
-      <label className="member-check-field"><input type="checkbox" checked={assistant.enabled} disabled={assistant.busy}
+      {import.meta.env.VITE_QWEN_MODEL !== 'off' && <label className="member-check-field"><input type="checkbox" checked={assistant.enabled} disabled={assistant.busy}
         onChange={(e) => { assistant.setEnabled(e.target.checked); if (!e.target.checked) assistant.cancel(); }} />
-        Enable experimental local Qwen · approximately 580 MB first download; substantial device memory. No prompt is sent to a hosted AI service.</label>
+        Enable experimental local Qwen · approximately 580 MB first download; substantial device memory. No prompt is sent to a hosted AI service.</label>}
       {assistant.enabled && <Field label="Local model runtime" id="assistant-device"><select id="assistant-device" value={assistant.device} disabled={assistant.busy}
         onChange={(e) => assistant.setDevice(e.target.value as 'wasm' | 'webgpu')}><option value="wasm">CPU / WASM · may be slow</option><option value="webgpu">WebGPU · requires a compatible device</option></select></Field>}
       <AssistantAnswers messages={assistant.messages} sourcePath={sourcePath} />

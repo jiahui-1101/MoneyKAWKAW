@@ -180,11 +180,11 @@ export function ReceiptUpload({
                     misread values—compare every suggestion against the original.
                   </p>
                   <div className="row wrap">
-                    <label className="member-check-field">
+                    {import.meta.env.VITE_RECEIPT_MODEL !== 'off' && <label className="member-check-field">
                       <input type="checkbox" checked={useModel} disabled={reading || saving}
                         onChange={e => setUseModel(e.target.checked)} />
                       <span>Optional experimental line suggestions · large first download, processed on this device</span>
-                    </label>
+                    </label>}
                     <button
                       className="btn primary"
                       disabled={reading || saving}

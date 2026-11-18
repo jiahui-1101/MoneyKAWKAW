@@ -26,6 +26,7 @@ export function HodInsights({ summary, tasks, users }: { summary: DepartmentBudg
   }
   const done = (t: Assignment) => ['Purchased', 'Claim Submitted', 'Completed'].includes(t.purchasing!.status);
   const rows = [...byMember.entries()].map(([id, list]) => ({
+    id,
     label: `${users.find((u) => u.id === id)?.name ?? 'Unassigned'} · ${list.length} task${list.length === 1 ? '' : 's'}`,
     total: list.reduce((s, t) => s + t.budget, 0),
     parts: [
