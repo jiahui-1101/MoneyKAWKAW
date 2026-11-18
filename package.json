@@ -9,6 +9,7 @@
     "prebuild": "npm run prepare:ocr && npm run prepare:receipt-model",
     "dev": "vite --host 127.0.0.1",
     "build": "tsc --noEmit && vite build",
+    "build:release": "npm run typecheck && npm run prepare:ocr && node scripts/build-release.mjs",
     "preview": "vite preview --host 127.0.0.1",
     "test": "vitest run --exclude tests/supabase/**",
     "supabase:start": "supabase start",
