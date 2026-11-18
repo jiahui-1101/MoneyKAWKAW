@@ -1,8 +1,8 @@
 # MoneyKAWKAW · Club budget & purchasing workspace
 
-A Director, HOD, Treasurer, and Committee Member frontend with an invite-only Supabase foundation. React 19, TypeScript, Vite, and React Router. Supabase mode provides Google sign-in and database-scoped club/activity/department/roster reads; financial business commands remain disabled until later phases.
+A Director, HOD, Treasurer, and Committee Member workspace using React, TypeScript, Vite and invite-only Supabase Auth. PostgreSQL RPCs and RLS enforce purchasing, receipt-backed claims, independent review, recorded reimbursements, member confirmation, reconciliation and private archiving.
 
-Read the [Supabase setup, schema, security boundaries and local testing guide](docs/supabase/README.md) first. The feature descriptions below describe the established role workspaces; financial workflows are still demo-only and are not backed by Supabase yet.
+Read the [Supabase setup, schema, security boundaries and local testing guide](docs/supabase/README.md) first. Local synthetic financial flows have been verified. Hosted Google OAuth, release authorization and operational backup ownership remain release gates.
 
 ## Run locally
 
@@ -22,7 +22,7 @@ Open the printed localhost URL. `npm run build` checks TypeScript and creates `d
 - Dedicated activity budget dashboards: department contribution, spending and overspending, commitments, pending claims, paid amounts, available balance, and read-only expense source records.
 - Responsive navigation, keyboard focus handling, loading skeletons, useful empty states, error/retry recovery, local success feedback, history, help, and workspace preferences.
 
-Create activity → configure departments → allocate budget → open budget dashboard → edit activity. Changes persist across refreshes. Workspace settings can explicitly restore the fictional sample data.
+Create activity → configure departments → allocate budget → open budget dashboard → edit activity. Supabase changes persist across refreshes. Fictional sample resets are available only in explicit demo mode.
 
 ## HOD experience
 
@@ -104,7 +104,7 @@ Director setup → HOD assignment → Member purchase/receipt/submission → Tre
 ## Architecture and calculations
 
 - `src/domain`: typed linked activity, department, assignment, expense, payment, history, and settings models; pure budget calculations and setup rules.
-- `src/services`: fictional seed records and a versioned localStorage adapter. Mutations validate input and append setup history; storage failures are surfaced before UI state changes.
+- `src/services`: typed Supabase repositories and authorized RPC adapters, plus separate explicit demo seed/localStorage adapters. Database errors surface without switching to demo data.
 - `src/context`: shared context identity and async workspace provider. This boundary supports replacing local persistence with API-backed operations while keeping view components.
 - `src/components`: `Shell`, `Field`, `DateField`, `Modal`, `Panel`, `Badge`, `Progress`, metrics, charts, financial tables, history, and department workflows.
 - `src/pages`: Director routes and isolated, lazily loaded HOD/Treasurer/Member route groups.
@@ -126,8 +126,10 @@ Manrope headings and DM Sans body/UI text are bundled through Fontsource, with n
 
 See [original Director verification](docs/VERIFICATION.md), [HOD verification and Director regression checks](docs/hod/VERIFICATION.md), [HOD commit history](docs/hod/COMMITS.md), and [HOD screenshots](docs/hod/screenshots/overview-preview.jpg).
 
-The foundation is Supabase-backed, but financial pages still use the explicit local demo ledger. Demo identity is not authentication, browser storage is not a security boundary, and history is not durable production audit storage. Use fictional financial information. Treasurer decisions, manual payment records, and Member acknowledgments persist only in demo mode; Supabase mode rejects those writes. There are no money transfers, external transfer verification, or trained financial predictions. English receipt OCR runs in the browser using locally served Tesseract assets and needs human review. Historical sample payments lack proof/reference metadata and are labeled accordingly.
+Supabase mode persists financial commands, evidence metadata and append-only audit events. Treasurer approval, manual payment recording and Member confirmation are distinct actions. The app records externally performed transfers. English Tesseract OCR requires review. BERT receipt suggestions, synthetic-trained LightGBM and local Qwen are experimental and financially advisory.
 
-The four frontends share linked tasks/claims, immutable submitted receipts, corrections, payout snapshots, review/payment status, and audit events in demo mode. Before financial production use, add authenticated, transaction-backed commands for those workflows, scoped ownership, durable append-only history, encrypted payout storage, and protected receipt/proof access. OCR assets are prepared automatically before dev/build from locked dependencies; see the Member notes for footprint and limitations.
+The four workspaces share linked tasks/claims, preserved originals and corrections, protected payout snapshots, payment status and audit events. Archived activities are read-only after independent signed reconciliation and verified private gzip generation. The financial archive references separately retained original files. Full recovery also requires database and Storage backups.
+
+`npm run build:release` creates a static candidate for the authorized hosted Supabase URL and a public key. It forces Supabase mode, disables synthetic login and all experimental models, copies OCR assets, and emits a Cloudflare Pages header policy. Required values are `VITE_SUPABASE_URL` and `VITE_SUPABASE_PUBLISHABLE_KEY` in an ignored release environment or process environment. The ordinary development build includes available local assets and can be much larger. Keep it separate from a reviewed release candidate.
 
 Local `AGENTS.md` and `REQUIREMENTS.md` are ignored and excluded from Git. Nothing has been pushed or deployed as part of this implementation.
