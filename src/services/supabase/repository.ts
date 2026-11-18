@@ -7,6 +7,7 @@ import type { Role, SessionProfile } from '../../domain/access';
 import { getDemoActor } from '../../domain/session';
 import { supabaseClient } from './client';
 import { listAccounts } from './member-accounts';
+import { readPages } from './pages';
 
 export interface WorkspaceRepository {
   load(): Promise<Store>;
@@ -35,18 +36,18 @@ export const supabaseRepository: WorkspaceRepository = {
       client.from('departments').select('id,club_id,activity_id,name,description,head_label,allocation_sen').order('name'),
       client.from('department_memberships').select('user_id,activity_id,department_id,role,status'),
       client.from('profiles').select('user_id,display_name'),
-      client.from('purchase_tasks').select('id,club_id,activity_id,department_id,item_name,description,assigned_member_id,created_by_hod,estimated_budget_sen,due_date,priority,status,updated_at,closing_resolution'),
-      client.from('claims').select('*').order('updated_at', { ascending: false }),
+      readPages(() => client.from('purchase_tasks').select('id,club_id,activity_id,department_id,item_name,description,assigned_member_id,created_by_hod,estimated_budget_sen,due_date,priority,status,updated_at,closing_resolution').order('id')),
+      readPages(() => client.from('claims').select('*').order('updated_at', { ascending: false }).order('id')),
       client.from('audit_events').select('id,actor_uid,action,record_type,record_id,activity_id,department_id,changes,created_at').order('created_at', { ascending: false }).limit(250),
       client.rpc('financial_summaries'),
-      client.from('reimbursement_payments').select('*').order('claim_id'),
-      client.from('payment_proofs').select('*').eq('upload_status', 'retained').order('claim_id'),
+      readPages(() => client.from('reimbursement_payments').select('*').order('claim_id').order('id')),
+      readPages(() => client.from('payment_proofs').select('*').eq('upload_status', 'retained').order('claim_id').order('id')),
       client.from('financial_notifications').select('*').order('created_at', { ascending: false }).limit(100),
     ]);
     if (results.some(({ error }) => error)) fail();
     const [clubResult, activityResult, departmentResult, membershipResult, profileResult, taskResult, claimResult, eventResult] = results;
     if (!clubResult.data || !activityResult.data || !departmentResult.data || !membershipResult.data || !profileResult.data || !taskResult.data || !claimResult.data || !eventResult.data) fail();
-    const claims = claimResult.data;
+    const claims = claimResult.data, tasks = taskResult.data;
     const [summaryResult, paymentResult, proofResult, notificationResult] = results.slice(8);
     const notificationRows = notificationResult.data as unknown as Database['public']['Tables']['financial_notifications']['Row'][];
     const financialSummaries = summaryResult.data as unknown as FinancialSummary[];
@@ -117,7 +118,7 @@ export const supabaseRepository: WorkspaceRepository = {
       throw new Error('Your club role or membership changed. Refresh to continue.');
     const expenses: Expense[] = claims.filter((claim) => claim.status !== 'Draft').map((claim) => ({
       id: claim.id, activityId: claim.activity_id, departmentId: claim.department_id,
-      description: taskResult.data.find((task) => task.id === claim.purchase_task_id)?.item_name ?? 'Purchase claim',
+      description: tasks.find((task) => task.id === claim.purchase_task_id)?.item_name ?? 'Purchase claim',
       amount: Number(claim.claimed_amount_sen ?? 0), date: (claim.submitted_at ?? claim.created_at).slice(0,10),
       lifecycle: claim.status as Expense['lifecycle'],
       state: claim.status === 'Pending' ? 'Pending review' : claim.status === 'Under Review' ? 'In review' : claim.status === 'Rejected' ? 'Declined' : 'Approved',
@@ -127,7 +128,9 @@ export const supabaseRepository: WorkspaceRepository = {
         reason: claim.decision_reason, analysis: claim.risk_assessment as unknown as RiskResult | undefined,
         decisionAnalysis: claim.decision_risk as unknown as RiskResult | undefined },
     }));
-    const destinationResult = paymentRows.length ? await client.rpc('recorded_payment_destinations') : { data: [], error: null };
+    const destinationResult = paymentRows.length
+      ? await readPages(() => client.rpc('recorded_payment_destinations').order('claim_id'))
+      : { data: [], error: null };
     if (destinationResult.error || !destinationResult.data) fail();
     const destinations = new Map(destinationResult.data.map((row) => [row.claim_id, row]));
     const proofs = new Map(proofRows.map((row) => [row.id, row]));

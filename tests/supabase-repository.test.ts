@@ -26,7 +26,7 @@ beforeEach(() => {
     rpc: vi.fn((name: string) => Promise.resolve({ data: name === 'current_club_session' ? profile : name === 'list_my_payment_accounts' ? [] : true, error: null })),
     from: vi.fn((table: string) => {
       const query = {
-        select() { return this; }, eq() { return this; }, order() { return this; }, limit() { return this; },
+        select() { return this; }, eq() { return this; }, order() { return this; }, limit() { return this; }, range() { return this; },
         maybeSingle: async () => ({ data: data[table], error: null }),
         update() { return this; },
         then: (resolve: (value: unknown) => unknown, reject: (reason: unknown) => unknown) =>
