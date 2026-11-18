@@ -73,6 +73,7 @@ export function Gauge({ value, label, warnAt = 80 }: { value: number; label: str
 }
 
 export interface StackRow {
+  id: string;
   label: string;
   total: number;
   parts: Slice[];
@@ -89,7 +90,7 @@ export function StackedBars({ rows, format, empty = 'Nothing to show yet.' }: { 
         const used = r.parts.reduce((s, p) => s + p.value, 0);
         const over = used > r.total;
         return (
-          <li key={r.label}>
+          <li key={r.id}>
             <div className="viz-stack-head">
               <span>{r.label}</span>
               <strong className={`money${over ? ' viz-over' : ''}`}>

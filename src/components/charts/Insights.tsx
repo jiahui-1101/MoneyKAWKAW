@@ -73,6 +73,7 @@ export function BudgetInsights({ store, activityIds }: { store: Store; activityI
   const rows = scoped.activities.map((a) => {
     const x = summarize(store, a.id);
     return {
+      id: a.id,
       label: a.name,
       total: a.budget,
       parts: [
