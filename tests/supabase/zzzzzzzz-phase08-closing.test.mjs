@@ -67,7 +67,7 @@ test('closing reconciles one payment, freezes writes and archives retained evide
   assert.equal(reconciled.unallocated, 800000);
   assert.equal(reconciled.departments[0].remaining, 189000);
   assert.ok(Object.values(reconciled.blockers).every((count) => count === 0));
-  assert.equal((await sign(paid.revision)).error?.code, '40001');
+  assert.equal((await sign(paid.revision)).error?.code, 'PT409');
 
   const key = randomUUID();
   const [primary, conflicting] = await Promise.all([sign(reconciled.revision, key), sign(reconciled.revision)]);
