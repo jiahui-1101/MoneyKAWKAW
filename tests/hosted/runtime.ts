@@ -16,8 +16,35 @@ export const identities: Record<string, string> = {
   '3c315d49-f6ea-49bb-a031-5239b4d1bf66': 'Member B',
 };
 export type Request = { label: string; path: string; method?: string; body?: unknown;
-  expectStatus: number[]; expectCount?: number; expectCode?: string; expectNoData?: boolean; bytesBase64?: string; mime?: string };
+  expectStatus: number[]; expectCount?: number; expectCode?: string; expectNoData?: boolean; bytesBase64?: string; mime?: string; saveAs?: string };
 export type Plan = { label: string; groups: Request[][]; startAt?: string };
+export function resolveRequest(r: Request, bindings: Map<string, unknown>): Request {
+  const lookup = (reference: string) => {
+    const [name, ...keys] = reference.split('.');
+    let value = bindings.get(name);
+    if (!bindings.has(name)) throw new Error('Missing reviewed response binding.');
+    for (const key of keys) {
+      if (['__proto__', 'constructor', 'prototype'].includes(key) || !value || typeof value !== 'object'
+        || !Object.hasOwn(value, key)) throw new Error('Invalid response field binding.');
+      value = (value as Record<string, unknown>)[key];
+    }
+    return value;
+  };
+  const body = (v: unknown): unknown => {
+    if (Array.isArray(v)) return v.map(body);
+    if (v && typeof v === 'object') {
+      const fields = v as Record<string, unknown>;
+      if (Object.keys(fields).length === 1 && typeof fields.ref === 'string') return lookup(fields.ref);
+      return Object.fromEntries(Object.entries(fields).map(([key, value]) => [key, body(value)]));
+    }
+    return v;
+  };
+  return { ...r, body: body(r.body), path: r.path.replace(/\{\{([\w.-]+)\}\}/g, (_match, ref: string) => {
+    const value = lookup(ref);
+    if (typeof value !== 'string' && typeof value !== 'number') throw new Error('Invalid path binding.');
+    return /^[a-f0-9-]{36}\/[a-f0-9-]{36}\.(png|jpg|json\.gz)$/.test(String(value)) ? String(value) : encodeURIComponent(String(value));
+  }) };
+}
 export function validatePlan(plan: Plan) {
   if (!plan.label?.startsWith('SYNTHETIC-09C') || !Array.isArray(plan.groups) || plan.groups.length > 80)
     throw new Error('A bounded, labeled synthetic plan is required.');
@@ -44,12 +71,16 @@ export async function captureIdentity() {
   if (error || !user || !session || !identities[user.id]) throw new Error('Use an approved Google QA identity.');
   // Retain this genuine bearer in this tab's memory only, never in DOM, files or report output.
   const token = session.access_token;
+  const bindings = new Map<string, unknown>();
   const key = import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY;
   return { uid: user.id, role: identities[user.id], async run(plan: Plan) {
     validatePlan(plan);
     if (plan.startAt) await new Promise(resolve => setTimeout(resolve, Math.max(0, Date.parse(plan.startAt!) - Date.now())));
     const results = [];
-    for (const group of plan.groups) results.push(...await Promise.all(group.map(async r => {
+    for (const group of plan.groups) results.push(...await Promise.all(group.map(async template => {
+      const r = resolveRequest(template, bindings);
+      // Recheck after resolving IDs; response references must never bypass the archive guard.
+      validatePlan({ label: plan.label, groups: [[r]] });
       const startedAt = new Date().toISOString(), started = performance.now();
       const binary = r.bytesBase64 ? Uint8Array.from(atob(r.bytesBase64), c => c.charCodeAt(0)) : undefined;
       const response = await fetch(endpoint + r.path, { method: r.method ?? 'GET', redirect: 'error',
@@ -59,6 +90,10 @@ export async function captureIdentity() {
       const bytes = new Uint8Array(await response.arrayBuffer());
       let value: unknown;
       try { value = JSON.parse(new TextDecoder().decode(bytes)); } catch { /* Binary response. */ }
+      if (r.saveAs && response.ok) {
+        if (!/^[a-zA-Z][\w-]{0,40}$/.test(r.saveAs)) throw new Error('Invalid response binding name.');
+        bindings.set(r.saveAs, value);
+      }
       const object = value && typeof value === 'object' ? value as Record<string, unknown> : {};
       const count = Array.isArray(value) ? value.length : value === null ? 0 : undefined;
       const code = typeof object.code === 'string' ? object.code : undefined;
