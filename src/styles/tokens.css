@@ -13,9 +13,9 @@
   --subtle: #62626b;
   --line: #e7e7ec;
   --line-strong: #c9c9d2;
-  --brand: #7a2ee0;
-  --brand-hover: #5f1fbb;
-  --brand-soft: #f3ecfd;
+  --brand: #111114;
+  --brand-hover: #34343c;
+  --brand-soft: #efeff2;
   --accent: #f7941d;
   --green: #2f8f3a;
   --green-soft: #edf6f0;
@@ -28,10 +28,10 @@
   --violet-soft: #f2eff8;
   --dark: #0b0b0f;
   --dark-muted: #c9c9d6;
-  --focus: #7a2ee0;
+  --focus: #111114;
   --shadow: 0 3px 16px #20262605, 0 1px 3px #20262603;
   --shadow-popover: 0 20px 70px #18241f2e;
-  --shadow-brand: 0 2px 3px #7a2ee014;
+  --shadow-brand: 0 2px 3px #11111414;
   --overlay: #19231f80;
   /* Airost logo colours — chart series */
   --ai-orange: #f7941d;
