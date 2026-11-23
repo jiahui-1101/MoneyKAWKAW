@@ -14,6 +14,13 @@ const stage = [
   { key: 'committed', label: 'Committed', tone: tones.committed },
 ] as const;
 
+/** Director aggregate balances can exist without exposing individual claim rows. */
+export function claimsAreRestricted(store: Store) {
+  const summary = summarize(store);
+  return store.financialSummaries !== undefined && store.expenses.length === 0 &&
+    summary.recorded + summary.pending > 0;
+}
+
 /** Claim amounts per month for the last six months on record. Declined claims excluded. */
 function monthly(store: Store) {
   const by = new Map<string, number>();
@@ -41,8 +48,10 @@ export function BudgetCard({ store }: { store: Store }) {
 export function MonthlyCard({ store }: { store: Store }) {
   const { money } = useFormat();
   return (
-    <ChartCard title="Claims per month">
-      <ColumnChart columns={monthly(store)} format={(n) => money(n, true)} empty="No dated claims yet." />
+    <ChartCard title="Claims per month" hint="Grouped by submission date">
+      {claimsAreRestricted(store)
+        ? <p className="viz-empty">Individual claim records are restricted here. Monthly claim details are unavailable.</p>
+        : <ColumnChart columns={monthly(store)} format={(n) => money(n, true)} empty="No dated claims yet." />}
     </ChartCard>
   );
 }
@@ -50,7 +59,9 @@ export function MonthlyCard({ store }: { store: Store }) {
 export function ClaimsCard({ store }: { store: Store }) {
   return (
     <ChartCard title="Claims by status">
-      <CountBars rows={claimStages(store.expenses, store.payments).filter((s) => s.label !== 'Payment Pending' || s.count)} />
+      {claimsAreRestricted(store)
+        ? <p className="viz-empty">Individual claim records are restricted here. Refer to the authoritative budget balances.</p>
+        : <CountBars rows={claimStages(store.expenses, store.payments).filter((s) => s.label !== 'Payment Pending' || s.count)} />}
     </ChartCard>
   );
 }
