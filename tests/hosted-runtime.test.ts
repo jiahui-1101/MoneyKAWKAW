@@ -13,6 +13,8 @@ it('protects archived reference mutations including nested forged parameters', (
   const mutation = { ...request, method: 'POST', path: '/rest/v1/rpc/transition_claim',
     body: { nested: { id: '0e90e217-9fbc-4ae4-b7f0-acfc01b80f9f' } } };
   expect(() => validatePlan({ ...plan, groups: [[mutation]] })).toThrow('cannot be mutated');
+  expect(() => validatePlan({ ...plan, groups: [[{ ...mutation, body: {},
+    path: '/rest/v1/claims?id=eq.%30e90e217-9fbc-4ae4-b7f0-acfc01b80f9f' }]] })).toThrow('cannot be mutated');
   expect(() => validatePlan({ ...plan, groups: [[{ ...request, method: 'GET',
     path: '/rest/v1/claims?id=eq.0e90e217-9fbc-4ae4-b7f0-acfc01b80f9f' }]] })).not.toThrow();
 });

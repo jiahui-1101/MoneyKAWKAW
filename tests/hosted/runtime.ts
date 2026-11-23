@@ -3,7 +3,9 @@ import { supabaseClient } from '../../src/services/supabase/client';
 const endpoint = 'https://mqklyfboywbxcexdttrl.supabase.co';
 const protectedIds = ['64ae397c-a1b0-45a6-9dfe-558a4954d01f', '0e90e217-9fbc-4ae4-b7f0-acfc01b80f9f',
   'b064d8da-261d-4ee9-9302-b52e5b0bc17c', '6e016c63-716b-42fd-9a5d-89cad1d42f09',
-  'd61180de-a9f8-4954-a04f-9b26a990ad49', '478d55a7-f7b5-423c-bda7-7025729d7591'];
+  'd61180de-a9f8-4954-a04f-9b26a990ad49', '478d55a7-f7b5-423c-bda7-7025729d7591',
+  '8b7127bf-d137-4455-9107-e73f07157e90', '3eae4985-67d6-42ba-99de-37bf88b88599',
+  'a195d99f-5389-477f-a049-7ce30481c2b7', '469d49dc-b6e9-46d1-a332-18ffe7d61222'];
 const readRpcs = new Set(['current_club_session', 'get_my_payment_account', 'list_my_payment_accounts',
   'my_claim_destination', 'financial_summaries', 'activity_closing_report', 'assistant_context']);
 export const identities: Record<string, string> = {
