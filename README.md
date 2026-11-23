@@ -50,6 +50,7 @@
 | Field | Details |
 |---|---|
 | Project name | MoneyKAWKAW |
+| Project team | NJHL |
 | Submission | AIROST Internship Project |
 | Project type | Club budget, purchasing, and expense tracking web app |
 | Repository contributor | [Wong Jia Hui](https://github.com/jiahui-1101) |
@@ -124,6 +125,23 @@ Approval is a decision, not a payment. Recording a payment does not mark it rece
 4. The Treasurer reviews the original evidence and change history, then approves or declines. An over-budget risk analysis is advisory and shows its contributing factors.
 5. After approval, the Treasurer separately records the external payment and uploads proof.
 6. The Member confirms receipt or records a discrepancy. The activity history and financial totals update from linked records.
+
+```mermaid
+flowchart LR
+    D["Director<br/>Activity and overall budget"] --> H["HOD<br/>Department budget and purchase task"]
+    H --> M["Committee Member<br/>Assigned item and due date"]
+    M --> R["Receipt capture<br/>OCR suggestions reviewed by Member"]
+    R --> A["Claim edits and audit history<br/>Original receipt and OCR preserved"]
+    A --> C["Submitted claim<br/>Over-budget reason when needed"]
+    C --> T["Treasurer review<br/>Risk analysis is advisory"]
+    T -->|Declined| N["Member sees decision"]
+    T -->|Approved| P["External payment and proof"]
+    P --> F["Member confirms receipt or reports a discrepancy"]
+    D --> B["Budget dashboards"]
+    H --> B
+    C --> B
+    P --> B
+```
 
 ## Architecture and Access Control
 
@@ -274,7 +292,7 @@ The release build is designed to reject model weights and environment files. Exp
 
 ## Team
 
-**Project team:** MoneyKAWKAW
+**Project team:** NJHL
 **Repository contributor:** [Wong Jia Hui](https://github.com/jiahui-1101)
 
 <!-- Add any additional confirmed team members and their contributions here. -->
