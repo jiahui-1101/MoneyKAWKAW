@@ -107,6 +107,7 @@ export default function App() {
                 path="activities/:id/departments"
                 element={<ActivityDetail tab="departments" />}
               />
+              <Route path="activities/:id/map" element={<ActivityDetail tab="map" />} />
               <Route path="activities/:id/budget" element={<ActivityDetail tab="budget" />} />
               <Route path="activities/:id/closing" element={<ActivityDetail tab="closing" />} />
               <Route path="budgets" element={<Dashboard key="budgets" budgets />} />

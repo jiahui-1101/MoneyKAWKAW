@@ -76,11 +76,15 @@ export function MoneyMap({ store, activity, claimHref }: { store: Store; activit
   const [sel, setSel] = useState<string | null>(null);
   const [onlyOpen, setOnlyOpen] = useState(false);
   const { nodes, edges } = build(store, activity, (n) => money(n, true), claimHref);
-  const open = (n: MapNode) => n.tone === statusTone.wait || n.tone === statusTone.bad || n.tone === statusTone.approved;
+  const open = (n: MapNode) => n.tone === statusTone.wait || n.tone === statusTone.bad || (n.kind === 'claim' && n.tone === statusTone.approved);
   const visible = onlyOpen ? new Set(nodes.filter(open).flatMap((n) => [...chain(n.id, edges)])) : null;
   const shown = nodes.filter((n) => !visible || visible.has(n.id));
   const pos = new Map<string, { x: number; y: number }>();
-  columns.forEach((c, ci) => shown.filter((n) => n.kind === c.kind).forEach((n, i) => pos.set(n.id, { x: ci * COL_W, y: TOP + i * (NODE_H + GAP) })));
+  const parentY = (id: string) => Math.min(Infinity, ...edges.filter((e) => e.to === id && pos.has(e.from)).map((e) => pos.get(e.from)!.y));
+  columns.forEach((c, ci) => shown.filter((n) => n.kind === c.kind)
+    .map((n, i) => ({ n, key: ci ? parentY(n.id) : i, i }))
+    .sort((a, b) => a.key - b.key || a.i - b.i)
+    .forEach(({ n }, i) => pos.set(n.id, { x: ci * COL_W, y: TOP + i * (NODE_H + GAP) })));
   const height = TOP + Math.max(1, ...columns.map((c) => shown.filter((n) => n.kind === c.kind).length)) * (NODE_H + GAP);
   const lit = sel ? chain(sel, edges) : null;
   const current = nodes.find((n) => n.id === sel);
