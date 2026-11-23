@@ -87,7 +87,7 @@ export function Waterfall({ total, totalLabel, steps, endLabel, format }: { tota
   const bars = [
     { label: totalLabel, value: total, from: 0, to: total, tone: 'var(--ink)', sign: '' },
     ...steps.map((s) => { const b = { label: s.label, value: s.value, from: top - s.value, to: top, tone: s.tone, sign: '−' }; top -= s.value; return b; }),
-    { label: endLabel, value: left, from: Math.min(0, left), to: Math.max(0, left), tone: left < 0 ? 'var(--ai-magenta)' : 'var(--line-strong)', sign: '' },
+    { label: endLabel, value: left, from: Math.min(0, left), to: Math.max(0, left), tone: left < 0 ? 'var(--ai-magenta)' : 'var(--line-strong)', sign: left < 0 ? '−' : '' },
   ];
   return (
     <ol className="ix-wf">
