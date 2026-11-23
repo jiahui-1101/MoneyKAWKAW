@@ -11,11 +11,12 @@ import { Empty, Panel, Progress, Status, TextLink, useFormat } from '../componen
 import { demoMode } from '../services/supabase/client';
 import { ActivityClosingPanel } from '../components/ActivityClosingPanel';
 import { financialStateLabel } from '../domain/activity-closing';
+import { MoneyMap } from '../components/charts/MoneyMap';
 
 export function ActivityDetail({
   tab = 'overview',
 }: {
-  tab?: 'overview' | 'departments' | 'budget' | 'closing';
+  tab?: 'overview' | 'map' | 'departments' | 'budget' | 'closing';
 }) {
   const { id } = useParams();
   const { store, reload } = useWorkspace();
@@ -70,6 +71,7 @@ export function ActivityDetail({
       <nav className="detail-tabs" aria-label="Activity sections">
         {[
           ['overview', 'Overview', path],
+          ['map', 'Money map', `${path}/map`],
           ['departments', 'Departments', `${path}/departments`],
           ['budget', 'Budget dashboard', `${path}/budget`],
           ...(!demoMode ? [['closing', 'Activity closing', `${path}/closing`]] : []),
@@ -83,6 +85,10 @@ export function ActivityDetail({
       <Overspending store={store} activityId={a.id} />
       {tab === 'closing' && !demoMode ? (
         <ActivityClosingPanel key={a.id} activity={a} workspaceRole="Director" reload={reload} />
+      ) : tab === 'map' ? (
+        <Panel title="Money map" subtitle="Click any box to trace where its money goes">
+          <div className="panel-body"><MoneyMap store={store} activity={a} /></div>
+        </Panel>
       ) : tab === 'departments' ? (
         <>
           <div className="section-intro">

@@ -1,4 +1,4 @@
-import { pct } from './Charts';
+import { CountBars } from './Graphs';
 
 /** Area + line trend over ordered buckets (e.g. monthly spend). */
 export function TrendArea({ points, format, label }: { points: { label: string; value: number }[]; format: (n: number) => string; label: string }) {
@@ -28,18 +28,7 @@ export function TrendArea({ points, format, label }: { points: { label: string; 
   );
 }
 
-/** Pipeline funnel: count at each workflow stage as proportional columns. */
+/** Count at each workflow stage, drawn as labelled horizontal bars. */
 export function Pipeline({ stages }: { stages: { label: string; count: number; tone: string }[] }) {
-  const max = Math.max(...stages.map((s) => s.count), 1);
-  return (
-    <ol className="viz-pipeline">
-      {stages.map((s) => (
-        <li key={s.label}>
-          <strong>{s.count}</strong>
-          <span className="viz-pipe-bar"><span style={{ height: `${pct(s.count, max)}%`, background: s.tone }} /></span>
-          <em>{s.label}</em>
-        </li>
-      ))}
-    </ol>
-  );
+  return <CountBars rows={stages} />;
 }

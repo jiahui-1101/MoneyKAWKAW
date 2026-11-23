@@ -5,12 +5,12 @@ import { ChartCard, Donut, Gauge, Legend, StackedBars, type Slice } from './Char
 import { Pipeline, TrendArea } from './Trends';
 
 export const tones = {
-  paid: 'var(--green)',
-  pending: 'var(--gold)',
-  committed: 'var(--accent)',
-  available: 'var(--teal)',
-  declined: 'var(--danger)',
-  review: 'var(--violet)',
+  paid: 'var(--ai-green)',
+  pending: 'var(--ai-orange)',
+  committed: 'var(--ai-blue)',
+  available: 'var(--line-strong)',
+  declined: 'var(--ai-magenta)',
+  review: '#b57cf0',
 };
 
 /** Paid / pending / committed / available split of a derived budget summary. */

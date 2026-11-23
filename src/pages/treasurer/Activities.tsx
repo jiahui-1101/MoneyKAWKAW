@@ -1,3 +1,4 @@
+import { MoneyMap } from '../../components/charts/MoneyMap';
 import { Search, Wallet, CircleDollarSign, ArrowDownLeft, Percent } from 'lucide-react';
 import { useState } from 'react';
 import { Link, useParams } from 'react-router-dom';
@@ -240,6 +241,9 @@ export function TreasuryActivityDetail({ closing = false }: { closing?: boolean 
           },
         ]}
       />
+      <Panel title="Money map" subtitle="Click any box to trace where its money goes">
+        <div className="panel-body"><MoneyMap store={data} activity={activity} claimHref={(cid) => `/treasurer/claims/${cid}`} /></div>
+      </Panel>
       <TreasuryLifecycle data={scope} />
       <FinancialAlerts data={scope} />
       <Panel

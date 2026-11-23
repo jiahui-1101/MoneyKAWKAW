@@ -1,4 +1,6 @@
 import type { ReactNode } from 'react';
+import { InteractiveDonut } from './Interactive';
+import { BarList } from './Graphs';
 
 export interface Slice {
   label: string;
@@ -21,39 +23,9 @@ export function ChartCard({ title, hint, children, wide }: { title: string; hint
   );
 }
 
-/** Ring chart with a centre total and an accessible legend. */
-export function Donut({ slices, centre, caption, format }: { slices: Slice[]; centre: string; caption: string; format: (n: number) => string }) {
-  const total = slices.reduce((s, x) => s + x.value, 0);
-  const r = 15.9155;
-  let offset = 25;
-  return (
-    <div className="viz-donut">
-      <svg viewBox="0 0 42 42" role="img" aria-label={`${caption}: ${slices.map((s) => `${s.label} ${format(s.value)}`).join(', ')}`}>
-        <circle cx="21" cy="21" r={r} fill="none" stroke="var(--line)" strokeWidth="5" />
-        {total > 0 &&
-          slices.map((s) => {
-            const p = pct(s.value, total);
-            const el = (
-              <circle key={s.label} cx="21" cy="21" r={r} fill="none" stroke={s.tone} strokeWidth="5" strokeDasharray={`${p} ${100 - p}`} strokeDashoffset={offset} />
-            );
-            offset -= p;
-            return el;
-          })}
-        <text x="21" y="21" className="viz-donut-value">{centre}</text>
-        <text x="21" y="26" className="viz-donut-caption">{caption}</text>
-      </svg>
-      <ul className="viz-legend">
-        {slices.map((s) => (
-          <li key={s.label}>
-            <i style={{ background: s.tone }} />
-            <span>{s.label}</span>
-            <strong className="money">{format(s.value)}</strong>
-            <em>{pct(s.value, total).toFixed(0)}%</em>
-          </li>
-        ))}
-      </ul>
-    </div>
-  );
+/** Ring chart with a centre total and an interactive legend. */
+export function Donut(props: { slices: Slice[]; centre: string; caption: string; format: (n: number) => string }) {
+  return <InteractiveDonut {...props} />;
 }
 
 /** Half-circle gauge for a single utilisation ratio; turns red past 100%. */
@@ -80,34 +52,9 @@ export interface StackRow {
   href?: string;
 }
 
-/** Horizontal stacked bars: each row's parts against its total (e.g. paid / pending / committed vs allocation). */
-export function StackedBars({ rows, format, empty = 'Nothing to show yet.' }: { rows: StackRow[]; format: (n: number) => string; empty?: string }) {
-  if (!rows.length) return <p className="viz-empty">{empty}</p>;
-  const max = Math.max(...rows.map((r) => Math.max(r.total, r.parts.reduce((s, p) => s + p.value, 0))), 1);
-  return (
-    <ul className="viz-stack">
-      {rows.map((r) => {
-        const used = r.parts.reduce((s, p) => s + p.value, 0);
-        const over = used > r.total;
-        return (
-          <li key={r.id}>
-            <div className="viz-stack-head">
-              <span>{r.label}</span>
-              <strong className={`money${over ? ' viz-over' : ''}`}>
-                {format(used)} <em>/ {format(r.total)}</em>
-              </strong>
-            </div>
-            <div className="viz-stack-track" role="img" aria-label={`${r.label}: ${r.parts.map((p) => `${p.label} ${format(p.value)}`).join(', ')} of ${format(r.total)}`}>
-              <span className="viz-stack-limit" style={{ width: `${pct(r.total, max)}%` }} />
-              {r.parts.map((p) => (
-                <span key={p.label} className="viz-stack-seg" style={{ width: `${pct(p.value, max)}%`, background: p.tone }} />
-              ))}
-            </div>
-          </li>
-        );
-      })}
-    </ul>
-  );
+/** Horizontal stacked bars with hover breakdown (row parts against its total). */
+export function StackedBars({ rows, format, empty }: { rows: StackRow[]; format: (n: number) => string; empty?: string }) {
+  return <BarList rows={rows.map((r) => ({ id: r.id, label: r.label, parts: r.parts, limit: r.total }))} format={format} empty={empty} />;
 }
 
 /** Legend row shared by stacked charts. */
