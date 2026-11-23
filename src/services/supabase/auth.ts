@@ -1,6 +1,6 @@
 import { roles as knownRoles, type Role, type SessionProfile } from '../../domain/access';
 import { dataMode, supabaseClient } from './client';
-import { membershipAccessError } from './membership-error';
+import { membershipAccessError, oauthCallbackError } from './membership-error';
 
 export type AuthState = { profile: SessionProfile | null; signedIn: boolean; error: string; loading: boolean };
 export const initialAuthState: AuthState = { profile: null, signedIn: false, error: '', loading: true };
@@ -29,8 +29,13 @@ function sessionProfile(value: unknown): SessionProfile | null {
 export function watchSession(update: (state: AuthState) => void) {
   const client = supabaseClient();
   let active = true, generation = 0;
+  let signedIn = false;
+  const callbackError = oauthCallbackError(typeof window === 'undefined' ? '' : window.location?.search ?? '');
   const restore = async (background = false) => {
     const attempt = ++generation;
+    if (callbackError) {
+      update({ profile: null, signedIn, loading: false, error: callbackError }); return;
+    }
     // Focus rechecks still validate grants, but must not unmount an in-progress receipt editor.
     if (!background) update({ ...initialAuthState, signedIn: true, loading: true });
     try {
@@ -59,6 +64,8 @@ export function watchSession(update: (state: AuthState) => void) {
   };
   const { data: { subscription } } = client.auth.onAuthStateChange((_event, session) => {
     ++generation;
+    signedIn = !!session;
+    if (callbackError) { update({ profile: null, signedIn, loading: false, error: callbackError }); return; }
     if (!session) update({ profile: null, signedIn: false, loading: false, error: '' });
     else queueMicrotask(() => { if (active) void restore(); });
   });

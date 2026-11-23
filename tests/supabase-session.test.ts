@@ -27,6 +27,17 @@ beforeEach(() => {
   };
 });
 const signIn = () => mocks.listener('SIGNED_IN', { user: { id: 'member-a' } });
+it('does not publish an old account after a failed OAuth callback', async () => {
+  const events = Object.assign(new EventTarget(), { location: {
+    search: '?error=invalid_request&error_code=bad_oauth_state&error_description=private-account-secret',
+  } });
+  vi.stubGlobal('window', events);
+  const stop = watchSession(state => states.push(state)); signIn();
+  await vi.waitFor(() => expect(states.at(-1)?.error).toContain('Google sign-in expired'));
+  expect(states.at(-1)?.profile).toBeNull();
+  expect(states.at(-1)?.error).not.toContain('private-account-secret');
+  expect(mocks.client.rpc).not.toHaveBeenCalled(); stop();
+});
 
 it('restores only the database-assigned profile and clears it at sign-out', async () => {
   const stop = watchSession((state) => states.push(state)); signIn();
