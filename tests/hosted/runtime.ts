@@ -1,4 +1,5 @@
 import { supabaseClient } from '../../src/services/supabase/client';
+import { sdkRequest } from './sdk-request';
 
 const endpoint = 'https://mqklyfboywbxcexdttrl.supabase.co';
 const protectedIds = ['64ae397c-a1b0-45a6-9dfe-558a4954d01f', '0e90e217-9fbc-4ae4-b7f0-acfc01b80f9f',
@@ -17,7 +18,7 @@ export const identities: Record<string, string> = {
 };
 export type Request = { label: string; path: string; method?: string; body?: unknown;
   expectStatus: number[]; expectCount?: number; expectCode?: string; expectNoData?: boolean; bytesBase64?: string; mime?: string; saveAs?: string;
-  auth?: 'current' | 'anonymous' | 'tampered-role' };
+  auth?: 'current' | 'anonymous' | 'tampered-role'; transport?: 'sdk'; cancelAfterMs?: number };
 export type Plan = { label: string; groups: Request[][]; startAt?: string };
 export function resolveRequest(r: Request, bindings: Map<string, unknown>): Request {
   const lookup = (reference: string) => {
@@ -55,6 +56,8 @@ export function validatePlan(plan: Plan) {
     if (!Array.isArray(group) || group.length < 1 || group.length > 2) throw new Error('Maximum concurrency is two.');
     for (const r of group) {
       const url = new URL(r.path, endpoint);
+      if (r.transport && (r.transport !== 'sdk' || r.method !== 'POST' || r.auth)) throw new Error('Unreviewed SDK transport.');
+      if (r.cancelAfterMs !== undefined && (!r.transport || r.cancelAfterMs < 1 || r.cancelAfterMs > 1000)) throw new Error('Unbounded cancellation check.');
       if (!r.path.startsWith('/') || url.origin !== endpoint || !/^\/(rest|storage|functions)\/v1\//.test(url.pathname)
         || !['GET', 'POST', 'PATCH', 'PUT', 'DELETE'].includes(r.method ?? 'GET')
         || !Array.isArray(r.expectStatus) || !r.expectStatus.length
@@ -95,7 +98,15 @@ export async function captureIdentity() {
       const startedAt = new Date().toISOString(), started = performance.now();
       const binary = r.bytesBase64 ? Uint8Array.from(atob(r.bytesBase64), c => c.charCodeAt(0)) : undefined;
       let response: Response;
-      try { response = await fetch(endpoint + r.path, { method: r.method ?? 'GET', redirect: 'error',
+      let sdk: Awaited<ReturnType<typeof sdkRequest>> | undefined;
+      try {
+        if (r.transport) {
+          sdk = await sdkRequest(endpoint, key, token, r.path, r.body, r.cancelAfterMs);
+          if (!sdk.response) return { label: r.label, uid: user.id, status: sdk.status, sdkAttempts: sdk.attempts,
+            cancelled: sdk.cancelled, pass: r.expectStatus.includes(sdk.status), startedAt,
+            finishedAt: new Date().toISOString(), path: r.path, outcome: 'Cancelled or network failure; authoritative readback required.' };
+          response = sdk.response;
+        } else response = await fetch(endpoint + r.path, { method: r.method ?? 'GET', redirect: 'error',
         signal: AbortSignal.timeout(15_000),
         headers: { apikey: key, ...(r.auth === 'anonymous' ? {} : { Authorization: 'Bearer ' + bearer }),
           ...(r.body !== undefined || binary ? { 'Content-Type': r.mime ?? 'application/json' } : {}) },
@@ -121,6 +132,7 @@ export async function captureIdentity() {
       const id = typeof value === 'string' ? value : object.id;
       const hash = [...new Uint8Array(await crypto.subtle.digest('SHA-256', bytes))].map(b => b.toString(16).padStart(2, '0')).join('');
       return { label: r.label, uid: r.auth === 'anonymous' ? null : user.id,
+        sdkAttempts: sdk?.attempts, clientMessage: sdk?.clientMessage, cancelled: sdk?.cancelled,
         role: r.auth === 'anonymous' ? 'Anonymous' : identities[user.id], authMode: r.auth ?? 'current',
         expiresAt: session.expires_at, method: r.method ?? 'GET', path: r.path,
         startedAt, finishedAt: new Date().toISOString(), milliseconds: Math.round(performance.now() - started),
