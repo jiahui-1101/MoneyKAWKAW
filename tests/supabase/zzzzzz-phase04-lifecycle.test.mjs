@@ -3,11 +3,13 @@ import test from 'node:test';
 import { randomUUID } from 'node:crypto';
 import { admin, anonymous, signIn, syntheticEmails } from './helpers.mjs';
 import { createFinancialClaim } from './phase04-fixture.mjs';
+import { archiveFixture } from './phase08-fixture.mjs';
 const ok = (r) => { assert.ifError(r.error); return r.data; };
 const row = async (client,id) => ok(await client.from('claims').select('*').eq('id',id).single());
 
 test('conflicting review requests complete with one decision and a nonretryable HTTP conflict', async () => {
-  const { claim } = await createFinancialClaim('Synthetic bounded review conflict', 1000, 1000);
+  const workflow = await archiveFixture('Synthetic isolated review conflict');
+  const { claim } = await createFinancialClaim('Synthetic bounded review conflict', 1000, 1000, workflow);
   const { client: treasurer } = await signIn(syntheticEmails.treasurer);
   const reviewed = ok(await treasurer.rpc('transition_claim', {
     p_claim_id: claim.id, p_target: 'Under Review', p_expected_updated_at: claim.updated_at,
