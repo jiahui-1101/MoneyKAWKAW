@@ -5,6 +5,7 @@ import { RecentActivity } from '../components/Finance';
 import { Modal, PageHeader, Panel } from '../components/ui';
 import { Field } from '../components/Field';
 import { updateSettings } from '../services/director';
+import { demoMode } from '../services/supabase/client';
 
 export function History() {
   const { store } = useWorkspace();
@@ -48,8 +49,9 @@ export function History() {
       </div>
       <RecentActivity store={filtered} all />
       <p className="data-note">
-        Local history is append-only through ordinary workspace controls. Demo reset clears local
-        history. Future API authorization and durable audit storage are required for production.
+        {demoMode
+          ? 'Demo history stays on this device and is cleared by a demo reset.'
+          : 'Club history is stored on the server. Workspace controls cannot edit or delete audit events.'}
       </p>
     </div>
   );

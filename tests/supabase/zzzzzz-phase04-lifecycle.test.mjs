@@ -2,8 +2,35 @@ import assert from 'node:assert/strict';
 import test from 'node:test';
 import { randomUUID } from 'node:crypto';
 import { admin, anonymous, signIn, syntheticEmails } from './helpers.mjs';
+import { createFinancialClaim } from './phase04-fixture.mjs';
+import { archiveFixture } from './phase08-fixture.mjs';
 const ok = (r) => { assert.ifError(r.error); return r.data; };
 const row = async (client,id) => ok(await client.from('claims').select('*').eq('id',id).single());
+
+test('conflicting review requests complete with one decision and a nonretryable HTTP conflict', async () => {
+  const workflow = await archiveFixture('Synthetic isolated review conflict');
+  const { claim } = await createFinancialClaim('Synthetic bounded review conflict', 1000, 1000, workflow);
+  const { client: treasurer } = await signIn(syntheticEmails.treasurer);
+  const reviewed = ok(await treasurer.rpc('transition_claim', {
+    p_claim_id: claim.id, p_target: 'Under Review', p_expected_updated_at: claim.updated_at,
+    p_request_key: randomUUID(), p_reason: 'Synthetic independent review',
+  }));
+  const started = performance.now();
+  const attempts = await Promise.all(['Approved', 'Rejected'].map(target => treasurer.rpc('transition_claim', {
+    p_claim_id: claim.id, p_target: target, p_expected_updated_at: reviewed,
+    p_request_key: randomUUID(), p_reason: 'Synthetic conflicting decision',
+  }).abortSignal(AbortSignal.timeout(10_000))));
+  assert.equal(attempts.filter(result => !result.error).length, 1);
+  const conflict = attempts.find(result => result.error);
+  assert.equal(conflict.status, 409);
+  assert.equal(conflict.error.code, 'PT409');
+  assert.ok(performance.now() - started < 10_000);
+  const current = await row(treasurer, claim.id);
+  assert.ok(['Approved', 'Rejected'].includes(current.status));
+  const decisions = ok(await treasurer.from('claim_status_history').select('id')
+    .eq('claim_id', claim.id).in('to_status', ['Approved', 'Rejected']));
+  assert.equal(decisions.length, 1);
+});
 
 test('Phase 04 enforces independent review, exact payment and receipt confirmation', async () => {
   const {client:treasurer,user:treasUser}=await signIn(syntheticEmails.treasurer);
@@ -32,7 +59,9 @@ test('Phase 04 enforces independent review, exact payment and receipt confirmati
     assert.equal((await call(member,'Approved',reviewed)).error?.code,'42501');
   } finally { ok(await admin.from('club_role_grants').delete().eq('club_id',c.club_id).eq('user_id',memberUser.id).eq('role','Treasurer')); }
   assert.equal(ok(await call(treasurer,'Under Review',c.updated_at,startKey)),reviewed);
-  assert.equal((await call(treasurer,'Approved',c.updated_at)).error?.code,'40001');
+  const stale = await call(treasurer,'Approved',c.updated_at);
+  assert.equal(stale.error?.code,'PT409');
+  assert.equal(stale.status,409);
   assert.ok((await call(treasurer,'Rejected',reviewed,randomUUID(),'')).error);
   const risk=ok(await treasurer.rpc('assess_claim_risk',{p_claim_id:c.id}));
   assert.equal(risk.variance,500); assert.equal(risk.variancePercent,12.5);

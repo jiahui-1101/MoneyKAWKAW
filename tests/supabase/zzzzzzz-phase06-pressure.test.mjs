@@ -34,7 +34,7 @@ test('pressure snapshots require independent current Treasurer grants and expose
   assert.equal(ok(await treasurer.rpc('retain_claim_pressure_advice', advice)), retained);
   assert.ok((await treasurer.rpc('retain_claim_pressure_advice', { ...advice, p_score: .9 })).error);
   assert.equal((await treasurer.rpc('retain_claim_pressure_advice', {
-    ...advice, p_raw: { ...value.raw, claim_sen: 1 } })).error?.code, '40001');
+    ...advice, p_raw: { ...value.raw, claim_sen: 1 } })).error?.code, 'PT409');
   const saved = ok(await treasurer.from('claim_pressure_advice').select('*').eq('id', retained).single());
   assert.equal(saved.provenance, 'unverified_client_advisory'); assert.equal(saved.experimental, true);
   assert.equal(saved.claim_revision, claim.revision); assert.match(saved.feature_hash, /^[a-f0-9]{64}$/);

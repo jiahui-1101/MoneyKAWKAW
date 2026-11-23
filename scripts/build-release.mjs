@@ -33,6 +33,13 @@ await writeFile(join(assets, '_headers'), [
   '  Permissions-Policy: camera=(self), microphone=(), geolocation=()',
   '  Cache-Control: no-store', '',
 ].join('\n'));
+// Explicitly close QA URLs even when an edge still has previous HTML cached.
+if (env.MONEYKAWKAW_HOSTED_QA !== 'synthetic-09c') {
+  await writeFile(join(assets, '_redirects'), [
+    '/tests/hosted/qa / 302', '/tests/hosted/qa.html / 302', '',
+    '/tests/hosted/p1 / 302', '/tests/hosted/p1.html / 302', '',
+  ].join('\n'));
+}
 await build({
   mode: 'release', publicDir: assets,
   define: {

@@ -59,7 +59,7 @@ test('HOD and Member share scoped purchasing tasks with audit history', async ()
   const stale = await member.rpc('update_my_purchase_progress', {
     p_task_id: created.data.id, p_status: 'Purchased', p_expected_updated_at: created.data.updated_at,
   });
-  assert.equal(stale.error?.code, '40001');
+  assert.equal(stale.error?.code, 'PT409');
   assert.equal((await hod.from('purchase_tasks').select('status').eq('id', created.data.id).single()).data.status, 'In Progress');
   assert.ok((await otherMember.rpc('update_my_purchase_progress', {
     p_task_id: created.data.id, p_status: 'Purchased', p_expected_updated_at: changed.data.updated_at,

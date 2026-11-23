@@ -8,7 +8,7 @@ type RpcError = { code?: string; message: string };
 
 function result<T>(data: T | null, error: RpcError | null, fallback: string): T {
   if (error) {
-    const expected = ['22023', '23503', '23505', '23514', '40001', '42501', 'P0002'];
+    const expected = ['22023', '23503', '23505', '23514', 'PT409', '40001', '42501', 'P0002'];
     throw new Error(error.code && expected.includes(error.code) ? error.message : fallback);
   }
   if (data === null) throw new Error(fallback);

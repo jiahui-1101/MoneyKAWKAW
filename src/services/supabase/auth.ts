@@ -1,10 +1,10 @@
 import { roles as knownRoles, type Role, type SessionProfile } from '../../domain/access';
 import { dataMode, supabaseClient } from './client';
+import { membershipAccessError, oauthCallbackError } from './membership-error';
 
 export type AuthState = { profile: SessionProfile | null; signedIn: boolean; error: string; loading: boolean };
 export const initialAuthState: AuthState = { profile: null, signedIn: false, error: '', loading: true };
 const denied = 'This Google account is not an active club member. Ask a club administrator for an invitation.';
-const unavailable = 'Club access could not be verified. Check your connection, then retry.';
 
 function sessionProfile(value: unknown): SessionProfile | null {
   if (!value || typeof value !== 'object') return null;
@@ -29,8 +29,13 @@ function sessionProfile(value: unknown): SessionProfile | null {
 export function watchSession(update: (state: AuthState) => void) {
   const client = supabaseClient();
   let active = true, generation = 0;
+  let signedIn = false;
+  const callbackError = oauthCallbackError(typeof window === 'undefined' ? '' : window.location?.search ?? '');
   const restore = async (background = false) => {
     const attempt = ++generation;
+    if (callbackError) {
+      update({ profile: null, signedIn, loading: false, error: callbackError }); return;
+    }
     // Focus rechecks still validate grants, but must not unmount an in-progress receipt editor.
     if (!background) update({ ...initialAuthState, signedIn: true, loading: true });
     try {
@@ -53,12 +58,14 @@ export function watchSession(update: (state: AuthState) => void) {
         return;
       }
       if (active && generation === attempt) update({ profile, signedIn: true, loading: false, error: '' });
-    } catch {
-      if (active && generation === attempt) update({ profile: null, signedIn: true, loading: false, error: unavailable });
+    } catch (error) {
+      if (active && generation === attempt) update({ profile: null, signedIn: true, loading: false, error: membershipAccessError(error) });
     }
   };
   const { data: { subscription } } = client.auth.onAuthStateChange((_event, session) => {
     ++generation;
+    signedIn = !!session;
+    if (callbackError) { update({ profile: null, signedIn, loading: false, error: callbackError }); return; }
     if (!session) update({ profile: null, signedIn: false, loading: false, error: '' });
     else queueMicrotask(() => { if (active) void restore(); });
   });
