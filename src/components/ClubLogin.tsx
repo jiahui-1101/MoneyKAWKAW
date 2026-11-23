@@ -30,6 +30,9 @@ export function ClubLogin({ state, retry }: { state: AuthState; retry: () => voi
             <button className="btn primary" disabled={busy} onClick={() => void act(state.signedIn ? logout : login)}>
               {state.signedIn ? 'Sign out' : 'Continue with Google'}
             </button>
+            {state.signedIn && <button className="btn" disabled={busy} onClick={() => void act(login)}>
+              Switch Google account
+            </button>}
             {state.error && <button className="btn" onClick={retry}>Retry access</button>}
           </div>
           {localLoginEnabled && !state.signedIn && <form className="stack" onSubmit={submitLocal}>
