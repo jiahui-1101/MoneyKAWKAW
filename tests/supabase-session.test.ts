@@ -44,6 +44,19 @@ it('rejects an authenticated account without an active invitation', async () => 
   expect(states.at(-1)?.profile).toBeNull();
   expect(mocks.client.rpc).toHaveBeenCalledTimes(1); stop();
 });
+it('explains a frozen invitation without publishing a profile or unrelated server details', async () => {
+  mocks.client.rpc.mockResolvedValueOnce({ data: null, error: {
+    code: '23514', message: 'This financial operation is frozen during activity closing',
+  } });
+  let stop = watchSession(state => states.push(state)); signIn();
+  await vi.waitFor(() => expect(states.at(-1)?.error).toContain('new invitation to an open activity'));
+  expect(states.at(-1)?.profile).toBeNull();
+  expect(mocks.client.rpc).toHaveBeenCalledTimes(1); stop();
+  mocks.client.rpc.mockResolvedValueOnce({ data: null, error: { code: '23514', message: 'private-account-secret' } });
+  stop = watchSession(state => states.push(state)); signIn();
+  await vi.waitFor(() => expect(states.at(-1)?.error).toContain('Check your connection'));
+  expect(states.at(-1)?.error).not.toContain('private-account-secret'); stop();
+});
 it('does not publish a stale profile after logout races with session restoration', async () => {
   let resolve!: (value: unknown) => void;
   mocks.client.rpc.mockImplementationOnce(() => new Promise((done) => { resolve = done; }));

@@ -1,10 +1,10 @@
 import { roles as knownRoles, type Role, type SessionProfile } from '../../domain/access';
 import { dataMode, supabaseClient } from './client';
+import { membershipAccessError } from './membership-error';
 
 export type AuthState = { profile: SessionProfile | null; signedIn: boolean; error: string; loading: boolean };
 export const initialAuthState: AuthState = { profile: null, signedIn: false, error: '', loading: true };
 const denied = 'This Google account is not an active club member. Ask a club administrator for an invitation.';
-const unavailable = 'Club access could not be verified. Check your connection, then retry.';
 
 function sessionProfile(value: unknown): SessionProfile | null {
   if (!value || typeof value !== 'object') return null;
@@ -53,8 +53,8 @@ export function watchSession(update: (state: AuthState) => void) {
         return;
       }
       if (active && generation === attempt) update({ profile, signedIn: true, loading: false, error: '' });
-    } catch {
-      if (active && generation === attempt) update({ profile: null, signedIn: true, loading: false, error: unavailable });
+    } catch (error) {
+      if (active && generation === attempt) update({ profile: null, signedIn: true, loading: false, error: membershipAccessError(error) });
     }
   };
   const { data: { subscription } } = client.auth.onAuthStateChange((_event, session) => {
