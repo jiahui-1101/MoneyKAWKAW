@@ -1,135 +1,289 @@
-# MoneyKAWKAW · Club budget & purchasing workspace
+# MoneyKAWKAW
 
-A Director, HOD, Treasurer, and Committee Member workspace using React, TypeScript, Vite and invite-only Supabase Auth. PostgreSQL RPCs and RLS enforce purchasing, receipt-backed claims, independent review, recorded reimbursements, member confirmation, reconciliation and private archiving.
+<p align="center">
+  <b>A club budget and expense tracker that connects activity planning, department purchasing, receipt-backed claims, Treasurer review, and verified reimbursement.</b>
+</p>
 
-Read the [Supabase setup, schema, security boundaries and local testing guide](docs/supabase/README.md) first. Local synthetic financial flows have been verified. Hosted Google OAuth, release authorization and operational backup ownership remain release gates.
+<p align="center">
+  <img alt="React" src="https://img.shields.io/badge/Frontend-React%2019-61DAFB?style=for-the-badge&logo=react&logoColor=black">
+  <img alt="TypeScript" src="https://img.shields.io/badge/Language-TypeScript-3178C6?style=for-the-badge&logo=typescript&logoColor=white">
+  <img alt="Vite" src="https://img.shields.io/badge/Build-Vite%207-646CFF?style=for-the-badge&logo=vite&logoColor=white">
+  <img alt="Supabase" src="https://img.shields.io/badge/Backend-Supabase-3FCF8E?style=for-the-badge&logo=supabase&logoColor=white">
+  <img alt="Vitest" src="https://img.shields.io/badge/Tests-Vitest-6E9F18?style=for-the-badge&logo=vitest&logoColor=white">
+  <img alt="Cloudflare Pages" src="https://img.shields.io/badge/Deploy-Cloudflare%20Pages-F38020?style=for-the-badge&logo=cloudflare&logoColor=white">
+</p>
 
-## Run locally
+<p align="center">
+  <a href="https://moneykawkaw.pages.dev/">🌐 Live Deployment</a> ·
+  <a href="#main-functions">📊 Main Functions</a> ·
+  <a href="#local-development">🛠️ Run Locally</a> ·
+  <a href="docs/supabase/README.md">🔐 Supabase Setup & Security</a>
+</p>
 
-```sh
-npm ci
-npm run dev -- --port 5186
-```
+---
 
-Open the printed localhost URL. `npm run build` checks TypeScript and creates `dist/`; `npm run preview -- --port 5186` serves that production build. `npm test` runs financial, permission, lifecycle, and persistence tests. `npm run lint` checks source/tests with Oxlint; `npm run typecheck` runs TypeScript separately. Static hosting must route unknown application paths to `index.html` for deep links.
+## Table of Contents
 
-## Director experience
+- [AIROST Internship Project](#airost-internship-project)
+- [Introduction](#introduction)
+- [Demo](#demo)
+- [Live Deployment](#live-deployment)
+- [Main Functions](#main-functions)
+- [Role Workflows](#role-workflows)
+- [System Flow](#system-flow)
+- [Architecture and Access Control](#architecture-and-access-control)
+- [Frontend & Backend](#frontend-and-backend)
+- [Technical Stack](#technical-stack)
+- [Local Development](#local-development)
+- [Environment Variables](#environment-variables)
+- [Cloud Deployment](#cloud-deployment)
+- [Application Routes](#application-routes)
+- [Project Structure](#project-structure)
+- [Verification](#verification)
+- [Team](#team)
+- [Notes for Evaluators](#notes-for-evaluators)
 
-- Organization dashboard: activity count, overall budgets, recorded expenses, remaining balance, utilization, budget/spending comparison, distribution chart, financial lifecycle balances, and recent history.
-- Activity portfolio: search, type/status filters, and sorting with URL-persisted filter state.
-- Activity creation and editing: name, description, type, status, dates, and budget; custom keyboard-friendly date calendar and validation.
-- Department setup: descriptive lead, description, allocation, search, editing, and confirmed removal. Linked expense/assignment records protect departments from removal.
-- Dedicated activity budget dashboards: department contribution, spending and overspending, commitments, pending claims, paid amounts, available balance, and read-only expense source records.
-- Responsive navigation, keyboard focus handling, loading skeletons, useful empty states, error/retry recovery, local success feedback, history, help, and workspace preferences.
+---
 
-Create activity → configure departments → allocate budget → open budget dashboard → edit activity. Supabase changes persist across refreshes. Fictional sample resets are available only in explicit demo mode.
+## AIROST Internship Project
 
-## HOD experience
+| Field | Details |
+|---|---|
+| Project name | MoneyKAWKAW |
+| Submission | AIROST Internship Project |
+| Project type | Club budget, purchasing, and expense tracking web app |
+| Repository contributor | [Wong Jia Hui](https://github.com/jiahui-1101) |
 
-Use the **Demo profile** selector or open `/demo` to explicitly choose an identity. Sarah, Amir, and Mei each have department-specific memberships; descriptive department lead names alone do not grant access. These are local demo identities, not production authentication.
+<!-- Add other confirmed team member names here if applicable. -->
 
-- Department dashboards, activity/department switching, procurement progress, deadlines, and financial summaries.
-- Purchasing task creation, eligible-member assignment, reassignment, editing, progress tracking, and confirmed cancellation.
-- A searchable task board, member workload views, item-budget tracking, claim variances, read-only reimbursement monitoring, and department history.
-- Shared Director/HOD data and persistence, additive migration of existing records, and role/scoped service checks. Director department setup now includes explicit HOD/member access assignment; activity budget pages show shared purchasing plans read-only.
+## Introduction
 
-Select department → create purchasing task → assign member → set budget/deadline → save → review dashboard → edit/track progress. HODs cannot change Director allocations, approve claims, or record payments. See the [complete HOD route map, financial rules, and integration notes](docs/hod/README.md).
+Club activities often involve several departments, advance purchases, member reimbursement claims, and a fixed overall budget. MoneyKAWKAW keeps those steps in one auditable workspace. Each activity has a budget; each department receives an allocation; purchasing tasks connect to members, receipts, claims, decisions, and payment records.
 
-## Treasurer experience
+The app supports Director, Treasurer, Head of Department (HOD), and Committee Member workflows. Role and activity/department scope are enforced by Supabase policies and authorized database operations, so a hidden button is never the only access check.
 
-Select **Nora Lim · Treasurer demo**. Activity oversight must be explicitly granted in Director activity setup; the sample Leadership Retreat is outside Nora’s scope.
+## Demo
 
-- Financial dashboard, budget/spending charts, claim status distribution, activity and department breakdowns, and over-budget alerts.
-- Searchable claim queues with status tabs, amount/date sorting, and activity/department/member/date filters.
-- Immutable original receipt, annotated claim lines, retained OCR suggestions and edit/exclusion history, justifications, and claim audit history.
-- Explicit review start, confirmed approval/decline, mandatory decline reasons, configurable deterministic advisory risk bands, and retained decision snapshots. Over-budget approval requires renewed analysis if financial context changes after review.
-- Approved-only payout instructions, masked by default; manual reimbursement recording with file validation, confirmation, preserved proof, and duplicate prevention.
-- Centralized payment history, proof viewing, append-only discrepancy resolution notes, and separate member receipt status. No Treasurer action confirms receipt for a member.
+Open the [MoneyKAWKAW live app](https://moneykawkaw.pages.dev/). Workspace sign-in is invite-only; credentials are not published here.
 
-Review → analyze → approve/decline → record an external manual payment with proof → await member confirmation. The optional **Load demo claim** tool adds clearly fictional fixtures; Members now submit their own uploaded receipt evidence through their separate workspace. Use fictional payout details throughout this local demo. See [Treasurer architecture and routes](docs/treasurer/README.md) and the [current four-role verification](docs/member/VERIFICATION.md).
+## Live Deployment
 
-## Committee Member experience
+| Resource | Link | Notes |
+|---|---|---|
+| Web application | [moneykawkaw.pages.dev](https://moneykawkaw.pages.dev/) | Cloudflare Pages frontend. Invite-only workspace access. |
+| Source code | [GitHub repository](https://github.com/jiahui-1101/MoneyKAWKAW) | React, TypeScript, and Supabase project. |
+| Supabase setup | [Database, authentication, and security guide](docs/supabase/README.md) | Includes local setup and role/access boundaries. |
 
-Select **Ava Chen**, **Ryan Lee**, or **Grace Lim · Member demo**. Active department membership and task ownership determine access.
+## Main Functions
 
-- Personal dashboard, assigned activities/departments, searchable purchasing tasks, department coordination, and owned purchase progress.
-- Bank/TNG destination CRUD with masking, default selection, protected removal, per-claim snapshots, and separately audited unpaid destination changes.
-- Persisted receipt drafts, original PNG/JPEG upload or camera input, actual on-device English OCR, and explicit manual fallback.
-- Retained source image/text, quantity/price corrections, missing lines, tax/discount treatment, exclusions with reasons, comparison views, and reconciled derived claim amounts.
-- Over-budget justification, confirmed submission, shared Treasurer review status, decisions, proof viewing, payment discrepancies, and one-time receipt acknowledgment.
-- Event-derived notifications with persistent read state, responsive navigation, keyboard focus, loading, error/retry, and empty states.
+- **Activity and budget setup:** Directors create activities, set an overall budget, create departments, assign department access, and review activity and organization-wide financial dashboards.
+- **Department purchasing:** HODs manage only departments they are assigned to, create itemized purchasing tasks, set budgets and due dates, and assign work to eligible members.
+- **Receipt-backed claims:** Members record purchases, upload or capture receipts, review OCR suggestions, correct or exclude lines with reasons, and submit the reconciled amount with any over-budget explanation.
+- **Treasurer review and payment:** Treasurers review authorized claims, inspect evidence and audit history, analyze over-budget requests, approve or decline with a recorded decision, then separately record an external payment and its proof.
+- **Member confirmation:** Members see claim and payment status, view proof for their own claim, report a discrepancy, and confirm receipt of payment.
+- **Dashboards and traceability:** Activity, department, Treasurer, HOD, and Member views summarize budget stages and link totals back to the underlying tasks, claims, and payments.
 
-Director setup → HOD assignment → Member purchase/receipt/submission → Treasurer review/payment proof → Member confirmation. See the [Member route map, architecture, OCR assets, and API readiness](docs/member/README.md).
+## Role Workflows
 
-## Routes
+### Director
+
+- Create and update activities, dates, status, overall budgets, departments, and allocations.
+- Explicitly grant HOD and Member access to activity departments.
+- Track organization and activity budgets, recorded expenses, reservations, pending claims, utilization, and recent history.
+- View financial summaries while claim details remain restricted to authorized claim participants and Treasurers.
+
+### Treasurer
+
+- See only activities for which Treasurer access is explicitly granted.
+- Review a searchable claim queue and open original receipts, OCR output, corrections, exclusions, explanations, and claim history.
+- Start a review, run an advisory over-budget analysis, and record an approval or decline with a reason where required.
+- Access payout instructions at the authorized payment step; details are masked in normal views.
+- Record an externally completed payment, attach proof, review payment history, and wait for the Member to confirm receipt.
+
+Approval is a decision, not a payment. Recording a payment does not mark it received by the Member.
+
+### Head of Department (HOD)
+
+- Switch between explicitly assigned activities and departments.
+- Create purchasing tasks, define item budgets and due dates, and assign eligible department members.
+- Track task progress, department purchasing plans, allocated budget, and recorded spending.
+- HODs cannot change the Director’s overall allocations, review or approve claims, or record reimbursements.
+
+### Committee Member
+
+- View personal activities, assigned purchasing work, and permitted department coordination details.
+- Manage saved bank or Touch 'n Go payout instructions; values are masked and can be selected for a claim.
+- Upload a receipt image or use camera capture, review on-device English OCR, correct line items, and keep excluded lines with reasons in the audit history.
+- Submit a claim, follow its review and payment status, view the Treasurer’s proof, and confirm or dispute receipt.
+
+## System Flow
+
+1. The Director creates an activity, sets the overall budget, creates departments, and grants access.
+2. The HOD creates a purchasing task with an item budget and deadline, then assigns a Member.
+3. The Member buys the item, uploads or captures the receipt, reviews OCR, edits claim lines, and submits the claim.
+4. The Treasurer reviews the original evidence and change history, then approves or declines. An over-budget risk analysis is advisory and shows its contributing factors.
+5. After approval, the Treasurer separately records the external payment and uploads proof.
+6. The Member confirms receipt or records a discrepancy. The activity history and financial totals update from linked records.
+
+## Architecture and Access Control
+
+- Supabase Auth identifies the signed-in user. PostgreSQL row-level security and scoped RPCs enforce role, activity, department, and record ownership on the server.
+- Directors configure activity budgets and membership; HODs manage assigned departments; Members access their own claims and payment details; Treasurers access claims and payment instructions only within their explicit activity scope.
+- Claim review, payment, and Member receipt confirmation are separate audited events.
+- Original receipt files and OCR extraction are preserved. Corrections and excluded lines retain before/after values, actor, time, and reason.
+- OCR is a review aid. Over-budget risk results are advisory; the Treasurer makes the approval decision.
+- Payout details are payment instructions, not authorization to transfer funds. The app records an external transfer and its proof; it does not initiate bank or wallet payments.
+- Dashboard figures are derived from linked activity, department, task, claim, and payment records. Client-submitted totals are not authoritative.
+- Archived activities become read-only after reconciliation. Financial archive records remain linked to separately retained receipt files; full recovery also requires database and Storage backups.
+
+### Budget Calculations
+
+Amounts use integer minor units. Recorded expenses include pending, in-review, and approved claims; declined claims remain in history but are removed from recorded totals. Remaining budget is the budget minus recorded expenses. Committed amounts include open task reservations and approved unpaid claims. A submitted claim replaces its task estimate to prevent double counting; declining a claim restores that reservation.
+
+Department allocations cannot exceed the activity budget. Lowering an activity budget below current allocations is rejected. Reducing an allocation below historical expenses preserves the records and shows the resulting overrun.
+
+<a id="frontend-and-backend"></a>
+
+## Frontend & Backend
+
+The repository contains a React frontend and a Supabase-backed data layer; it does not use a separate application-server folder.
+
+| Area | Location | Responsibility |
+|---|---|---|
+| Frontend application | <code>src/</code> | Role-based pages, dashboards, forms, receipt capture, charts, and navigation |
+| Domain rules | <code>src/domain/</code> | Linked records, budget calculations, statuses, and setup validation |
+| Data services | <code>src/services/</code> | Supabase repositories/RPC adapters and explicit local demo adapters |
+| Database backend | <code>supabase/</code> | SQL migrations, functions, row-level security, and local configuration |
+| Automated checks | <code>tests/</code> | Unit, permission, lifecycle, persistence, and integration coverage |
+
+Supabase is the backend for authentication, PostgreSQL persistence, database functions, and access policies. The public frontend uses a publishable key; server-only credentials must never be placed in Vite variables or committed.
+
+## Technical Stack
+
+- **Frontend:** React 19, TypeScript, React Router, and Vite 7.
+- **Database and authentication:** Supabase Auth and PostgreSQL with row-level security and RPCs.
+- **Receipt capture:** Browser camera/file input and on-device English OCR with Tesseract.js.
+- **Testing and linting:** Vitest, TypeScript, and Oxlint.
+- **Hosting:** Cloudflare Pages static frontend with security headers emitted by the release build.
+
+## Local Development
+
+Requirements: Node.js and npm. From the repository root:
+
+1. Install dependencies with <code>npm ci</code>.
+2. Start the app with <code>npm run dev -- --port 5186</code>.
+3. Open the localhost URL printed by Vite.
+
+Useful commands:
+
+| Command | Purpose |
+|---|---|
+| <code>npm test</code> | Run unit and local application tests; excludes the separate Supabase integration suite. |
+| <code>npm run lint</code> | Lint source and tests with Oxlint. |
+| <code>npm run typecheck</code> | Run TypeScript without emitting files. |
+| <code>npm run build</code> | Typecheck and create a standard Vite build. |
+| <code>npm run build:release</code> | Create the constrained production candidate for the authorized hosted Supabase project. |
+| <code>npm run test:supabase</code> | Run integration tests against the local Supabase/Docker environment. |
+
+For the database, authentication, seed data, and local Supabase test setup, follow [docs/supabase/README.md](docs/supabase/README.md). Do not use a database reset command against a hosted project.
+
+## Environment Variables
+
+See [.env.example](.env.example) for the variable names and local defaults.
+
+| Variable | Purpose |
+|---|---|
+| <code>VITE_DATA_MODE</code> | Select the explicit local demo or Supabase data source. |
+| <code>VITE_SUPABASE_URL</code> | Supabase project URL used by the client. |
+| <code>VITE_SUPABASE_PUBLISHABLE_KEY</code> | Public Supabase publishable/anonymous key for the browser. Never use a server secret here. |
+| <code>VITE_LOCAL_TEST_LOGIN</code> | Local-only authentication option; production release disables it. |
+| <code>VITE_RECEIPT_MODEL</code>, <code>VITE_PRESSURE_MODEL</code>, <code>VITE_QWEN_MODEL</code> | Optional experimental features; production release forces these off. |
+
+Google OAuth client secrets belong in Supabase provider configuration and must not be exposed to the browser or committed to Git. Use fictional payout details in local demo data.
+
+## Cloud Deployment
+
+The public frontend is hosted on [Cloudflare Pages](https://moneykawkaw.pages.dev/).
+
+For a reviewed production candidate:
+
+1. Set <code>VITE_SUPABASE_URL</code> to the authorized HTTPS Supabase project.
+2. Set <code>VITE_SUPABASE_PUBLISHABLE_KEY</code> to its public publishable key.
+3. Build with <code>npm run build:release</code>.
+4. Publish the generated <code>dist/</code> directory to the existing Pages project.
+5. Configure the exact HTTPS origin in Supabase Auth redirect allowlists and verify the invited-user sign-in flow.
+
+The release build forces Supabase mode, disables synthetic login and experimental models, copies the supported OCR assets, emits a Content Security Policy and other security headers, and redirects temporary hosted QA routes. Keep secrets out of the static build and repository. Database migrations are reviewed and applied separately from the frontend deployment.
+
+## Application Routes
 
 | Route | Page |
-| --- | --- |
-| `/` | Redirect to the selected role’s overview |
-| `/director` | Organization overview |
-| `/director/activities` | Searchable activity portfolio |
-| `/director/activities/new` | Activity creation |
-| `/director/activities/:id` | Activity overview |
-| `/director/activities/:id/edit` | Activity editing |
-| `/director/activities/:id/departments` | Department setup and allocations |
-| `/director/activities/:id/budget` | Activity budget dashboard |
-| `/director/budgets` | Organization financial breakdown |
-| `/director/history` | Searchable/filterable change history |
-| `/director/settings` | Timezone, attention threshold, demo reset |
-| `/hod` | HOD workspace overview |
-| `/hod/activities/:activityId/departments/:departmentId` | Department overview and scoped purchasing pages |
-| `/treasurer` | Financial overview |
-| `/treasurer/activities` | Authorized activity finances |
-| `/treasurer/activities/:id` | Activity financial details |
-| `/treasurer/claims` | Searchable claim review queue |
-| `/treasurer/claims/:id` | Claim evidence and review decisions |
-| `/treasurer/claims/:id/risk` | Advisory budget/risk analysis |
-| `/treasurer/claims/:id/reimburse` | Approved-only manual payment step |
-| `/treasurer/reimbursements` | Approved, unpaid claims |
-| `/treasurer/history` | Payment history and proof |
-| `/member` | Personal overview |
-| `/member/activities` | Assigned activity/department workspaces |
-| `/member/activities/:activityId/departments/:departmentId` | Scoped roster and public purchasing plans |
-| `/member/tasks` | Own tasks and department coordination |
-| `/member/tasks/:id` | Owned purchase progress or read-only coordination |
-| `/member/drafts/:id` | Receipt, items, comparison, and submission wizard |
-| `/member/claims` | Own drafts and submitted claims |
-| `/member/claims/:id` | Own evidence, review, destination, and timeline |
-| `/member/claims/:id/payment` | Own proof, discrepancy, and receipt acknowledgment |
-| `/member/accounts` | Own saved Bank/TNG instructions |
-| `/member/notifications` | Event-derived personal notifications |
-| `/demo` | Explicit local demo profile selection |
-| Unknown paths | Useful not-found view |
+|---|---|
+| <code>/</code> | Redirect to the selected role overview |
+| <code>/director</code> | Organization overview and budget dashboard |
+| <code>/director/activities</code> | Searchable activity portfolio |
+| <code>/director/activities/new</code> | Create an activity |
+| <code>/director/activities/:id</code> | Activity overview |
+| <code>/director/activities/:id/edit</code> | Edit activity details |
+| <code>/director/activities/:id/departments</code> | Department setup and allocations |
+| <code>/director/activities/:id/budget</code> | Activity budget dashboard |
+| <code>/director/activities/:id/map</code> | Activity Money Map |
+| <code>/director/budgets</code> | Organization financial breakdown |
+| <code>/director/history</code> | Searchable change history |
+| <code>/director/settings</code> | Workspace timezone, thresholds, and demo settings |
+| <code>/hod</code> | HOD overview |
+| <code>/hod/activities/:activityId/departments/:departmentId</code> | Scoped department workspace |
+| <code>/treasurer</code> | Treasurer financial overview |
+| <code>/treasurer/activities</code> | Authorized activity finances |
+| <code>/treasurer/activities/:id</code> | Activity finances and Money Map |
+| <code>/treasurer/claims</code> | Searchable claim review queue |
+| <code>/treasurer/claims/:id</code> | Claim evidence and review decisions |
+| <code>/treasurer/claims/:id/risk</code> | Advisory over-budget analysis |
+| <code>/treasurer/claims/:id/reimburse</code> | Approved-only manual payment step |
+| <code>/treasurer/reimbursements</code> | Approved, unpaid claims |
+| <code>/treasurer/history</code> | Payment history and proof |
+| <code>/member</code> | Personal overview |
+| <code>/member/activities</code> | Assigned activity/department workspaces |
+| <code>/member/activities/:activityId/departments/:departmentId</code> | Scoped roster and purchasing plans |
+| <code>/member/tasks</code> | Personal tasks and department coordination |
+| <code>/member/tasks/:id</code> | Owned purchase progress or read-only coordination |
+| <code>/member/drafts/:id</code> | Receipt and claim submission |
+| <code>/member/claims</code> | Own drafts and submitted claims |
+| <code>/member/claims/:id</code> | Own evidence, review, and timeline |
+| <code>/member/claims/:id/payment</code> | Own payment proof and receipt confirmation |
+| <code>/member/accounts</code> | Own saved payout instructions |
+| <code>/member/notifications</code> | Personal notifications |
+| <code>/demo</code> | Explicit local demo profile selection |
 
-## Architecture and calculations
+## Project Structure
 
-- `src/domain`: typed linked activity, department, assignment, expense, payment, history, and settings models; pure budget calculations and setup rules.
-- `src/services`: typed Supabase repositories and authorized RPC adapters, plus separate explicit demo seed/localStorage adapters. Database errors surface without switching to demo data.
-- `src/context`: shared context identity and async workspace provider. This boundary supports replacing local persistence with API-backed operations while keeping view components.
-- `src/components`: `Shell`, `Field`, `DateField`, `Modal`, `Panel`, `Badge`, `Progress`, metrics, charts, financial tables, history, and department workflows.
-- `src/pages`: Director routes and isolated, lazily loaded HOD/Treasurer/Member route groups.
-- `src/styles/tokens.css`: intentional font families, palette, spacing scale, radii, focus color, and shadows. Component, shell, calendar, and responsive page styles use these tokens.
+- <code>src/components/</code> — shared UI, charts, receipt and budget components.
+- <code>src/pages/</code> — Director, HOD, Treasurer, and Member workspaces.
+- <code>src/services/supabase/</code> — Supabase authentication, repository, and authorized RPC access.
+- <code>src/services/</code> — explicit demo seed and local persistence adapters.
+- <code>src/domain/</code> — models, budget rules, and pure calculations.
+- <code>supabase/migrations/</code> — ordered schema, policy, and database-function migrations.
+- <code>tests/</code> — unit and workflow tests.
+- <code>docs/</code> — setup and role-specific implementation guides.
 
-Amounts are integer minor units. Recorded expenses include pending, in-review, and approved claims; declined claims remain in history but leave recorded totals. Remaining = budget − recorded. Committed = open task reservations + approved unpaid amounts. Available = budget − paid − pending − committed. Pending includes in-review claims. A submitted claim replaces its task estimate, preventing double counting; declining it restores the original task reservation. Department allocations cannot exceed the activity ceiling; lowering an activity budget below current allocations is rejected. Reducing an allocation below historical expenses preserves records and visibly flags the resulting overrun.
+## Verification
 
-Setup saves use a revision check to reject stale Director snapshots. Background storage updates preserve filters and in-progress forms; setup forms retain their opening revision and require reload if another setup edit intervenes. Reimbursement recording requires the reviewed destination revision. A Member destination change closes an old payment confirmation and requires the Treasurer to review/reconfirm current instructions; it does not redirect an existing payment.
+The current project has unit coverage for role scoping, finance calculations, review/payment lifecycle, receipt history, and dashboard behavior. Run the commands in [Local Development](#local-development) before submitting a change. Supabase integration tests use an isolated local project; do not point test/reset scripts at hosted data.
 
-Currency is configured in `src/services/seed.ts` (MYR by default; MYR/SGD/USD supported). Reset the demo after changing seed configuration. Currency conversion is deliberately unavailable. Timezone and the utilization attention threshold are editable in workspace settings.
+The release build is designed to reject model weights and environment files. Experimental models are disabled in the static release.
 
-## Visual direction
+## Team
 
-Inspected HolyShip's actual [tokens](https://github.com/mavisbong41/HolyShip/blob/main/frontend/src/styles/tokens.css), [styles](https://github.com/mavisbong41/HolyShip/blob/main/frontend/src/styles/app.css), and [frontend structure](https://github.com/mavisbong41/HolyShip/tree/main/frontend/src). Adapted its compact navigation, warm accents, neutral surfaces, restrained shadows, and status hierarchy. No HolyShip branding or components were copied.
+**Project team:** MoneyKAWKAW
+**Repository contributor:** [Wong Jia Hui](https://github.com/jiahui-1101)
 
-Manrope headings and DM Sans body/UI text are bundled through Fontsource, with no external font request. The custom light palette uses burnt orange actions, deep green financial health, amber attention, red overruns, and restrained chart colors. Only a light theme is supported, explicitly independent of the operating system theme.
+<!-- Add any additional confirmed team members and their contributions here. -->
 
-## Verification and future integration
+## Notes for Evaluators
 
-See [original Director verification](docs/VERIFICATION.md), [HOD verification and Director regression checks](docs/hod/VERIFICATION.md), [HOD commit history](docs/hod/COMMITS.md), and [HOD screenshots](docs/hod/screenshots/overview-preview.jpg).
-
-Supabase mode persists financial commands, evidence metadata and append-only audit events. Treasurer approval, manual payment recording and Member confirmation are distinct actions. The app records externally performed transfers. English Tesseract OCR requires review. BERT receipt suggestions, synthetic-trained LightGBM and local Qwen are experimental and financially advisory.
-
-The four workspaces share linked tasks/claims, preserved originals and corrections, protected payout snapshots, payment status and audit events. Archived activities are read-only after independent signed reconciliation and verified private gzip generation. The financial archive references separately retained original files. Full recovery also requires database and Storage backups.
-
-`npm run build:release` creates a static candidate for the authorized hosted Supabase URL and a public key. It forces Supabase mode, disables synthetic login and all experimental models, copies OCR assets, and emits a Cloudflare Pages header policy. Required values are `VITE_SUPABASE_URL` and `VITE_SUPABASE_PUBLISHABLE_KEY` in an ignored release environment or process environment. The ordinary development build includes available local assets and can be much larger. Keep it separate from a reviewed release candidate.
-
-Local `AGENTS.md` and `REQUIREMENTS.md` are ignored and excluded from Git. Nothing has been pushed or deployed as part of this implementation.
+- The deployed workspace uses invite-only sign-in. Do not publish or share account credentials in this README.
+- Local demo profiles and fixtures are fictional and are not production identities or financial data.
+- English OCR suggestions must be reviewed by the Member before submission; OCR does not decide what is claimable.
+- Risk analysis is deterministic and advisory. It presents contributing factors but does not approve a claim.
+- Reimbursements are manually recorded after an external transfer. There is no bank or Touch 'n Go payment integration.
+- Payout details are masked and scoped. Use fictional payment details in local demo mode.
