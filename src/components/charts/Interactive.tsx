@@ -1,39 +1,7 @@
-import { useRef, useState, type KeyboardEvent, type ReactNode } from 'react';
+import { useState } from 'react';
 import type { LucideIcon } from 'lucide-react';
+import { Link } from 'react-router-dom';
 import { pct, type Slice } from './Charts';
-
-export const palette = ['var(--ai-purple)', 'var(--ai-orange)', 'var(--ai-blue)', 'var(--ai-green)', 'var(--ai-magenta)'];
-
-export interface Tab<T extends string> { id: T; label: string; icon: LucideIcon; count?: number }
-
-/** Roving-tabindex tablist used as a page sub-navigation. */
-export function DashTabs<T extends string>({ tabs, value, onChange, label }: { tabs: Tab<T>[]; value: T; onChange: (t: T) => void; label: string }) {
-  const refs = useRef<(HTMLButtonElement | null)[]>([]);
-  const onKey = (e: KeyboardEvent, i: number) => {
-    const d = e.key === 'ArrowRight' ? 1 : e.key === 'ArrowLeft' ? -1 : 0;
-    if (!d) return;
-    const n = (i + d + tabs.length) % tabs.length;
-    onChange(tabs[n].id);
-    refs.current[n]?.focus();
-  };
-  return (
-    <div className="dash-tabs" role="tablist" aria-label={label}>
-      {tabs.map((t, i) => (
-        <button key={t.id} ref={(el) => { refs.current[i] = el; }} type="button" role="tab" id={`dash-tab-${t.id}`}
-          aria-selected={value === t.id} aria-controls="dash-panel" tabIndex={value === t.id ? 0 : -1}
-          onClick={() => onChange(t.id)} onKeyDown={(e) => onKey(e, i)}>
-          <t.icon size={15} />
-          <span>{t.label}</span>
-          {t.count !== undefined && <em>{t.count}</em>}
-        </button>
-      ))}
-    </div>
-  );
-}
-
-export function TabPanel({ id, children }: { id: string; children: ReactNode }) {
-  return <div className="stack" role="tabpanel" id="dash-panel" aria-labelledby={`dash-tab-${id}`}>{children}</div>;
-}
 
 /** Donut whose segments and legend cross-highlight on hover/focus; click pins a slice. */
 export function InteractiveDonut({ slices, centre, caption, format, onSelect }: { slices: Slice[]; centre: string; caption: string; format: (n: number) => string; onSelect?: (label: string | null) => void }) {
@@ -80,7 +48,7 @@ export function InteractiveDonut({ slices, centre, caption, format, onSelect }: 
   );
 }
 
-export interface Tile { label: string; value: string; icon: LucideIcon; tone: string; meter?: number; active?: boolean; onClick?: () => void }
+export interface Tile { label: string; value: string; icon: LucideIcon; tone: string; meter?: number; to?: string }
 
 /** Compact KPI tiles with optional meter; clickable tiles act as filters/jumps. */
 export function KpiTiles({ items }: { items: Tile[] }) {
@@ -95,8 +63,8 @@ export function KpiTiles({ items }: { items: Tile[] }) {
             {t.meter !== undefined && <span className="ix-meter"><span style={{ width: `${Math.min(100, Math.max(0, t.meter))}%`, background: t.tone }} /></span>}
           </>
         );
-        return t.onClick
-          ? <button key={t.label} type="button" className="ix-kpi" aria-pressed={!!t.active} onClick={t.onClick}>{body}</button>
+        return t.to
+          ? <Link key={t.label} to={t.to} className="ix-kpi is-link">{body}</Link>
           : <div key={t.label} className="ix-kpi">{body}</div>;
       })}
     </div>

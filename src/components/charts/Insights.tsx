@@ -8,7 +8,7 @@ export const tones = {
   paid: 'var(--ai-green)',
   pending: 'var(--ai-orange)',
   committed: 'var(--ai-blue)',
-  available: 'var(--ai-purple)',
+  available: 'var(--line-strong)',
   declined: 'var(--ai-magenta)',
   review: '#b57cf0',
 };
