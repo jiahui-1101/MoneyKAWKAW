@@ -15,7 +15,7 @@
 }
 .dash-tabs em { font-style: normal; font-size: 11px; background: #ffffff24; padding: 0 7px; border-radius: 99px; }
 
-.ix-kpis { display: grid; grid-template-columns: repeat(auto-fit, minmax(170px, 1fr)); gap: var(--space-3); }
+.ix-kpis { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(150px, 100%), 1fr)); gap: var(--space-3); }
 .ix-kpi {
   display: grid; grid-template-columns: auto 1fr; align-items: center; gap: 4px 10px; text-align: left;
   background: var(--surface); border: 1px solid var(--line); border-radius: var(--radius); padding: 14px 16px;
@@ -60,7 +60,7 @@ button.ix-kpi[aria-pressed='true'] { border-color: var(--brand); box-shadow: 0 0
 .ix-bars li.dim { opacity: .45; }
 .ix-bars button { position: relative; width: 100%; display: grid; gap: 6px; border: 0; background: none; padding: 6px 8px; border-radius: 8px; cursor: pointer; text-align: left; }
 .ix-bars button:hover, .ix-bars button[aria-pressed='true'] { background: var(--surface-soft); }
-.ix-bar-head { display: flex; justify-content: space-between; gap: 8px; font-size: 13px; }
+.ix-bar-head { display: flex; flex-wrap: wrap; justify-content: space-between; gap: 8px; font-size: 13px; }
 .ix-bar-head > span { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 .ix-bar-head em { color: var(--muted); font-style: normal; font-weight: 400; }
 .ix-bar-tip { position: absolute; right: 8px; top: -30px; display: flex; gap: 12px; }
@@ -81,8 +81,12 @@ button.ix-kpi[aria-pressed='true'] { border-color: var(--brand); box-shadow: 0 0
 .ix-node:focus-visible rect { stroke: var(--ink); stroke-width: 2; }
 .ix-link { transition: opacity .2s; }
 
-.dash-grid-2 { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: var(--space-4); }
+.dash-grid-2 { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(300px, 100%), 1fr)); gap: var(--space-4); }
 
 @media (prefers-reduced-motion: reduce) {
   .ix .ix-seg, .ix-bars li, .ix-node, .ix-link { transition: none; }
 }
+.ix-bars, .ix-bars li, .ix-bars button, .ix-bar-head > span { min-width: 0; }
+.ix-bar-head strong { flex: none; white-space: nowrap; }
+.dash-grid-2 > * { min-width: 0; }
+.ix-heat, .ix-flow { min-width: 0; max-width: 100%; }
