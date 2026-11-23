@@ -7,8 +7,15 @@ import { Legend } from './Charts';
 import { tones } from './Insights';
 
 type Kind = 'dept' | 'task' | 'claim' | 'pay';
-interface MapNode { id: string; kind: Kind; label: string; sub: string; tone: string; status: string; to?: string }
+export interface MapNode { id: string; kind: Kind; label: string; sub: string; tone: string; status: string; to?: string }
 interface Edge { from: string; to: string }
+
+export function mapNodeNeedsAction(node: MapNode) {
+  if (node.kind === 'dept') return node.status === 'Over budget';
+  if (node.kind === 'task') return ['Not Started', 'In Progress', 'Purchased'].includes(node.status);
+  if (node.kind === 'claim') return ['Pending', 'Under Review', 'Approved', 'Payment Pending', 'Rejected'].includes(node.status);
+  return node.status === 'Awaiting member';
+}
 
 const columns: { kind: Kind; title: string }[] = [
   { kind: 'dept', title: 'Department' },
@@ -76,8 +83,7 @@ export function MoneyMap({ store, activity, claimHref }: { store: Store; activit
   const [sel, setSel] = useState<string | null>(null);
   const [onlyOpen, setOnlyOpen] = useState(false);
   const { nodes, edges } = build(store, activity, (n) => money(n, true), claimHref);
-  const open = (n: MapNode) => n.tone === statusTone.wait || n.tone === statusTone.bad || (n.kind === 'claim' && n.tone === statusTone.approved);
-  const visible = onlyOpen ? new Set(nodes.filter(open).flatMap((n) => [...chain(n.id, edges)])) : null;
+  const visible = onlyOpen ? new Set(nodes.filter(mapNodeNeedsAction).flatMap((n) => [...chain(n.id, edges)])) : null;
   const shown = nodes.filter((n) => !visible || visible.has(n.id));
   const pos = new Map<string, { x: number; y: number }>();
   const parentY = (id: string) => Math.min(Infinity, ...edges.filter((e) => e.to === id && pos.has(e.from)).map((e) => pos.get(e.from)!.y));
