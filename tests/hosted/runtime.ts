@@ -16,7 +16,8 @@ export const identities: Record<string, string> = {
   '3c315d49-f6ea-49bb-a031-5239b4d1bf66': 'Member B',
 };
 export type Request = { label: string; path: string; method?: string; body?: unknown;
-  expectStatus: number[]; expectCount?: number; expectCode?: string; expectNoData?: boolean; bytesBase64?: string; mime?: string; saveAs?: string };
+  expectStatus: number[]; expectCount?: number; expectCode?: string; expectNoData?: boolean; bytesBase64?: string; mime?: string; saveAs?: string;
+  auth?: 'current' | 'anonymous' | 'tampered-role' };
 export type Plan = { label: string; groups: Request[][]; startAt?: string };
 export function resolveRequest(r: Request, bindings: Map<string, unknown>): Request {
   const lookup = (reference: string) => {
@@ -56,7 +57,8 @@ export function validatePlan(plan: Plan) {
       const url = new URL(r.path, endpoint);
       if (!r.path.startsWith('/') || url.origin !== endpoint || !/^\/(rest|storage|functions)\/v1\//.test(url.pathname)
         || !['GET', 'POST', 'PATCH', 'PUT', 'DELETE'].includes(r.method ?? 'GET')
-        || !Array.isArray(r.expectStatus) || !r.expectStatus.length) throw new Error('Unreviewed request target.');
+        || !Array.isArray(r.expectStatus) || !r.expectStatus.length
+        || (r.auth && !['current', 'anonymous', 'tampered-role'].includes(r.auth))) throw new Error('Unreviewed request target.');
       const read = (r.method ?? 'GET') === 'GET' || (r.method === 'POST' && readRpcs.has(url.pathname.split('/').at(-1)!));
       if (!read && protectedIds.some(id => (decodeURIComponent(url.pathname + url.search) + JSON.stringify(r.body)).includes(id)))
         throw new Error('The archived reference cannot be mutated.');
@@ -81,10 +83,19 @@ export async function captureIdentity() {
       const r = resolveRequest(template, bindings);
       // Recheck after resolving IDs; response references must never bypass the archive guard.
       validatePlan({ label: plan.label, groups: [[r]] });
+      let bearer = token;
+      if (r.auth === 'tampered-role') {
+        const [header, payload, signature] = token.split('.');
+        const claims = JSON.parse(atob(payload.replaceAll('-', '+').replaceAll('_', '/')));
+        claims.role = 'service_role';
+        const encoded = btoa(String.fromCharCode(...new TextEncoder().encode(JSON.stringify(claims))))
+          .replaceAll('+', '-').replaceAll('/', '_').replace(/=+$/, '');
+        bearer = [header, encoded, signature].join('.');
+      }
       const startedAt = new Date().toISOString(), started = performance.now();
       const binary = r.bytesBase64 ? Uint8Array.from(atob(r.bytesBase64), c => c.charCodeAt(0)) : undefined;
       const response = await fetch(endpoint + r.path, { method: r.method ?? 'GET', redirect: 'error',
-        headers: { apikey: key, Authorization: 'Bearer ' + token,
+        headers: { apikey: key, ...(r.auth === 'anonymous' ? {} : { Authorization: 'Bearer ' + bearer }),
           ...(r.body !== undefined || binary ? { 'Content-Type': r.mime ?? 'application/json' } : {}) },
         body: binary ?? (r.body === undefined ? undefined : JSON.stringify(r.body)) });
       const bytes = new Uint8Array(await response.arrayBuffer());
@@ -101,7 +112,9 @@ export async function captureIdentity() {
         ? object.message : undefined;
       const id = typeof value === 'string' ? value : object.id;
       const hash = [...new Uint8Array(await crypto.subtle.digest('SHA-256', bytes))].map(b => b.toString(16).padStart(2, '0')).join('');
-      return { label: r.label, uid: user.id, role: identities[user.id], method: r.method ?? 'GET', path: r.path,
+      return { label: r.label, uid: r.auth === 'anonymous' ? null : user.id,
+        role: r.auth === 'anonymous' ? 'Anonymous' : identities[user.id], authMode: r.auth ?? 'current',
+        expiresAt: session.expires_at, method: r.method ?? 'GET', path: r.path,
         startedAt, finishedAt: new Date().toISOString(), milliseconds: Math.round(performance.now() - started),
         status: response.status, requestId: response.headers.get('sb-request-id') ?? response.headers.get('x-request-id'),
         code, message, count, responseBytes: bytes.length, responseSha256: hash,
