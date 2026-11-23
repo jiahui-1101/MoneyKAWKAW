@@ -94,10 +94,18 @@ export async function captureIdentity() {
       }
       const startedAt = new Date().toISOString(), started = performance.now();
       const binary = r.bytesBase64 ? Uint8Array.from(atob(r.bytesBase64), c => c.charCodeAt(0)) : undefined;
-      const response = await fetch(endpoint + r.path, { method: r.method ?? 'GET', redirect: 'error',
+      let response: Response;
+      try { response = await fetch(endpoint + r.path, { method: r.method ?? 'GET', redirect: 'error',
+        signal: AbortSignal.timeout(15_000),
         headers: { apikey: key, ...(r.auth === 'anonymous' ? {} : { Authorization: 'Bearer ' + bearer }),
           ...(r.body !== undefined || binary ? { 'Content-Type': r.mime ?? 'application/json' } : {}) },
         body: binary ?? (r.body === undefined ? undefined : JSON.stringify(r.body)) });
+      } catch {
+        // An interrupted mutation has an unknown outcome. Never retry it automatically.
+        return { label: r.label, uid: user.id, role: identities[user.id], method: r.method ?? 'GET', path: r.path,
+          startedAt, finishedAt: new Date().toISOString(), milliseconds: Math.round(performance.now() - started),
+          status: 0, pass: false, outcome: 'Unknown; inspect authoritative state before any next mutation.' };
+      }
       const bytes = new Uint8Array(await response.arrayBuffer());
       let value: unknown;
       try { value = JSON.parse(new TextDecoder().decode(bytes)); } catch { /* Binary response. */ }
