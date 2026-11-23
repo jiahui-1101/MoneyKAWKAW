@@ -32,7 +32,7 @@ export function LineChart({ labels, series, format, label }: { labels: string[];
         ))}
       </ul>
       <div className="ix-plot">
-        <svg viewBox={`0 0 ${w} ${h}`} preserveAspectRatio="none" role="img" aria-label={label} onMouseMove={move} onMouseLeave={() => setIdx(null)}>
+        <svg viewBox={`0 0 ${w} ${h}`} preserveAspectRatio="none" aria-label={label} onMouseMove={move} onMouseLeave={() => setIdx(null)}>
           <defs>
             <linearGradient id={gid} x1="0" x2="0" y1="0" y2="1">
               <stop offset="0" stopColor={shown[0]?.tone ?? 'var(--brand)'} stopOpacity="0.28" />
@@ -102,7 +102,7 @@ export function Heatmap({ rows, cols, cells, onSelect }: { rows: string[]; cols:
   return (
     <div className="ix-heat" role="region" aria-label="Utilisation heatmap" tabIndex={0}>
       <table>
-        <thead><tr><th />{cols.map((c, j) => <th key={c} className={hover?.[1] === j ? 'on' : ''}>{c}</th>)}</tr></thead>
+        <thead><tr><th><span className="sr-only">Activity</span></th>{cols.map((c, j) => <th key={c} className={hover?.[1] === j ? 'on' : ''}>{c}</th>)}</tr></thead>
         <tbody>
           {rows.map((r, i) => (
             <tr key={r}>

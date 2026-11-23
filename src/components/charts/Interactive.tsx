@@ -17,7 +17,7 @@ export function DashTabs<T extends string>({ tabs, value, onChange, label }: { t
     refs.current[n]?.focus();
   };
   return (
-    <nav className="dash-tabs" role="tablist" aria-label={label}>
+    <div className="dash-tabs" role="tablist" aria-label={label}>
       {tabs.map((t, i) => (
         <button key={t.id} ref={(el) => { refs.current[i] = el; }} type="button" role="tab" id={`dash-tab-${t.id}`}
           aria-selected={value === t.id} aria-controls="dash-panel" tabIndex={value === t.id ? 0 : -1}
@@ -27,7 +27,7 @@ export function DashTabs<T extends string>({ tabs, value, onChange, label }: { t
           {t.count !== undefined && <em>{t.count}</em>}
         </button>
       ))}
-    </nav>
+    </div>
   );
 }
 
