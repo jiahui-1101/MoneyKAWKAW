@@ -8,6 +8,7 @@ it('permits bounded real HTTP pairs without accepting external destinations', ()
   for (const path of ['https://example.com/rest/v1/claims', '//example.com/rest/v1/claims', '/auth/v1/admin/users'])
     expect(() => validatePlan({ ...plan, groups: [[{ ...request, path }]] })).toThrow();
   expect(() => validatePlan({ ...plan, groups: [[request, request, request]] })).toThrow();
+  expect(() => validatePlan({ ...plan, startAt: new Date(Date.now() + 60_000).toISOString() })).toThrow();
 });
 it('protects archived reference mutations including nested forged parameters', () => {
   const mutation = { ...request, method: 'POST', path: '/rest/v1/rpc/transition_claim',

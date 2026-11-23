@@ -17,10 +17,12 @@ export const identities: Record<string, string> = {
 };
 export type Request = { label: string; path: string; method?: string; body?: unknown;
   expectStatus: number[]; expectCount?: number; expectCode?: string; bytesBase64?: string; mime?: string };
-export type Plan = { label: string; groups: Request[][] };
+export type Plan = { label: string; groups: Request[][]; startAt?: string };
 export function validatePlan(plan: Plan) {
   if (!plan.label?.startsWith('SYNTHETIC-09C') || !Array.isArray(plan.groups) || plan.groups.length > 80)
     throw new Error('A bounded, labeled synthetic plan is required.');
+  if (plan.startAt && (!Number.isFinite(Date.parse(plan.startAt)) || Date.parse(plan.startAt) - Date.now() > 30_000
+    || Date.now() - Date.parse(plan.startAt) > 5_000)) throw new Error('Coordinated start must be within thirty seconds.');
   for (const group of plan.groups) {
     if (!Array.isArray(group) || group.length < 1 || group.length > 2) throw new Error('Maximum concurrency is two.');
     for (const r of group) {
@@ -45,6 +47,7 @@ export async function captureIdentity() {
   const key = import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY;
   return { uid: user.id, role: identities[user.id], async run(plan: Plan) {
     validatePlan(plan);
+    if (plan.startAt) await new Promise(resolve => setTimeout(resolve, Math.max(0, Date.parse(plan.startAt!) - Date.now())));
     const results = [];
     for (const group of plan.groups) results.push(...await Promise.all(group.map(async r => {
       const startedAt = new Date().toISOString(), started = performance.now();
@@ -65,7 +68,8 @@ export async function captureIdentity() {
       const hash = [...new Uint8Array(await crypto.subtle.digest('SHA-256', bytes))].map(b => b.toString(16).padStart(2, '0')).join('');
       return { label: r.label, uid: user.id, role: identities[user.id], method: r.method ?? 'GET', path: r.path,
         startedAt, finishedAt: new Date().toISOString(), milliseconds: Math.round(performance.now() - started),
-        status: response.status, code, message, count, responseBytes: bytes.length, responseSha256: hash,
+        status: response.status, requestId: response.headers.get('sb-request-id') ?? response.headers.get('x-request-id'),
+        code, message, count, responseBytes: bytes.length, responseSha256: hash,
         id: typeof id === 'string' && /^[0-9a-f-]{36}$/.test(id) ? id : undefined,
         pass: r.expectStatus.includes(response.status) && (r.expectCount === undefined || count === r.expectCount)
           && (r.expectCode === undefined || code === r.expectCode) };
