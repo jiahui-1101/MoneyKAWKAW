@@ -1,0 +1,73 @@
+import { supabaseClient } from '../../src/services/supabase/client';
+
+const endpoint = 'https://mqklyfboywbxcexdttrl.supabase.co';
+const protectedIds = ['64ae397c-a1b0-45a6-9dfe-558a4954d01f', '0e90e217-9fbc-4ae4-b7f0-acfc01b80f9f',
+  'b064d8da-261d-4ee9-9302-b52e5b0bc17c', '6e016c63-716b-42fd-9a5d-89cad1d42f09',
+  'd61180de-a9f8-4954-a04f-9b26a990ad49', '478d55a7-f7b5-423c-bda7-7025729d7591'];
+const readRpcs = new Set(['current_club_session', 'get_my_payment_account', 'list_my_payment_accounts',
+  'my_claim_destination', 'financial_summaries', 'activity_closing_report', 'assistant_context']);
+export const identities: Record<string, string> = {
+  '35dfb4ee-68d4-4641-8a16-df5a3232bc90': 'Director',
+  '64246ce8-dd75-47da-9d15-bb9477ccf48a': 'Treasurer',
+  'b1602d6f-74b0-493f-83ec-78b5baa55049': 'HOD',
+  '68e63a0f-5075-465e-be73-e7be028d3809': 'Member A',
+  '3c315d49-f6ea-49bb-a031-5239b4d1bf66': 'Member B',
+};
+export type Request = { label: string; path: string; method?: string; body?: unknown;
+  expectStatus: number[]; expectCount?: number; expectCode?: string; bytesBase64?: string; mime?: string };
+export type Plan = { label: string; groups: Request[][] };
+export function validatePlan(plan: Plan) {
+  if (!plan.label?.startsWith('SYNTHETIC-09C') || !Array.isArray(plan.groups) || plan.groups.length > 80)
+    throw new Error('A bounded, labeled synthetic plan is required.');
+  for (const group of plan.groups) {
+    if (!Array.isArray(group) || group.length < 1 || group.length > 2) throw new Error('Maximum concurrency is two.');
+    for (const r of group) {
+      const url = new URL(r.path, endpoint);
+      if (!r.path.startsWith('/') || url.origin !== endpoint || !/^\/(rest|storage|functions)\/v1\//.test(url.pathname)
+        || !['GET', 'POST', 'PATCH', 'PUT', 'DELETE'].includes(r.method ?? 'GET')
+        || !Array.isArray(r.expectStatus) || !r.expectStatus.length) throw new Error('Unreviewed request target.');
+      const read = (r.method ?? 'GET') === 'GET' || (r.method === 'POST' && readRpcs.has(url.pathname.split('/').at(-1)!));
+      if (!read && protectedIds.some(id => (decodeURIComponent(url.pathname + url.search) + JSON.stringify(r.body)).includes(id)))
+        throw new Error('The archived reference cannot be mutated.');
+      if (r.bytesBase64 && r.bytesBase64.length > 1_500_000) throw new Error('Upload exceeds QA bound.');
+    }
+  }
+}
+export async function captureIdentity() {
+  const client = supabaseClient();
+  const { data: { user }, error } = await client.auth.getUser();
+  const { data: { session } } = await client.auth.getSession();
+  if (error || !user || !session || !identities[user.id]) throw new Error('Use an approved Google QA identity.');
+  // Retain this genuine bearer in this tab's memory only, never in DOM, files or report output.
+  const token = session.access_token;
+  const key = import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY;
+  return { uid: user.id, role: identities[user.id], async run(plan: Plan) {
+    validatePlan(plan);
+    const results = [];
+    for (const group of plan.groups) results.push(...await Promise.all(group.map(async r => {
+      const startedAt = new Date().toISOString(), started = performance.now();
+      const binary = r.bytesBase64 ? Uint8Array.from(atob(r.bytesBase64), c => c.charCodeAt(0)) : undefined;
+      const response = await fetch(endpoint + r.path, { method: r.method ?? 'GET', redirect: 'error',
+        headers: { apikey: key, Authorization: 'Bearer ' + token,
+          ...(r.body !== undefined || binary ? { 'Content-Type': r.mime ?? 'application/json' } : {}) },
+        body: binary ?? (r.body === undefined ? undefined : JSON.stringify(r.body)) });
+      const bytes = new Uint8Array(await response.arrayBuffer());
+      let value: unknown;
+      try { value = JSON.parse(new TextDecoder().decode(bytes)); } catch { /* Binary response. */ }
+      const object = value && typeof value === 'object' ? value as Record<string, unknown> : {};
+      const count = Array.isArray(value) ? value.length : value === null ? 0 : undefined;
+      const code = typeof object.code === 'string' ? object.code : undefined;
+      const message = typeof object.message === 'string' && /^(Authentication required|This financial operation is frozen during activity closing|Activity unavailable|Access denied|Claim unavailable|Request key already used)$/.test(object.message)
+        ? object.message : undefined;
+      const id = typeof value === 'string' ? value : object.id;
+      const hash = [...new Uint8Array(await crypto.subtle.digest('SHA-256', bytes))].map(b => b.toString(16).padStart(2, '0')).join('');
+      return { label: r.label, uid: user.id, role: identities[user.id], method: r.method ?? 'GET', path: r.path,
+        startedAt, finishedAt: new Date().toISOString(), milliseconds: Math.round(performance.now() - started),
+        status: response.status, code, message, count, responseBytes: bytes.length, responseSha256: hash,
+        id: typeof id === 'string' && /^[0-9a-f-]{36}$/.test(id) ? id : undefined,
+        pass: r.expectStatus.includes(response.status) && (r.expectCount === undefined || count === r.expectCount)
+          && (r.expectCode === undefined || code === r.expectCode) };
+    })));
+    return { label: plan.label, identity: { uid: user.id, role: identities[user.id] }, results };
+  } };
+}
