@@ -271,7 +271,7 @@ export function TreasuryActivityDetail({ closing = false }: { closing?: boolean 
                   <tr key={d.id}>
                     <td>
                       <strong>{d.name}</strong>
-                      <small className="cell-sub">{d.head || 'No HOD assigned'}</small>
+                      <small className="cell-sub">{d.head || 'HOD name not recorded'}</small>
                     </td>
                     {[b.budget, b.recorded, b.pending, b.committed, b.paid, b.available].map(
                       (n, i) => (
