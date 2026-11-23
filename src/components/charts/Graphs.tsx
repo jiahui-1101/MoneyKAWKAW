@@ -75,3 +75,31 @@ export function CountBars({ rows }: { rows: { label: string; count: number; tone
     </ul>
   );
 }
+
+export interface Step { label: string; value: number; tone: string }
+
+/** Waterfall: a starting total, then each step taken off it, ending with what is left. */
+export function Waterfall({ total, totalLabel, steps, endLabel, format }: { total: number; totalLabel: string; steps: Step[]; endLabel: string; format: (n: number) => string }) {
+  const used = steps.reduce((s, x) => s + x.value, 0);
+  const left = total - used;
+  const max = Math.max(1, total, used);
+  let top = total;
+  const bars = [
+    { label: totalLabel, value: total, from: 0, to: total, tone: 'var(--ink)', sign: '' },
+    ...steps.map((s) => { const b = { label: s.label, value: s.value, from: top - s.value, to: top, tone: s.tone, sign: '−' }; top -= s.value; return b; }),
+    { label: endLabel, value: left, from: Math.min(0, left), to: Math.max(0, left), tone: left < 0 ? 'var(--ai-magenta)' : 'var(--line-strong)', sign: '' },
+  ];
+  return (
+    <ol className="ix-wf">
+      {bars.map((b) => (
+        <li key={b.label}>
+          <span className="ix-wf-track">
+            <span className="ix-wf-bar" style={{ bottom: `${pct(Math.max(0, b.from), max)}%`, height: `${Math.max(1.5, pct(b.to - Math.max(0, b.from), max))}%`, background: b.tone }} />
+          </span>
+          <em>{b.label}</em>
+          <b className={b.value < 0 ? 'viz-over' : ''}>{b.sign}{format(Math.abs(b.value))}</b>
+        </li>
+      ))}
+    </ol>
+  );
+}

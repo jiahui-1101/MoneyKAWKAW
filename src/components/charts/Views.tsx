@@ -4,9 +4,8 @@ import { summarize } from '../../domain/budget';
 import type { Store } from '../../domain/models';
 import { useFormat } from '../ui';
 import { ChartCard, Legend } from './Charts';
-import { BarList, ColumnChart, CountBars } from './Graphs';
+import { BarList, ColumnChart, CountBars, Waterfall } from './Graphs';
 import { claimStages, tones } from './Insights';
-import { InteractiveDonut } from './Interactive';
 
 const stage = [
   { key: 'paid', label: 'Paid', tone: tones.paid },
@@ -25,16 +24,14 @@ function monthly(store: Store) {
 }
 
 export function BudgetCard({ store }: { store: Store }) {
-  const { money } = useFormat();
   const s = summarize(store);
-  const compact = (n: number) => money(n, true);
+  const short = (n: number) => new Intl.NumberFormat('en-MY', { style: 'currency', currency: store.settings.currency, currencyDisplay: 'narrowSymbol', notation: 'compact', maximumFractionDigits: 1 }).format(n / 100);
   return (
-    <ChartCard title="Budget split">
-      <InteractiveDonut centre={compact(s.budget)} caption="total budget" format={compact} slices={[
+    <ChartCard title="Where the budget went">
+      <Waterfall total={s.budget} totalLabel="Budget" endLabel="Left" format={short} steps={[
         { label: 'Paid', value: s.paid, tone: tones.paid },
         { label: 'Pending', value: s.pending, tone: tones.pending },
         { label: 'Committed', value: s.committed, tone: tones.committed },
-        { label: 'Left', value: Math.max(0, s.available), tone: 'var(--line-strong)' },
       ]} />
     </ChartCard>
   );
