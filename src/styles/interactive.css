@@ -90,3 +90,4 @@ button.ix-kpi[aria-pressed='true'] { border-color: var(--brand); box-shadow: 0 0
 .ix-bar-head strong { flex: none; white-space: nowrap; }
 .dash-grid-2 > * { min-width: 0; }
 .ix-heat, .ix-flow { min-width: 0; max-width: 100%; }
+.ix-flow text { paint-order: stroke; stroke: var(--surface); stroke-width: 4px; stroke-linejoin: round; }

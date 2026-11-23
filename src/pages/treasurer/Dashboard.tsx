@@ -1,167 +1,87 @@
-import { ArrowDownLeft, ArrowUpRight, CircleDollarSign, FolderKanban, Wallet } from 'lucide-react';
+import { ArrowUpRight, Banknote, CircleDollarSign, Clock3, FileStack, LayoutDashboard, PieChart, Send, Wallet } from 'lucide-react';
+import { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { useTreasury } from '../../context/treasury-context';
 import { summarize } from '../../domain/budget';
 import { ChartCard } from '../../components/charts/Charts';
-import { BudgetInsights, tones } from '../../components/charts/Insights';
+import { tones } from '../../components/charts/Insights';
+import { DashTabs, KpiTiles, TabPanel } from '../../components/charts/Interactive';
 import { Pipeline } from '../../components/charts/Trends';
-import { MetricCards } from '../../components/MetricCards';
+import { ActivityBars, BudgetDonut, BudgetFlow, ClaimCards, DepartmentBars, SpendTrend, UtilisationHeat } from '../../components/charts/Views';
 import { PageHeader, Panel, TextLink, useFormat } from '../../components/ui';
-import {
-  FinancialAlerts,
-  SpendingChart,
-  TreasuryLifecycle,
-} from '../../components/treasurer/FinancialCharts';
+import { FinancialAlerts } from '../../components/treasurer/FinancialCharts';
+
+type View = 'overview' | 'budget' | 'claims' | 'payments';
 
 export function TreasuryDashboard() {
   const { data } = useTreasury();
   const { money, time } = useFormat();
+  const [view, setView] = useState<View>('overview');
+  const [picked, setPicked] = useState<string | null>(null);
   if (!data) return null;
   const s = summarize(data);
-  const unpaid = data.expenses.filter(
-    (e) => e.state === 'Approved' && !data.payments.some((p) => p.expenseId === e.id),
-  );
-  const counts = [
-    {
-      label: 'Pending claims',
-      value: data.expenses.filter((e) => e.state === 'Pending review').length,
-      to: '/treasurer/claims?status=Pending%20review',
-    },
-    {
-      label: 'Under review',
-      value: data.expenses.filter((e) => e.state === 'In review').length,
-      to: '/treasurer/claims?status=In%20review',
-    },
-    {
-      label: 'Approved claims',
-      value: data.expenses.filter((e) => e.state === 'Approved').length,
-      to: '/treasurer/claims?status=Approved',
-    },
-    { label: 'Pending reimbursements', value: unpaid.length, to: '/treasurer/reimbursements' },
-    { label: 'Recorded reimbursements', value: data.payments.length, to: '/treasurer/history' },
-  ];
-  const visibleCounts = data.financialSummaries
-    ? ['Pending', 'Under Review', 'Approved', 'Rejected', 'Payment Pending', 'Paid', 'Received'].map((status) => ({
-      label: status === 'Paid' ? 'Paid · awaiting confirmation' : status,
-      value: data.expenses.filter((e) => e.lifecycle === status).length,
-      to: `/treasurer/claims?status=${encodeURIComponent(status)}`,
-    })) : counts;
+  const unpaid = data.expenses.filter((e) => e.state === 'Approved' && !data.payments.some((p) => p.expenseId === e.id));
+  const awaiting = data.payments.filter((p) => !p.manual?.receivedConfirmedAt).length;
+  const toReview = data.expenses.filter((e) => ['Pending review', 'In review'].includes(e.state) || ['Pending', 'Under Review'].includes(e.lifecycle ?? '')).length;
   return (
     <div className="stack dashboard">
-      <PageHeader
-        eyebrow="TREASURER WORKSPACE"
-        title="Financial overview"
-        description="A considered view of club finances, from the first claim to the final record."
-      >
-        <Link className="btn primary" to="/treasurer/claims">
-          Review claims <ArrowUpRight size={15} />
-        </Link>
+      <PageHeader eyebrow="TREASURER" title="Overview">
+        <Link className="btn primary" to="/treasurer/claims">Review claims <ArrowUpRight size={15} /></Link>
       </PageHeader>
-      <div className="overview-toolbar">
-        <span className="section-label">Your financial overview</span>
-        <span className="period-tag">
-          {data.activities.length} authorized activities · all dates
-        </span>
-      </div>
-      <MetricCards
-        items={[
-          {
-            label: 'Total activity budget',
-            value: money(s.budget, true),
-            icon: Wallet,
-            note: `${money(s.allocated, true)} allocated to departments`,
-          },
-          {
-            label: 'Recorded expenses',
-            value: money(s.recorded, true),
-            icon: CircleDollarSign,
-            note: demoMode ? 'Pending + approved claims' : 'Approved liability + paid expenditure',
-            tone: 'violet',
-          },
-          {
-            label: 'Remaining budget',
-            value: money(s.remaining, true),
-            icon: ArrowDownLeft,
-            note: 'Overall budget less recorded',
-            tone: 'green',
-          },
-          {
-            label: 'Total activities',
-            value: String(data.activities.length).padStart(2, '0'),
-            icon: FolderKanban,
-            note: 'Within your assigned oversight',
-            tone: 'gold',
-          },
-        ]}
-      />
-      <div className="treasury-counts">
-        {visibleCounts.map((c) => (
-          <Link key={c.label} to={c.to}>
-            <span>{c.label}</span>
-            <strong>{c.value.toString().padStart(2, '0')}</strong>
-            {c.to === '/treasurer/history' && (
-              <small>
-                {data.payments.filter((p) => !p.manual?.receivedConfirmedAt).length} awaiting member
-              </small>
-            )}
-            <ArrowUpRight size={14} />
-          </Link>
-        ))}
-      </div>
-      <BudgetInsights store={data} activityIds={data.activities.map((a) => a.id)} />
-      <div className="viz-grid">
-        <ChartCard wide title="Reimbursement flow" hint="Approved claims moving to payment and member confirmation">
-          <Pipeline
-            stages={[
+      <KpiTiles items={[
+        { label: 'Budget', value: money(s.budget, true), icon: Wallet, tone: 'var(--ai-purple)', meter: s.utilization },
+        { label: 'Recorded', value: money(s.recorded, true), icon: CircleDollarSign, tone: 'var(--ai-blue)' },
+        { label: 'To review', value: String(toReview), icon: Clock3, tone: 'var(--ai-orange)', onClick: () => setView('claims') },
+        { label: 'To pay', value: String(unpaid.length), icon: Banknote, tone: 'var(--ai-magenta)', onClick: () => setView('payments') },
+        { label: 'Paid', value: money(s.paid, true), icon: Send, tone: 'var(--ai-green)' },
+      ]} />
+      <DashTabs label="Dashboard sections" value={view} onChange={setView} tabs={[
+        { id: 'overview', label: 'Overview', icon: LayoutDashboard },
+        { id: 'budget', label: 'Budget', icon: PieChart },
+        { id: 'claims', label: 'Claims', icon: FileStack, count: toReview },
+        { id: 'payments', label: 'Payments', icon: Banknote, count: unpaid.length },
+      ]} />
+      <TabPanel id={view}>
+        {view === 'overview' && <>
+          <div className="dash-grid-2">
+            <ChartCard title="Where the money is"><BudgetDonut store={data} /></ChartCard>
+            <ChartCard title="Spend over time"><SpendTrend store={data} /></ChartCard>
+          </div>
+          <ChartCard title="Budget flow" hint="Click a block to trace it"><BudgetFlow store={data} /></ChartCard>
+          <FinancialAlerts data={data} />
+        </>}
+        {view === 'budget' && <>
+          <ChartCard title="Department utilisation" hint="Click a cell to drill in"><UtilisationHeat store={data} onPick={setPicked} /></ChartCard>
+          <div className="dash-grid-2">
+            <ChartCard title="By activity" hint="Click to filter departments"><ActivityBars store={data} selected={picked} onSelect={setPicked} /></ChartCard>
+            <ChartCard title={picked ? `Departments · ${data.activities.find((a) => a.id === picked)?.name}` : 'By department'}><DepartmentBars store={data} activityId={picked} /></ChartCard>
+          </div>
+        </>}
+        {view === 'claims' && <ClaimCards store={data} />}
+        {view === 'payments' && <>
+          <ChartCard title="Reimbursement flow">
+            <Pipeline stages={[
               { label: 'Approved · unpaid', count: unpaid.length, tone: tones.pending },
-              { label: 'Paid · awaiting member', count: data.payments.filter((p) => !p.manual?.receivedConfirmedAt).length, tone: tones.committed },
-              { label: 'Member confirmed', count: data.payments.filter((p) => p.manual?.receivedConfirmedAt).length, tone: tones.paid },
-            ]}
-          />
-        </ChartCard>
-      </div>
-      <TreasuryLifecycle data={data} />
-      {!!data.notifications?.length && <Panel title="Financial notifications" subtitle="Persisted business events · no email or push delivery implied">
-        <div className="member-content stack">{data.notifications.map((n) => <div key={n.id}>
-          <TextLink to={n.to}>{n.title}</TextLink><p>{n.detail}</p><small>{time(n.at)}</small>
-        </div>)}</div>
-      </Panel>}
-      <div className="treasury-two-col">
-        <SpendingChart data={data} />
-        <SpendingChart data={data} departments />
-      </div>
-      <FinancialAlerts data={data} />
-      <Panel
-        title="Recent financial activity"
-        subtitle="Shared records with an accountable actor and time"
-        action={<TextLink to="/treasurer/history">Payment history</TextLink>}
-      >
-        <div className="timeline">
-          {data.events.slice(0, 6).map((e) => (
-            <div className="timeline-item" key={e.id}>
-              <span className="timeline-icon">
-                <Wallet size={15} />
-              </span>
-              <div>
-                <Link to={`/treasurer/activities/${e.activityId}`}>{e.action}</Link>
-                <p>
-                  {e.actor} · {data.activities.find((a) => a.id === e.activityId)?.name}
-                </p>
-                <details>
-                  <summary>View event details</summary>
-                  <p className="audit-detail">{e.detail}</p>
-                </details>
-              </div>
-              <time dateTime={e.at}>{time(e.at)}</time>
+              { label: 'Paid · awaiting member', count: awaiting, tone: tones.committed },
+              { label: 'Member confirmed', count: data.payments.length - awaiting, tone: tones.paid },
+            ]} />
+          </ChartCard>
+          <Panel title="Recent activity" action={<TextLink to="/treasurer/history">Payment history</TextLink>}>
+            <div className="timeline">
+              {data.events.slice(0, 6).map((e) => (
+                <div className="timeline-item" key={e.id}>
+                  <span className="timeline-icon"><Wallet size={15} /></span>
+                  <div>
+                    <Link to={`/treasurer/activities/${e.activityId}`}>{e.action}</Link>
+                    <p>{e.actor} · {data.activities.find((a) => a.id === e.activityId)?.name}</p>
+                  </div>
+                  <time dateTime={e.at}>{time(e.at)}</time>
+                </div>
+              ))}
             </div>
-          ))}
-        </div>
-      </Panel>
-      <p className="data-note">
-        Recording a reimbursement does not verify an external transfer. Member
-        confirmation remains separate.
-      </p>
+          </Panel>
+        </>}
+      </TabPanel>
     </div>
   );
 }
-import { demoMode } from '../../services/supabase/client';
