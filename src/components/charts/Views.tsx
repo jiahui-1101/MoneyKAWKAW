@@ -1,5 +1,6 @@
 import { ArrowLeft } from 'lucide-react';
 import { useState } from 'react';
+import { Link } from 'react-router-dom';
 import { summarize } from '../../domain/budget';
 import type { Store } from '../../domain/models';
 import { useFormat } from '../ui';
@@ -71,6 +72,35 @@ export function ActivityBudgetCard({ store }: { store: Store }) {
       </div>
       <BarList rows={rows} format={(n) => money(n, true)} onSelect={activity ? undefined : setPicked} empty="No departments yet." />
       {!activity && rows.length > 0 && <small className="viz-hint">Click an activity to see its departments</small>}
+    </ChartCard>
+  );
+}
+
+const DAY = 86_400_000;
+
+/** Claims still awaiting a decision, grouped by how long they have waited since submission. */
+export function WaitingCard({ store, href }: { store: Store; href: (id: string) => string }) {
+  const { money } = useFormat();
+  const now = Date.now();
+  const waiting = store.expenses
+    .filter((e) => (e.lifecycle ? ['Pending', 'Under Review'].includes(e.lifecycle) : ['Pending review', 'In review'].includes(e.state)))
+    .map((e) => ({ e, days: Math.max(0, Math.floor((now - new Date(e.review?.submittedAt ?? e.date).getTime()) / DAY)) }))
+    .sort((a, b) => b.days - a.days);
+  const count = (lo: number, hi: number) => waiting.filter((w) => w.days >= lo && w.days < hi).length;
+  return (
+    <ChartCard title="Waiting for review">
+      <CountBars rows={[
+        { label: 'Under 3 days', count: count(0, 3), tone: tones.paid },
+        { label: '3–7 days', count: count(3, 8), tone: tones.pending },
+        { label: 'Over 7 days', count: count(8, Infinity), tone: tones.declined },
+      ]} />
+      {waiting.length ? (
+        <ul className="ix-oldest">
+          {waiting.slice(0, 3).map(({ e, days }) => (
+            <li key={e.id}><Link to={href(e.id)}>{e.description}</Link><span>{money(e.amount, true)} · {days}d</span></li>
+          ))}
+        </ul>
+      ) : <p className="viz-empty">Nothing waiting.</p>}
     </ChartCard>
   );
 }

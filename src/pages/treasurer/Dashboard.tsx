@@ -6,7 +6,7 @@ import { ChartCard } from '../../components/charts/Charts';
 import { tones } from '../../components/charts/Insights';
 import { KpiTiles } from '../../components/charts/Interactive';
 import { CountBars } from '../../components/charts/Graphs';
-import { ActivityBudgetCard, BudgetCard, ClaimsCard, MonthlyCard } from '../../components/charts/Views';
+import { ActivityBudgetCard, BudgetCard, ClaimsCard, MonthlyCard, WaitingCard } from '../../components/charts/Views';
 import { PageHeader, useFormat } from '../../components/ui';
 import { FinancialAlerts } from '../../components/treasurer/FinancialCharts';
 
@@ -31,11 +31,12 @@ export function TreasuryDashboard() {
       ]} />
       <div className="dash-grid-3">
         <BudgetCard store={data} />
-        <MonthlyCard store={data} />
+        <WaitingCard store={data} href={(id) => `/treasurer/claims/${id}`} />
         <ClaimsCard store={data} />
       </div>
       <ActivityBudgetCard store={data} />
       <div className="dash-grid-2">
+        <MonthlyCard store={data} />
         <ChartCard title="Reimbursements">
           <CountBars rows={[
             { label: 'Approved, not paid', count: unpaid.length, tone: tones.pending },
@@ -43,8 +44,8 @@ export function TreasuryDashboard() {
             { label: 'Confirmed', count: data.payments.length - awaiting, tone: tones.paid },
           ]} />
         </ChartCard>
-        <FinancialAlerts data={data} />
       </div>
+      <FinancialAlerts data={data} />
     </div>
   );
 }
