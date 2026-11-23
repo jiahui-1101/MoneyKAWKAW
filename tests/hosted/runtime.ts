@@ -16,7 +16,7 @@ export const identities: Record<string, string> = {
   '3c315d49-f6ea-49bb-a031-5239b4d1bf66': 'Member B',
 };
 export type Request = { label: string; path: string; method?: string; body?: unknown;
-  expectStatus: number[]; expectCount?: number; expectCode?: string; bytesBase64?: string; mime?: string };
+  expectStatus: number[]; expectCount?: number; expectCode?: string; expectNoData?: boolean; bytesBase64?: string; mime?: string };
 export type Plan = { label: string; groups: Request[][]; startAt?: string };
 export function validatePlan(plan: Plan) {
   if (!plan.label?.startsWith('SYNTHETIC-09C') || !Array.isArray(plan.groups) || plan.groups.length > 80)
@@ -72,7 +72,8 @@ export async function captureIdentity() {
         code, message, count, responseBytes: bytes.length, responseSha256: hash,
         id: typeof id === 'string' && /^[0-9a-f-]{36}$/.test(id) ? id : undefined,
         pass: r.expectStatus.includes(response.status) && (r.expectCount === undefined || count === r.expectCount)
-          && (r.expectCode === undefined || code === r.expectCode) };
+          && (r.expectCode === undefined || code === r.expectCode)
+          && (!r.expectNoData || !response.ok || count === 0 || value === null) };
     })));
     return { label: plan.label, identity: { uid: user.id, role: identities[user.id] }, results };
   } };
