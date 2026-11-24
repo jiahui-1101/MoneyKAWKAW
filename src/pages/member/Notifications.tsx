@@ -17,7 +17,7 @@ export function MemberNotifications() {
   const mark = async (ids: string[]) => {
     setError('');
     try {
-      await run(() => readMemberNotifications(ids), 'Notification read state saved.');
+      await run(() => readMemberNotifications(ids), 'Marked as read.');
     } catch (e) {
       setError(e instanceof Error ? e.message : 'Unable to update notifications.');
     }
@@ -27,7 +27,7 @@ export function MemberNotifications() {
       <PageHeader
         eyebrow="MY IN-APP NOTIFICATIONS"
         title="Notifications"
-        description="Actual assignment, deadline, review, payment, and receipt-confirmation updates. No push notification service is connected."
+        description="Updates about your purchases and claims. We don’t send phone alerts, so check here."
       >
         <button
           className="btn"
@@ -39,7 +39,7 @@ export function MemberNotifications() {
       </PageHeader>
       <Panel
         title="My updates"
-        subtitle={`${unread.length} unread · tied to shared source records`}
+        subtitle={`${unread.length} unread `}
       >
         <div className="member-tabs">
           <button
@@ -84,7 +84,7 @@ export function MemberNotifications() {
           ))}
           {!shown.length && (
             <Empty title="You’re up to date">
-              No matching notifications remain. Updates follow real shared records and deadlines.
+              Nothing new right now.
             </Empty>
           )}
         </div>

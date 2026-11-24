@@ -22,7 +22,7 @@ export function MemberClaimDetail() {
           </Link>
         }
       >
-        Only your own claims in active departments are available here.
+        You can only open your own claims.
       </Empty>
     );
   const task = data.assignments.find((t) => t.expenseId === claim.id),
@@ -45,7 +45,7 @@ export function MemberClaimDetail() {
   return (
     <div className="stack">
       <Link className="back-link" to="/member/claims">
-        ← My claims / Claim detail
+        ← Back to my claims
       </Link>
       <PageHeader
         eyebrow={`MY CLAIM · ${claim.id}`}
@@ -73,19 +73,19 @@ export function MemberClaimDetail() {
       <ClaimProgress claim={claim} payments={payments} next={next} />
       <Panel
         title="Your submitted claim"
-        subtitle="These values and the original receipt are protected after submission"
+        subtitle="Locked after you submitted"
       >
         <dl className="treasury-facts">
           {[
             ['Final claimed amount', money(claim.amount)],
-            ['Item budget', task ? money(task.budget) : 'Legacy task unavailable'],
+            ['Item budget', task ? money(task.budget) : '—'],
             ['Submitted', time(claim.review?.submittedAt ?? claim.date)],
-            ['Purchasing task', task?.purchasing?.name ?? 'Legacy source'],
-            ['Treasurer decision', claim.state],
+            ['Purchasing task', task?.purchasing?.name ?? '—'],
+            ['Status', claim.state],
             [
               'Reviewer',
               demoProfiles.find((p) => p.userId === claim.review?.reviewer)?.name ??
-                (claim.review?.reviewer ? 'Authorized Treasurer' : 'Awaiting review'),
+                (claim.review?.reviewer ? 'Treasurer' : 'Awaiting review'),
             ],
             [
               'Decision time',
@@ -103,7 +103,7 @@ export function MemberClaimDetail() {
       <div className={`treasury-justification ${claim.state === 'Declined' ? 'is-declined' : ''}`}>
         <span className="eyebrow">YOUR PURCHASE CONTEXT</span>
         <p>
-          {claim.review?.justification || 'No explanation was retained for this legacy record.'}
+          {claim.review?.justification || 'No note added.'}
         </p>
         {claim.review?.reason && (
           <>
@@ -114,7 +114,7 @@ export function MemberClaimDetail() {
       </div>
       <ClaimDestination claim={claim} />
       <ReceiptReview claimId={claim.id} amount={claim.amount} load={memberClaimService.receipt} />
-      <Panel title="Claim status timeline" subtitle="Actual shared events, actors, and timestamps">
+      <Panel title="Claim status timeline" subtitle="What happened and when">
         <div className="treasury-evidence-history">
           {!events.some((e) => e.action === 'Claim submitted') && <article>
             <h3>Claim submitted</h3>
@@ -131,7 +131,7 @@ export function MemberClaimDetail() {
                 </small>
               </div>
               <details>
-                <summary>View event details</summary>
+                <summary>Details</summary>
                 <p>{e.detail}</p>
               </details>
             </article>

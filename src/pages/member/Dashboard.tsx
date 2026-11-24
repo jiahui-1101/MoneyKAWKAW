@@ -40,7 +40,7 @@ export function MemberDashboard() {
       <PageHeader
         eyebrow="COMMITTEE MEMBER WORKSPACE"
         title={`Hi ${actor.name.split(' ')[0]}`}
-        description={demoMode ? 'Your purchases and claims at a glance.' : 'Your assigned activities, purchasing tasks, and shared progress.'}
+        description={demoMode ? 'Your purchases and claims at a glance.' : 'Your purchases and claims at a glance.'}
       >
         <Link className="btn primary" to="/member/tasks">
           View my purchases
@@ -110,7 +110,7 @@ export function MemberDashboard() {
       </div>
       <Panel
         title="My upcoming tasks"
-        subtitle="Open purchases, ordered by their actual HOD deadline"
+        subtitle="Soonest due first"
         action={<TextLink to="/member/tasks">All my tasks</TextLink>}
       >
         <MemberTaskTable
@@ -123,7 +123,7 @@ export function MemberDashboard() {
       <div className="member-two-col">
         <Panel
           title="Department purchasing progress"
-          subtitle="Coordination visibility · purchase progress is separate from reimbursement"
+          subtitle="How much your department has bought"
         >
           <div className="member-content stack">
             {data.scopes.map((s) => {
@@ -143,7 +143,7 @@ export function MemberDashboard() {
                     <small className="cell-sub">{s.activity.name}</small>
                   </Link>
                   <small>
-                    {done} of {tasks.length} purchased or claimed
+                    {done} of {tasks.length} bought
                   </small>
                   <Progress
                     value={tasks.length ? (done / tasks.length) * 100 : 0}
@@ -168,15 +168,15 @@ export function MemberDashboard() {
               </div>
             ))}
             <p className="field-hint">
-              Approved claims stay unpaid until the Treasurer records a reimbursement. Only you can
-              confirm its receipt.
+              Approved doesn’t mean paid. When the Treasurer pays you, please confirm you got the
+              money.
             </p>
           </div>
         </Panel>}
       </div>
       {<Panel
         title="Recent claims"
-        subtitle="Shared Treasurer status, evidence, and payment history"
+        subtitle="Your latest claims"
         action={<TextLink to="/member/claims">All my claims</TextLink>}
       >
         <MemberClaimTable
@@ -186,7 +186,7 @@ export function MemberDashboard() {
       </Panel>}
       <Panel
         title="Recent notifications"
-        subtitle="Real assignments, deadlines, and shared claim events"
+        subtitle="Your latest updates"
         action={<TextLink to="/member/notifications">View notifications</TextLink>}
       >
         <div className="member-content stack">
@@ -205,7 +205,7 @@ export function MemberDashboard() {
           ))}
           {!notes.length && (
             <Empty title="You’re up to date">
-              Notifications will follow actual changes to your responsibilities{demoMode ? ' and claims' : ''}.
+              New tasks and claim updates will show here.{demoMode ? ' and claims' : ''}.
             </Empty>
           )}
         </div>
