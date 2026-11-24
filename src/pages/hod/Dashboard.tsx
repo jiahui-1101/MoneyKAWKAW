@@ -11,6 +11,7 @@ import {
   UpcomingPurchases,
   useDepartmentScope,
 } from '../../components/hod/HodWidgets';
+import { ActionQueue } from '../../components/ActionQueue';
 import { HodInsights } from '../../components/charts/HodInsights';
 import { demoMode } from '../../services/supabase/client';
 import { canPlanActivity, financialStateLabel } from '../../domain/activity-closing';
@@ -22,7 +23,7 @@ export function HodDashboard({ department = false }: { department?: boolean }) {
   const counts = [
     ['Total purchasing tasks', tasks.length, ''],
     [
-      'Pending tasks',
+      'Not yet bought',
       tasks.filter((t) => ['Not Started', 'In Progress'].includes(t.purchasing!.status)).length,
       'attention=pending',
     ],
@@ -38,11 +39,19 @@ export function HodDashboard({ department = false }: { department?: boolean }) {
       'attention=unassigned',
     ],
     [
-      demoMode ? 'Purchased · no claim' : 'Purchased tasks',
+      demoMode ? 'Bought, waiting for claim' : 'Bought',
       tasks.filter((t) => t.purchasing!.status === 'Purchased' && (demoMode ? !t.expenseId : true)).length,
       demoMode ? 'attention=awaiting-claim' : 'status=Purchased',
     ],
   ] as const;
+  const count = (n: number, word: string) => `${n} ${word}${n === 1 ? '' : 's'}`;
+  const overdue = tasks.filter((t) => isOverdue(t, today)).length;
+  const unassigned = tasks.filter((t) => !t.purchasing!.assigneeId && t.purchasing!.status !== 'Cancelled').length;
+  const queue = [
+    ...(summary.available < 0 ? [{ title: `Over budget by ${money(-summary.available)}`, detail: 'Reduce or cancel open tasks, or ask the Director for more budget.', to: `${base}/budget`, action: 'Check budget' }] : []),
+    ...(overdue ? [{ title: `${count(overdue, 'task')} past the due date`, detail: 'Check with the member or change the due date.', to: `${base}/tasks?attention=overdue`, action: 'View' }] : []),
+    ...(unassigned ? [{ title: `${count(unassigned, 'task')} with no one assigned`, detail: 'Choose a department member to buy each item.', to: `${base}/tasks?attention=unassigned`, action: 'Assign' }] : []),
+  ];
   return (
     <div className="stack hod-dashboard">
       <PageHeader
@@ -66,7 +75,7 @@ export function HodDashboard({ department = false }: { department?: boolean }) {
             <strong>
               {new Set(data.scopes.map((s) => s.activity.id)).size.toString().padStart(2, '0')}
             </strong>
-            <span>Explicit department memberships</span>
+            <span>Departments you lead</span>
           </div>
           {data.scopes.map((s) => (
             <Link
@@ -88,15 +97,15 @@ export function HodDashboard({ department = false }: { department?: boolean }) {
       {department && (
         <Panel
           title="Your department, in context"
-          action={<TextLink to={`${base}/members`}>Meet the team</TextLink>}
+          action={<TextLink to={`${base}/members`}>View members</TextLink>}
         >
           <div className="panel-body">
             <p className="activity-description">
               {scope.department.description ||
-                'This department is ready for a clear purchasing plan.'}
+                'No description yet.'}
             </p>
             <div className="activity-setup-note">
-              <span>HOD: {data.actor.name} · Allocation set by the Director</span>
+              <span>HOD: {data.actor.name} · Budget set by the Director</span>
               <span>
                 {date(scope.activity.startDate)} — {date(scope.activity.endDate)}
               </span>
@@ -106,13 +115,10 @@ export function HodDashboard({ department = false }: { department?: boolean }) {
       )}
       <DepartmentMetrics data={data} scope={scope} />
       <HodInsights summary={summary} tasks={tasks} users={data.directory.users} />
-      {(summary.available < 0 || summary.planned > summary.budget) && (
+      <ActionQueue items={queue} clear="Your department's tasks are on track." />
+      {summary.available >= 0 && summary.planned > summary.budget && (
         <div className="form-error" role="status">
-          Department budget attention:{' '}
-          {summary.available < 0
-            ? `${money(-summary.available)} beyond available allocation ${demoMode ? 'after claims and commitments.' : 'after planned task commitments.'}`
-            : `Planned estimates exceed the allocation by ${money(summary.planned - summary.budget)}.`}{' '}
-          Review outstanding plans. Claim decisions remain with the Treasurer.
+          Planned tasks are {money(summary.planned - summary.budget)} more than your budget. Reduce or cancel open tasks.
         </div>
       )}
       <div className="task-counts">

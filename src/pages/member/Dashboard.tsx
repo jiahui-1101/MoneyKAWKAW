@@ -8,6 +8,7 @@ import {
   MemberTaskTable,
   memberDepartmentPath,
 } from '../../components/member/MemberTables';
+import { ActionQueue } from '../../components/ActionQueue';
 import { MemberInsights } from '../../components/charts/MemberInsights';
 import { MetricCards } from '../../components/MetricCards';
 import { Empty, PageHeader, Panel, Progress, TextLink, useFormat } from '../../components/ui';
@@ -27,12 +28,19 @@ export function MemberDashboard() {
     (e) => e.state === 'Approved' && !data.payments.some((p) => p.expenseId === e.id),
   );
   const notes = memberNotifications(data);
+  const toClaim = mine.filter((t) => t.purchasing!.status === 'Purchased' && !t.expenseId);
+  const toConfirm = data.payments.filter((p) => !p.manual?.receivedConfirmedAt && data.expenses.some((e) => e.id === p.expenseId));
+  const queue = [
+    ...toConfirm.map((p) => ({ title: `Confirm you got ${money(p.amount)}`, detail: 'The Treasurer recorded a payment. Check your bank or TNG, then confirm.', to: `/member/claims/${p.expenseId}/payment`, action: 'Confirm' })),
+    ...toClaim.map((t) => ({ title: `Claim for ${t.purchasing!.name}`, detail: 'You bought this. Upload the receipt to get paid back.', to: `/member/tasks/${t.id}`, action: 'Start claim' })),
+    ...pending.slice(0, 3).map((t) => ({ title: `Buy ${t.purchasing!.name}`, detail: `Budget ${money(t.budget)} · due ${t.purchasing!.dueDate}`, to: `/member/tasks/${t.id}`, action: 'Open' })),
+  ];
   return (
     <div className="stack dashboard">
       <PageHeader
         eyebrow="COMMITTEE MEMBER WORKSPACE"
         title={`Hi ${actor.name.split(' ')[0]}`}
-        description={demoMode ? 'Your department’s purpose, your next purchase, and a clear path to reimbursement.' : 'Your assigned activities, purchasing tasks, and shared progress.'}
+        description={demoMode ? 'Your purchases and claims at a glance.' : 'Your assigned activities, purchasing tasks, and shared progress.'}
       >
         <Link className="btn primary" to="/member/tasks">
           View my purchases
@@ -40,7 +48,7 @@ export function MemberDashboard() {
       </PageHeader>
       {!data.scopes.length && (
         <Empty title="No active departments assigned">
-          Your Director must explicitly add your Member profile to an activity department.
+          Ask your Director to add you to a department.
         </Empty>
       )}
       <MetricCards
@@ -55,7 +63,7 @@ export function MemberDashboard() {
             label: 'My assigned tasks',
             value: String(mine.length).padStart(2, '0'),
             icon: ClipboardList,
-            note: 'Shared HOD purchasing plans',
+            note: 'Set by your HOD',
             tone: 'violet',
           },
           ...([
@@ -63,7 +71,7 @@ export function MemberDashboard() {
             label: 'Claims awaiting review',
             value: String(awaiting.length).padStart(2, '0'),
             icon: Clock,
-            note: 'Pending + in review',
+            note: 'Not decided yet',
             tone: 'gold',
           },
           {
@@ -73,24 +81,25 @@ export function MemberDashboard() {
               true,
             ),
             icon: Wallet,
-            note: 'Manually recorded · check receipt status',
+            note: 'Paid to you so far',
             tone: 'green',
           },
           ]),
         ]}
       />
+      <ActionQueue items={queue} clear="Nothing to buy or confirm right now." />
       <MemberInsights tasks={mine} claims={data.expenses} payments={data.payments} />
       <div className="member-counts">
         {[
-          ['Pending purchases', pending.length, '/member/tasks'],
-          ['Completed purchases', completed.length, '/member/tasks'],
+          ['Not yet bought', pending.length, '/member/tasks'],
+          ['Bought', completed.length, '/member/tasks'],
           ...([
           [
             'Approved claims',
             data.expenses.filter((e) => e.state === 'Approved').length,
             '/member/claims',
           ],
-          ['Pending reimbursements', unpaid.length, '/member/claims'],
+          ['Approved, not paid yet', unpaid.length, '/member/claims'],
           ]),
         ].map(([label, value, to]) => (
           <Link key={label} to={String(to)}>
