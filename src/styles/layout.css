@@ -78,3 +78,6 @@ main { padding: 24px; }
   .action-queue-list li { flex-wrap: wrap; }
   .action-queue-list .btn { margin-left: 36px; }
 }
+@media (max-width: 560px) {
+  .action-queue-list li > div { flex: 1 1 calc(100% - 40px); }
+}

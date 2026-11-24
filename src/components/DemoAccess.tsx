@@ -79,7 +79,7 @@ export function DemoAccess() {
         <span className="brand-mark">
           <Wallet size={22} />
         </span>
-        Money<span className="brand-accent">KAWKAW</span>
+        <span>Money<span className="brand-accent">KAWKAW</span></span>
       </div>
       <PageHeader
         eyebrow="TRY THE DEMO"

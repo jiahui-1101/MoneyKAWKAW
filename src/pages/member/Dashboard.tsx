@@ -68,20 +68,20 @@ export function MemberDashboard() {
           },
           ...([
           {
-            label: 'Claims awaiting review',
+            label: 'Waiting for review',
             value: String(awaiting.length).padStart(2, '0'),
             icon: Clock,
             note: 'Not decided yet',
             tone: 'gold',
           },
           {
-            label: 'Total reimbursed',
+            label: 'Paid to you',
             value: money(
               data.payments.reduce((s, p) => s + p.amount, 0),
               true,
             ),
             icon: Wallet,
-            note: 'Paid to you so far',
+            note: 'Recorded by the Treasurer',
             tone: 'green',
           },
           ]),

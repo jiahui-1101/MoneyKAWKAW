@@ -18,7 +18,7 @@ export function ClubLogin({ state, retry }: { state: AuthState; retry: () => voi
     void act(() => loginLocal(email.trim(), password));
   };
   return <main className="access-page stack">
-    <div className="brand"><Wallet size={22} /> Money<span className="brand-accent">KAWKAW</span></div>
+    <div className="brand"><span className="brand-mark"><Wallet size={22} /></span><span>Money<span className="brand-accent">KAWKAW</span></span></div>
     <PageHeader eyebrow="CLUB WORKSPACE" title="Your club. One clear workspace."
       description="Sign in with your invited Google account to continue." />
     <Panel title={state.loading ? 'Checking your membership' : 'Welcome to your club workspace'}>
