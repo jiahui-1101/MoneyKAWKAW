@@ -24,7 +24,7 @@ export function ReceiptReview({
         if (active) setReceipt(r);
       })
       .catch((e) => {
-        if (active) setError(e instanceof Error ? e.message : 'Unable to load evidence.');
+        if (active) setError(e instanceof Error ? e.message : 'Couldn’t load the receipt.');
       });
     return () => {
       active = false;
@@ -34,10 +34,10 @@ export function ReceiptReview({
     return (
       <Panel title="Receipt evidence">
         <Empty
-          title="Evidence unavailable"
+          title="Receipt didn’t load"
           action={
             <button className="btn" onClick={() => setAttempt((n) => n + 1)}>
-              Retry evidence
+              Try again
             </button>
           }
         >
@@ -51,7 +51,7 @@ export function ReceiptReview({
         className="skeleton"
         style={{ height: 300 }}
         role="status"
-        aria-label="Loading claim evidence"
+        aria-label="Loading receipt"
       />
     );
   return <ReceiptEvidenceView receipt={receipt} amount={amount} />;
@@ -73,8 +73,8 @@ export function ReceiptEvidenceView({
           title="Original receipt"
           subtitle={
             receipt.extraction
-              ? 'Exact uploaded image · original source is preserved'
-              : 'Immutable fictional sample · no live OCR was run on this legacy fixture'
+              ? 'Exactly as the member uploaded it'
+              : 'Sample receipt for testing · not scanned'
           }
           action={
             <a
@@ -98,8 +98,8 @@ export function ReceiptEvidenceView({
           </div>
         </Panel>
         <Panel
-          title="Annotated claim view"
-          subtitle="Line annotations show corrections and exclusions; the source image is preserved"
+          title="Items in this claim"
+          subtitle="Shows which items the member edited or removed"
         >
           <div className="treasury-annotation">
             <span className="eyebrow">
@@ -118,8 +118,8 @@ export function ReceiptEvidenceView({
                     {l.excluded
                       ? 'Excluded from claim'
                       : l.edited
-                        ? 'Corrected source value'
-                        : 'Included unchanged'}
+                        ? 'Edited by member'
+                        : 'Unchanged'}
                   </small>
                 </div>
                 <div className="receipt-values">
@@ -131,29 +131,28 @@ export function ReceiptEvidenceView({
               </div>
             ))}
             <div className="receipt-total">
-              <span>Final claimed amount</span>
+              <span>Amount claimed</span>
               <strong>{money(total)}</strong>
             </div>
             <Badge tone={total === amount ? 'green' : 'danger'}>
               {total === amount
                 ? receipt.expenseId
-                  ? 'Reconciles to submitted amount'
-                  : 'Draft amount reconciles'
-                : 'Amount mismatch · approval blocked'}
+                  ? 'Matches claim amount'
+                  : 'Matches draft amount'
+                : 'Doesn’t match claim amount · can’t approve yet'}
             </Badge>
             <p className="field-hint">
-              This view reconstructs the retained line history. No pixel locations or OCR confidence
-              values are invented.
+              Built from the member’s item list. Items are not marked on the photo.
             </p>
           </div>
         </Panel>
       </div>
       <Panel
-        title="Source items & final values"
+        title="Original vs. final items"
         subtitle={
           receipt.extraction?.method === 'manual'
-            ? 'Manually entered source values, retained alongside corrections'
-            : 'Original OCR suggestions are retained alongside the claimant’s changes'
+            ? 'Typed in by the member, with their edits'
+            : 'What the scan read vs. what the member changed'
         }
       >
         <div
@@ -165,11 +164,11 @@ export function ReceiptEvidenceView({
           <table>
             <thead>
               <tr>
-                <th>ORIGINAL EXTRACTION</th>
+                <th>READ FROM RECEIPT</th>
                 <th>ORIGINAL AMOUNT</th>
                 <th>FINAL DESCRIPTION</th>
                 <th>FINAL AMOUNT</th>
-                <th>TREATMENT</th>
+                <th>STATUS</th>
               </tr>
             </thead>
             <tbody>
@@ -188,7 +187,7 @@ export function ReceiptEvidenceView({
                   <td className="money">{money(lineValue(l.final))}</td>
                   <td>
                     <Badge tone={l.excluded ? 'danger' : l.edited ? 'gold' : 'green'}>
-                      {l.excluded ? 'Excluded' : l.edited ? 'Corrected' : 'Included'}
+                      {l.excluded ? 'Not claimed' : l.edited ? 'Edited' : 'Claimed'}
                     </Badge>
                   </td>
                 </tr>
@@ -198,8 +197,8 @@ export function ReceiptEvidenceView({
         </div>
       </Panel>
       <Panel
-        title="Receipt modification report"
-        subtitle="Append-only evidence history · who changed what, when, and why"
+        title="Receipt edit history"
+        subtitle="Who changed what, when and why"
       >
         <div className="treasury-evidence-history">
           {receipt.edits.map((edit, i) => (
@@ -210,7 +209,7 @@ export function ReceiptEvidenceView({
                     ? 'Item excluded'
                     : edit.beforeExcluded
                       ? 'Item included again'
-                      : 'Source value corrected')}
+                      : 'Edited')}
                 </h3>
                 <small>
                   {time(edit.at)} · {edit.actor}
@@ -233,7 +232,7 @@ export function ReceiptEvidenceView({
             </article>
           ))}
           {!receipt.edits.length && (
-            <p className="muted">No corrections or exclusions were submitted.</p>
+            <p className="muted">The member made no changes to the receipt.</p>
           )}
           {receipt.totalEdits?.map((e, i) => (
             <article key={`total-${i}`}>
@@ -250,28 +249,28 @@ export function ReceiptEvidenceView({
       </Panel>
       {receipt.extraction && (
         <Panel
-          title="Retained extraction & receipt totals"
+          title="Scanned text & totals"
           subtitle={
             receipt.extraction.method === 'tesseract'
-              ? 'Tesseract on-device OCR · suggestions require human review'
-              : 'Manual entry · no OCR accuracy is claimed'
+              ? 'Read automatically from the photo · the member checked it'
+              : 'Typed in by the member'
           }
         >
           <div className="treasury-evidence-history">
             <div className="row between wrap">
-              <span>Original total: {money(receipt.originalTotal!)}</span>
-              <span>Reviewed total: {money(reviewedTotal(receipt))}</span>
-              <strong>Claimable: {money(total)}</strong>
+              <span>Total read from receipt: {money(receipt.originalTotal!)}</span>
+              <span>Total after edits: {money(reviewedTotal(receipt))}</span>
+              <strong>Amount claimed: {money(total)}</strong>
             </div>
             <p className="field-hint">
-              Purchase date: {receipt.purchaseDate}. Shared tax and discount allocations are
-              explicit line corrections; no hidden proration is applied.
+              Purchase date: {receipt.purchaseDate}. Tax and discounts appear as their own lines.
+              Nothing is split behind the scenes.
             </p>
             <details>
-              <summary>View retained source text</summary>
-              <pre className="receipt-raw" tabIndex={0} aria-label="Retained receipt source text">
+              <summary>Show scanned text</summary>
+              <pre className="receipt-raw" tabIndex={0} aria-label="Scanned receipt text">
                 {receipt.extraction.rawText ||
-                  'Manually transcribed from the uploaded image; no machine extraction was performed.'}
+                  'Typed in by the member. Not scanned.'}
               </pre>
             </details>
           </div>
