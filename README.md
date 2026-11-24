@@ -15,6 +15,7 @@
 
 <p align="center">
   <a href="https://moneykawkaw.pages.dev/">🌐 Live Deployment</a> ·
+  <a href="https://htmlpreview.github.io/?https://github.com/jiahui-1101/MoneyKAWKAW/blob/main/presentation/moneykawkaw-presentation.html">🎤 Pitch Deck</a> ·
   <a href="#main-functions">📊 Main Functions</a> ·
   <a href="#local-development">🛠️ Run Locally</a> ·
   <a href="docs/supabase/README.md">🔐 Supabase Setup & Security</a> ·
@@ -449,6 +450,7 @@ Role-specific verification notes are in [docs/VERIFICATION.md](docs/VERIFICATION
 | Material | Link | Status |
 |---|---|---|
 | Live app | [moneykawkaw.pages.dev](https://moneykawkaw.pages.dev/) | Invite-only |
+| Pitch deck | [View slides](https://htmlpreview.github.io/?https://github.com/jiahui-1101/MoneyKAWKAW/blob/main/presentation/moneykawkaw-presentation.html) · [source](presentation/moneykawkaw-presentation.html) | Ready |
 | Supabase setup and security | [docs/supabase/README.md](docs/supabase/README.md) | Ready |
 | HOD workspace guide | [docs/hod/README.md](docs/hod/README.md) | Ready |
 | Member workspace guide | [docs/member/README.md](docs/member/README.md) | Ready |
