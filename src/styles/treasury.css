@@ -34,7 +34,7 @@
   font: 750 25px var(--font-display);
 }
 .treasury-counts small {
-  font-size: 9px;
+  font-size: 11px;
   padding-right: 20px;
 }
 .treasury-counts svg {
@@ -63,7 +63,7 @@
   font-size: 12px;
 }
 .treasury-chart-row small {
-  font-size: 10px;
+  font-size: 11px;
 }
 .treasury-bar {
   height: 6px;
@@ -142,7 +142,7 @@
 .treasury-id {
   overflow-wrap: anywhere;
   max-width: 210px;
-  font-size: 10px;
+  font-size: 11px;
 }
 .treasury-receipt {
   padding: 0 22px 22px;
@@ -156,7 +156,7 @@
   background: var(--surface);
 }
 .treasury-receipt p {
-  font-size: 10px;
+  font-size: 11px;
   color: var(--muted);
   margin-top: 12px;
 }
@@ -177,7 +177,7 @@
 }
 .receipt-line small {
   display: block;
-  font-size: 10px;
+  font-size: 11px;
   margin-top: 5px;
 }
 .receipt-line.excluded {

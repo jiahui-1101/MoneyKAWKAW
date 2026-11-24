@@ -44,7 +44,7 @@
 .brand small {
   display: block;
   font-family: var(--font-body);
-  font-size: 7px;
+  font-size: 11px;
   letter-spacing: 0.16em;
   color: var(--muted);
   margin-top: 1px;
@@ -68,7 +68,7 @@
   display: block;
 }
 .workspace-card small {
-  font-size: 10px;
+  font-size: 11px;
   display: block;
   margin-top: 2px;
 }
@@ -87,7 +87,7 @@
 .nav-label {
   color: var(--subtle);
   letter-spacing: 0.14em;
-  font-size: 9px;
+  font-size: 11px;
   font-weight: 650;
   padding: 0 12px 12px;
 }
@@ -129,7 +129,7 @@
   border-radius: 5px;
   background: var(--surface);
   border: 1px solid var(--line);
-  font-size: 10px;
+  font-size: 11px;
 }
 .sidebar-bottom {
   margin-top: auto;
@@ -160,7 +160,7 @@
   z-index: 1;
 }
 .sidebar-tip .eyebrow {
-  font-size: 8px;
+  font-size: 11px;
   color: var(--brand);
 }
 .sidebar-tip h3 {
@@ -169,7 +169,7 @@
   line-height: 1.45;
 }
 .sidebar-tip p {
-  font-size: 10px;
+  font-size: 11px;
   color: var(--muted);
   max-width: 140px;
   line-height: 1.7;
@@ -179,7 +179,7 @@
   align-items: center;
   gap: 18px;
   margin-top: 15px;
-  font-size: 10px;
+  font-size: 11px;
   font-weight: 700;
 }
 .user-card {
@@ -196,7 +196,7 @@
 }
 .user-card small {
   display: block;
-  font-size: 10px;
+  font-size: 11px;
 }
 .avatar {
   width: 34px;
@@ -265,7 +265,7 @@
   display: flex;
   align-items: center;
   gap: 6px;
-  font-size: 10px;
+  font-size: 11px;
   color: var(--muted);
   padding: 5px 11px;
   border: 1px solid var(--line);
@@ -300,7 +300,7 @@ main {
   display: flex;
   justify-content: space-between;
   color: var(--subtle);
-  font-size: 10px;
+  font-size: 11px;
   gap: 15px;
 }
 .footer-dot {
@@ -397,14 +397,14 @@ main {
     min-width: 0;
   }
   .breadcrumb {
-    font-size: 10px;
+    font-size: 11px;
     white-space: normal;
   }
   .breadcrumb span {
     margin: 0 5px;
   }
   .demo-pill {
-    font-size: 9px;
+    font-size: 11px;
     padding: 4px 8px;
   }
   .topbar .avatar {
@@ -417,6 +417,6 @@ main {
     margin: 0 18px;
     flex-direction: column;
     gap: 6px;
-    font-size: 9px;
+    font-size: 11px;
   }
 }

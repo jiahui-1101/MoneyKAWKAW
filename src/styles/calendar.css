@@ -57,7 +57,7 @@
 }
 .calendar-grid > .calendar-weekday {
   color: var(--muted);
-  font-size: 10px;
+  font-size: 11px;
 }
 .calendar-grid > button {
   border: 0;

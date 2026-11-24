@@ -138,7 +138,7 @@
 }
 .member-roster small {
   display: block;
-  font-size: 10px;
+  font-size: 11px;
   margin-top: 5px;
 }
 .member-progress-row {
@@ -154,7 +154,7 @@
   color: var(--brand);
 }
 .member-progress-row > small {
-  font-size: 10px;
+  font-size: 11px;
 }
 .member-status-row {
   display: flex;
@@ -195,7 +195,7 @@
   overflow-wrap: anywhere;
 }
 .member-notification small {
-  font-size: 10px;
+  font-size: 11px;
 }
 .member-unread {
   width: 7px;
@@ -441,7 +441,7 @@
 }
 .member-shell .nav-count {
   margin-left: auto;
-  font-size: 9px;
+  font-size: 11px;
   padding: 2px 6px;
   background: var(--brand-soft);
   color: var(--brand);

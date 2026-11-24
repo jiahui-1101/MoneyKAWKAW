@@ -22,12 +22,12 @@
   display: flex;
   align-items: center;
   gap: 5px;
-  font-size: 9px;
+  font-size: 11px;
   padding-left: 12px;
   border-left: 1px solid var(--line);
 }
 .overview-toolbar select {
-  font-size: 10px;
+  font-size: 11px;
   width: auto;
   max-width: 190px;
   padding: 7px 30px 7px 10px;
@@ -59,7 +59,7 @@
 }
 .budget-pulse p {
   color: var(--muted);
-  font-size: 10px;
+  font-size: 11px;
   margin-top: 5px;
 }
 .budget-pulse p span {
@@ -70,7 +70,7 @@
 }
 .pulse-progress .row {
   color: var(--muted);
-  font-size: 10px;
+  font-size: 11px;
   margin-bottom: 9px;
 }
 .pulse-progress strong {
@@ -92,7 +92,7 @@
 }
 .activity-intro .eyebrow {
   color: var(--accent);
-  font-size: 9px;
+  font-size: 11px;
 }
 .activity-intro h2 {
   color: var(--surface);
@@ -151,7 +151,7 @@
 }
 .filter-selects select {
   width: auto;
-  font-size: 10px;
+  font-size: 11px;
   padding: 10px 29px 10px 10px;
   border-color: var(--line);
 }
@@ -201,7 +201,7 @@
   border: 1px solid var(--line-strong);
   background: var(--surface);
   border-radius: 50%;
-  font-size: 10px;
+  font-size: 11px;
   font-weight: 600;
 }
 .setup-steps .current {
@@ -361,7 +361,7 @@
   margin: 24px 0;
 }
 .form-aside li {
-  font-size: 10px;
+  font-size: 11px;
   display: flex;
   align-items: center;
   gap: 8px;
@@ -371,7 +371,7 @@
   color: var(--brand);
 }
 .aside-note {
-  font-size: 10px;
+  font-size: 11px;
   color: var(--muted);
   border-top: 1px solid var(--line-strong);
   padding-top: 17px;
@@ -397,7 +397,7 @@
 }
 .activity-detail-heading .eyebrow {
   color: var(--brand);
-  font-size: 9px;
+  font-size: 11px;
 }
 .detail-meta {
   display: flex;
@@ -439,7 +439,7 @@
   border: 1px solid var(--line);
   color: var(--muted);
   padding: 1px 6px;
-  font-size: 9px;
+  font-size: 11px;
   border-radius: 4px;
 }
 .activity-description {
@@ -482,7 +482,7 @@ tfoot td {
 }
 .data-note {
   color: var(--muted);
-  font-size: 10px;
+  font-size: 11px;
   line-height: 1.8;
 }
 .panel-note {
@@ -508,7 +508,7 @@ tfoot td {
   border-radius: var(--radius);
 }
 .allocation-banner small {
-  font-size: 8px;
+  font-size: 11px;
   letter-spacing: 0.08em;
 }
 .allocation-banner strong {
@@ -572,7 +572,7 @@ tfoot td {
   gap: 7px;
   margin: 14px 0 18px;
   color: var(--muted);
-  font-size: 10px;
+  font-size: 11px;
 }
 .mini-avatar {
   width: 23px;
@@ -582,7 +582,7 @@ tfoot td {
   background: var(--canvas);
   border: 1px solid var(--line);
   border-radius: 50%;
-  font-size: 8px;
+  font-size: 11px;
   color: var(--muted);
 }
 .department-amounts {
@@ -592,7 +592,7 @@ tfoot td {
   gap: 10px;
 }
 .department-amounts small {
-  font-size: 10px;
+  font-size: 11px;
 }
 .department-amounts strong {
   display: block;
@@ -604,7 +604,7 @@ tfoot td {
 .department-remaining {
   margin-top: 9px;
   color: var(--muted);
-  font-size: 9px;
+  font-size: 11px;
 }
 .department-warning {
   color: var(--danger) !important;
@@ -670,13 +670,13 @@ tfoot td {
     margin-right: 78px;
   }
   .comparison-value strong {
-    font-size: 9px;
+    font-size: 11px;
   }
   .metric {
     padding: 16px 14px;
   }
   .metric p {
-    font-size: 8px;
+    font-size: 11px;
   }
   .form-layout {
     grid-template-columns: minmax(0, 1fr) 220px;
@@ -707,7 +707,7 @@ tfoot td {
     font-size: 28px;
   }
   .metric p {
-    font-size: 10px;
+    font-size: 11px;
   }
   .chart-grid {
     grid-template-columns: 1fr;
@@ -761,7 +761,7 @@ tfoot td {
     max-width: 420px;
   }
   .page-heading .eyebrow {
-    font-size: 8px;
+    font-size: 11px;
   }
   .metrics {
     gap: 12px;
@@ -770,13 +770,13 @@ tfoot td {
     padding: 16px 13px;
   }
   .metric > .row > span:first-child {
-    font-size: 10px;
+    font-size: 11px;
   }
   .metric-value {
     font-size: 25px;
   }
   .metric p {
-    font-size: 8px;
+    font-size: 11px;
     line-height: 1.7;
     align-items: flex-start;
   }
@@ -796,7 +796,7 @@ tfoot td {
     gap: 18px;
   }
   .budget-pulse p {
-    font-size: 9px;
+    font-size: 11px;
     line-height: 1.8;
   }
   .budget-pulse .pulse-icon {
@@ -811,7 +811,7 @@ tfoot td {
     font-size: 15px;
   }
   .panel-head p {
-    font-size: 10px;
+    font-size: 11px;
   }
   .comparison-chart {
     padding: 5px 17px 22px;
@@ -872,7 +872,7 @@ tfoot td {
     display: none;
   }
   .filter-selects select {
-    font-size: 10px;
+    font-size: 11px;
     padding-left: 8px;
   }
   .form-section {
@@ -887,7 +887,7 @@ tfoot td {
     padding: 8px 0 16px;
   }
   .setup-steps > span:not(.step-line) {
-    font-size: 9px;
+    font-size: 11px;
     flex-direction: column;
     text-align: center;
     gap: 7px;
@@ -973,6 +973,6 @@ tfoot td {
     padding: 12px 15px;
   }
   .overspending a {
-    font-size: 10px;
+    font-size: 11px;
   }
 }

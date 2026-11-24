@@ -50,7 +50,7 @@
 }
 .demo-profile {
   max-width: 205px;
-  font-size: 10px;
+  font-size: 11px;
   background-color: var(--surface);
 }
 .membership-legend {
@@ -122,11 +122,11 @@
 }
 .hod-scope-bar .eyebrow {
   color: var(--subtle);
-  font-size: 8px;
+  font-size: 11px;
 }
 .hod-scope-bar p {
   color: var(--muted);
-  font-size: 10px;
+  font-size: 11px;
   margin-top: 4px;
 }
 .hod-scope-select {
@@ -135,7 +135,7 @@
   min-width: 0;
 }
 .hod-scope-select label {
-  font-size: 10px;
+  font-size: 11px;
   font-weight: 500;
   color: var(--muted);
 }
@@ -166,7 +166,7 @@
 }
 .assigned-count small {
   color: var(--dark-muted);
-  font-size: 8px;
+  font-size: 11px;
   letter-spacing: 0.1em;
 }
 .assigned-count strong {
@@ -178,7 +178,7 @@
 }
 .assigned-count span {
   color: var(--dark-muted);
-  font-size: 9px;
+  font-size: 11px;
 }
 .scope-tile {
   position: relative;
@@ -200,7 +200,7 @@
   border-left: 3px solid var(--brand);
 }
 .scope-tile .eyebrow {
-  font-size: 9px;
+  font-size: 11px;
   color: var(--brand);
 }
 .scope-tile strong {
@@ -213,7 +213,7 @@
   display: flex;
   align-items: center;
   gap: 6px;
-  font-size: 10px;
+  font-size: 11px;
 }
 .scope-tile > svg {
   position: absolute;
@@ -240,7 +240,7 @@
 }
 .task-counts span {
   display: block;
-  font-size: 10px;
+  font-size: 11px;
   color: var(--muted);
   min-height: 30px;
   line-height: 1.7;
@@ -276,7 +276,7 @@
   display: flex;
   gap: 7px;
   align-items: center;
-  font-size: 10px;
+  font-size: 11px;
   min-height: 30px;
 }
 .flow-step i {
@@ -365,11 +365,11 @@ select[aria-invalid='true'] {
 }
 .deadline-row small {
   display: block;
-  font-size: 10px;
+  font-size: 11px;
   margin-top: 4px;
 }
 .deadline-row > span:last-child {
-  font-size: 9px;
+  font-size: 11px;
   white-space: nowrap;
 }
 .deadline-icon {
@@ -399,7 +399,7 @@ select[aria-invalid='true'] {
   border: 1px solid var(--line);
   color: var(--muted);
   padding: 7px 11px;
-  font-size: 10px;
+  font-size: 11px;
   font-weight: 550;
   border-radius: 6px;
 }
@@ -416,7 +416,7 @@ select[aria-invalid='true'] {
   background: transparent;
   border: 0;
   color: var(--brand);
-  font-size: 10px;
+  font-size: 11px;
   padding: 0 5px;
 }
 .hod-member-grid {
@@ -449,7 +449,7 @@ select[aria-invalid='true'] {
   margin: 17px 0 5px;
 }
 .hod-member-card > p {
-  font-size: 10px;
+  font-size: 11px;
   color: var(--muted);
   line-height: 1.8;
 }
@@ -466,13 +466,13 @@ select[aria-invalid='true'] {
 }
 .member-workload small {
   display: block;
-  font-size: 9px;
+  font-size: 11px;
   color: var(--muted);
   margin-top: 4px;
 }
 .member-plan-total {
   margin-top: 15px;
-  font-size: 10px;
+  font-size: 11px;
   color: var(--muted);
 }
 .member-plan-total strong {
@@ -497,7 +497,7 @@ select[aria-invalid='true'] {
 }
 .task-facts dt {
   color: var(--muted);
-  font-size: 10px;
+  font-size: 11px;
   margin-bottom: 7px;
 }
 .task-facts dd {
@@ -520,7 +520,7 @@ select[aria-invalid='true'] {
   gap: 25px;
 }
 .capacity-row small {
-  font-size: 10px;
+  font-size: 11px;
 }
 .capacity-row strong {
   font-family: var(--font-display);
@@ -596,7 +596,7 @@ select[aria-invalid='true'] {
     gap: 15px;
   }
   .flow-step {
-    font-size: 9px;
+    font-size: 11px;
   }
   .hod-member-grid {
     grid-template-columns: 1fr;
@@ -642,7 +642,7 @@ select[aria-invalid='true'] {
   }
   .demo-profile {
     max-width: 190px;
-    font-size: 10px;
+    font-size: 11px;
   }
   .access-page {
     padding: 30px 18px;
@@ -670,7 +670,7 @@ select[aria-invalid='true'] {
   .hod-scope-select select {
     width: 100%;
     max-width: none;
-    font-size: 10px;
+    font-size: 11px;
   }
   .assigned-activities {
     grid-template-columns: 1fr;
@@ -682,10 +682,10 @@ select[aria-invalid='true'] {
   }
   .assigned-count small {
     max-width: 90px;
-    font-size: 8px;
+    font-size: 11px;
   }
   .assigned-count span {
-    font-size: 8px;
+    font-size: 11px;
     max-width: 110px;
     line-height: 1.8;
   }
@@ -704,7 +704,7 @@ select[aria-invalid='true'] {
     padding: 15px 13px;
   }
   .task-counts span {
-    font-size: 9px;
+    font-size: 11px;
     min-height: 29px;
   }
   .procurement-flow {
@@ -713,7 +713,7 @@ select[aria-invalid='true'] {
     padding: 0 17px 22px;
   }
   .flow-step {
-    font-size: 10px;
+    font-size: 11px;
     min-height: 18px;
   }
   .procurement-flow strong {
@@ -725,7 +725,7 @@ select[aria-invalid='true'] {
     padding-right: 17px;
   }
   .expense-overview .row {
-    font-size: 10px;
+    font-size: 11px;
     flex-wrap: wrap;
   }
   .expense-overview strong {
@@ -738,20 +738,20 @@ select[aria-invalid='true'] {
     gap: 9px;
   }
   .deadline-row > span:last-child {
-    font-size: 8px;
+    font-size: 11px;
   }
   .deadline-row strong {
-    font-size: 10px;
+    font-size: 11px;
   }
   .deadline-row small {
-    font-size: 9px;
+    font-size: 11px;
   }
   .attention-filters {
     padding: 0 17px 19px;
     gap: 7px;
   }
   .filter-chip {
-    font-size: 9px;
+    font-size: 11px;
     padding: 7px 9px;
   }
   .hod-member-grid {
