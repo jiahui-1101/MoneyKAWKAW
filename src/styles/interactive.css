@@ -104,3 +104,12 @@
 .ix-oldest li { display: flex; justify-content: space-between; gap: 10px; }
 .ix-oldest a { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; min-width: 0; }
 .ix-oldest span { color: var(--muted); white-space: nowrap; }
+.mm-seg button[aria-pressed='true'] { background: var(--brand); }
+.mm-edge.on { stroke: var(--brand); }
+.mm-node[aria-pressed='true'] { border-color: var(--brand); box-shadow: 0 0 0 2px var(--brand-soft); }
+.mm-scroll { background: radial-gradient(var(--line) 1px, transparent 1px) 0 0 / 16px 16px; border: 1px solid var(--line); border-radius: var(--radius-sm); padding: 14px; }
+.mm-col { color: var(--brand); }
+.mm-table { width: 100%; border-collapse: collapse; font-size: 13px; }
+.mm-table th, .mm-table td { text-align: left; padding: 9px 10px; border-bottom: 1px solid var(--line); }
+.mm-table th { font-size: 11px; letter-spacing: .06em; text-transform: uppercase; color: var(--muted); }
+.mm-dot { display: inline-block; width: 8px; height: 8px; border-radius: 50%; margin-right: 8px; }

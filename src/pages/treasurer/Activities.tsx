@@ -241,7 +241,7 @@ export function TreasuryActivityDetail({ closing = false }: { closing?: boolean 
           },
         ]}
       />
-      <Panel title="Money map" subtitle="Click any box to trace where its money goes">
+      <Panel title="Money map" subtitle="Tap a box to see where its money comes from and goes, or show it as a list">
         <div className="panel-body"><MoneyMap store={data} activity={activity} claimHref={(cid) => `/treasurer/claims/${cid}`} /></div>
       </Panel>
       <TreasuryLifecycle data={scope} />

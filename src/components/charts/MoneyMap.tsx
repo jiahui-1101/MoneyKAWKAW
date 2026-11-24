@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { summarize } from '../../domain/budget';
 import type { Activity, Expense, Payment, Store } from '../../domain/models';
-import { useFormat } from '../ui';
+import { statusLabel, useFormat } from '../ui';
 import { Legend } from './Charts';
 import { tones } from './Insights';
 
@@ -82,6 +82,7 @@ export function MoneyMap({ store, activity, claimHref }: { store: Store; activit
   const { money } = useFormat();
   const [sel, setSel] = useState<string | null>(null);
   const [onlyOpen, setOnlyOpen] = useState(false);
+  const [asList, setAsList] = useState(false);
   const { nodes, edges } = build(store, activity, (n) => money(n, true), claimHref);
   const visible = onlyOpen ? new Set(nodes.filter(mapNodeNeedsAction).flatMap((n) => [...chain(n.id, edges)])) : null;
   const shown = nodes.filter((n) => !visible || visible.has(n.id));
@@ -94,7 +95,7 @@ export function MoneyMap({ store, activity, claimHref }: { store: Store; activit
   const height = TOP + Math.max(1, ...columns.map((c) => shown.filter((n) => n.kind === c.kind).length)) * (NODE_H + GAP);
   const lit = sel ? chain(sel, edges) : null;
   const current = nodes.find((n) => n.id === sel);
-  if (!nodes.length) return <p className="viz-empty">No departments yet.</p>;
+  if (!nodes.length) return <p className="viz-empty">No departments yet. Add them in the Departments tab.</p>;
   return (
     <div className="mm">
       <div className="row between wrap">
@@ -102,13 +103,31 @@ export function MoneyMap({ store, activity, claimHref }: { store: Store; activit
           { label: 'Done', tone: statusTone.ok },
           { label: 'Waiting', tone: statusTone.wait },
           { label: 'Approved', tone: statusTone.approved },
-          { label: 'Rejected / over', tone: statusTone.bad },
+          { label: 'Declined / over budget', tone: statusTone.bad },
         ]} />
         <div className="mm-seg" role="group" aria-label="Show">
           <button type="button" aria-pressed={!onlyOpen} onClick={() => setOnlyOpen(false)}>All</button>
           <button type="button" aria-pressed={onlyOpen} onClick={() => { setOnlyOpen(true); setSel(null); }}>Needs action</button>
         </div>
+        <button type="button" className="btn" aria-pressed={asList} onClick={() => setAsList(!asList)}>{asList ? 'Show as map' : 'Show as list'}</button>
       </div>
+      {asList ? (
+        <div className="table-wrap" role="region" aria-label="Money map as a list" tabIndex={0}>
+          <table className="mm-table">
+            <thead><tr><th>Step</th><th>Name</th><th>Amount</th><th>Status</th></tr></thead>
+            <tbody>
+              {columns.flatMap((c) => shown.filter((n) => n.kind === c.kind).map((n) => (
+                <tr key={n.id}>
+                  <td>{c.title}</td>
+                  <td>{n.to ? <Link to={n.to}>{n.label}</Link> : n.label}</td>
+                  <td className="money">{n.sub}</td>
+                  <td><span className="mm-dot" style={{ background: n.tone }} />{statusLabel(n.status)}</td>
+                </tr>
+              )))}
+            </tbody>
+          </table>
+        </div>
+      ) : <>
       <div className="mm-scroll" role="region" aria-label="Money map" tabIndex={0}>
         <div className="mm-canvas" style={{ width: COL_W * 3 + NODE_W, height }}>
           {columns.map((c, i) => <span key={c.kind} className="mm-col" style={{ left: i * COL_W }}>{c.title}</span>)}
@@ -125,7 +144,7 @@ export function MoneyMap({ store, activity, claimHref }: { store: Store; activit
             return (
               <button key={n.id} type="button" className={`mm-node${lit && !lit.has(n.id) ? ' off' : ''}`} aria-pressed={sel === n.id}
                 style={{ left: p.x, top: p.y, width: NODE_W, height: NODE_H }} onClick={() => setSel(sel === n.id ? null : n.id)}
-                aria-label={`${n.label}, ${n.sub}, ${n.status}`}>
+                aria-label={`${n.label}, ${n.sub}, ${statusLabel(n.status)}`}>
                 <i style={{ background: n.tone }} />
                 <span>{n.label}</span>
                 <small>{n.sub}</small>
@@ -134,15 +153,16 @@ export function MoneyMap({ store, activity, claimHref }: { store: Store; activit
           })}
         </div>
       </div>
-      {current && (
-        <div className="mm-detail" role="status">
+      <div className="mm-detail" role="status">
+        {current ? <>
           <i style={{ background: current.tone }} />
           <strong>{current.label}</strong>
-          <span>{current.status}</span>
+          <span>{statusLabel(current.status)}</span>
           <span className="money">{current.sub}</span>
           {current.to && <Link className="text-link" to={current.to}>Open claim</Link>}
-        </div>
-      )}
+        </> : <span className="muted">Nothing selected. Tap a box to see where its money comes from and goes.</span>}
+      </div>
+      </>}
     </div>
   );
 }

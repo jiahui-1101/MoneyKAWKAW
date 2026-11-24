@@ -86,7 +86,7 @@ export function ActivityDetail({
       {tab === 'closing' && !demoMode ? (
         <ActivityClosingPanel key={a.id} activity={a} workspaceRole="Director" reload={reload} />
       ) : tab === 'map' ? (
-        <Panel title="Money map" subtitle="Click any box to trace where its money goes">
+        <Panel title="Money map" subtitle="Tap a box to see where its money comes from and goes, or show it as a list">
           <div className="panel-body"><MoneyMap store={store} activity={a} /></div>
         </Panel>
       ) : tab === 'departments' ? (

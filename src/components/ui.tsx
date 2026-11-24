@@ -53,6 +53,10 @@ const statusLabels: Record<string, string> = {
   Rejected: 'Declined',
   'Payment Pending': 'Approved · not paid yet',
   Received: 'Member confirmed',
+  'Awaiting member': 'Paid · waiting for member',
+  'Not Started': 'Not started',
+  'In Progress': 'In progress',
+  'Claim Submitted': 'Claim sent',
 };
 const statusTones: Record<string, string> = {
   Active: 'green',
