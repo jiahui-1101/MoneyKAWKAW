@@ -5,7 +5,7 @@
   color-scheme: light;
   --font-body: 'DM Sans Variable', 'Segoe UI', sans-serif;
   --font-display: 'Manrope Variable', 'Segoe UI', sans-serif;
-  --canvas: #f7f8fa;
+  --canvas: #f6f6f8;
   --surface: #ffffff;
   --surface-soft: #fafaf9;
   --ink: #111114;
@@ -13,10 +13,10 @@
   --subtle: #62626b;
   --line: #e7e7ec;
   --line-strong: #c9c9d2;
-  --brand: #ad4808;
-  --brand-hover: #8c3806;
-  --brand-soft: #fff2e8;
-  --accent: #ff7823;
+  --brand: #111114;
+  --brand-hover: #34343c;
+  --brand-soft: #efeff2;
+  --accent: #f7941d;
   --green: #2f8f3a;
   --green-soft: #edf6f0;
   --teal: #1597d5;
@@ -28,10 +28,10 @@
   --violet-soft: #f2eff8;
   --dark: #0b0b0f;
   --dark-muted: #c9c9d6;
-  --focus: #943a04;
+  --focus: #111114;
   --shadow: 0 3px 16px #20262605, 0 1px 3px #20262603;
   --shadow-popover: 0 20px 70px #18241f2e;
-  --shadow-brand: 0 1px 2px #ad480829;
+  --shadow-brand: 0 2px 3px #11111414;
   --overlay: #19231f80;
   /* Airost logo colours — chart series */
   --ai-orange: #f7941d;
