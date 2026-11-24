@@ -21,10 +21,6 @@
   <a href="#project-materials">📁 Project Materials</a>
 </p>
 
-<p align="center">
-  <img src="docs/screenshots/overview-desktop.jpg" alt="MoneyKAWKAW Director overview with activity budgets and spending stages" width="900">
-</p>
-
 ---
 
 ## Table of Contents
@@ -33,7 +29,6 @@
 - [Problem Statement](#problem-statement)
 - [Introduction](#introduction)
 - [Demo](#demo)
-- [Screenshots](#screenshots)
 - [Live Deployment](#live-deployment)
 - [Main Functions](#main-functions)
 - [Role Workflows](#role-workflows)
@@ -94,25 +89,6 @@ The app supports Director, Treasurer, Head of Department (HOD), and Committee Me
 Open the [MoneyKAWKAW live app](https://moneykawkaw.pages.dev/). Workspace sign-in is invite-only; credentials are not published here.
 
 To explore without an invitation, run the app locally with <code>VITE_DATA_MODE=local</code> (see [Local Development](#local-development)) and open <code>/demo</code> to pick a fictional Director, HOD, Treasurer, or Member profile.
-
-## Screenshots
-
-| Director | HOD |
-|---|---|
-| <img src="docs/screenshots/activity-budget-desktop.jpg" alt="Director activity budget dashboard" width="420"> | <img src="docs/hod/screenshots/task-board-desktop.jpg" alt="HOD purchasing task board" width="420"> |
-| Activity budget dashboard with department allocations and spending stages | Department purchasing tasks with budgets, due dates, and assignees |
-
-| Committee Member | Treasurer |
-|---|---|
-| <img src="docs/member/screenshots/receipt-review-desktop.jpg" alt="Member receipt review with OCR line items" width="420"> | <img src="docs/treasurer/screenshots/claim-review-desktop.png" alt="Treasurer claim review with evidence and audit history" width="420"> |
-| Receipt capture and OCR line review before submission | Claim evidence, corrections, and review decision |
-
-| Advisory risk analysis | Payment proof |
-|---|---|
-| <img src="docs/treasurer/screenshots/risk-analysis-desktop.png" alt="Treasurer advisory over-budget analysis" width="420"> | <img src="docs/treasurer/screenshots/payment-proof-desktop.png" alt="Treasurer payment proof record" width="420"> |
-| Contributing factors are shown; the Treasurer still decides | External transfer recorded with proof, separate from approval |
-
-More screenshots, including mobile layouts, are in [docs/screenshots](docs/screenshots), [docs/hod/screenshots](docs/hod/screenshots), [docs/member/screenshots](docs/member/screenshots), and [docs/treasurer/screenshots](docs/treasurer/screenshots).
 
 ## Live Deployment
 
@@ -204,7 +180,7 @@ sequenceDiagram
     H->>S: Create purchase task with item budget and due date
     S-->>M: Task assigned (estimate reserved in department budget)
     M->>S: Upload receipt, review OCR lines, submit claim
-    S->>S: Validate scope, amounts, and status; replace task estimate with claim amount
+    S->>S: Validate scope, amounts, and status, then replace task estimate with claim amount
     T->>S: Start review, open evidence and history
     T->>S: Optional advisory over-budget analysis
     T->>S: Approve or decline with reason
@@ -456,8 +432,7 @@ MoneyKAWKAW/
 ├── ml/                      offline model experiments (receipt, risk, assistant)
 ├── public/                  favicon, OCR assets, and model runtimes
 └── docs/
-    ├── screenshots/         Director screenshots
-    ├── hod/ member/ treasurer/   role guides, verification notes, screenshots
+    ├── hod/ member/ treasurer/   role guides and verification notes
     └── supabase/            database, authentication, and security setup
 ```
 
