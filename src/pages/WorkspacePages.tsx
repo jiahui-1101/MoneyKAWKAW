@@ -23,19 +23,19 @@ export function History() {
   return (
     <div className="stack">
       <PageHeader
-        eyebrow="A RECORD OF THE DETAILS"
-        title="Activity log"
-        description="Follow activity setup and allocation changes across the workspace."
+        eyebrow="HISTORY"
+        title="History"
+        description="Every change to activities and department budgets."
       />
       <div className="history-filters">
         <input
           aria-label="Search history"
           value={query}
           onChange={(e) => setQuery(e.target.value)}
-          placeholder="Search changes, details, or actor…"
+          placeholder="Search by change or person…"
         />
         <select
-          aria-label="History activity"
+          aria-label="Filter by activity"
           value={activity}
           onChange={(e) => setActivity(e.target.value)}
         >
@@ -51,7 +51,7 @@ export function History() {
       <p className="data-note">
         {demoMode
           ? 'Demo history stays on this device and is cleared by a demo reset.'
-          : 'Club history is stored on the server. Workspace controls cannot edit or delete audit events.'}
+          : 'History is saved for the club and can’t be edited or deleted.'}
       </p>
     </div>
   );
@@ -86,12 +86,12 @@ export function Settings() {
       <PageHeader
         eyebrow="MAKE IT YOUR WORKSPACE"
         title="Settings"
-        description="Set display preferences and understand your demo workspace."
+        description="Choose your time zone and budget warning level."
       />
       <div className="settings-layout">
         <Panel
           title="Workspace preferences"
-          subtitle="Consistent dates and budget attention thresholds"
+          subtitle="Time zone and budget warning"
         >
           <form className="settings-form stack" onSubmit={save} noValidate>
             <Field label="Workspace currency" id="currency">
@@ -102,17 +102,16 @@ export function Settings() {
               />
             </Field>
             <p className="field-hint">
-              Currency is configured in the mock workspace seed. Changing it requires migrating
-              monetary records; this demo does not convert currencies.
+              Currency is set to RM for this club.
             </p>
-            <Field label="Display timezone" id="timezone">
+            <Field label="Time zone" id="timezone">
               <select id="timezone" value={timezone} onChange={(e) => setTimezone(e.target.value)}>
                 <option value="Asia/Kuala_Lumpur">Kuala Lumpur (UTC+08:00)</option>
                 <option value="Asia/Singapore">Singapore (UTC+08:00)</option>
-                <option value="UTC">Coordinated Universal Time (UTC)</option>
+                <option value="UTC">UTC (world time)</option>
               </select>
             </Field>
-            <Field label="Utilization attention threshold (%)" id="threshold">
+            <Field label="Warn me when budget used reaches (%)" id="threshold">
               <input
                 id="threshold"
                 inputMode="numeric"
@@ -121,7 +120,7 @@ export function Settings() {
               />
             </Field>
             <p className="field-hint">
-              Choose 1–100. Activity and department progress bars turn amber at this percentage.
+              Choose 1–100. Activity and department progress bars turn yellow at this percentage.
               Recorded spending above budget is always marked red.
             </p>
             {error && (
@@ -141,38 +140,37 @@ export function Settings() {
           <Panel title="Director access">
             <div className="panel-body access-note">
               <ShieldCheck size={25} />
-              <h3>Activity setup & financial oversight</h3>
+              <h3>What you can do</h3>
               <p>
-                This workspace is limited to Director actions. Department lead names are descriptive
-                and do not assign permissions.
+                As Director you set up activities, budgets and departments. Typing a department
+                head’s name doesn’t give them access; choose the HOD in the department form.
               </p>
               <p>
-                Real authentication, role assignments, and server authorization will be integrated
-                in a later phase.
+                Only the Treasurer approves and pays claims.
               </p>
             </div>
           </Panel>
-          <Panel title="Local demo data">
+          <Panel title="Demo data">
             <div className="panel-body stack">
               <p className="settings-copy">
-                Changes persist in this browser. Sample claims and payments are fictional. Restore
-                the sample workspace to clear your local changes.
+                Your changes are saved in this browser. Sample claims and payments are made up. Reset
+                to go back to the sample data.
               </p>
               <button className="btn" onClick={() => setConfirm(true)}>
                 <RotateCcw size={14} />
-                Reset demo workspace
+                Reset demo data
               </button>
             </div>
           </Panel>
         </div>
       </div>
       {confirm && (
-        <Modal title="Reset your demo workspace?" onClose={() => setConfirm(false)}>
+        <Modal title="Reset demo data?" onClose={() => setConfirm(false)}>
           <div className="row">
             <AlertCircle size={22} className="danger-text" />
             <p>
-              This clears created activities, department changes, settings, and local history.
-              Fictional sample records will be restored.
+              This deletes the activities, departments, settings and history you changed, and brings
+              back the sample data. You can’t undo this.
             </p>
           </div>
           {error && (
@@ -194,11 +192,11 @@ export function Settings() {
                   setSetupRevision(0);
                   setConfirm(false);
                 } catch {
-                  setError('Storage is unavailable. Enable browser storage and retry.');
+                  setError('This browser can’t save data. Allow site storage, then try again.');
                 }
               }}
             >
-              Reset workspace
+              Reset demo data
             </button>
           </div>
         </Modal>

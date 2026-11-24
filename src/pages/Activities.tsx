@@ -50,8 +50,8 @@ export function Activities() {
       </PageHeader>
       <div className="activity-intro">
         <div>
-          <span className="eyebrow">YOUR ACTIVITY PORTFOLIO</span>
-          <h2>{store.activities.length} activities. Plenty of possibility.</h2>
+          <span className="eyebrow">YOUR ACTIVITIES</span>
+          <h2>{store.activities.length} {store.activities.length === 1 ? 'activity' : 'activities'}</h2>
           <p>Give each one a clear budget and the right team to bring it to life.</p>
         </div>
         <span className="intro-mark">
@@ -61,7 +61,7 @@ export function Activities() {
       <Panel
         title="All activities"
         subtitle="Your club’s plans, in one place"
-        action={<span className="count-label">{activities.length} results</span>}
+        action={<span className="count-label">{activities.length} {activities.length === 1 ? 'result' : 'results'}</span>}
       >
         <div className="filters">
           <div className="search-field">
@@ -114,7 +114,7 @@ export function Activities() {
             title={
               store.activities.length
                 ? 'No matching activities'
-                : 'Make room for your next big idea'
+                : 'No activities yet'
             }
             action={
               store.activities.length ? (

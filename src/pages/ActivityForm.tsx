@@ -67,8 +67,8 @@ export function ActivityForm() {
     );
   const cancel = () => (dirty ? setDiscard(true) : navigate(back));
   if (existing?.financialState && existing.financialState !== 'Open') return (
-    <Empty title="Activity setup is read-only" action={<Link className="btn" to={back + '/closing'}>Activity closing</Link>}>
-      The financial closing workflow controls changes to this activity.
+    <Empty title="This activity is being closed" action={<Link className="btn" to={back + '/closing'}>Go to closing</Link>}>
+      You can’t edit it while it is being closed.
     </Empty>
   );
   const submit = async (e: FormEvent) => {
@@ -92,11 +92,11 @@ export function ActivityForm() {
         const saved = await mutate(
           (s) => {
             if ((s.setupRevision ?? 0) !== setupRevision)
-              throw new Error('Activity setup changed in another view. Reload before saving this form.');
+              throw new Error('Someone else changed this activity. Reload the page and try again.');
             const next = upsertActivity(s, input, id);
             return configureTreasurer(next, id ?? next.activities[0].id, treasurer);
           },
-          id ? 'Activity updated successfully.' : 'Activity created. Next, configure your departments.',
+          id ? 'Activity updated successfully.' : 'Activity created. Next, add departments.',
         );
         activityId = id ?? saved.activities[0].id;
       } else {
@@ -121,7 +121,7 @@ export function ActivityForm() {
       <PageHeader
         eyebrow={id ? 'ACTIVITY SETTINGS' : 'SOMETHING GOOD STARTS HERE'}
         title={id ? 'Edit activity' : 'New activity'}
-        description="A clear purpose, a thoughtful budget, and a team ready to go."
+        description="Add the name, dates and budget. You’ll add departments next."
       />
       {!id && (
         <div className="setup-steps">
@@ -144,8 +144,8 @@ export function ActivityForm() {
             <div className="form-section-title">
               <span>01</span>
               <div>
-                <h2>Give your activity a purpose</h2>
-                <p>The essentials that bring everyone onto the same page.</p>
+                <h2>Basic details</h2>
+                <p>Name, type and dates</p>
               </div>
             </div>
             <Field label="Activity name" id="name" required error={invalid.includes('name')}>
@@ -226,12 +226,12 @@ export function ActivityForm() {
             <div className="form-section-title">
               <span>02</span>
               <div>
-                <h2>Set the financial foundation</h2>
-                <p>The overall limit for all your activity’s departments.</p>
+                <h2>Budget</h2>
+                <p>The most this activity can spend, shared by all departments</p>
               </div>
             </div>
             <Field
-              label={`Overall budget (${currency})`}
+              label={`Activity budget (${currency})`}
               id="budget"
               required
               error={invalid.includes('budget')}
@@ -249,11 +249,11 @@ export function ActivityForm() {
               </div>
             </Field>
             <p className="field-hint">
-              Department allocations must stay within this budget.
+              Department budgets must add up to this or less.
               {existing &&
-                ` Currently allocated: ${money(existing.departments.reduce((s, d) => s + d.allocation, 0))}.`}
+                ` Already given to departments: ${money(existing.departments.reduce((s, d) => s + d.allocation, 0))}.`}
             </p>
-            {demoMode && <Field label="Treasurer oversight" id="treasurer-access">
+            {demoMode && <Field label="Treasurer for this activity" id="treasurer-access">
               <select
                 id="treasurer-access"
                 value={treasurer ? 'yes' : 'no'}
@@ -291,7 +291,7 @@ export function ActivityForm() {
           <ul>
             <li>
               <Check size={15} />
-              Keep unallocated funds for flexibility
+              Keep some budget spare for surprises
             </li>
             <li>
               <Check size={15} />
@@ -303,7 +303,7 @@ export function ActivityForm() {
             </li>
           </ul>
           <div className="aside-note">
-            {demoMode ? 'This is a local demo. Your changes are saved in this browser.' : 'Activity details are saved to the connected club workspace.'}
+            {demoMode ? 'This is a local demo. Your changes are saved in this browser.' : 'Changes are saved for your whole club.'}
           </div>
         </aside>
       </div>
