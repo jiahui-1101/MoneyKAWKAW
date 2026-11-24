@@ -37,10 +37,10 @@ export function TreasuryActivities() {
       <PageHeader
         eyebrow="ACTIVITY FINANCES"
         title="Activity finances"
-        description="Director-managed budgets across the activities under your oversight."
+        description="Budgets for activities you manage. Only the Director can change budgets."
       />
       <Panel
-        title="Authorized activities"
+        title="Your activities"
         subtitle={`${data.activities.length} activities · budgets are managed by the Director`}
       >
         <div className="filters">
@@ -64,8 +64,8 @@ export function TreasuryActivities() {
               <option key={t}>{t}</option>
             ))}
           </select>
-          {!demoMode && <select className="compact-select" aria-label="Financial stage" value={stage} onChange={(event) => setStage(event.target.value)}>
-            <option value="">All financial stages</option>
+          {!demoMode && <select className="compact-select" aria-label="Stage" value={stage} onChange={(event) => setStage(event.target.value)}>
+            <option value="">All stages</option>
             <option>Open</option><option>Closing</option><option>Archived</option>
           </select>}
         </div>
@@ -82,12 +82,12 @@ export function TreasuryActivities() {
                   {[
                     'ACTIVITY',
                     'OVERALL BUDGET',
-                    'ALLOCATED',
-                    'RECORDED',
-                    'AVAILABLE',
-                    'PENDING',
-                    'UTILIZATION',
-                    'FINANCIAL STATUS',
+                    'GIVEN TO DEPTS',
+                    'CLAIMED',
+                    'FREE TO SPEND',
+                    'WAITING REVIEW',
+                    'USED %',
+                    'BUDGET HEALTH',
                   ].map((h) => (
                     <th key={h}>{h}</th>
                   ))}
@@ -130,10 +130,10 @@ export function TreasuryActivities() {
                           }
                         >
                           {s.available < 0
-                            ? 'Deficit'
+                            ? 'Over budget'
                             : s.utilization >= data.settings.warningPercent
-                              ? 'Attention'
-                              : 'Within plan'}
+                              ? 'Nearly used up'
+                              : 'On track'}
                         </Badge>
                       </td>
                     </tr>
@@ -174,20 +174,20 @@ export function TreasuryActivityDetail({ closing = false }: { closing?: boolean 
   if (!activity)
     return (
       <Empty
-        title="Activity access restricted"
+        title="Activity not found"
         action={
           <Link className="btn" to="/treasurer/activities">
             Back to activities
           </Link>
         }
       >
-        This record is unavailable within your Treasurer oversight.
+        This activity doesn’t exist or you don’t manage it.
       </Empty>
     );
   if (closing && !demoMode) return (
     <div className="stack">
-      <Link className="back-link" to={`/treasurer/activities/${activity.id}`}>← Activity financial dashboard</Link>
-      <PageHeader eyebrow="ACTIVITY RECONCILIATION" title={activity.name} description={activity.description} />
+      <Link className="back-link" to={`/treasurer/activities/${activity.id}`}>← Back to activity</Link>
+      <PageHeader eyebrow="CLOSING THE ACTIVITY" title={activity.name} description={activity.description} />
       <ActivityClosingPanel key={activity.id} activity={activity} workspaceRole="Treasurer" reload={reload} />
     </div>
   );
@@ -200,7 +200,7 @@ export function TreasuryActivityDetail({ closing = false }: { closing?: boolean 
   return (
     <div className="stack">
       <Link className="back-link" to="/treasurer/activities">
-        ← Activities / Financial dashboard
+        ← Back to activities
       </Link>
       <PageHeader
         eyebrow={`${activity.type.toUpperCase()} · ${financialStateLabel(activity.financialState, activity.status)}`}
@@ -208,35 +208,35 @@ export function TreasuryActivityDetail({ closing = false }: { closing?: boolean 
         description={activity.description}
       >
         <TextLink to={`/treasurer/history?activity=${id}`}>Payment history</TextLink>
-        {!demoMode && <TextLink to={`/treasurer/activities/${id}/closing`}>Activity closing</TextLink>}
+        {!demoMode && <TextLink to={`/treasurer/activities/${id}/closing`}>Close activity</TextLink>}
       </PageHeader>
       <MetricCards
         items={[
           {
-            label: 'Overall budget',
+            label: 'Activity budget',
             value: money(s.budget, true),
             icon: Wallet,
-            note: 'Director-managed ceiling',
+            note: 'Set by the Director',
           },
           {
-            label: 'Recorded claims',
+            label: 'Claimed',
             value: money(s.recorded, true),
             icon: CircleDollarSign,
-            note: 'Approved liability + paid expenditure',
+            note: 'Approved + paid claims',
             tone: 'violet',
           },
           {
-            label: 'Remaining budget',
+            label: 'Left after claims',
             value: money(s.remaining, true),
             icon: ArrowDownLeft,
-            note: 'Budget less recorded',
+            note: 'Budget minus claimed',
             tone: 'green',
           },
           {
-            label: 'Budget utilization',
+            label: 'Used %',
             value: `${s.utilization.toFixed(1)}%`,
             icon: Percent,
-            note: 'Recorded / overall budget',
+            note: 'Claimed ÷ budget',
             tone: 'gold',
           },
         ]}
@@ -247,8 +247,8 @@ export function TreasuryActivityDetail({ closing = false }: { closing?: boolean 
       <TreasuryLifecycle data={scope} />
       <FinancialAlerts data={scope} />
       <Panel
-        title="Department spending breakdown"
-        subtitle="Available funds also reserve open purchasing tasks"
+        title="Spending by department"
+        subtitle="“Free to spend” also subtracts unfinished purchases"
       >
         <div className="table-scroll" tabIndex={0} role="region" aria-label="Department balances">
           <table>
@@ -256,13 +256,13 @@ export function TreasuryActivityDetail({ closing = false }: { closing?: boolean 
               <tr>
                 {[
                   'DEPARTMENT',
-                  'ALLOCATION',
-                  'RECORDED',
-                  'PENDING',
-                  'COMMITTED',
+                  'BUDGET',
+                  'CLAIMED',
+                  'WAITING REVIEW',
+                  'SET ASIDE',
                   'PAID',
-                  'AVAILABLE',
-                  'UTILIZATION',
+                  'FREE TO SPEND',
+                  'USED %',
                 ].map((h) => (
                   <th key={h}>{h}</th>
                 ))}
@@ -275,7 +275,7 @@ export function TreasuryActivityDetail({ closing = false }: { closing?: boolean 
                   <tr key={d.id}>
                     <td>
                       <strong>{d.name}</strong>
-                      <small className="cell-sub">{d.head || 'HOD name not recorded'}</small>
+                      <small className="cell-sub">{d.head || 'No HOD assigned'}</small>
                     </td>
                     {[b.budget, b.recorded, b.pending, b.committed, b.paid, b.available].map(
                       (n, i) => (
@@ -293,13 +293,13 @@ export function TreasuryActivityDetail({ closing = false }: { closing?: boolean 
         </div>
         {!activity.departments.length && (
           <Empty title="No departments yet">
-            The Director can configure this activity’s departments and allocations.
+            Ask the Director to add departments and budgets.
           </Empty>
         )}
       </Panel>
       <Panel
-        title="Activity claims & payment status"
-        subtitle="Filter the shared records by department, member, submission date, and review status"
+        title="Claims in this activity"
+        subtitle="Filter by department, member, date or status"
       >
         <ClaimList activityId={id} />
       </Panel>

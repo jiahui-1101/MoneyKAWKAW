@@ -11,7 +11,7 @@ export function ClaimDistribution({ data }: { data: Store }) {
   const states = demoMode ? reviewStates : ['Pending', 'Under Review', 'Approved', 'Rejected', 'Payment Pending', 'Paid', 'Received'];
   const countFor = (state: string) => data.expenses.filter((e) => (demoMode ? e.state : e.lifecycle) === state).length;
   return (
-    <Panel title="Claims at a glance" subtitle="Every submitted record, including declined claims">
+    <Panel title="Claims by status" subtitle="All submitted claims, including declined">
       <div className="distribution">
         <div className="donut">
           <svg viewBox="0 0 180 180" role="img" aria-label={`${total} claims by review status`}>
@@ -88,7 +88,7 @@ export function SpendingChart({
   return (
     <Panel
       title={`Spending by ${departments ? 'department' : 'activity'}`}
-      subtitle={demoMode ? 'Recorded claims · pending + approved, excluding declined' : 'Approved unpaid liability and paid expenditure · pending exposure stays separate'}
+      subtitle={demoMode ? 'Claims waiting for review + approved, not declined' : 'Approved and paid claims. Claims waiting for review are not included.'}
     >
       <div className="treasury-chart-list">
         {rows.map((r, i) => (
@@ -106,7 +106,7 @@ export function SpendingChart({
                 style={{ width: `${total ? (r.value / total) * 100 : 0}%` }}
               />
             </div>
-            <small>{total ? ((r.value / total) * 100).toFixed(1) : 0}% of recorded expenses</small>
+            <small>{total ? ((r.value / total) * 100).toFixed(1) : 0}% of total spending</small>
           </div>
         ))}
       </div>
@@ -137,31 +137,31 @@ export function FinancialAlerts({ data }: { data: Store }) {
   );
   return (
     <Panel
-      title="Budget attention"
-      subtitle="Item overruns and department deficits have separate limits"
+      title="Needs attention"
+      subtitle="Items over their budget, and departments over budget"
     >
       <div className="treasury-alerts">
         {deficits.map((d) => (
           <Link key={d.id} to={d.to}>
-            <Badge tone="danger">Deficit</Badge>
+            <Badge tone="danger">Over budget</Badge>
             <span>
               {d.name}
-              <small className="cell-sub">Available funds below zero by {money(d.value)}</small>
+              <small className="cell-sub">Over budget by {money(d.value)}</small>
             </span>
           </Link>
         ))}
         {over.map((e) => (
           <Link key={e.id} to={`/treasurer/claims/${e.id}/risk`}>
-            <Badge tone="gold">Item variance</Badge>
+            <Badge tone="gold">Over item budget</Badge>
             <span>
               {e.description}
-              <small className="cell-sub">Review justification and budget impact</small>
+              <small className="cell-sub">Check the member’s reason</small>
             </span>
           </Link>
         ))}
         {!deficits.length && !over.length && (
-          <Empty title="Within the current plan">
-            No item overruns or department deficits are recorded.
+          <Empty title="All within budget">
+            No items or departments are over budget.
           </Empty>
         )}
       </div>
@@ -174,16 +174,16 @@ export function TreasuryLifecycle({ data }: { data: Store }) {
   return (
     <div className="budget-pulse">
       <div>
-        <span className="eyebrow">THE WHOLE FINANCIAL PICTURE</span>
-        <h2>{money(s.available)} available to plan</h2>
+        <span className="eyebrow">BUDGET SUMMARY</span>
+        <h2>{money(s.available)} free to spend</h2>
         <p>
-          {money(s.pending)} awaiting decision · {money(s.committed)} committed · {money(s.paid)}{' '}
-          payments recorded
+          {money(s.pending)} waiting for review · {money(s.committed)} set aside · {money(s.paid)}{' '}
+          paid
         </p>
       </div>
       <div className="pulse-progress">
         <div className="row between">
-          <span>Budget utilization</span>
+          <span>Budget used</span>
           <strong>{s.utilization.toFixed(1)}%</strong>
         </div>
         <Progress
