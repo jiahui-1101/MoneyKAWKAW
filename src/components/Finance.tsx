@@ -96,7 +96,7 @@ export function ActivityTable({
       className="table-scroll"
       tabIndex={0}
       role="region"
-      aria-label="Scrollable financial table"
+      aria-label="Activities table"
     >
       <table>
         <thead>

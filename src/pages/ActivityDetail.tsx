@@ -32,7 +32,7 @@ export function ActivityDetail({
           </Link>
         }
       >
-        It may not exist in this browser’s demo workspace.
+        It may have been deleted, or the link is wrong.
       </Empty>
     );
   const summary = summarize(store, a.id);
@@ -73,8 +73,8 @@ export function ActivityDetail({
           ['overview', 'Overview', path],
           ['map', 'Money map', `${path}/map`],
           ['departments', 'Departments', `${path}/departments`],
-          ['budget', 'Budget dashboard', `${path}/budget`],
-          ...(!demoMode ? [['closing', 'Activity closing', `${path}/closing`]] : []),
+          ['budget', 'Budget',  `${path}/budget`],
+          ...(!demoMode ? [['closing', 'Close activity',  `${path}/closing`]] : []),
         ].map(([key, label, to]) => (
           <NavLink key={key} to={to} end className={({ isActive }) => (isActive ? 'active' : '')}>
             {label}
@@ -92,8 +92,8 @@ export function ActivityDetail({
       ) : tab === 'departments' ? (
         <>
           <div className="section-intro">
-            <h2>A clear role. A thoughtful allocation.</h2>
-            <p>Keep the team’s total allocations within the overall budget of {money(a.budget)}.</p>
+            <h2>Split the budget between departments</h2>
+            <p>Department budgets must add up to {money(a.budget)} or less.</p>
           </div>
           <Departments activity={a} />
         </>
@@ -103,13 +103,13 @@ export function ActivityDetail({
           {tab === 'overview' && (
             <Panel
               title="About this activity"
-              action={<TextLink to={`${path}/budget`}>Open budget dashboard</TextLink>}
+              action={<TextLink to={`${path}/budget`}>See budget</TextLink>}
             >
               <div className="panel-body">
                 <p className="activity-description">{a.description}</p>
                 <div className="activity-setup-note">
-                  <span>{money(summary.budget - summary.allocated)} remains unallocated.</span>
-                  <TextLink to={`${path}/departments`}>Configure departments</TextLink>
+                  <span>{money(summary.budget - summary.allocated)} not given to a department yet.</span>
+                  <TextLink to={`${path}/departments`}>Manage departments</TextLink>
                 </div>
               </div>
             </Panel>
@@ -134,37 +134,37 @@ function DepartmentBreakdown({ store, activity }: { store: Store; activity: Acti
       subtitle="See each team’s allocation, spending, and contribution to total expenses"
       action={
         <TextLink to={`/director/activities/${activity.id}/departments`}>
-          Manage allocations
+          Edit department budgets
         </TextLink>
       }
     >
       {!activity.departments.length ? (
         <Empty
-          title="Your budget is ready for a team"
+          title="No departments yet"
           action={
             <Link className="btn primary" to={`/director/activities/${activity.id}/departments`}>
-              Configure departments <ArrowUpRight size={15} />
+              Add departments <ArrowUpRight size={15} />
             </Link>
           }
         >
-          Add departments to start distributing your overall budget.
+          Add departments to split the budget.
         </Empty>
       ) : (
         <div
           className="table-scroll"
           tabIndex={0}
           role="region"
-          aria-label="Scrollable financial table"
+          aria-label="Department budgets table"
         >
           <table>
             <thead>
               <tr>
                 <th>DEPARTMENT</th>
-                <th>ALLOCATION</th>
-                <th>RECORDED</th>
-                <th>REMAINING</th>
-                <th>UTILIZATION</th>
-                <th>SHARE OF EXPENSES</th>
+                <th>BUDGET</th>
+                <th>CLAIMED</th>
+                <th>LEFT</th>
+                <th>USED %</th>
+                <th>SHARE OF CLAIMS</th>
               </tr>
             </thead>
             <tbody>
@@ -175,7 +175,7 @@ function DepartmentBreakdown({ store, activity }: { store: Store; activity: Acti
                   <tr key={d.id}>
                     <td>
                       <strong className="department-table-name">{d.name}</strong>
-                      <small className="cell-sub">{d.head || 'Lead not assigned'}</small>
+                      <small className="cell-sub">{d.head || 'No head yet'}</small>
                     </td>
                     <td className="money">{money(d.allocation)}</td>
                     <td className="money">{money(s.recorded)}</td>
@@ -207,19 +207,18 @@ function DepartmentBreakdown({ store, activity }: { store: Store; activity: Acti
             </tbody>
             <tfoot>
               <tr>
-                <td>Total departments</td>
+                <td>All departments</td>
                 <td className="money">{money(summary.allocated)}</td>
                 <td className="money">{money(summary.recorded)}</td>
                 <td className="money">{money(summary.allocated - summary.recorded)}</td>
-                <td colSpan={2}>{money(summary.budget - summary.allocated)} unallocated</td>
+                <td colSpan={2}>{money(summary.budget - summary.allocated)} not given out</td>
               </tr>
             </tfoot>
           </table>
         </div>
       )}
       <p className="data-note panel-note">
-        Remaining = allocation less recorded expenses. Utilization above 100% indicates an exceeded
-        allocation.
+        Left = budget minus claimed. Over 100% used means the department is over budget.
       </p>
     </Panel>
   );
@@ -228,17 +227,17 @@ function DepartmentBreakdown({ store, activity }: { store: Store; activity: Acti
 function ExpenseRecords({ store, activity }: { store: Store; activity: Activity }) {
   const { money, date } = useFormat();
   const [state, setState] = useState('');
-  if (!demoMode) return <Panel title="Private claim records" subtitle="Director access uses authorized financial aggregates">
-    <p className="data-note">The department totals above include recorded reimbursements. Individual claims,
-      receipts, payment destinations and proof remain private to their claimant and authorized Treasurer.</p>
+  if (!demoMode) return <Panel title="Claims are private" subtitle="You see totals only">
+    <p className="data-note">Only the member and the Treasurer can see each claim, receipt and bank detail. The
+      totals above include them.</p>
   </Panel>;
   const expenses = store.expenses.filter(
     (e) => e.activityId === activity.id && (!state || e.state === state),
   );
   return (
     <Panel
-      title="Recorded expenses"
-      subtitle="Read-only, fictional claim records · approval and payment are separate"
+      title="Claims"
+      subtitle="Sample claims (view only). Approved doesn’t mean paid."
       action={
         <select
           className="compact-select"
@@ -246,8 +245,8 @@ function ExpenseRecords({ store, activity }: { store: Store; activity: Activity 
           value={state}
           onChange={(e) => setState(e.target.value)}
         >
-          <option value="">All review states</option>
-          <option>Pending review</option>
+          <option value="">All statuses</option>
+          <option value="Pending review">Waiting for review</option>
           <option>In review</option>
           <option>Approved</option>
           <option>Declined</option>
@@ -259,16 +258,16 @@ function ExpenseRecords({ store, activity }: { store: Store; activity: Activity 
           className="table-scroll"
           tabIndex={0}
           role="region"
-          aria-label="Scrollable financial table"
+          aria-label="Claims table"
         >
           <table>
             <thead>
               <tr>
-                <th>EXPENSE / SOURCE</th>
+                <th>CLAIM</th>
                 <th>DEPARTMENT</th>
-                <th>REVIEW STATE</th>
+                <th>STATUS</th>
                 <th>AMOUNT</th>
-                <th>PAYMENT RECORDED</th>
+                <th>PAID</th>
               </tr>
             </thead>
             <tbody>
@@ -301,9 +300,8 @@ function ExpenseRecords({ store, activity }: { store: Store; activity: Activity 
           </table>
         </div>
       ) : (
-        <Empty title="No recorded expenses">
-          Expenses will appear here when claims are recorded. Director setup does not create claims
-          or payments.
+        <Empty title="No claims yet">
+          Claims show here after members submit them.
         </Empty>
       )}
     </Panel>

@@ -25,15 +25,15 @@ export function Departments({ activity }: { activity: Activity }) {
     <div className="stack">
       <div className="allocation-banner">
         <div>
-          <small>OVERALL BUDGET</small>
+          <small>ACTIVITY BUDGET</small>
           <strong className="money">{money(activity.budget)}</strong>
         </div>
         <div>
-          <small>DEPARTMENT ALLOCATIONS</small>
+          <small>GIVEN TO DEPARTMENTS</small>
           <strong className="money">{money(allocated)}</strong>
         </div>
         <div>
-          <small>STILL TO ALLOCATE</small>
+          <small>NOT GIVEN OUT YET</small>
           <strong className="money good-text">{money(activity.budget - allocated)}</strong>
         </div>
         <Progress
@@ -43,8 +43,8 @@ export function Departments({ activity }: { activity: Activity }) {
         />
       </div>
       <Panel
-        title="The teams behind the activity"
-        subtitle={editable ? 'Configure departments and give each one a clear allocation' : 'Read-only department allocations'}
+        title="Departments"
+        subtitle={editable ? 'Add departments and give each one a budget' : 'This activity is closing, so budgets can’t be changed'}
         action={
           editable && <button
             className="btn primary"
@@ -62,7 +62,7 @@ export function Departments({ activity }: { activity: Activity }) {
           <div className="department-search">
             <input
               aria-label="Search departments"
-              placeholder="Search departments or leads…"
+              placeholder="Search by department or head…"
               value={query}
               onChange={(e) => setQuery(e.target.value)}
             />
@@ -110,7 +110,7 @@ export function Departments({ activity }: { activity: Activity }) {
                   </div>
                   <div className="row between">
                     <h3>{d.name}</h3>
-                    {over && <Badge tone="danger">Over allocation</Badge>}
+                    {over && <Badge tone="danger">Over budget</Badge>}
                   </div>
                   <p>{d.description || 'No description added.'}</p>
                   <div className="department-lead">
@@ -123,32 +123,32 @@ export function Departments({ activity }: { activity: Activity }) {
                             .join('')
                         : '–'}
                     </span>
-                    <span>{d.head || 'Lead not assigned'}</span>
+                    <span>{d.head || 'No head yet'}</span>
                   </div>
                   <div className="department-amounts">
                     <div>
-                      <small>Allocated</small>
+                      <small>Budget</small>
                       <strong className="money">{money(d.allocation)}</strong>
                     </div>
                     <div>
-                      <small>{demoMode ? 'Recorded expenses' : 'Planned commitments'}</small>
+                      <small>{demoMode ? 'Claimed' : 'Set aside'}</small>
                       <strong className="money">{money(used)}</strong>
                     </div>
                   </div>
                   <Progress
                     value={utilization}
-                    label={`${d.name} ${demoMode ? 'spending' : 'planned commitment'} utilization`}
+                    label={`${d.name} budget used`}
                     tone={over ? 'danger' : 'green'}
                   />
                   <div className="row between department-remaining">
                     <span className={over ? 'danger-text' : ''}>
-                      {money(remaining)} {demoMode ? 'remaining' : 'available to plan'}
+                      {money(remaining)} {demoMode ? 'left' : 'free to spend'}
                     </span>
-                    <span>{utilization.toFixed(1)}% {demoMode ? 'used' : 'planned'}</span>
+                    <span>{utilization.toFixed(1)}% {demoMode ? 'used' : 'set aside'}</span>
                   </div>
                   {over && (
                     <p className="department-warning">
-                      {demoMode ? 'Expenses exceed' : 'Planned commitments exceed'} this allocation by {money(-remaining)}. Review the allocation.
+                      Over budget by {money(-remaining)}. Raise its budget or cancel a purchase.
                     </p>
                   )}
                 </article>
@@ -157,16 +157,16 @@ export function Departments({ activity }: { activity: Activity }) {
         </div>
         {!activity.departments.length && (
           <Empty
-            title="Every great activity needs a team"
+            title="No departments yet"
             action={
               editable && <button className="btn" onClick={() => setEditing('new')}>
                 <Plus size={15} />
-                Create your first department
+                Add department
               </button>
             }
           >
-            Add departments such as Logistics, Programme, or Marketing, then allocate part of your
-            overall budget.
+            Add departments such as Logistics, Programme or Marketing, then give each one part of
+            the budget.
           </Empty>
         )}
         {activity.departments.length > 0 &&
@@ -185,8 +185,8 @@ export function Departments({ activity }: { activity: Activity }) {
       {removing && (
         <Modal title={`Remove ${removing.name}?`} onClose={() => setRemoving(null)}>
           <p>
-            This releases its {money(removing.allocation)} allocation back to the activity.
-            Departments linked to expenses or assignments are protected from removal.
+            Its {money(removing.allocation)} budget goes back to the activity. You can’t remove a
+            department that has claims or tasks.
           </p>
           {error && (
             <p className="form-error" role="alert">
@@ -204,7 +204,7 @@ export function Departments({ activity }: { activity: Activity }) {
                 try {
                   await mutate(
                     (s) => removeDepartment(s, activity.id, removing.id),
-                    'Department removed. Its allocation is available again.',
+                    'Department removed. Its budget is free again.',
                   );
                   setRemoving(null);
                 } catch (e) {
@@ -219,10 +219,10 @@ export function Departments({ activity }: { activity: Activity }) {
       )}
       <p className="data-note">
         {demoMode
-          ? `All allocations are in ${currency}. Reducing an allocation below recorded expenses shows an overspending indicator; historical records are preserved.`
-          : `All allocations are in ${currency}. Active purchasing estimates reserve department funds until the task is cancelled or otherwise released.`}
+          ? `All budgets are in ${currency}. If you set a budget lower than what is already claimed, it shows as Over budget. Past records stay.`
+          : `All budgets are in ${currency}. Money for open purchase tasks is set aside until the task is done or cancelled.`}
       </p>
-      {!demoMode && <p className="data-note">Department removal is unavailable in this phase so linked assignments and the audit history remain intact.</p>}
+      {!demoMode && <p className="data-note">Departments can’t be removed yet, so their tasks and history stay safe.</p>}
     </div>
   );
 }
@@ -274,7 +274,7 @@ function DepartmentForm({
         await mutate(
           (s) => {
             if ((s.setupRevision ?? 0) !== setupRevision)
-              throw new Error('Department setup changed in another view. Reopen this form before saving.');
+              throw new Error('Someone else changed this department. Close and reopen this form.');
             const next = upsertDepartment(s, activity.id,
               { name, description, head, allocation: allocationSen }, department?.id);
             const target = department?.id ?? next.activities.find((a) => a.id === activity.id)!.departments.at(-1)!.id;
@@ -301,7 +301,7 @@ function DepartmentForm({
             hodUserId: hodId || undefined,
             memberUserIds: memberIds,
           }),
-          department ? 'Department, allocation, and assignments updated.' : 'Department created and budget allocated.',
+          department ? 'Department saved.' : 'Department created.',
         );
       }
       onClose();
@@ -311,12 +311,12 @@ function DepartmentForm({
   };
   return (
     <Modal
-      title={department ? `Edit ${department.name}` : 'Make room for your team'}
+      title={department ? `Edit ${department.name}` : 'Add department'}
       onClose={onClose}
     >
       <form className="stack" onSubmit={save} noValidate>
         <div className="inline-info">
-          Available for this department <strong className="money">{money(available)}</strong>
+          You can give this department up to <strong className="money">{money(available)}</strong>
         </div>
         <Field
           label="Department name"
@@ -343,7 +343,7 @@ function DepartmentForm({
             placeholder="What will this team look after?"
           />
         </Field>
-        <Field label="Department lead (optional)" id="department-head">
+        <Field label="Head’s name (for display only)" id="department-head">
           <input
             id="department-head"
             value={head}
@@ -352,7 +352,7 @@ function DepartmentForm({
             placeholder="e.g. Sarah Tan"
           />
         </Field>
-        <Field label={`Budget allocation (${currency})`} id="department-allocation" required>
+        <Field label={`Department budget (${currency})`} id="department-allocation" required>
           <div className="amount-field">
             <span>{currency}</span>
             <input
@@ -364,8 +364,8 @@ function DepartmentForm({
           </div>
         </Field>
         <p className="field-hint">
-          Start at zero if the allocation is still being planned. Naming a lead here is descriptive;
-          it does not grant role access.
+          Leave at 0 if you haven’t decided. Typing a name doesn’t give access; choose the HOD
+          below.
         </p>
         {store?.directory && (
           <DepartmentAccessFields

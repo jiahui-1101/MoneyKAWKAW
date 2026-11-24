@@ -19,9 +19,9 @@ export function DepartmentAccessFields({
 }) {
   return (
     <div className="stack">
-      <Field label={demoMode ? 'Assigned HOD (explicit demo access)' : 'Assigned HOD'} id="department-hod">
+      <Field label={'Head of Department (HOD)'} id="department-hod">
         <select id="department-hod" value={hodId} onChange={(e) => setHodId(e.target.value)}>
-          <option value="">No HOD assigned</option>
+          <option value="">No HOD yet</option>
           {directory.users
             .filter((u) => !demoMode || demoProfiles.some((p) => p.userId === u.id && p.role === 'HOD'))
             .map((u) => (
@@ -32,7 +32,7 @@ export function DepartmentAccessFields({
         </select>
       </Field>
       <fieldset className="field">
-        <legend className="membership-legend">Eligible committee members</legend>
+        <legend className="membership-legend">Committee members in this department</legend>
         <div className="membership-list">
           {directory.users
             .filter((u) => u.id !== hodId)
@@ -59,8 +59,8 @@ export function DepartmentAccessFields({
         </div>
       </fieldset>
       <p className="field-hint">
-        This explicitly grants access to this department only. The selected HOD is also eligible to
-        take a purchasing task. Descriptive lead names alone do not grant access.
+        Only the people you choose can see this department. The HOD can also take purchase
+        tasks.
       </p>
     </div>
   );
