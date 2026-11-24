@@ -29,7 +29,7 @@ export function ClaimDestination({ claim }: { claim: Expense }) {
       })
       .catch((e) => {
         if (active)
-          setError(e instanceof Error ? e.message : 'Unable to load selected destination.');
+          setError(e instanceof Error ? e.message : 'Couldn’t load the payment account.');
       })
       .finally(() => {
         if (active) setLoading(false);
@@ -46,7 +46,7 @@ export function ClaimDestination({ claim }: { claim: Expense }) {
     try {
       await run(
         () => memberClaimService.changeDestination(claim.id, account, reason),
-        'Selected destination changed with an audit record.',
+        'Payment account changed. The change is recorded.',
       );
       setOpen(false);
       setReason('');
@@ -57,8 +57,8 @@ export function ClaimDestination({ claim }: { claim: Expense }) {
   return (
     <>
       <Panel
-        title="Selected reimbursement destination"
-        subtitle="A claim snapshot · changing your default never silently redirects this request"
+        title="Where this claim will be paid"
+        subtitle="Changing your default account later won’t change this claim"
         action={
           demoMode && destination &&
           !locked && (
@@ -67,14 +67,14 @@ export function ClaimDestination({ claim }: { claim: Expense }) {
               disabled={busy || !data?.accounts.length}
               onClick={() => setOpen(true)}
             >
-              Change destination with reason
+              Change account
             </button>
           )
         }
       >
         <div className="member-content stack">
           {loading ? (
-            <p role="status">Loading your selected destination…</p>
+            <p role="status">Loading payment account…</p>
           ) : destination ? (
             <>
               <h3>{destination.label}</h3>
@@ -84,7 +84,7 @@ export function ClaimDestination({ claim }: { claim: Expense }) {
               <strong>{destination.masked}</strong>
               <p className="field-hint">
                 {!demoMode
-                  ? 'This submitted destination is frozen. Full instructions are available only to an independent authorized Treasurer during payment processing.'
+                  ? 'This account is locked for this claim. Only the Treasurer sees the full number, and only when paying you.'
                   : locked
                   ? 'This destination is locked because a payment was recorded or the claim was declined.'
                   : 'An unpaid destination change uses one of your saved accounts and records a reason. Full identifiers stay out of ordinary views.'}
@@ -92,10 +92,10 @@ export function ClaimDestination({ claim }: { claim: Expense }) {
             </>
           ) : (
             <Empty
-              title="Destination unavailable"
+              title="Couldn’t load payment account"
               action={
                 <button className="btn" onClick={() => setAttempt((n) => n + 1)}>
-                  Retry destination
+                  Try again
                 </button>
               }
             >
@@ -106,7 +106,7 @@ export function ClaimDestination({ claim }: { claim: Expense }) {
       </Panel>
       {open && (
         <Modal
-          title="Change this unpaid claim’s destination?"
+          title="Change the payment account for this claim?"
           onClose={() => {
             if (!busy) setOpen(false);
           }}
@@ -116,7 +116,7 @@ export function ClaimDestination({ claim }: { claim: Expense }) {
               The previous masked destination is retained in history. A recorded payment locks this
               action. Use the selector; avoid writing account identifiers in the reason.
             </p>
-            <Field id="replacement-account" label="My replacement account" required>
+            <Field id="replacement-account" label="New account" required>
               <select
                 id="replacement-account"
                 value={account}
@@ -130,7 +130,7 @@ export function ClaimDestination({ claim }: { claim: Expense }) {
                 ))}
               </select>
             </Field>
-            <Field id="replacement-reason" label="Reason for destination change" required>
+            <Field id="replacement-reason" label="Why are you changing it?" required>
               <textarea
                 id="replacement-reason"
                 maxLength={500}
@@ -145,10 +145,10 @@ export function ClaimDestination({ claim }: { claim: Expense }) {
             )}
             <div className="form-actions">
               <button type="button" className="btn" disabled={busy} onClick={() => setOpen(false)}>
-                Keep destination
+                Keep current account
               </button>
               <button className="btn primary" disabled={busy}>
-                {busy ? 'Saving…' : 'Confirm destination change'}
+                {busy ? 'Saving…' : 'Change account'}
               </button>
             </div>
           </form>

@@ -59,7 +59,7 @@ export function AccountForm({ id, onClose }: { id?: string; onClose: () => void 
     try {
       await run(
         () => accountService.save(form, id, revision),
-        'Payment destination saved. Submitted claims retain their selected snapshot.',
+        'Account saved. Claims you already sent keep their old account.',
       );
       onClose();
     } catch (e) {
@@ -68,7 +68,7 @@ export function AccountForm({ id, onClose }: { id?: string; onClose: () => void 
   };
   return (
     <Modal
-      title={id ? 'Edit my payment account' : 'Add a payment destination'}
+      title={id ? 'Edit payment account' : 'Add payment account'}
       onClose={() => {
         if (!busy) onClose();
       }}
@@ -85,7 +85,7 @@ export function AccountForm({ id, onClose }: { id?: string; onClose: () => void 
               {error}
             </p>
             <button type="button" className="btn" onClick={() => setAttempt((n) => n + 1)}>
-              Retry account
+              Try again
             </button>
           </>
         ) : (
@@ -105,13 +105,13 @@ export function AccountForm({ id, onClose }: { id?: string; onClose: () => void 
                 ))}
               </select>
             </Field>
-            <Field id="account-label" label="Friendly label" required>
+            <Field id="account-label" label="Nickname (e.g. My Maybank)" required>
               <input
                 id="account-label"
                 maxLength={80}
                 value={form.label}
                 onChange={(e) => setForm((f) => ({ ...f, label: e.target.value }))}
-                placeholder="e.g. Demo reimbursement account"
+                placeholder="e.g. My Maybank account"
               />
             </Field>
             <Field id="account-holder" label="Account holder" required>
@@ -123,20 +123,20 @@ export function AccountForm({ id, onClose }: { id?: string; onClose: () => void 
               />
             </Field>
             {form.kind === 'Bank' && (
-              <Field id="account-institution" label="Bank / institution" required>
+              <Field id="account-institution" label="Bank name" required>
                 <input
                   id="account-institution"
                   maxLength={80}
                   value={form.institution}
                   onChange={(e) => setForm((f) => ({ ...f, institution: e.target.value }))}
-                  placeholder="Demo institution"
+                  placeholder="e.g. Maybank"
                 />
               </Field>
             )}
             <Field
               id="account-identifier"
               label={
-                form.kind === 'Bank' ? 'Account identifier' : 'Registered TNG phone identifier'
+                form.kind === 'Bank' ? 'Account number' : 'Phone number linked to TNG'
               }
               required
             >
@@ -158,7 +158,7 @@ export function AccountForm({ id, onClose }: { id?: string; onClose: () => void 
               />
               <span>
                 {wasDefault
-                  ? 'This is your default. Choose a different default from the account list to replace it.'
+                  ? 'This is your default account. To change it, choose “Set default” on another account.'
                   : 'Make this my default for future drafts'}
               </span>
             </label>

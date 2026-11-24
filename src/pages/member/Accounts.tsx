@@ -18,7 +18,7 @@ export function MemberAccounts() {
     try {
       await run(
         () => accountService.setDefault(id),
-        'Default updated for future drafts. Existing claims are unchanged.',
+        'Default account changed. Claims you already sent aren’t affected.',
       );
     } catch (e) {
       setError(e instanceof Error ? e.message : 'Unable to change the default.');
@@ -28,7 +28,7 @@ export function MemberAccounts() {
     if (!removing) return;
     setError('');
     try {
-      await run(() => accountService.remove(removing.id), 'Unused payment account removed.');
+      await run(() => accountService.remove(removing.id), 'Account removed.');
       setRemoving(null);
     } catch (e) {
       setError(e instanceof Error ? e.message : 'Unable to remove this account.');
@@ -37,8 +37,8 @@ export function MemberAccounts() {
   return (
     <div className="stack">
       <PageHeader
-        eyebrow="MY PAYMENT PREFERENCES"
-        title="Payout accounts"
+        eyebrow="WHERE YOU GET PAID"
+        title="Payment accounts"
         description="Save your own reimbursement instructions and select a snapshot for each claim."
       >
         <button className="btn primary" onClick={() => setEditing(null)}>
@@ -59,8 +59,8 @@ export function MemberAccounts() {
         </p>
       )}
       <Panel
-        title="My saved destinations"
-        subtitle={demoMode ? 'Local demonstration only · use fictional details' : 'Private payment instructions · full details are shown only to you while editing'}
+        title="My accounts"
+        subtitle={demoMode ? 'Local demonstration only · use fictional details' : 'Only you can see the full number'}
       >
         <div className="member-account-grid">
           {data.accounts.map((a) => (
@@ -108,7 +108,7 @@ export function MemberAccounts() {
         </div>
         {!data.accounts.length && (
           <Empty
-            title="Add your first destination"
+            title="Add your first account"
             action={
               <button className="btn primary" onClick={() => setEditing(null)}>
                 Add payment account
@@ -128,7 +128,7 @@ export function MemberAccounts() {
       )}
       {removing && (
         <Modal
-          title="Remove this unused destination?"
+          title="Remove this account?"
           onClose={() => {
             if (!busy) setRemoving(null);
           }}
@@ -154,7 +154,7 @@ export function MemberAccounts() {
                 Keep account
               </button>
               <button className="btn danger" disabled={busy} onClick={() => void remove()}>
-                {busy ? 'Removing…' : 'Confirm removal'}
+                {busy ? 'Removing…' : 'Remove account'}
               </button>
             </div>
           </div>

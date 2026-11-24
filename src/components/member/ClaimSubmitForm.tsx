@@ -41,7 +41,7 @@ export function ClaimSubmitForm({
       .catch((e) => {
         if (active) {
           setSummary(null);
-          setError(e instanceof Error ? e.message : 'Unable to reconcile this draft.');
+          setError(e instanceof Error ? e.message : 'Couldn’t check this draft. Try again.');
         }
       })
       .finally(() => {
@@ -61,11 +61,11 @@ export function ClaimSubmitForm({
     try {
       await change(
         () => draftService.preferences(draft.id, draft.updatedAt, account, reason),
-        'Draft payment selection and explanation saved.',
+        'Draft saved.',
       );
       const current = await memberClaimService.context(draft.id);
       if (current.needsJustification && reason.trim().length < 3)
-        throw new Error('Explain this over-budget request before reviewing submission.');
+        throw new Error('Please explain why this costs more than the budget.');
       setConfirm(current);
     } catch (e) {
       setError(e instanceof Error ? e.message : 'Unable to prepare submission.');
@@ -84,7 +84,7 @@ export function ClaimSubmitForm({
             confirm.accountUpdatedAt,
             submissionKey,
           ),
-        'Claim submitted for Treasurer review. No approval or payment has occurred.',
+        'Claim sent to the Treasurer. You’ll be notified when it’s decided.',
       );
       navigate(`/member/claims/${claimId}`);
     } catch (e) {
@@ -93,29 +93,29 @@ export function ClaimSubmitForm({
   };
   return (
     <Panel
-      title="A clear request, ready for review"
-      subtitle="The claim amount is derived from your retained receipt items, never entered separately"
+      title="Submit your claim"
+      subtitle="The amount comes from the items you chose"
     >
       <form className="member-content stack" onSubmit={review} noValidate>
         <p className="settings-copy">
           {scope?.activity.name} / {scope?.department.name} · {task.purchasing!.name}
         </p>
         {loading ? (
-          <p role="status">Reconciling receipt and checking current budget context…</p>
+          <p role="status">Checking your claim against the budget…</p>
         ) : (
           summary && (
             <>
               <dl className="member-submit-facts">
                 <div>
-                  <dt>Allocated item budget</dt>
+                  <dt>Budget</dt>
                   <dd>{money(task.budget)}</dd>
                 </div>
                 <div>
-                  <dt>Claimable amount</dt>
+                  <dt>You’re claiming</dt>
                   <dd>{money(summary.amount)}</dd>
                 </div>
                 <div>
-                  <dt>Item variance</dt>
+                  <dt>Over (+) or under (−) budget</dt>
                   <dd className={summary.variance > 0 ? 'danger-text' : ''}>
                     {money(summary.variance)} · {summary.variancePercent.toFixed(2)}%
                   </dd>
@@ -139,8 +139,8 @@ export function ClaimSubmitForm({
           id="claim-justification"
           label={
             summary?.needsJustification
-              ? 'Over-budget justification'
-              : 'Purchase context / justification'
+              ? 'Why is it over budget?'
+              : 'Note for the Treasurer (optional)'
           }
           required={summary?.needsJustification}
         >
@@ -153,7 +153,7 @@ export function ClaimSubmitForm({
           />
         </Field>
         {data.accounts.length ? (
-          <Field id="claim-account" label="Selected payment account" required>
+          <Field id="claim-account" label="Pay me to" required>
             <select id="claim-account" value={account} onChange={(e) => setAccount(e.target.value)}>
               <option value="">Choose one of my saved accounts</option>
               {data.accounts.map((a) => (
@@ -166,20 +166,19 @@ export function ClaimSubmitForm({
           </Field>
         ) : (
           <Empty
-            title="Add a payment destination first"
+            title="Add a payment account first"
             action={
               <Link className="btn primary" to="/member/accounts">
                 Manage my accounts
               </Link>
             }
           >
-            Your receipt draft is saved. Return after adding fictional payment instructions for this
-            local demo.
+            Your draft is saved. Add a payment account, then come back.
           </Empty>
         )}
         <p className="field-hint">
-          Submission saves a destination snapshot. Later default/account edits do not redirect the
-          claim. An unpaid destination change requires a separate reason and audit record.
+          We’ll pay this claim to the account you choose here, even if you change your default
+          later.
         </p>
         {error && (
           <p className="form-error" role="alert">
@@ -190,7 +189,7 @@ export function ClaimSubmitForm({
           className="btn primary"
           disabled={saving || busy || loading || !summary || !data.accounts.length}
         >
-          Review submission
+          Review & submit
         </button>
       </form>
       {confirm && (
@@ -210,23 +209,22 @@ export function ClaimSubmitForm({
               <strong>{money(confirm.amount)}</strong>
             </p>
             <p className="settings-copy">
-              Destination: {confirm.destination?.label} · {confirm.destination?.masked}
+              Pay to: {confirm.destination?.label} · {confirm.destination?.masked}
               <br />
               {confirm.destination?.holder} · {confirm.destination?.institution}
             </p>
             <p className="settings-copy">
-              The original receipt, extraction, annotated line changes, explanation, and chosen
-              destination snapshot will be retained. Submitted amounts and source evidence cannot be
-              silently edited. The Treasurer will review; approval and payment are separate.
+              After you submit, your receipt, changes and payment account are saved and can’t be
+              edited. The Treasurer will review it. Approval and payment happen later, separately.
             </p>
             {reason && <p className="member-quote">{reason}</p>}
             {error && <p className="form-error" role="alert">{error}</p>}
             <div className="form-actions">
               <button className="btn" disabled={busy} onClick={() => setConfirm(null)}>
-                Keep reviewing
+                Go back
               </button>
               <button className="btn primary" disabled={busy} onClick={() => void submit()}>
-                {busy ? 'Submitting…' : 'Confirm claim submission'}
+                {busy ? 'Submitting…' : 'Submit claim'}
               </button>
             </div>
           </div>
