@@ -39,7 +39,7 @@ export function TreasuryRisk() {
     try {
       await run(
         () => treasuryService.analyze(claim.id),
-        'Advisory risk analysis saved. No claim decision was made.',
+        'Risk check saved. The claim is not approved or declined yet.',
       );
     } catch (e) {
       setError(e instanceof Error ? e.message : 'Unable to analyze claim.');
@@ -48,15 +48,15 @@ export function TreasuryRisk() {
   return (
     <div className="stack">
       <Link className="back-link" to={`/treasurer/claims/${id}`}>
-        ← Claim detail / Budget & risk
+        ← Back to claim
       </Link>
       <PageHeader
-        eyebrow="RULE-BASED ADVISORY ANALYSIS"
-        title="Over-budget analysis"
+        eyebrow="ADVICE ONLY · YOU DECIDE"
+        title="Over-budget check"
         description={`${claim.description} · ${c.activity.name} / ${c.department.name}`}
       >
         {demoMode && <button className="btn" onClick={() => setConfigure(true)}>
-          Configure thresholds
+          Change risk levels
         </button>}
         {!final && (
           <button className="btn primary" disabled={busy} onClick={() => void analyze()}>
@@ -70,19 +70,19 @@ export function TreasuryRisk() {
         </p>
       )}
       <Panel
-        title="Financial safety assessment — Authoritative"
-        subtitle="Current shared balances · amounts below already reserve this submitted claim"
+        title="Budget check"
+        subtitle="Current balances. This claim is already counted in them."
       >
         <dl className="treasury-facts">
           {[
-            ['Allocated item budget', c.task ? money(c.task.budget) : 'Unlinked'],
+            ['Item budget', c.task ? money(c.task.budget) : 'No item budget'],
             ['Claim amount', money(claim.amount)],
             ['Over budget', money(Math.max(0, c.variance))],
-            ['Item variance', `${c.variancePercent.toFixed(2)}%`],
-            ['Department remaining', money(dep.remaining)],
-            ['Department available', money(dep.available)],
-            ['Activity remaining', money(activity.remaining)],
-            ['Activity available', money(activity.available)],
+            ['Over item budget', `${c.variancePercent.toFixed(2)}%`],
+            ['Department left after claims', money(dep.remaining)],
+            ['Department free to spend', money(dep.available)],
+            ['Activity left after claims', money(activity.remaining)],
+            ['Activity free to spend', money(activity.available)],
             [
               'Other pending claims',
               money(
@@ -91,7 +91,7 @@ export function TreasuryRisk() {
               ),
             ],
             [
-              'Approved unpaid liabilities',
+              'Approved, not yet paid',
               money(activity.recorded - activity.paid - (data.financialSummaries ? 0 : activity.pending)),
             ],
           ].map(([label, value]) => (
@@ -104,34 +104,32 @@ export function TreasuryRisk() {
       </Panel>
       <div className="treasury-justification">
         <span className="eyebrow">MEMBER’S EXPLANATION</span>
-        <p>{claim.review?.justification || 'No reason retained.'}</p>
+        <p>{claim.review?.justification || 'The member gave no explanation.'}</p>
       </div>
       <Panel
-        title="Financial impact of approval"
-        subtitle="Moving a submitted claim to approved does not add the expense twice"
+        title="What approving changes"
+        subtitle="This claim is already counted. Approving won’t count it twice."
       >
         <div className="treasury-impact">
-          <h3>{money(claim.amount)} becomes an approved liability if accepted.</h3>
+          <h3>If you approve, the club will owe the member {money(claim.amount)}.</h3>
           <p>
-            Pending and in-review claims already reduce available funds. Approval changes the review
-            classification; recording payment later moves the same amount from unpaid liability to
-            paid.
+            Claims waiting for review already reduce the money free to spend. Approving only changes
+            the status. Recording the payment later moves the amount from “owed” to “paid”.
           </p>
           <p>
             {dep.available < 0
-              ? `The department currently has a ${money(-dep.available)} deficit after claims and open task reservations.`
-              : `Department funds available after existing claims and reservations: ${money(dep.available)}.`}
+              ? `The department is ${money(-dep.available)} over budget, counting claims and unfinished purchases.`
+              : `Department money still free to spend: ${money(dep.available)}.`}
           </p>
           <p>
-            Declined claims are excluded from recorded expenses; their linked item estimates remain
-            reserved pending a future correction workflow.
+            Declined claims don’t count as spending. Their item budget stays set aside for now.
           </p>
         </div>
       </Panel>
       {analysis ? (
         <Panel
-          title={final ? 'Analysis retained at decision' : 'Saved advisory result'}
-          subtitle={`${time(analysis.at)} · ${analysis.actor} · ${final ? 'historical snapshot' : 'rerun to refresh current balances'}`}
+          title={final ? 'Risk check at decision time' : 'Latest risk check'}
+          subtitle={`${time(analysis.at)} · ${analysis.actor} · ${final ? 'saved when decided' : 'run again for the latest balances'}`}
         >
           <div className="treasury-risk-result">
             <Badge
@@ -139,29 +137,29 @@ export function TreasuryRisk() {
                 analysis.band === 'High' ? 'danger' : analysis.band === 'Medium' ? 'gold' : 'green'
               }
             >
-              {analysis.band} · rule-based risk level
+              {analysis.band} risk
             </Badge>
             <p>
-              A deterministic rule assessment, not a statistical prediction. The highest factor sets
-              the band. The Treasurer makes the decision.
+              Based on fixed rules, not a prediction. The highest factor sets the overall level. You
+              decide.
             </p>
             <dl className="treasury-facts">
               <div>
-                <dt>Snapshot variance</dt>
+                <dt>Over item budget</dt>
                 <dd>
                   {money(analysis.variance)} · {analysis.variancePercent.toFixed(2)}%
                 </dd>
               </div>
               <div>
-                <dt>Department available</dt>
+                <dt>Department free to spend</dt>
                 <dd>{money(analysis.departmentAvailable)}</dd>
               </div>
               <div>
-                <dt>Activity available</dt>
+                <dt>Activity free to spend</dt>
                 <dd>{money(analysis.activityAvailable)}</dd>
               </div>
               <div>
-                <dt>Other pending</dt>
+                <dt>Other claims waiting</dt>
                 <dd>{money(analysis.pendingOther)}</dd>
               </div>
             </dl>
@@ -179,18 +177,18 @@ export function TreasuryRisk() {
               </article>
             ))}
             <p className="field-hint">
-              Rules in this snapshot: medium variance ≥ {analysis.rules.mediumVariance}%; high ≥{' '}
-              {analysis.rules.highVariance}%; low headroom ≤ {analysis.rules.lowHeadroomPercent}%. A
-              negative available balance is High.
+              Rules used: Medium if {analysis.rules.mediumVariance}%+ over the item budget, High if{' '}
+              {analysis.rules.highVariance}%+. Low money left means {analysis.rules.lowHeadroomPercent}% of
+              the budget or less. Over budget is always High.
             </p>
           </div>
         </Panel>
       ) : (
-        <Panel title="Ready for a considered review">
-          <Empty title={final ? 'No historical analysis retained' : 'No analysis recorded yet'}>
+        <Panel title="Risk check">
+          <Empty title={final ? 'No risk check saved' : 'No risk check yet'}>
             {final
-              ? 'This legacy decision predates advisory snapshots. The current balances above provide context; no historical analysis is invented.'
-              : 'Select Analyze risk to calculate transparent factors from current shared records. Approval of an over-budget claim requires an analysis first.'}
+              ? 'This claim was decided before risk checks were saved. Use the current balances above.'
+              : 'Select Analyze risk to see what affects this claim. You must run it before approving an over-budget claim.'}
           </Empty>
         </Panel>
       )}
@@ -198,7 +196,7 @@ export function TreasuryRisk() {
         <PressureAnalysis key={claim.id} claimId={claim.id} revision={claim.review?.updatedAt ?? ''} />}
       {final && <PressureHistory key={claim.id} claimId={claim.id} />}
       <Link className="btn" to={`/treasurer/claims/${id}`}>
-        Return to claim review
+        Back to claim
       </Link>
       {configure && <RiskRulesForm onClose={() => setConfigure(false)} />}
     </div>

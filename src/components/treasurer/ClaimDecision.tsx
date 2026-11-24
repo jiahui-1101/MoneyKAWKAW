@@ -23,7 +23,7 @@ export function ClaimDecision({
     try {
       await run(
         () => treasuryService.decide(claim.id, claim.review!.updatedAt, decision, reason),
-        `Claim ${decision.toLowerCase()}. Decision and analysis snapshot saved.`,
+        `Claim ${decision.toLowerCase()}. Your decision and risk check were saved.`,
       );
       onClose();
     } catch (e) {
@@ -43,12 +43,12 @@ export function ClaimDecision({
         </p>
         <p className="settings-copy">
           {decision === 'Approved'
-            ? 'Confirm you reviewed the original receipt, changes, and budget impact. Approval creates an unpaid liability; it does not record a payment.'
-            : 'The member will see this reason in My Claims. The claim and original evidence remain in history.'}
+            ? 'Check the original receipt, any edits and the budget impact. Approving means the club owes this amount. It does not mark it as paid.'
+            : 'The member will see this reason in My claims. The claim and receipt stay in the history.'}
         </p>
         <Field
           id="decision-reason"
-          label={decision === 'Declined' ? 'Reason for declining' : 'Decision note'}
+          label={decision === 'Declined' ? 'Reason for declining' : 'Note (optional)'}
           required={decision === 'Declined'}
         >
           <textarea
