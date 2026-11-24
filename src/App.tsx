@@ -39,10 +39,10 @@ class ErrorBoundary extends Component<{ children: ReactNode }, { failed: boolean
   render() {
     return this.state.failed ? (
       <div className="empty">
-        <h1>The workspace couldn’t render.</h1>
-        <p>Reload the page to try again. Your saved local data is preserved.</p>
+        <h1>Something went wrong on this page.</h1>
+        <p>Reload the page to try again. Your saved data is safe.</p>
         <button className="btn primary" onClick={() => window.location.reload()}>
-          Reload workspace
+          Reload page
         </button>
       </div>
     ) : (
@@ -117,14 +117,14 @@ export default function App() {
                 path="*"
                 element={
                   <Empty
-                    title="This page isn’t in your workspace"
+                    title="Page not found"
                     action={
                       <Link className="btn primary" to="/director">
                         Back to overview
                       </Link>
                     }
                   >
-                    Choose an activity or a workspace section from the navigation.
+                    Pick a page from the menu.
                   </Empty>
                 }
               />

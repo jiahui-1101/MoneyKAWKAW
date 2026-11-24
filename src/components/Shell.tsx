@@ -23,8 +23,8 @@ import { demoMode } from '../services/supabase/client';
 const navigation = [
   { to: '/director', label: 'Overview', icon: LayoutDashboard, end: true },
   { to: '/director/activities', label: 'Activities', icon: FolderKanban },
-  { to: '/director/budgets', label: 'Budget overview', icon: PiggyBank },
-  { to: '/director/history', label: 'Activity log', icon: Activity },
+  { to: '/director/budgets', label: 'Budgets', icon: PiggyBank },
+  { to: '/director/history', label: 'History', icon: Activity },
 ];
 export function Shell() {
   const { actor, clubName } = useSession();
@@ -81,9 +81,9 @@ export function Shell() {
   const section = location.pathname.includes('/activities')
     ? 'Activities'
     : location.pathname.includes('/budgets')
-      ? 'Budget overview'
+      ? 'Budgets'
       : location.pathname.includes('/history')
-        ? 'Activity log'
+        ? 'History'
         : location.pathname.includes('/settings')
           ? 'Workspace settings'
           : 'Overview';
@@ -164,7 +164,7 @@ export function Shell() {
             }}
           >
             <CircleHelp size={18} />
-            Help & guidance
+            Help
           </button>
           <div className="user-card">
             <span className="avatar">{initials}</span>
@@ -201,7 +201,7 @@ export function Shell() {
             >
               <Search size={16} />
               <input
-                aria-label="Search activities globally"
+                aria-label="Search activities"
                 placeholder="Search activities…"
                 value={search}
                 onChange={(e) => setSearch(e.target.value)}
@@ -210,7 +210,7 @@ export function Shell() {
             <DemoRoleSwitcher />
             <span className="demo-pill">
               <span />
-              {demoMode ? 'Local demo' : 'Club workspace'}
+              {demoMode ? 'Demo mode' : 'Club workspace'}
             </span>
             <button
               className="avatar avatar-button"
@@ -226,11 +226,11 @@ export function Shell() {
             <Skeleton />
           ) : error ? (
             <div className="empty error-panel" role="alert">
-              <h1>Let’s get your workspace back</h1>
+              <h1>Couldn’t load your club data</h1>
               <p>{error}</p>
               <div className="row">
                 <button className="btn primary" onClick={() => void reload()}>
-                  Retry loading
+                  Try again
                 </button>
                 {demoMode && <button className="btn" onClick={() => setConfirmReset(true)}>
                   Reset demo data
@@ -250,34 +250,33 @@ export function Shell() {
       </div>
       <Toast />
       {help && (
-        <Modal title="Your Director workspace" onClose={() => setHelp(false)}>
+        <Modal title="How the Director workspace works" onClose={() => setHelp(false)}>
           <div className="stack help-content">
             <p>
-              Create an activity, establish its overall budget, then configure departments and
-              allocate funds. Dashboards update as soon as your changes are saved.
+              1. Create an activity and set its budget. 2. Add departments and give each one part
+              of the budget. Charts update as soon as you save.
             </p>
             <p>
-              <strong>Remaining</strong> is the overall budget less recorded expenses.{' '}
-              <strong>Available</strong> also accounts for open assignment commitments. Pending
-              claims and approved unpaid amounts remain separate.
+              <strong>Free to spend</strong> is the budget minus money already claimed and money set
+              aside for open purchases. Claims waiting for review are shown on their own.
             </p>
             <p>
-              All sample expenses and payment records are fictional and read-only. Claim decisions
-              belong to the Treasurer. Member payout details are never included in this workspace.
+              The Treasurer approves and pays claims. You can’t see members’ bank details. Sample
+              claims are made up.
             </p>
             <Link
               className="btn primary"
               to="/director/activities/new"
               onClick={() => setHelp(false)}
             >
-              Create your first activity <ArrowUpRight size={16} />
+              Create an activity <ArrowUpRight size={16} />
             </Link>
           </div>
         </Modal>
       )}
       {confirmReset && (
-        <Modal title="Restore sample workspace?" onClose={() => setConfirmReset(false)}>
-          <p>This removes your local demo changes and restores the fictional sample records.</p>
+        <Modal title="Reset demo data?" onClose={() => setConfirmReset(false)}>
+          <p>This deletes your changes and brings back the sample data. You can’t undo this.</p>
           {resetError && (
             <p role="alert" className="form-error">
               {resetError}
@@ -294,11 +293,11 @@ export function Shell() {
                   await reset();
                   setConfirmReset(false);
                 } catch {
-                  setResetError('Browser storage is unavailable. Enable local storage and retry.');
+                  setResetError('This browser can’t save data. Allow site storage, then try again.');
                 }
               }}
             >
-              Restore sample data
+              Reset demo data
             </button>
           </div>
         </Modal>

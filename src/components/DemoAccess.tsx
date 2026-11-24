@@ -12,17 +12,17 @@ export function DemoRoleSwitcher() {
   const navigate = useNavigate();
   const [signOutError, setSignOutError] = useState('');
   if (!demoMode) return <div className="row wrap">
-    <select className="compact-select demo-profile" aria-label="Workspace" value={actor.role}
+    <select className="compact-select demo-profile" aria-label="Switch role" value={actor.role}
       onChange={(e) => { select(e.target.value); navigate(roleHome(e.target.value as DemoActor['role'])); }}>
       {roles?.map((role) => <option key={role}>{role}</option>)}
     </select>
-    <button className="btn" onClick={() => { void logout().catch(() => setSignOutError('Unable to sign out. Please retry.')); }}>Sign out</button>
+    <button className="btn" onClick={() => { void logout().catch(() => setSignOutError('Couldn’t sign out. Try again.')); }}>Sign out</button>
     {signOutError && <span role="alert">{signOutError}</span>}
   </div>;
   return (
     <select
       className="compact-select demo-profile"
-      aria-label="Demo profile"
+      aria-label="Switch demo person"
       value={actor.userId}
       onChange={(e) => {
         const profile = demoProfiles.find((p) => p.userId === e.target.value)!;
@@ -32,7 +32,7 @@ export function DemoRoleSwitcher() {
     >
       {demoProfiles.map((p) => (
         <option key={p.userId} value={p.userId}>
-          {p.name} · {p.role} demo
+          {p.name} · {p.role === 'Member' ? 'Committee Member' : p.role} demo
         </option>
       ))}
     </select>
@@ -51,19 +51,19 @@ export function RoleGate({
   ) : (
     <div className="access-page">
       <Empty
-        title={`${role} access required`}
+        title={`This page is for the ${role === 'Member' ? 'Committee Member' : role}`}
         action={
           <div className="row wrap">
             <Link className="btn primary" to={roleHome(actor.role)}>
-              Return to my workspace
+              Go to my home page
             </Link>
             <Link className="btn" to="/demo">
-              Choose a workspace
+              Switch role
             </Link>
           </div>
         }
       >
-        Your current {actor.role} profile cannot open this workspace. An explicit role assignment is required.
+        You’re using the {actor.role} role, so this page is closed to you. Ask your Director for access.
       </Empty>
     </div>
   );
@@ -82,13 +82,13 @@ export function DemoAccess() {
         Money<span className="brand-accent">KAWKAW</span>
       </div>
       <PageHeader
-        eyebrow="LOCAL DEMO PROFILES"
-        title="The right workspace for your role."
-        description="Choose an explicit demo identity. These profiles demonstrate access boundaries; they are not production authentication."
+        eyebrow="TRY THE DEMO"
+        title="Who do you want to try?"
+        description="Pick a person to see what their role can do. This is a demo, not a real login."
       />
       <Panel
-        title="Explore the shared club workspace"
-        subtitle="Every profile uses the same activities, departments, and financial records"
+        title="Pick a person"
+        subtitle="Everyone sees the same sample club"
       >
         <div className="profile-grid">
           {demoProfiles.map((profile) => (
@@ -106,23 +106,22 @@ export function DemoAccess() {
               <h2>{profile.name}</h2>
               <p>
                 {profile.role === 'Director'
-                  ? 'Activity setup & club financial oversight'
+                  ? 'Plan activities and set budgets'
                   : profile.role === 'Treasurer'
-                    ? 'Claim review & reimbursement oversight'
+                    ? 'Review claims and pay members back'
                     : profile.role === 'Member'
-                      ? 'My purchases, receipt-backed claims & reimbursement tracking'
-                      : 'Assigned department purchasing & team oversight'}
+                      ? 'Buy items, upload receipts, get paid back'
+                      : 'Run your department’s purchases and team'}
               </p>
               <span className="text-link">
-                Open {profile.role} workspace <ArrowRight size={15} />
+                Open {profile.role === 'Member' ? 'Committee Member' : profile.role} workspace <ArrowRight size={15} />
               </span>
             </button>
           ))}
         </div>
       </Panel>
       <p className="data-note">
-        All four role workspaces share one local ledger. HOD/Member department memberships and
-        Treasurer activity grants are explicit; demo profiles are not production authentication.
+        All four demo people share the same sample club data, saved in this browser.
       </p>
     </main>
   );

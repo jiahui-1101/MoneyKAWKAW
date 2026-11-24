@@ -10,7 +10,7 @@ export function ClubLogin({ state, retry }: { state: AuthState; retry: () => voi
   const localLoginEnabled = import.meta.env.DEV && dataMode === 'local' && import.meta.env.VITE_LOCAL_TEST_LOGIN === 'true';
   const act = async (operation: () => Promise<unknown>) => {
     setError(''); setBusy(true);
-    try { await operation(); } catch { setError('Sign-in could not complete. Please try again.'); }
+    try { await operation(); } catch { setError('Couldn’t sign in. Please try again.'); }
     finally { setBusy(false); }
   };
   const submitLocal = (event: FormEvent) => {
@@ -24,7 +24,7 @@ export function ClubLogin({ state, retry }: { state: AuthState; retry: () => voi
     <Panel title={state.loading ? 'Checking your membership' : 'Welcome to your club workspace'}>
       <div className="member-content stack">
         {state.loading ? <Skeleton /> : <>
-          <p>Club access is by invitation. Signing in does not grant a role or department access.</p>
+          <p>Only invited members can sign in. Your Director gives you a role after you join.</p>
           {(error || state.error) && <p role="alert">{error || state.error}</p>}
           <div className="row wrap">
             <button className="btn primary" disabled={busy} onClick={() => void act(state.signedIn ? logout : login)}>
@@ -33,7 +33,7 @@ export function ClubLogin({ state, retry }: { state: AuthState; retry: () => voi
             {state.signedIn && <button className="btn" disabled={busy} onClick={() => void act(login)}>
               Switch Google account
             </button>}
-            {state.error && <button className="btn" onClick={retry}>Retry access</button>}
+            {state.error && <button className="btn" onClick={retry}>Try again</button>}
           </div>
           {localLoginEnabled && !state.signedIn && <form className="stack" onSubmit={submitLocal}>
             <p className="data-note">Local test accounts only. Club membership is still checked after sign-in.</p>
