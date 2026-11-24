@@ -7,6 +7,7 @@ import { demoProfiles } from '../../domain/session';
 import { treasuryService } from '../../services/treasury';
 import { ReceiptReview } from '../../components/treasurer/ReceiptReview';
 import { ClaimDecision } from '../../components/treasurer/ClaimDecision';
+import { ClaimProgress, claimStep } from '../../components/ClaimProgress';
 import { Badge, Empty, PageHeader, Panel, Status, TextLink, paymentLabel, useFormat } from '../../components/ui';
 import { demoMode } from '../../services/supabase/client';
 export function TreasuryClaimDetail() {
@@ -40,7 +41,18 @@ export function TreasuryClaimDetail() {
     );
   const c = claimContext(data, claim);
   const dep = summarize(data, claim.activityId, claim.departmentId);
-  const paid = data.payments.some((p) => p.expenseId === claim.id);
+  const claimPayments = data.payments.filter((p) => p.expenseId === claim.id);
+  const paid = claimPayments.length > 0;
+  const nextSteps = [
+    { title: 'Start the review', detail: 'Open the review so the member knows you are checking the receipt.' },
+    { title: 'Approve or decline', detail: c.variance > 0 ? 'This claim is over its item budget. Run the budget check before you approve.' : 'Check the receipt below, then approve or decline.' },
+    { title: 'Pay the member, then record it', detail: 'Send the money through your bank or TNG, then record the payment with proof.' },
+    { title: 'Wait for the member to confirm', detail: 'Only the member can confirm the money arrived.' },
+    { title: 'All done', detail: 'The member confirmed they received the money.' },
+  ];
+  const next = claim.state === 'Declined'
+    ? { title: 'All done', detail: 'This claim was declined. The member can see your reason.' }
+    : nextSteps[claimStep(claim, claimPayments)];
   const events = data.events.filter(
     (e) => (c.task && e.assignmentId === c.task.id) || e.detail.includes(claim.id),
   );
@@ -103,6 +115,7 @@ export function TreasuryClaimDetail() {
         <Badge tone={paid ? 'green' : 'neutral'}>{paymentLabel(paymentState(data, claim))}</Badge>
         <span>Submitted {time(claim.review?.submittedAt ?? claim.date)}</span>
       </div>
+      <ClaimProgress claim={claim} payments={claimPayments} next={next} />
       <Panel
         title="The submitted financial record"
         subtitle="The submitted amount and original task estimate are preserved separately"

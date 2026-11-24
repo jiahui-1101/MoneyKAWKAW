@@ -5,6 +5,7 @@ import { paymentState } from '../../domain/risk';
 import { memberClaimService } from '../../services/member-claims';
 import { ReceiptReview } from '../../components/treasurer/ReceiptReview';
 import { ClaimDestination } from '../../components/member/ClaimDestination';
+import { ClaimProgress, claimStep } from '../../components/ClaimProgress';
 import { Badge, Empty, PageHeader, Panel, Status, paymentLabel, useFormat } from '../../components/ui';
 export function MemberClaimDetail() {
   const { id } = useParams(),
@@ -31,18 +32,16 @@ export function MemberClaimDetail() {
   const payments = data.payments.filter((p) => p.expenseId === claim.id),
     events = data.events.filter((e) => e.assignmentId === task?.id);
   const state = paymentState(data, claim);
-  const stage =
-    claim.state === 'Declined'
-      ? 2
-      : payments.some((p) => p.manual?.receivedConfirmedAt)
-        ? 4
-        : payments.length
-          ? 3
-          : claim.state === 'Approved'
-            ? 2
-            : claim.state === 'In review'
-              ? 1
-              : 0;
+  const step = claimStep(claim, payments);
+  const next = claim.state === 'Declined'
+    ? { title: 'Read the Treasurer’s reason', detail: 'This claim was declined. The reason is shown below.' }
+    : [
+        { title: 'Wait for the Treasurer', detail: 'Your claim is in the queue. You’ll get a notification when it is reviewed.' },
+        { title: 'Wait for a decision', detail: 'The Treasurer is checking your receipt and the budget.' },
+        { title: 'Wait for payment', detail: 'Approved means the club owes you. The Treasurer will pay you and upload proof.' },
+        { title: 'Confirm you got the money', detail: 'Check your bank or TNG, then confirm on the payment page.' },
+        { title: 'All done', detail: 'You confirmed you received the money.' },
+      ][step];
   return (
     <div className="stack">
       <Link className="back-link" to="/member/claims">
@@ -54,7 +53,7 @@ export function MemberClaimDetail() {
         description={`${scope.activity.name} / ${scope.department.name}`}
       >
         {<Link className="btn primary" to={`/member/claims/${claim.id}/payment`}>
-          {payments.length ? 'View payment proof & receipt status' : 'View reimbursement status'}
+          {payments.length ? 'See payment & confirm you got it' : 'See payment status'}
         </Link>}
       </PageHeader>
       <div className="treasury-record-bar">
@@ -71,26 +70,7 @@ export function MemberClaimDetail() {
           {paymentLabel(state, 'member')}
         </Badge>
       </div>
-      <ol className="member-state-steps" aria-label="Claim lifecycle">
-        {(claim.state === 'Declined'
-          ? ['Submitted', 'Treasurer review', 'Declined']
-          : ['Submitted', 'Treasurer review', 'Approved / unpaid', 'Payment recorded', 'Received']
-        ).map((label, i) => (
-          <li
-            key={label}
-            className={
-              i === stage
-                ? `current${claim.state === 'Declined' ? ' declined' : ''}`
-                : i < stage
-                  ? 'done'
-                  : ''
-            }
-          >
-            <span>{i + 1}</span>
-            {label}
-          </li>
-        ))}
-      </ol>
+      <ClaimProgress claim={claim} payments={payments} next={next} />
       <Panel
         title="Your submitted claim"
         subtitle="These values and the original receipt are protected after submission"

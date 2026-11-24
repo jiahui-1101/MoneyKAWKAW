@@ -53,3 +53,17 @@ main { padding: 24px; }
 .metric p { font-size: 12px; }
 .badge { font-size: 11px; }
 .cell-sub, .eyebrow { font-size: 11px; }
+
+/* Claim progress (incident-style lifecycle + next action) */
+.claim-progress { display: grid; gap: 10px; padding: 18px 20px; }
+.claim-progress > .row strong { font-size: 15px; }
+.claim-progress-bar { list-style: none; margin: 0; padding: 0; display: flex; gap: 6px; }
+.claim-progress-bar li { flex: 1; height: 6px; border-radius: 4px; background: var(--line); }
+.claim-progress-bar li.done { background: #e9b48f; }
+.claim-progress-bar li.current { background: var(--brand); }
+.claim-progress-bar.is-declined li.current { background: var(--danger); }
+.claim-progress .eyebrow { margin-top: 6px; }
+.claim-next { display: flex; gap: 12px; align-items: flex-start; padding: 12px 14px; border: 1px solid var(--line); border-radius: var(--radius-sm); background: var(--surface); }
+.claim-next > svg { color: var(--green); flex-shrink: 0; margin-top: 2px; }
+.claim-next-num { display: grid; place-items: center; flex-shrink: 0; width: 24px; height: 24px; border-radius: 50%; background: var(--brand); color: #fff; font-size: 12px; font-weight: 700; }
+.claim-next p { margin-top: 2px; }
