@@ -8,7 +8,7 @@ export function TreasuryClaims({ reimbursements = false }: { reimbursements?: bo
   return (
     <div className="stack">
       <PageHeader
-        eyebrow={reimbursements ? 'REIMBURSEMENTS' : 'CLAIM MANAGEMENT'}
+        eyebrow={reimbursements ? 'REIMBURSEMENTS' : 'CLAIMS'}
         title={
           reimbursements
             ? 'Reimbursements'
@@ -16,11 +16,11 @@ export function TreasuryClaims({ reimbursements = false }: { reimbursements?: bo
         }
         description={
           !demoMode && !reimbursements
-            ? 'Review evidence and enter an independent decision. Approved claims can proceed to documented manual reimbursement.'
+            ? 'Check each receipt and the budget, then approve or decline. Approved claims move to Reimbursements for payment.'
             :
           reimbursements
-            ? 'Approved, unpaid claims with a selected payout snapshot. Record external transfers with proof.'
-            : 'Compare receipts, understand the variance, and leave a traceable decision.'
+            ? 'Approved claims waiting for payment. Pay the member yourself, then record it here with proof.'
+            : 'Compare each receipt with the budget, then approve or decline.'
         }
       >
         {demoMode && !reimbursements && (
@@ -30,14 +30,14 @@ export function TreasuryClaims({ reimbursements = false }: { reimbursements?: bo
         )}
       </PageHeader>
       <Panel
-        title={reimbursements ? 'Pending reimbursements' : 'Claim review queue'}
+        title={reimbursements ? 'Waiting for payment' : 'Claims'}
         subtitle={
           !demoMode && !reimbursements
-            ? 'Review, decisions, payment obligations, and receipt confirmation stay distinct'
+            ? 'Approving, paying, and the member confirming are separate steps'
             :
           reimbursements
-            ? 'Payments are recorded manually; this application does not move money.'
-            : 'Shared submission records · original evidence remains unchanged'
+            ? 'This app doesn’t send money. Pay the member, then record it here.'
+            : 'Original receipts are never changed'
         }
       >
         <ClaimList reimbursements={reimbursements} />

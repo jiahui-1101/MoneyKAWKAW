@@ -90,7 +90,7 @@ export function ClaimList({
       await run(() => treasuryService.review(id, expected), 'Claim is now in review.');
       navigate(`/treasurer/claims/${id}`);
     } catch (e) {
-      setError(e instanceof Error ? e.message : 'Unable to start review.');
+      setError(e instanceof Error ? e.message : 'Couldn’t start the review. Refresh and try again.');
     }
   };
   return (
@@ -114,7 +114,7 @@ export function ClaimList({
           <Search size={16} />
           <input
             aria-label="Search claims"
-            placeholder="Claim, member, purchase…"
+            placeholder="Search claim, member or item…"
             value={query}
             onChange={(e) => setQuery(e.target.value)}
           />
@@ -202,7 +202,7 @@ export function ClaimList({
         </p>
       )}
       <p className="treasury-result" role="status">
-        {records.length} matching {reimbursements ? 'unpaid approved claims' : 'claims'}
+        {records.length} {reimbursements ? `approved ${records.length === 1 ? 'claim' : 'claims'} waiting for payment` : records.length === 1 ? 'claim' : 'claims'}
         {from && until && from > until ? ' · Choose an end date after the start date.' : ''}
       </p>
       {records.length ? (
@@ -217,9 +217,9 @@ export function ClaimList({
                   'SUBMITTED',
                   'ITEM BUDGET',
                   'CLAIM AMOUNT',
-                  'VARIANCE',
-                  'REVIEW',
-                  'PAYMENT',
+                  'OVER / UNDER BUDGET',
+                  'CLAIM STATUS',
+                  'PAYMENT STATUS',
                   'ACTION',
                 ].map((h) => (
                   <th key={h}>{h}</th>
@@ -237,7 +237,7 @@ export function ClaimList({
                       </Link>
                       <small className="cell-sub treasury-id">{e.id}</small>
                       <small className="cell-sub">
-                        {c.task?.purchasing?.name ?? 'Legacy purchase'}
+                        {c.task?.purchasing?.name ?? 'No linked purchase'}
                       </small>
                     </td>
                     <td>
@@ -246,10 +246,10 @@ export function ClaimList({
                     </td>
                     <td>
                       {data.directory?.users.find((u) => u.id === e.review?.claimantId)?.name ??
-                        'Legacy claimant unavailable'}
+                        'Member unknown'}
                     </td>
                     <td>{date(e.date)}</td>
-                    <td className="money">{c.task ? money(c.task.budget) : 'Unlinked'}</td>
+                    <td className="money">{c.task ? money(c.task.budget) : 'No item budget'}</td>
                     <td className="money">{money(e.amount)}</td>
                     <td className={`money ${c.variance > 0 ? 'danger-text' : 'good-text'}`}>
                       {money(c.variance)}
@@ -262,7 +262,7 @@ export function ClaimList({
                     <td>
                       {reimbursements ? (
                         <Link className="btn primary" to={`/treasurer/claims/${e.id}/reimburse`}>
-                          Process reimbursement
+                          Record payment
                         </Link>
                       ) : !demoMode ? (
                         <Link className="text-link" to={`/treasurer/claims/${e.id}`}>
@@ -274,11 +274,11 @@ export function ClaimList({
                           disabled={busy}
                           onClick={() => void review(e.id, e.review!.updatedAt)}
                         >
-                          Review {e.id}
+                          Start review<span className="sr-only"> {e.id}</span>
                         </button>
                       ) : (
                         <Link className="text-link" to={`/treasurer/claims/${e.id}`}>
-                          View record
+                          View claim
                         </Link>
                       )}
                     </td>
@@ -297,7 +297,7 @@ export function ClaimList({
             </button>
           }
         >
-          Try another filter. Submitted claims appear here within your authorized activities.
+          Try other filters. You only see claims from activities you manage.
         </Empty>
       )}
     </>

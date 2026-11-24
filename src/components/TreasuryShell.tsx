@@ -21,7 +21,7 @@ import { Empty, Modal, Skeleton, ToastMessage } from './ui';
 import { useWorkspaceNavigation } from './useWorkspaceNavigation';
 
 const entries = [
-  { to: '/treasurer', title: 'Financial overview', icon: LayoutDashboard, end: true },
+  { to: '/treasurer', title: 'Overview', icon: LayoutDashboard, end: true },
   { to: '/treasurer/activities', title: 'Activities', icon: Activity },
   { to: '/treasurer/claims', title: 'Claim review', icon: ClipboardList },
   { to: '/treasurer/reimbursements', title: 'Reimbursements', icon: Wallet },
@@ -37,7 +37,7 @@ export function TreasuryShell() {
   const visibleEntries = entries;
   const section =
     visibleEntries.find((e) => (e.end ? e.to === location.pathname : location.pathname.startsWith(e.to)))
-      ?.title ?? 'Financial record';
+      ?.title ?? 'Treasurer';
   return (
     <div className="app-shell treasury-shell">
       <a className="skip-link" href="#main">
@@ -76,7 +76,7 @@ export function TreasuryShell() {
           <span className="club-mark">C</span>
           <div>
             <strong>{clubName ?? 'Campus Collective'}</strong>
-            <small>Financial workspace</small>
+            <small>Treasurer workspace</small>
           </div>
           <ShieldCheck size={15} />
         </div>
@@ -155,10 +155,10 @@ export function TreasuryShell() {
             <Skeleton />
           ) : error ? (
             <Empty
-              title="Your financial workspace couldn’t load"
+              title="Couldn’t load your data"
               action={
                 <button className="btn primary" onClick={() => void reload()}>
-                  Retry loading
+                  Try again
                 </button>
               }
             >
@@ -175,7 +175,7 @@ export function TreasuryShell() {
                 </Link>
               }
             >
-              A Director must explicitly grant your Treasurer profile activity oversight.
+              Ask a Director to add you as Treasurer of an activity.
             </Empty>
           )}
         </main>
@@ -186,25 +186,21 @@ export function TreasuryShell() {
       </div>
       <ToastMessage notice={notice} dismiss={dismiss} />
       {help && (
-        <Modal title="Your financial workspace" onClose={() => setHelp(false)}>
+        <Modal title="How the Treasurer workspace works" onClose={() => setHelp(false)}>
           <div className="stack">
             <p>
-              Review evidence, analyze over-budget requests, and record your decision. Approval
-              creates an unpaid liability.
+              Check each receipt and the budget, then approve or decline. Approving a claim means
+              the club owes the member. It does not pay them.
             </p>
             <p>
-              Record an external manual transfer with proof after approval. A local payment record
-              does not verify a bank transfer. Only the member can confirm receipt.
+              Pay the member through your bank or TNG, then record it here with proof. This app
+              doesn’t send money. Only the member can confirm they got it.
             </p>
             <p>
-              Available funds subtract recorded claims and open task estimates. Claims already
-              include pending and approved amounts, so approval and payment never add the expense
+              Each claim is counted once in the budget. Approving or paying it doesn’t count it
               again.
             </p>
-            <p>
-              These are fictional records stored in this browser. No bank, OCR, or predictive model
-              is connected.
-            </p>
+            {demoMode && <p>These are made-up records saved in this browser.</p>}
           </div>
         </Modal>
       )}

@@ -29,14 +29,14 @@ export function TreasuryClaimDetail() {
   if (!data || !claim)
     return (
       <Empty
-        title="Claim access restricted"
+        title="Claim not found"
         action={
           <Link className="btn" to="/treasurer/claims">
             Back to claims
           </Link>
         }
       >
-        The claim is unavailable within your authorized activities.
+        This claim doesn’t exist or isn’t in an activity you manage.
       </Empty>
     );
   const c = claimContext(data, claim);
@@ -70,15 +70,15 @@ export function TreasuryClaimDetail() {
   return (
     <div className="stack">
       <Link className="back-link" to="/treasurer/claims">
-        ← Claim management / Claim detail
+        ← Back to claims
       </Link>
       <PageHeader
-        eyebrow={`CLAIM RECORD · ${claim.id}`}
+        eyebrow={`CLAIM · ${claim.id}`}
         title={claim.description}
         description={`${c.activity.name} / ${c.department.name}`}
       >
         {<Link className="btn" to={`/treasurer/claims/${id}/risk`}>
-          Budget & risk analysis
+          Check budget risk
         </Link>}
         {claim.state === 'Pending review' && (
           <button className="btn primary" disabled={busy} onClick={() => void review()}>
@@ -100,7 +100,7 @@ export function TreasuryClaimDetail() {
             <TextLink to={`/treasurer/history?claim=${id}`}>View payment record</TextLink>
           ) : (
             <Link className="btn primary" to={`/treasurer/claims/${id}/reimburse`}>
-              Process reimbursement
+              Record payment
             </Link>
           ))}
       </PageHeader>
@@ -117,30 +117,30 @@ export function TreasuryClaimDetail() {
       </div>
       <ClaimProgress claim={claim} payments={claimPayments} next={next} />
       <Panel
-        title="The submitted financial record"
-        subtitle="The submitted amount and original task estimate are preserved separately"
+        title="Claim summary"
+        subtitle="What the member claimed vs. the planned budget"
       >
         <dl className="treasury-facts">
           {[
             [
               'Submitted by',
               data.directory?.users.find((u) => u.id === claim.review?.claimantId)?.name ??
-                'Legacy claimant unavailable',
+                'Member unknown',
             ],
-            ['Purchasing task', c.task?.purchasing?.name ?? 'No linked task'],
+            ['Purchase', c.task?.purchasing?.name ?? 'No linked purchase'],
             ['Item budget', c.task ? money(c.task.budget) : 'Unavailable'],
-            ['Final claimed amount', money(claim.amount)],
-            ['Item variance', `${money(c.variance)} (${c.variancePercent.toFixed(2)}%)`],
-            ['Department available', money(dep.available)],
+            ['Amount claimed', money(claim.amount)],
+            ['Over / under item budget', `${money(c.variance)} (${c.variancePercent.toFixed(2)}%)`],
+            ['Department free to spend', money(dep.available)],
             [
               'Reviewer',
               data.directory?.users.find((u) => u.id === claim.review?.reviewer)?.name ??
               demoProfiles.find((p) => p.userId === claim.review?.reviewer)?.name ??
-                'Not yet assigned',
+                'Review not started',
             ],
             [
               'Decision time',
-              claim.review?.reviewedAt ? time(claim.review.reviewedAt) : 'Awaiting decision',
+              claim.review?.reviewedAt ? time(claim.review.reviewedAt) : 'Not decided yet',
             ],
           ].map(([label, value]) => (
             <div key={label}>
@@ -151,36 +151,36 @@ export function TreasuryClaimDetail() {
         </dl>
       </Panel>
       <div className="treasury-justification">
-        <span className="eyebrow">MEMBER’S SUBMITTED CONTEXT</span>
-        <h2>{c.variance > 0 ? 'Over-budget justification' : 'Purchase justification'}</h2>
+        <span className="eyebrow">MEMBER’S EXPLANATION</span>
+        <h2>{c.variance > 0 ? 'Why it is over budget' : 'Why this was bought'}</h2>
         <p>
-          {claim.review?.justification || 'No justification was retained in this legacy sample.'}
+          {claim.review?.justification || 'The member gave no explanation.'}
         </p>
       </div>
-      {!demoMode && destination && <Panel title="Selected payment destination summary" subtitle="Masked for review; full instructions require authorized payment access">
+      {!demoMode && destination && <Panel title="Member’s payment details" subtitle="Partly hidden. Full details appear only when you record the payment.">
         <dl className="treasury-facts"><div><dt>Label</dt><dd>{destination.label}</dd></div>
           <div><dt>Type</dt><dd>{destination.kind}</dd></div>
-          <div><dt>Holder</dt><dd>{destination.holder}</dd></div>
-          <div><dt>Institution</dt><dd>{destination.institution}</dd></div>
-          <div><dt>Identifier</dt><dd>{destination.masked}</dd></div></dl>
+          <div><dt>Account holder</dt><dd>{destination.holder}</dd></div>
+          <div><dt>Bank</dt><dd>{destination.institution}</dd></div>
+          <div><dt>Account / phone no.</dt><dd>{destination.masked}</dd></div></dl>
       </Panel>}
       {claim.review?.reason && (
         <div className={`treasury-decision ${claim.state === 'Declined' ? 'is-declined' : ''}`}>
-          <h2>{claim.state} · decision reason</h2>
+          <h2>Reason for {claim.state === 'Declined' ? 'declining' : 'approving'}</h2>
           <p>{claim.review.reason}</p>
         </div>
       )}
       <ReceiptReview claimId={claim.id} amount={claim.amount} />
       <Panel
-        title="Claim history & audit trail"
-        subtitle="Append-only shared events · decision and payment remain distinct"
+        title="Claim history"
+        subtitle="Every step is logged and can’t be edited"
       >
         <div className="treasury-evidence-history">
           {!events.some((e) => e.action === 'Claim submitted') && <article>
             <h3>Claim submitted</h3>
             <p>
               {time(claim.review?.submittedAt ?? claim.date)} · {money(claim.amount)} · original
-              receipt and claimant changes retained.
+              receipt and the member’s edits are kept.
             </p>
           </article>}
           {events.map((e) => (
