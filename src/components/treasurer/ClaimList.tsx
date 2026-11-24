@@ -7,7 +7,7 @@ import { reviewStates } from '../../domain/treasury';
 import { treasuryService } from '../../services/treasury';
 import { DateField } from '../DateField';
 import { Field } from '../Field';
-import { Empty, Status, useFormat } from '../ui';
+import { Empty, Status, paymentLabel, useFormat } from '../ui';
 import { demoMode } from '../../services/supabase/client';
 
 export function ClaimList({
@@ -258,7 +258,7 @@ export function ClaimList({
                     <td>
                       <Status value={e.lifecycle ?? e.state} />
                     </td>
-                    <td>{paymentState(data, e)}</td>
+                    <td>{paymentLabel(paymentState(data, e))}</td>
                     <td>
                       {reimbursements ? (
                         <Link className="btn primary" to={`/treasurer/claims/${e.id}/reimburse`}>

@@ -10,7 +10,7 @@ import { PaymentIssueResolutions } from '../../components/PaymentIssueResolution
 import { DiscrepancyResolution } from '../../components/treasurer/DiscrepancyResolution';
 import { DateField } from '../../components/DateField';
 import { ProofPreview } from '../../components/treasurer/ProofPreview';
-import { Badge, Empty, Modal, PageHeader, Panel, useFormat } from '../../components/ui';
+import { Badge, Empty, Modal, PageHeader, Panel, paymentLabel, useFormat } from '../../components/ui';
 export function TreasuryHistory() {
   const { data } = useTreasury();
   const { money, date, time } = useFormat();
@@ -236,7 +236,7 @@ export function TreasuryHistory() {
                       <td>{date(p.date)}</td>
                       <td>
                         <Badge tone={p.manual?.receivedConfirmedAt ? 'green' : 'gold'}>
-                          {paymentState(data, e)}
+                          {paymentLabel(paymentState(data, e))}
                         </Badge>
                       </td>
                       <td>{p.manual?.reference ?? 'Legacy · not retained'}</td>

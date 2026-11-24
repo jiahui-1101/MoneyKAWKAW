@@ -4,7 +4,7 @@ import type { MemberSnapshot } from '../../domain/member';
 import { departmentToday, isOverdue } from '../../domain/hod';
 import { paymentState } from '../../domain/risk';
 import { PurchaseBadge } from '../hod/HodWidgets';
-import { Badge, Empty, Status, useFormat } from '../ui';
+import { Badge, Empty, Status, paymentLabel, useFormat } from '../ui';
 export const memberDepartmentPath = (activity: string, department: string) =>
   `/member/activities/${activity}/departments/${department}`;
 export function MemberTaskTable({ tasks, data }: { tasks: Assignment[]; data: MemberSnapshot }) {
@@ -140,7 +140,7 @@ export function MemberClaimTable({ claims, data }: { claims: Expense[]; data: Me
                 <td>
                   <Status value={claim.lifecycle ?? claim.state} />
                 </td>
-                <td>{paymentState(data, claim)}</td>
+                <td>{paymentLabel(paymentState(data, claim), 'member')}</td>
               </tr>
             );
           })}

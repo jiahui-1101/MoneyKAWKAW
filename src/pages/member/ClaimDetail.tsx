@@ -5,7 +5,7 @@ import { paymentState } from '../../domain/risk';
 import { memberClaimService } from '../../services/member-claims';
 import { ReceiptReview } from '../../components/treasurer/ReceiptReview';
 import { ClaimDestination } from '../../components/member/ClaimDestination';
-import { Badge, Empty, PageHeader, Panel, Status, useFormat } from '../../components/ui';
+import { Badge, Empty, PageHeader, Panel, Status, paymentLabel, useFormat } from '../../components/ui';
 export function MemberClaimDetail() {
   const { id } = useParams(),
     { data } = useMember(),
@@ -68,7 +68,7 @@ export function MemberClaimDetail() {
                 : 'gold'
           }
         >
-          {state}
+          {paymentLabel(state, 'member')}
         </Badge>
       </div>
       <ol className="member-state-steps" aria-label="Claim lifecycle">

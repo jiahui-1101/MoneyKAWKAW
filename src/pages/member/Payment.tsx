@@ -9,7 +9,7 @@ import type { ProofFile } from '../../domain/treasury';
 import { ProofPreview } from '../../components/treasurer/ProofPreview';
 import { Field } from '../../components/Field';
 import { PaymentIssueResolutions } from '../../components/PaymentIssueResolutions';
-import { Badge, Empty, Modal, PageHeader, Panel, useFormat } from '../../components/ui';
+import { Badge, Empty, Modal, PageHeader, Panel, paymentLabel, useFormat } from '../../components/ui';
 export function MemberPayment() {
   const { id } = useParams(),
     { data, busy, run } = useMember(),
@@ -96,7 +96,7 @@ export function MemberPayment() {
       />
       <div className="treasury-record-bar">
         <Badge tone={manual?.receivedConfirmedAt ? 'green' : 'gold'}>
-          {paymentState(data, claim)}
+          {paymentLabel(paymentState(data, claim), 'member')}
         </Badge>
         <Badge tone="neutral">External transfer not independently verified</Badge>
       </div>

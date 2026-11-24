@@ -45,25 +45,41 @@ export function Badge({ children, tone = 'neutral' }: { children: ReactNode; ton
     </span>
   );
 }
+/** One plain-language label per claim stage, whichever record vocabulary the value came from. */
+const statusLabels: Record<string, string> = {
+  'Pending review': 'Waiting for review',
+  Pending: 'Waiting for review',
+  'Under Review': 'In review',
+  Rejected: 'Declined',
+  'Payment Pending': 'Approved · not paid yet',
+  Received: 'Member confirmed',
+};
+const statusTones: Record<string, string> = {
+  Active: 'green',
+  Approved: 'green',
+  Paid: 'green',
+  'Member confirmed': 'green',
+  Declined: 'danger',
+  'In review': 'violet',
+  Planning: 'gold',
+  'Waiting for review': 'gold',
+  'Approved · not paid yet': 'gold',
+};
+export const statusLabel = (value: string) => statusLabels[value] ?? value;
 export function Status({ value }: { value: string }) {
-  return (
-    <Badge
-      tone={
-        value === 'Active' || value === 'Approved'
-          ? 'green'
-          : value === 'Declined'
-            ? 'danger'
-            : value === 'In review'
-              ? 'violet'
-              : value === 'Planning' || value === 'Pending review'
-                ? 'gold'
-                : 'neutral'
-      }
-    >
-      {value}
-    </Badge>
-  );
+  const label = statusLabel(value);
+  return <Badge tone={statusTones[label] ?? 'neutral'}>{label}</Badge>;
 }
+const paymentLabels: Record<string, [treasurer: string, member: string]> = {
+  'Not payable': ['Not approved yet', 'Not approved yet'],
+  'Payment pending': ['Approved · not paid yet', 'Approved · not paid yet'],
+  'Received confirmed': ['Member confirmed', 'You confirmed you got it'],
+  'Issue reported · awaiting receipt': ['Member reported a problem', 'You reported a problem'],
+  'Recorded · awaiting member': ['Paid · waiting for member to confirm', 'Paid · please confirm you got it'],
+};
+/** Plain label for a payment state; the member sees it addressed to them. */
+export const paymentLabel = (state: string, viewer: 'treasurer' | 'member' = 'treasurer') =>
+  paymentLabels[state]?.[viewer === 'member' ? 1 : 0] ?? state;
 export function Progress({
   value,
   tone = 'brand',

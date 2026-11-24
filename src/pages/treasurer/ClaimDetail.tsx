@@ -7,7 +7,7 @@ import { demoProfiles } from '../../domain/session';
 import { treasuryService } from '../../services/treasury';
 import { ReceiptReview } from '../../components/treasurer/ReceiptReview';
 import { ClaimDecision } from '../../components/treasurer/ClaimDecision';
-import { Badge, Empty, PageHeader, Panel, Status, TextLink, useFormat } from '../../components/ui';
+import { Badge, Empty, PageHeader, Panel, Status, TextLink, paymentLabel, useFormat } from '../../components/ui';
 import { demoMode } from '../../services/supabase/client';
 export function TreasuryClaimDetail() {
   const { id } = useParams();
@@ -100,7 +100,7 @@ export function TreasuryClaimDetail() {
 
       <div className="treasury-record-bar">
         <Status value={claim.lifecycle ?? claim.state} />
-        <Badge tone={paid ? 'green' : 'neutral'}>{paymentState(data, claim)}</Badge>
+        <Badge tone={paid ? 'green' : 'neutral'}>{paymentLabel(paymentState(data, claim))}</Badge>
         <span>Submitted {time(claim.review?.submittedAt ?? claim.date)}</span>
       </div>
       <Panel
