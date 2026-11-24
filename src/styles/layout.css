@@ -38,3 +38,18 @@ main { padding: 24px; }
   .page-heading { flex-direction: column; align-items: stretch; gap: 12px; }
   .page-heading h1 { font-size: 21px; }
 }
+
+/* Warm command-centre look: orange page kicker, soft wave on KPI tiles, readable small text. */
+.page-heading .eyebrow { display: inline-flex; align-items: center; gap: 10px; color: var(--brand); letter-spacing: 0.14em; }
+.page-heading .eyebrow::before { content: ''; width: 18px; height: 2px; border-radius: 2px; background: currentColor; flex-shrink: 0; }
+.metric, .ix-kpi { position: relative; overflow: hidden; }
+.metric::before, .ix-kpi::before {
+  content: ''; position: absolute; inset: 0 0 auto; height: 12px; pointer-events: none;
+  background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 200 12' preserveAspectRatio='none'%3E%3Cpath d='M0 0H200V5C160 9 130 2 100 5S40 9 0 4Z' fill='%23fff2e8'/%3E%3Cpath d='M0 4C40 9 70 2 100 5S160 9 200 5' fill='none' stroke='%23ffbb91' stroke-width='2' vector-effect='non-scaling-stroke'/%3E%3C/svg%3E") top / 100% 100% no-repeat;
+}
+.metric { padding-top: 22px; }
+.ix-kpi { padding-top: 20px; }
+.ix-kpi.is-link:hover, .metric:hover { border-color: var(--brand); }
+.metric p { font-size: 12px; }
+.badge { font-size: 11px; }
+.cell-sub, .eyebrow { font-size: 11px; }
