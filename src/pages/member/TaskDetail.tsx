@@ -25,7 +25,7 @@ export function MemberTaskDetail() {
           </Link>
         }
       >
-        This purchase is outside your current department memberships.
+        You can’t open this purchase. It isn’t in your department.
       </Empty>
     );
   const p = task.purchasing!,
@@ -69,7 +69,7 @@ export function MemberTaskDetail() {
       >
         {own && !task.expenseId && !p.resolvedAtClosure && (open || (closing && draft)) && ['Purchased', 'Completed'].includes(p.status) && (
           <button className="btn primary" disabled={busy} onClick={() => void begin()}>
-            {draft ? 'Continue claim draft' : 'Prepare reimbursement claim'}
+            {draft ? 'Continue claim draft' : 'Start claim'}
           </button>
         )}
         {claim && (
@@ -83,7 +83,7 @@ export function MemberTaskDetail() {
         {!open && <Badge tone="neutral">{financialStateLabel(scope.activity.financialState, '')}</Badge>}
         {p.resolvedAtClosure && <Badge tone="green">Resolved at closing</Badge>}
         <Badge tone={own ? 'green' : 'neutral'}>
-          {own ? 'Assigned to you' : 'Read-only coordination'}
+          {own ? 'Assigned to you' : 'View only'}
         </Badge>
         {claim && <Status value={claim.state} />}
       </div>
@@ -93,8 +93,8 @@ export function MemberTaskDetail() {
         </p>
       )}
       <Panel
-        title="The HOD’s purchasing brief"
-        subtitle="Assignment purpose, budget, assignee, and deadline are controlled by the HOD"
+        title="Purchase details"
+        subtitle="Set by your HOD"
       >
         <dl className="treasury-facts">
           {[
@@ -110,10 +110,10 @@ export function MemberTaskDetail() {
               'Assigned member',
               data.directory.users.find((u) => u.id === p.assigneeId)?.name ?? 'Unassigned',
             ],
-            ['Estimated item budget', money(task.budget)],
+            ['Item budget', money(task.budget)],
             ['Due date', date(p.dueDate)],
             ['Priority', p.priority],
-            ['Purchase stage', p.status],
+            ['Status', p.status],
           ].map(([label, value]) => (
             <div key={label}>
               <dt>{label}</dt>
@@ -125,15 +125,15 @@ export function MemberTaskDetail() {
       {own ? (
         <Panel
           title="My purchasing progress"
-          subtitle="Completing a purchase never approves a claim or records reimbursement"
+          subtitle="Marking it as bought doesn’t send a claim. Start a claim after buying."
         >
           <div className="member-content stack">
             <p className="settings-copy">
               {task.expenseId
-                ? 'This purchase has a submitted claim. Its original assignment and claim evidence are protected. Follow the Treasurer’s decision in My claims.'
+                ? 'You’ve already claimed this. Track it in My claims.'
                 : p.status === 'Cancelled'
                   ? 'Your HOD cancelled this purchase. No claim can be prepared against it.'
-                  : 'Update the physical purchase, then prepare a receipt-backed claim. Your HOD still controls the assignment details.'}
+                  : 'Mark it as bought, then start a claim with your receipt.'}
             </p>
             <div className="row wrap">
               {open && !task.expenseId && p.status === 'Not Started' && (
@@ -156,12 +156,12 @@ export function MemberTaskDetail() {
               )}
               {(open || closing) && !p.resolvedAtClosure && !task.expenseId && p.status === 'Purchased' && (
                 <button className="btn" disabled={busy} onClick={() => void progress('Completed')}>
-                  Complete purchase checklist
+                  Mark as done
                 </button>
               )}
               {claim && (
                 <Link className="btn" to={`/member/claims/${claim.id}`}>
-                  Track reimbursement
+                  View my claim
                 </Link>
               )}
             </div>
@@ -174,8 +174,7 @@ export function MemberTaskDetail() {
             This assignment belongs to{' '}
             {data.directory.users.find((u) => u.id === p.assigneeId)?.name ??
               'an unassigned team member'}
-            . You can view the purchasing plan; updates and private claim details belong to its
-            owner.
+            . Only they can update it.
           </p>
         </div>
       )}

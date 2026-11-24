@@ -52,7 +52,7 @@ export function MemberPayment() {
           </Link>
         }
       >
-        Reimbursement records are available only for your own active-department claims.
+        You can only open your own claims.
       </Empty>
     );
   const manual = payment?.manual;
@@ -64,7 +64,7 @@ export function MemberPayment() {
       if (dialog === 'confirm')
         await run(
           () => memberService.confirm(payment.id, parseMoney(amount), ack),
-          'Receipt confirmed by you. The shared reimbursement record is updated.',
+          'Thanks, you confirmed you got the money.',
         );
       else
         await run(
@@ -74,7 +74,7 @@ export function MemberPayment() {
               reason,
               amount.trim() ? parseMoney(amount) : undefined,
             ),
-          'Payment issue recorded. Receipt remains unconfirmed.',
+          'Problem reported. The Treasurer will follow up.',
         );
       setDialog(null);
       setReason('');
@@ -98,24 +98,24 @@ export function MemberPayment() {
         <Badge tone={manual?.receivedConfirmedAt ? 'green' : 'gold'}>
           {paymentLabel(paymentState(data, claim), 'member')}
         </Badge>
-        <Badge tone="neutral">External transfer not independently verified</Badge>
+        <Badge tone="neutral">Check your bank or TNG to be sure</Badge>
       </div>
       <Panel
         title="Recorded transfer information"
-        subtitle="Approval, manual transfer recording, and your receipt acknowledgment are separate events"
+        subtitle="Approval, payment, and your confirmation are separate steps"
       >
         <dl className="treasury-facts">
           {[
             ['Claim ID', claim.id],
             [
               'Approved claim amount',
-              claim.state === 'Approved' ? money(claim.amount) : 'Not approved',
+              claim.state === 'Approved' ? money(claim.amount) : 'Not approved yet',
             ],
             ['Paid amount', payment ? money(payment.amount) : 'No payment recorded'],
             ['Payment date', payment ? date(payment.date) : 'Awaiting Treasurer'],
-            ['Transaction reference', manual?.reference ?? 'Not retained / not yet recorded'],
+            ['Transaction reference', manual?.reference ?? 'Not recorded yet'],
             ['Payment method', manual?.payout.kind ?? 'Not yet available'],
-            ['Used destination', manual?.payout.masked ?? 'No recorded destination'],
+            ['Paid to', manual?.payout.masked ?? 'No recorded destination'],
             [
               'Recorded by',
               demoProfiles.find((p) => p.userId === manual?.recordedBy)?.name ??
@@ -125,7 +125,7 @@ export function MemberPayment() {
               'Receipt confirmed',
               manual?.receivedConfirmedAt
                 ? `${time(manual.receivedConfirmedAt)} · you`
-                : 'Awaiting your acknowledgment',
+                : 'Waiting for you to confirm',
             ],
           ].map(([label, value]) => (
             <div key={label}>
@@ -137,26 +137,25 @@ export function MemberPayment() {
       </Panel>
       {!payment ? (
         <Empty
-          title={claim.state === 'Approved' ? 'Payment is pending' : 'Treasurer review comes first'}
+          title={claim.state === 'Approved' ? 'Not paid yet' : 'Waiting for Treasurer approval'}
           action={
             <Link className="btn" to={`/member/claims/${id}`}>
               View claim status
             </Link>
           }
         >
-          There is no recorded transfer to acknowledge. You can confirm only after a manual payment
-          is recorded and you have actually received it.
+          You’ll be able to confirm here after the Treasurer pays you.
         </Empty>
       ) : !manual ? (
-        <Empty title="Historical payment metadata is unavailable">
+        <Empty title="Payment details not available">
           This legacy sample has no retained proof or confirmation metadata. No receipt
           acknowledgment is fabricated.
         </Empty>
       ) : (
         <>
           <Panel
-            title="Preserved payment proof"
-            subtitle="Uploaded by the authorized Treasurer for this claim"
+            title="Payment proof"
+            subtitle="Uploaded by the Treasurer"
           >
             <div className="member-content">
               {proofError ? (
@@ -181,8 +180,8 @@ export function MemberPayment() {
             <div className="member-payment-issue">
               <Badge tone={manual.discrepancy.resolvedAt ? 'green' : 'danger'}>
                 {manual.discrepancy.resolvedAt
-                  ? 'Reported issue retained · resolved by receipt acknowledgment'
-                  : 'Payment discrepancy reported'}
+                  ? 'Problem solved · you confirmed payment'
+                  : 'Payment problem reported'}
               </Badge>
               <p>{manual.discrepancy.reason}</p>
               {manual.discrepancy.receivedAmount !== undefined && (
@@ -194,10 +193,10 @@ export function MemberPayment() {
           )}
           {!manual.receivedConfirmedAt ? (
             <div className="member-scope-banner">
-              <h2>Confirm only after receiving the money.</h2>
+              <h2>Did you get the money?</h2>
               <p>
-                If the transfer has not arrived or the amount differs, keep it awaiting confirmation
-                or report the issue. A local proof record alone does not establish delivery.
+                Only confirm after you see the money in your account. If nothing arrived or the amount
+                is wrong, report a problem.
               </p>
               <div className="row wrap">
                 <button
@@ -209,7 +208,7 @@ export function MemberPayment() {
                     setDialog('confirm');
                   }}
                 >
-                  Confirm received
+                  Yes, I got it
                 </button>
                 <button
                   className="btn danger"
@@ -220,7 +219,7 @@ export function MemberPayment() {
                     setDialog('issue');
                   }}
                 >
-                  Report payment issue
+                  No, or wrong amount
                 </button>
               </div>
             </div>
@@ -228,8 +227,7 @@ export function MemberPayment() {
             <div className="member-scope-banner">
               <Badge tone="green">Received confirmed</Badge>
               <p>
-                Your acknowledgment is retained with your identity and time. No duplicate
-                confirmation is available.
+                Your confirmation is saved with your name and the time. Thank you!
               </p>
             </div>
           )}
@@ -239,8 +237,8 @@ export function MemberPayment() {
         <Modal
           title={
             dialog === 'confirm'
-              ? 'Confirm the reimbursement was received?'
-              : 'Report a payment discrepancy'
+              ? 'Did you get the full amount?'
+              : 'Report a payment problem'
           }
           onClose={() => {
             if (!busy) setDialog(null);
@@ -253,9 +251,9 @@ export function MemberPayment() {
             <p className="settings-copy">
               {dialog === 'confirm'
                 ? manual?.discrepancy
-                  ? 'Confirm only if you have now received the full amount. This acknowledgment resolves your reported issue while retaining its original report.'
-                  : 'Your acknowledgment records receipt; it does not independently verify a bank transaction.'
-                : 'Describe the missing or different payment. Your claim stays awaiting confirmation and the Treasurer can see your report.'}
+                  ? 'Only confirm if you have now received the full amount. Confirming will close your reported problem.'
+                  : 'Only confirm if the money is in your bank or TNG account.'
+                : 'Tell the Treasurer what is wrong (for example, nothing arrived or the amount is wrong).'}
             </p>
             <Field
               id="member-received-amount"
@@ -292,7 +290,7 @@ export function MemberPayment() {
             )}
             <div className="form-actions">
               <button type="button" className="btn" disabled={busy} onClick={() => setDialog(null)}>
-                Keep awaiting confirmation
+                Cancel
               </button>
               <button
                 className={`btn ${dialog === 'confirm' ? 'primary' : 'danger'}`}
@@ -301,8 +299,8 @@ export function MemberPayment() {
                 {busy
                   ? 'Saving…'
                   : dialog === 'confirm'
-                    ? 'Confirm receipt acknowledgment'
-                    : 'Save discrepancy report'}
+                    ? 'Yes, I got the money'
+                    : 'Send report'}
               </button>
             </div>
           </form>
