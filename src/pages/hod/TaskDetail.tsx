@@ -77,7 +77,7 @@ export function HodTaskDetail() {
       <div className="row wrap">
         <PurchaseBadge task={task} />
         {!open && <Badge tone="neutral">{financialStateLabel(scope.activity.financialState, '')}</Badge>}
-        {p.resolvedAtClosure && <Badge tone="green">Resolved at closing</Badge>}
+        {p.resolvedAtClosure && <Badge tone="green">Closed without a claim</Badge>}
         <Badge
           tone={p.priority === 'High' ? 'danger' : p.priority === 'Medium' ? 'gold' : 'neutral'}
         >
@@ -92,32 +92,32 @@ export function HodTaskDetail() {
             label: 'Estimated item budget',
             value: money(task.budget, true),
             icon: Wallet,
-            note: 'Reserved purchasing estimate',
+            note: 'Set aside for this task',
             tone: 'brand',
           },
           {
             label: 'Recorded claim amount',
-            value: claim ? money(claim.amount, true) : demoMode ? 'No claim' : 'Restricted',
+            value: claim ? money(claim.amount, true) : demoMode ? 'No claim' : 'Private',
             icon: CircleDollarSign,
-            note: claim ? 'Shared expense record' : demoMode ? 'No expense has been recorded' : 'Use authorized department aggregates',
+            note: claim ? 'Shared expense record' : demoMode ? 'No expense has been recorded' : 'See department totals on Budget',
             tone: 'violet',
           },
           {
-            label: 'Variance against estimate',
+            label: 'Difference from estimate',
             value: claim ? `${variance > 0 ? '+' : ''}${money(variance, true)}` : '—',
             icon: Clock,
             note: claim
               ? variance > 0
                 ? 'Claim exceeds the item estimate'
                 : 'Claim is within the item estimate'
-              : 'Available when a claim is recorded',
+              : 'Shown after a claim is submitted',
             tone: variance > 0 ? 'danger' : 'green',
           },
           {
-            label: 'Reimbursement recorded',
-            value: demoMode ? money(paid, true) : 'Restricted',
+            label: 'Paid back',
+            value: demoMode ? money(paid, true) : 'Private',
             icon: CheckCircle2,
-            note: paid ? 'Sample payment history' : 'Purchase completion is not payment',
+            note: paid ? 'Sample payment history' : 'Completing a purchase doesn’t pay the claim',
             tone: 'green',
           },
         ]}
@@ -134,7 +134,7 @@ export function HodTaskDetail() {
         </div>
       )}
       <div className="hod-two-columns">
-        <Panel title="The purchase brief" subtitle="Clear context for the person doing the buying">
+        <Panel title="Task details" subtitle="What to buy and by when">
           <div className="panel-body stack">
             <p className="activity-description">{p.description}</p>
             <dl className="task-facts">
@@ -160,8 +160,8 @@ export function HodTaskDetail() {
           </div>
         </Panel>
         <Panel
-          title="Purchase progress"
-          subtitle="Track procurement without changing reimbursement"
+          title="Buying status"
+          subtitle="Doesn’t affect the claim or payment"
         >
           <div className="panel-body stack">
             <p className="settings-copy">
@@ -196,7 +196,7 @@ export function HodTaskDetail() {
                         );
                       } catch (e) {
                         setError(
-                          e instanceof Error ? e.message : 'Unable to update purchasing progress.',
+                          e instanceof Error ? e.message : 'Couldn’t change the status. Try again.',
                         );
                       }
                     }}
@@ -224,7 +224,7 @@ export function HodTaskDetail() {
                 setResolutionReason('');
                 setError('');
                 setResolve(true);
-              }}>Resolve without reimbursement</button>}
+              }}>Close without a claim</button>}
           </div>
         </Panel>
       </div>
@@ -235,37 +235,37 @@ export function HodTaskDetail() {
         <div className="panel-body">
           <dl className="task-facts claim-facts">
             <div>
-              <dt>Claim source</dt>
-              <dd>{claim?.id ?? (demoMode ? 'No submitted claim' : 'Restricted')}</dd>
+              <dt>Claim ID</dt>
+              <dd>{claim?.id ?? (demoMode ? 'No submitted claim' : 'Private')}</dd>
             </div>
             <div>
-              <dt>Review state</dt>
+              <dt>Claim status</dt>
               <dd>
                 {claim ? (
                   <Status value={claim.state} />
                 ) : (
-                  <span className="muted">{demoMode ? 'Not submitted' : 'Restricted'}</span>
+                  <span className="muted">{demoMode ? 'Not submitted' : 'Private'}</span>
                 )}
               </dd>
             </div>
             <div>
-              <dt>Payment state</dt>
-              <dd>{demoMode ? paid ? `${money(paid)} recorded` : 'Not paid' : 'Restricted'}</dd>
+              <dt>Payment status</dt>
+              <dd>{demoMode ? paid ? `${money(paid)} recorded` : 'Not paid' : 'Private'}</dd>
             </div>
             <div>
-              <dt>Unreimbursed claim amount</dt>
+              <dt>Still to be paid</dt>
               <dd>{claim ? money(claim.amount - paid) : '—'}</dd>
             </div>
           </dl>
           <p className="data-note">
-            HODs cannot approve claims, run risk reviews, record payments, or view payout account
+            Only the Treasurer can approve claims, check over-budget risk, pay members, or see bank
             details.
           </p>
         </div>
       </Panel>
       <Panel
         title="Task history"
-        subtitle="Creation, reassignment, and progress changes are preserved"
+        subtitle="Every change to this task is kept here"
       >
         <div className="timeline">
           {events.map((e) => (
@@ -292,10 +292,10 @@ export function HodTaskDetail() {
           )}
         </div>
       </Panel>
-      {resolve && <Modal title="Resolve without reimbursement" onClose={() => setResolve(false)}>
+      {resolve && <Modal title="Close without a claim" onClose={() => setResolve(false)}>
         <div className="stack">
           <p>Confirm why this purchase has no reimbursement obligation. The original task and claim history stay available.</p>
-          <Field label="Resolution reason" id="purchase-resolution" required>
+          <Field label="Reason" id="purchase-resolution" required>
             <textarea id="purchase-resolution" maxLength={500} value={resolutionReason}
               onChange={(event) => setResolutionReason(event.target.value)} />
           </Field>
@@ -306,12 +306,12 @@ export function HodTaskDetail() {
                 await run(async () => {
                   await activityClosing.resolvePurchase(task.id, resolutionReason);
                   return { data: await hodService.load() };
-                }, 'Purchase obligation resolved.');
+                }, 'Task closed without a claim.');
                 setResolve(false);
               } catch (cause) {
-                setError(cause instanceof Error ? cause.message : 'Purchase resolution could not be saved.');
+                setError(cause instanceof Error ? cause.message : 'Couldn’t close this task. Try again.');
               }
-            }}>Confirm purchase resolution</button>
+            }}>Close without claim</button>
         </div>
       </Modal>}
       {cancel && (
@@ -328,7 +328,7 @@ export function HodTaskDetail() {
           )}
           <div className="form-actions">
             <button className="btn" onClick={() => setCancel(false)}>
-              Keep purchasing task
+              Keep task
             </button>
             <button
               className="btn danger"

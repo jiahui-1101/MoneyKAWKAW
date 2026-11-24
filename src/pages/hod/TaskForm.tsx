@@ -43,8 +43,8 @@ export function HodTaskForm() {
   }, [dirty]);
   const back = taskId ? `${base}/tasks/${taskId}` : `${base}/tasks`;
   if (!canPlanActivity(scope.activity.financialState) || p?.resolvedAtClosure) return (
-    <Empty title="Purchasing setup is read-only" action={<Link className="btn" to={back}>Back to purchases</Link>}>
-      Use the existing purchasing records to review this activity’s commitments.
+    <Empty title="Planning is closed for this activity" action={<Link className="btn" to={back}>Back to purchasing tasks</Link>}>
+      You can view existing tasks but not add or edit them.
     </Empty>
   );
   const cancel = () => (dirty ? setDiscard(true) : navigate(back));
@@ -70,7 +70,7 @@ export function HodTaskForm() {
     return (
       <Empty
         title={
-          task?.expenseId ? 'Submitted purchases are protected' : 'This plan has been cancelled'
+          task?.expenseId ? 'This task has a claim, so it can’t be edited' : 'This plan has been cancelled'
         }
         action={
           <Link className="btn primary" to={back}>
@@ -121,7 +121,7 @@ export function HodTaskForm() {
     <div className="stack">
       <button className="back-link" onClick={cancel}>
         <ArrowLeft size={15} />
-        Back to {taskId ? 'purchase' : 'task board'}
+        Back to {taskId ? 'task' : 'purchasing tasks'}
       </button>
       <PageHeader
         eyebrow={`${scope.department.name.toUpperCase()} · PURCHASING PLAN`}
@@ -164,7 +164,7 @@ export function HodTaskForm() {
               />
             </Field>
             <Field
-              label="Assigned department member"
+              label="Assign to"
               id="purchase-member"
               required
               error={invalid.includes('assigneeId')}
@@ -175,7 +175,7 @@ export function HodTaskForm() {
                 aria-invalid={invalid.includes('assigneeId')}
                 onChange={(e) => update('assigneeId', e.target.value)}
               >
-                <option value="">Choose an eligible member</option>
+                <option value="">Choose a department member</option>
                 {eligibleMembers(data, scope.activity.id, scope.department.id).map((u) => (
                   <option key={u.id} value={u.id}>
                     {u.name}
@@ -216,12 +216,12 @@ export function HodTaskForm() {
             <div className="form-section-title">
               <span>02</span>
               <div>
-                <h2>A thoughtful item budget</h2>
-                <p>This estimate reserves part of your department allocation.</p>
+                <h2>Item budget</h2>
+                <p>This amount is set aside from your department budget.</p>
               </div>
             </div>
             <div className="inline-info">
-              Maximum item budget <strong className="money">{money(available)}</strong>
+              You can set up to <strong className="money">{money(available)}</strong>
             </div>
             <Field
               label={`Estimated item budget (${currency})`}
@@ -265,7 +265,7 @@ export function HodTaskForm() {
           <span className="aside-icon">
             <Info size={22} />
           </span>
-          <h2>A clear brief makes a confident purchase.</h2>
+          <h2>Tips</h2>
           <p>
             The Director has allocated {money(summary.budget)} to {scope.department.name}. Your team
             can distribute that budget across purchasing tasks.
@@ -273,15 +273,15 @@ export function HodTaskForm() {
           <ul>
             <li>
               <Check size={15} />
-              Assign only eligible department members
+              Only members of this department can be assigned
             </li>
             <li>
               <Check size={15} />
-              Keep estimates separate from expenses
+              This is an estimate; the claim shows the real cost
             </li>
             <li>
               <Check size={15} />
-              Track purchasing and claims separately
+              Members submit their claim after buying
             </li>
           </ul>
           <div className="aside-note">
@@ -290,7 +290,7 @@ export function HodTaskForm() {
         </aside>
       </div>
       {discard && (
-        <Modal title="Discard unsaved purchasing changes?" onClose={() => setDiscard(false)}>
+        <Modal title="Leave without saving?" onClose={() => setDiscard(false)}>
           <p>Your changes have not been saved.</p>
           <div className="form-actions">
             <button className="btn" onClick={() => setDiscard(false)}>

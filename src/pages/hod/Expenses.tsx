@@ -14,7 +14,7 @@ export function HodExpenses() {
     [review, setReview] = useState(''),
     [payment, setPayment] = useState('');
   if (!demoMode) return <div className="stack">
-    <PageHeader eyebrow={`${scope.department.name.toUpperCase()} · FINANCIAL VISIBILITY`}
+    <PageHeader eyebrow={`${scope.department.name.toUpperCase()} · CLAIMS & PAYMENTS`}
       title="Department finances"
       description="Authorized department totals separate purchasing plans, pending claims, approved obligations, and recorded payments." />
     <DepartmentMetrics data={data} scope={scope} />
@@ -40,9 +40,9 @@ export function HodExpenses() {
   return (
     <div className="stack">
       <PageHeader
-        eyebrow={`${scope.department.name.toUpperCase()} · FINANCIAL VISIBILITY`}
+        eyebrow={`${scope.department.name.toUpperCase()} · CLAIMS & PAYMENTS`}
         title="Expenses & claims"
-        description="Monitor claim review, item variances, and reimbursement without changing financial decisions."
+        description="See claim status and payments. Only the Treasurer can approve or pay."
       />
       <MetricCards
         items={[
@@ -50,7 +50,7 @@ export function HodExpenses() {
             label: 'Submitted claim amounts',
             value: money(summary.recorded, true),
             icon: CircleDollarSign,
-            note: 'Actual recorded claims',
+            note: 'All claims submitted',
             tone: 'brand',
           },
           {
@@ -61,7 +61,7 @@ export function HodExpenses() {
             tone: 'gold',
           },
           {
-            label: 'Unreimbursed claim amount',
+            label: 'Not yet paid back',
             value: money(summary.recorded - summary.paid, true),
             icon: Wallet,
             note: 'Includes claims awaiting review',
@@ -71,14 +71,14 @@ export function HodExpenses() {
             label: 'Paid reimbursements',
             value: money(summary.paid, true),
             icon: CheckCircle2,
-            note: 'Fictional shared payment records',
+            note: 'Sample data',
             tone: 'green',
           },
         ]}
       />
       <Panel
         title="Department expense & claim records"
-        subtitle="Fictional, read-only records linked to shared purchasing tasks"
+        subtitle="Sample claims (view only)"
       >
         <div className="filters">
           <div className="search-field">
@@ -92,23 +92,23 @@ export function HodExpenses() {
           </div>
           <div className="filter-selects">
             <select
-              aria-label="Claim review state"
+              aria-label="Claim status"
               value={review}
               onChange={(e) => setReview(e.target.value)}
             >
-              <option value="">All review states</option>
+              <option value="">All claim statuses</option>
               <option>Pending review</option>
               <option>In review</option>
               <option>Approved</option>
               <option>Declined</option>
             </select>
             <select
-              aria-label="Reimbursement state"
+              aria-label="Payment status"
               value={payment}
               onChange={(e) => setPayment(e.target.value)}
             >
-              <option value="">All reimbursements</option>
-              <option value="paid">Fully recorded</option>
+              <option value="">All payment statuses</option>
+              <option value="paid">Paid in full</option>
               <option value="unpaid">Not fully paid</option>
             </select>
           </div>
@@ -125,11 +125,11 @@ export function HodExpenses() {
                 <tr>
                   <th>PURCHASE / CLAIM</th>
                   <th>MEMBER</th>
-                  <th>REVIEW</th>
+                  <th>CLAIM STATUS</th>
                   <th>ITEM ESTIMATE</th>
                   <th>CLAIM AMOUNT</th>
-                  <th>VARIANCE</th>
-                  <th>PAYMENT RECORDED</th>
+                  <th>DIFFERENCE</th>
+                  <th>PAID</th>
                   <th>
                     <span className="sr-only">Task details</span>
                   </th>
@@ -152,7 +152,7 @@ export function HodExpenses() {
                       </td>
                       <td>
                         {data.directory.users.find((u) => u.id === task?.purchasing?.assigneeId)
-                          ?.name ?? 'No assignment'}
+                          ?.name ?? 'No linked task'}
                       </td>
                       <td>
                         <Status value={e.state} />
