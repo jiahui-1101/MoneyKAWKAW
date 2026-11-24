@@ -478,7 +478,6 @@ These are possible next steps, not features in the current release.
 
 ### Team Contributions
 
-> Roles below are taken from the commit history. Please review them and add any other confirmed members before submission.
 
 | Team member | Role | Contributions evidenced in the repository |
 |---|---|---|
