@@ -17,7 +17,12 @@
   <a href="https://moneykawkaw.pages.dev/">🌐 Live Deployment</a> ·
   <a href="#main-functions">📊 Main Functions</a> ·
   <a href="#local-development">🛠️ Run Locally</a> ·
-  <a href="docs/supabase/README.md">🔐 Supabase Setup & Security</a>
+  <a href="docs/supabase/README.md">🔐 Supabase Setup & Security</a> ·
+  <a href="#project-materials">📁 Project Materials</a>
+</p>
+
+<p align="center">
+  <img src="docs/screenshots/overview-desktop.jpg" alt="MoneyKAWKAW Director overview with activity budgets and spending stages" width="900">
 </p>
 
 ---
@@ -25,21 +30,28 @@
 ## Table of Contents
 
 - [AIROST Internship Project](#airost-internship-project)
+- [Problem Statement](#problem-statement)
 - [Introduction](#introduction)
 - [Demo](#demo)
+- [Screenshots](#screenshots)
 - [Live Deployment](#live-deployment)
 - [Main Functions](#main-functions)
 - [Role Workflows](#role-workflows)
 - [System Flow](#system-flow)
+- [Claim Lifecycle](#claim-lifecycle)
+- [Worked Example: A Department Purchase](#worked-example-a-department-purchase)
 - [Architecture and Access Control](#architecture-and-access-control)
 - [Frontend & Backend](#frontend-and-backend)
 - [Technical Stack](#technical-stack)
+- [Experimental Models](#experimental-models)
 - [Local Development](#local-development)
 - [Environment Variables](#environment-variables)
 - [Cloud Deployment](#cloud-deployment)
 - [Application Routes](#application-routes)
 - [Project Structure](#project-structure)
 - [Verification](#verification)
+- [Project Materials](#project-materials)
+- [Future Improvements](#future-improvements)
 - [Team](#team)
 - [Notes for Evaluators](#notes-for-evaluators)
 
@@ -57,6 +69,20 @@
 
 <!-- Add other confirmed team member names here if applicable. -->
 
+## Problem Statement
+
+A club event is planned months ahead, but its money moves in many small steps: a Director sets a budget, departments buy items with their own money, receipts arrive as photos in chat groups, and a Treasurer pays people back later. When these steps live in spreadsheets and messages, the same questions come up every time:
+
+| Question | What usually goes wrong |
+|---|---|
+| How much of each department's budget is already used? | Spending is only known after receipts are collected, so overruns are found late. |
+| Which purchases still have no claim? | Planned purchases and submitted claims are tracked in different places. |
+| Is this receipt total correct? | Totals are typed by hand and edits leave no history. |
+| Has this claim been paid? | "Approved" and "paid" are mixed up, and there is no proof of transfer. |
+| Did the member actually receive the money? | There is no confirmation step, so disputes have no record. |
+
+MoneyKAWKAW turns that scramble into one linked record: **budget → purchase task → receipt-backed claim → Treasurer decision → recorded payment → member confirmation**, with every total traceable to its source records.
+
 ## Introduction
 
 Club activities often involve several departments, advance purchases, member reimbursement claims, and a fixed overall budget. MoneyKAWKAW keeps those steps in one auditable workspace. Each activity has a budget; each department receives an allocation; purchasing tasks connect to members, receipts, claims, decisions, and payment records.
@@ -66,6 +92,27 @@ The app supports Director, Treasurer, Head of Department (HOD), and Committee Me
 ## Demo
 
 Open the [MoneyKAWKAW live app](https://moneykawkaw.pages.dev/). Workspace sign-in is invite-only; credentials are not published here.
+
+To explore without an invitation, run the app locally with <code>VITE_DATA_MODE=local</code> (see [Local Development](#local-development)) and open <code>/demo</code> to pick a fictional Director, HOD, Treasurer, or Member profile.
+
+## Screenshots
+
+| Director | HOD |
+|---|---|
+| <img src="docs/screenshots/activity-budget-desktop.jpg" alt="Director activity budget dashboard" width="420"> | <img src="docs/hod/screenshots/task-board-desktop.jpg" alt="HOD purchasing task board" width="420"> |
+| Activity budget dashboard with department allocations and spending stages | Department purchasing tasks with budgets, due dates, and assignees |
+
+| Committee Member | Treasurer |
+|---|---|
+| <img src="docs/member/screenshots/receipt-review-desktop.jpg" alt="Member receipt review with OCR line items" width="420"> | <img src="docs/treasurer/screenshots/claim-review-desktop.png" alt="Treasurer claim review with evidence and audit history" width="420"> |
+| Receipt capture and OCR line review before submission | Claim evidence, corrections, and review decision |
+
+| Advisory risk analysis | Payment proof |
+|---|---|
+| <img src="docs/treasurer/screenshots/risk-analysis-desktop.png" alt="Treasurer advisory over-budget analysis" width="420"> | <img src="docs/treasurer/screenshots/payment-proof-desktop.png" alt="Treasurer payment proof record" width="420"> |
+| Contributing factors are shown; the Treasurer still decides | External transfer recorded with proof, separate from approval |
+
+More screenshots, including mobile layouts, are in [docs/screenshots](docs/screenshots), [docs/hod/screenshots](docs/hod/screenshots), [docs/member/screenshots](docs/member/screenshots), and [docs/treasurer/screenshots](docs/treasurer/screenshots).
 
 ## Live Deployment
 
@@ -143,6 +190,83 @@ flowchart LR
     P --> B
 ```
 
+The same flow as a sequence, from budget setup to the Member's confirmation:
+
+```mermaid
+sequenceDiagram
+    autonumber
+    participant D as Director
+    participant H as HOD
+    participant M as Committee Member
+    participant S as Supabase (RLS + RPCs)
+    participant T as Treasurer
+    D->>S: Create activity, overall budget, departments, access grants
+    H->>S: Create purchase task with item budget and due date
+    S-->>M: Task assigned (estimate reserved in department budget)
+    M->>S: Upload receipt, review OCR lines, submit claim
+    S->>S: Validate scope, amounts, and status; replace task estimate with claim amount
+    T->>S: Start review, open evidence and history
+    T->>S: Optional advisory over-budget analysis
+    T->>S: Approve or decline with reason
+    T->>S: Record external payment and upload proof
+    S-->>M: Payment recorded with proof
+    M->>S: Confirm receipt or report a discrepancy
+    S-->>D: Dashboards recalculated from linked records
+```
+
+## Claim Lifecycle
+
+Claim status changes are validated by the <code>transition_claim</code> database function and payment RPCs (see <code>supabase/migrations/</code>). Every change writes a row to the claim status history with the actor, time, and reason. In the interface, a rejected claim is shown as **Declined**.
+
+```mermaid
+stateDiagram-v2
+    [*] --> Draft: Member starts a claim
+    Draft --> Pending: Member submits receipt-backed claim
+    Pending --> UnderReview: Treasurer starts review
+    UnderReview --> Approved: Treasurer approves
+    UnderReview --> Rejected: Treasurer declines with reason
+    Approved --> PaymentPending: Payment step opened
+    PaymentPending --> Paid: External transfer recorded with proof
+    Paid --> Received: Member confirms receipt
+    Paid --> Paid: Discrepancy reported, then resolved
+    Rejected --> [*]
+    Received --> [*]
+```
+
+| Rule | Enforced by |
+|---|---|
+| Only an independent Treasurer with activity access can review, approve, or decline; a Treasurer cannot review their own claim. | <code>transition_claim</code> |
+| A decline needs a reason of at least 3 characters. | <code>transition_claim</code> |
+| Payment can only be recorded for an approved claim in Payment Pending. | Payment recording RPC |
+| Only the claimant can confirm receipt or report a discrepancy. | <code>transition_claim</code> and dispute RPC |
+| A stale screen cannot overwrite a newer claim; the user is asked to refresh. | Expected <code>updated_at</code> check |
+
+Recording a payment states that a manual external transfer was recorded; bank settlement is not independently verified by the app.
+
+## Worked Example: A Department Purchase
+
+The figures below are **illustrative** and show how the [budget rules](#budget-calculations) apply. They are not real club data.
+
+```mermaid
+flowchart LR
+    A["Department allocation<br/>RM1,200"] --> B["Task: banner printing<br/>RM300 reserved"]
+    B --> C["Claim submitted<br/>RM340 + over-budget reason"]
+    C --> D["Treasurer approves<br/>approved, unpaid"]
+    D --> E["Payment recorded<br/>with proof"]
+    E --> F["Member confirms<br/>received"]
+```
+
+| Step | Event | Department view |
+|---|---|---|
+| 1 | Director allocates RM1,200 of a RM5,000 activity budget to Logistics. | Remaining RM1,200 |
+| 2 | HOD creates a banner-printing task with an item budget of RM300 and assigns a Member. | RM300 committed as an open reservation |
+| 3 | Member buys the banner for RM340, uploads the receipt, reviews OCR lines, and explains the RM40 overrun. | Claim of RM340 replaces the RM300 estimate; recorded expenses RM340; remaining RM860 |
+| 4 | Treasurer reviews the receipt, OCR output, and edit history, checks the advisory risk factors, and approves. | RM340 approved and still unpaid |
+| 5 | Treasurer records the external transfer and uploads proof. | RM340 paid, awaiting Member confirmation |
+| 6 | Member confirms receipt. | Claim closed as Received |
+
+If the Treasurer had declined the claim at step 4, the RM340 would stay in history but leave recorded expenses, and the RM300 task reservation would be restored.
+
 ## Architecture and Access Control
 
 - Supabase Auth identifies the signed-in user. PostgreSQL row-level security and scoped RPCs enforce role, activity, department, and record ownership on the server.
@@ -184,9 +308,39 @@ Supabase is the backend for authentication, PostgreSQL persistence, database fun
 - **Testing and linting:** Vitest, TypeScript, and Oxlint.
 - **Hosting:** Cloudflare Pages static frontend with security headers emitted by the release build.
 
+| Area | Choice |
+|---|---|
+| Framework | React 19, React Router 7 |
+| Build | Vite 7, TypeScript 5.9 |
+| Backend | Supabase (PostgreSQL, Auth, Storage, row-level security, RPCs); Supabase CLI 3 for local development |
+| Receipt OCR | Tesseract.js 7 with English language data, running in the browser |
+| Icons and fonts | lucide-react, DM Sans and Manrope variable fonts |
+| Tests and linting | Vitest, Oxlint with React and JSX accessibility plugins |
+| Hosting | Cloudflare Pages (static <code>dist/</code> build) |
+
+## Experimental Models
+
+The <code>ml/</code> folder holds offline experiments. They are **disabled in the production release build** and never authorize a financial operation.
+
+| Folder | Experiment | Status |
+|---|---|---|
+| <code>ml/receipt/</code> | Fine-tuned multilingual DistilBERT that classifies OCR receipt rows | Optional local opt-in via <code>VITE_RECEIPT_MODEL</code>; deterministic parsing and database validation remain authoritative; Member review is mandatory |
+| <code>ml/risk/</code> | LightGBM model of future budget pressure, trained on **synthetic** activity lifecycles | Not validated on real club outcomes; the deterministic advisory analysis is what Treasurers use |
+| <code>ml/assistant/</code> | Local Qwen financial assistant using bounded, read-only, scope-checked database context | Local experiment; requires explicit opt-in via <code>VITE_QWEN_MODEL</code> |
+
+Each folder's README explains how to reproduce, evaluate, and the limits of the experiment.
+
 ## Local Development
 
-Requirements: Node.js and npm. From the repository root:
+Requirements: Node.js and npm. Vite 7 needs Node.js 20.19+ or 22.12+. The Supabase integration tests also need Docker for the local Supabase stack.
+
+```bash
+git clone https://github.com/jiahui-1101/MoneyKAWKAW.git
+cd MoneyKAWKAW
+cp .env.example .env.local   # local demo mode by default
+```
+
+From the repository root:
 
 1. Install dependencies with <code>npm ci</code>.
 2. Start the app with <code>npm run dev -- --port 5186</code>.
@@ -284,11 +438,59 @@ The release build forces Supabase mode, disables synthetic login and experimenta
 - <code>tests/</code> — unit and workflow tests.
 - <code>docs/</code> — setup and role-specific implementation guides.
 
+```text
+MoneyKAWKAW/
+├── src/
+│   ├── App.tsx              route table for all role workspaces
+│   ├── components/          shared UI, charts, receipt, budget, and role shells
+│   ├── pages/               Director pages, plus hod/, member/, treasurer/
+│   ├── domain/              models, budget rules, risk, receipt, and access logic
+│   ├── services/            demo adapters, OCR, validation, and Supabase access
+│   │   └── supabase/        authentication, repositories, and RPC adapters
+│   ├── context/             session and workspace state
+│   └── styles/              global styles
+├── supabase/
+│   └── migrations/          ordered schema, RLS policies, storage, and RPCs
+├── tests/                   unit, permission, lifecycle, and Supabase integration tests
+├── scripts/                 OCR preparation, release build, seeding, and test helpers
+├── ml/                      offline model experiments (receipt, risk, assistant)
+├── public/                  favicon, OCR assets, and model runtimes
+└── docs/
+    ├── screenshots/         Director screenshots
+    ├── hod/ member/ treasurer/   role guides, verification notes, screenshots
+    └── supabase/            database, authentication, and security setup
+```
+
 ## Verification
 
 The current project has unit coverage for role scoping, finance calculations, review/payment lifecycle, receipt history, and dashboard behavior. Run the commands in [Local Development](#local-development) before submitting a change. Supabase integration tests use an isolated local project; do not point test/reset scripts at hosted data.
 
 The release build is designed to reject model weights and environment files. Experimental models are disabled in the static release.
+
+Role-specific verification notes are in [docs/VERIFICATION.md](docs/VERIFICATION.md), [docs/hod/VERIFICATION.md](docs/hod/VERIFICATION.md), [docs/member/VERIFICATION.md](docs/member/VERIFICATION.md), and [docs/treasurer/VERIFICATION.md](docs/treasurer/VERIFICATION.md).
+
+## Project Materials
+
+| Material | Link | Status |
+|---|---|---|
+| Live app | [moneykawkaw.pages.dev](https://moneykawkaw.pages.dev/) | Invite-only |
+| Supabase setup and security | [docs/supabase/README.md](docs/supabase/README.md) | Ready |
+| HOD workspace guide | [docs/hod/README.md](docs/hod/README.md) | Ready |
+| Member workspace guide | [docs/member/README.md](docs/member/README.md) | Ready |
+| Treasurer workspace guide | [docs/treasurer/README.md](docs/treasurer/README.md) | Ready |
+| Verification notes | [docs/VERIFICATION.md](docs/VERIFICATION.md) | Ready |
+| Commit log notes | [docs/COMMITS.md](docs/COMMITS.md) | Ready |
+| Model experiments | [ml/receipt](ml/receipt/README.md), [ml/risk](ml/risk/README.md), [ml/assistant](ml/assistant/README.md) | Experimental |
+
+## Future Improvements
+
+These are possible next steps, not features in the current release.
+
+1. **Payment integration:** connect to a bank or e-wallet API so transfers are verified by the provider instead of manually recorded.
+2. **Multilingual OCR:** extend on-device OCR beyond English, keeping Member review as the safety gate.
+3. **Validated risk model:** train and evaluate the budget-pressure model on real, consented club history before it informs any review.
+4. **Notifications:** send email or push reminders for due purchase tasks, pending reviews, and unconfirmed payments.
+5. **Reporting:** export reconciled activity reports for club committees and auditors.
 
 ## Team
 
@@ -296,6 +498,14 @@ The release build is designed to reject model weights and environment files. Exp
 **Repository contributor:** [Wong Jia Hui](https://github.com/jiahui-1101)
 
 <!-- Add any additional confirmed team members and their contributions here. -->
+
+### Team Contributions
+
+> Roles below are taken from the commit history. Please review them and add any other confirmed members before submission.
+
+| Team member | Role | Contributions evidenced in the repository |
+|---|---|---|
+| **Wong Jia Hui** | Developer | Director, HOD, Treasurer, and Member workspaces; Supabase schema, RLS, and RPCs; receipt OCR; dashboards; model experiments; Cloudflare deployment; documentation |
 
 ## Notes for Evaluators
 
@@ -305,3 +515,18 @@ The release build is designed to reject model weights and environment files. Exp
 - Risk analysis is deterministic and advisory. It presents contributing factors but does not approve a claim.
 - Reimbursements are manually recorded after an external transfer. There is no bank or Touch 'n Go payment integration.
 - Payout details are masked and scoped. Use fictional payment details in local demo mode.
+
+MoneyKAWKAW implements the full claim loop end to end:
+
+```text
+Activity budget
+-> department allocation
+-> purchase task (estimate reserved)
+-> receipt upload + Member-reviewed OCR
+-> submitted claim (estimate replaced by actual amount)
+-> Treasurer review + advisory risk analysis
+-> approve or decline
+-> manually recorded external payment + proof
+-> Member confirms receipt or reports a discrepancy
+-> dashboards derived from linked records
+```
