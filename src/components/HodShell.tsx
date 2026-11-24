@@ -45,10 +45,10 @@ export function HodShell() {
     { to: '/hod', title: 'Overview', icon: LayoutDashboard, end: true },
     { to: base, title: 'My department', icon: ShieldCheck, end: true },
     { to: `${base}/tasks`, title: 'Purchasing tasks', icon: ClipboardList },
-    { to: `${base}/members`, title: 'Department members', icon: Users },
-    { to: `${base}/budget`, title: 'Budget & allocations', icon: PiggyBank },
+    { to: `${base}/members`, title: 'Members', icon: Users },
+    { to: `${base}/budget`, title: 'Budget', icon: PiggyBank },
     ...(demoMode ? [{ to: `${base}/expenses`, title: 'Expenses & claims', icon: Wallet }] : []),
-    { to: `${base}/history`, title: 'Department activity', icon: Activity },
+    { to: `${base}/history`, title: 'History', icon: Activity },
   ];
   const [help, setHelp] = useState(false);
   const initials = actor.name
@@ -152,7 +152,7 @@ export function HodShell() {
             </button>
             <span className="breadcrumb">
               Workspace <span>/</span>
-              <strong>Department oversight</strong>
+              <strong>My department</strong>
             </span>
           </div>
           <div className="row">
@@ -172,8 +172,8 @@ export function HodShell() {
           {!loading && data && data.scopes.length > 0 && (
             <div className="hod-scope-bar">
               <div>
-                <span className="eyebrow">YOUR ASSIGNED WORKSPACE</span>
-                <p>Department budgets are set by the Director.</p>
+                <span className="eyebrow">VIEWING</span>
+                <p>Only the Director can change your budget.</p>
               </div>
               <div className="hod-scope-select">
                 <label htmlFor="hod-department">Activity & department</label>
@@ -194,7 +194,7 @@ export function HodShell() {
               title="Your department workspace couldn’t load"
               action={
                 <button className="btn primary" onClick={() => void reload()}>
-                  Retry loading
+                  Try again
                 </button>
               }
             >
@@ -206,7 +206,7 @@ export function HodShell() {
               action={
                 <div className="row wrap">
                   <button className="btn" onClick={() => void reload()}>
-                    Refresh assignments
+                    Check again
                   </button>
                   <Link className="btn primary" to="/demo">
                     Choose demo profile
@@ -219,14 +219,14 @@ export function HodShell() {
             </Empty>
           ) : unauthorized ? (
             <Empty
-              title="Department access restricted"
+              title="You can’t open this department"
               action={
                 <Link className="btn primary" to="/hod">
-                  Return to my departments
+                  Back to my departments
                 </Link>
               }
             >
-              This department is outside your current activity membership and HOD assignment.
+              You are not the HOD of this department.
             </Empty>
           ) : (
             <Outlet />
@@ -239,21 +239,19 @@ export function HodShell() {
       </div>
       <ToastMessage notice={notice} dismiss={dismiss} />
       {help && (
-        <Modal title="Your department workspace" onClose={() => setHelp(false)}>
+        <Modal title="How the HOD workspace works" onClose={() => setHelp(false)}>
           <div className="stack">
             <p>
-              Choose one of your assigned departments, plan purchases, assign eligible members, and
-              track progress. The Director sets your department allocation.
+              Choose one of your departments, plan purchases, assign them to department members, and
+              track progress. The Director sets your budget.
             </p>
             <p>
-              Planned budgets are estimates. Recorded spending comes from shared claim records.
-              Available funds subtract recorded claims and unclaimed task budgets, including
-              completed purchases awaiting a claim.
+              Task amounts are estimates. Spending comes from members’ claims. Free to spend = budget
+              minus claims minus tasks with no claim yet.
             </p>
             <p>
-              Tasks linked to submitted claims are protected. Purchase completion never approves a
-              claim or records a reimbursement. Sample financial records are fictional and
-              read-only.
+              Once a claim is submitted, the task is locked. Marking a purchase done does not approve
+              or pay the claim; only the Treasurer does that.
             </p>
           </div>
         </Modal>

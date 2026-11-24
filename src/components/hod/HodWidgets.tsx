@@ -27,7 +27,7 @@ export function useDepartmentScope() {
   const scope = activityId
     ? data?.scopes.find((s) => s.activity.id === activityId && s.department.id === departmentId)
     : data?.scopes[0];
-  if (!data || !scope) throw new Error('An authorized department is required.');
+  if (!data || !scope) throw new Error('You don’t have access to this department.');
   return {
     data,
     scope,
@@ -72,24 +72,24 @@ export function DepartmentMetrics({ data, scope }: { data: HodSnapshot; scope: H
           tone: 'brand',
         },
         {
-          label: 'Allocated purchasing budget',
+          label: 'Planned purchases',
           value: money(s.planned, true),
           icon: ClipboardList,
-          note: 'Item estimates · excludes cancelled',
+          note: 'Total of task estimates (not cancelled)',
           tone: 'violet',
         },
         {
           label: demoMode ? 'Recorded spending' : 'Claim spending',
           value: money(s.recorded, true),
           icon: CircleDollarSign,
-          note: 'Aggregated approved liability and paid expenditure',
+          note: 'Claims approved or already paid',
           tone: 'gold',
         },
         {
           label: 'Available for purchases',
           value: money(s.available, true),
           icon: PiggyBank,
-          note: demoMode ? 'After claims and unclaimed plans' : 'Allocation less active task commitments',
+          note: demoMode ? 'After claims and open tasks' : 'Budget left after open tasks',
           tone: s.available < 0 ? 'danger' : 'green',
         },
       ]}
@@ -102,11 +102,11 @@ export function DepartmentBalances({ data, scope }: { data: HodSnapshot; scope: 
   return (
     <div className="lifecycle">
       {[
-        [demoMode ? 'Remaining after expenses' : 'Available to plan', money(s.available), demoMode ? 'Allocation less recorded claims' : 'Allocation less active task commitments'],
-        [demoMode ? 'Committed' : 'Planned purchasing commitments', money(s.committed), demoMode ? 'Open purchases + approved unpaid' : 'Active task estimates · cancelled tasks excluded'],
-        ['Pending claim review', money(s.pending), demoMode ? 'Decision remains with Treasurer' : 'Department aggregate only; private evidence stays restricted'],
-        ['Paid reimbursements', money(s.paid), demoMode ? 'Fictional shared payment records' : 'Recorded transfers; recipient confirmation remains separate'],
-        ['Budget utilization', `${s.utilization.toFixed(1)}%`, demoMode ? 'Actual claims / department budget' : 'Approved liability and paid expenditure / department allocation'],
+        [demoMode ? 'Left after claims' : 'Available to plan', money(s.available), demoMode ? 'Budget minus claims' : 'Budget left after open tasks'],
+        [demoMode ? 'Committed' : 'Set aside, not paid yet', money(s.committed), demoMode ? 'Open tasks + approved claims not yet paid' : 'Active task estimates · cancelled tasks excluded'],
+        ['Pending claim review', money(s.pending), demoMode ? 'Decision remains with Treasurer' : 'Total only; receipts are private'],
+        ['Paid reimbursements', money(s.paid), demoMode ? 'Fictional shared payment records' : 'Payments sent; the member confirms receipt separately'],
+        ['Budget used', `${s.utilization.toFixed(1)}%`, demoMode ? 'Actual claims / department budget' : 'Approved and paid claims ÷ department budget'],
       ].map(([label, value, note]) => (
         <div key={label}>
           <small>{label}</small>
@@ -162,11 +162,11 @@ export function TaskTable({ tasks, data }: { tasks: Assignment[]; data: HodSnaps
                   </Link>
                   <small className="cell-sub">
                     {task.expenseId
-                      ? 'Linked claim record'
+                      ? 'Claim submitted'
                       : p.status === 'Purchased'
-                        ? demoMode ? 'Purchased · awaiting claim' : 'Purchased · claim details restricted'
+                        ? demoMode ? 'Bought, waiting for claim' : 'Purchased'
                         : p.status === 'Completed'
-                          ? 'Purchase complete · no claim recorded'
+                          ? 'Done · no claim yet'
                           : 'Department purchasing plan'}
                   </small>
                 </td>
@@ -197,7 +197,7 @@ export function TaskTable({ tasks, data }: { tasks: Assignment[]; data: HodSnaps
                   <PurchaseBadge task={task} />
                 </td>
                 <td>
-                  {claim ? <Status value={claim.state} /> : <span className="muted">{demoMode ? 'No claim' : 'Restricted'}</span>}
+                  {claim ? <Status value={claim.state} /> : <span className="muted">{demoMode ? 'No claim yet' : 'Private'}</span>}
                 </td>
                 <td>
                   <Link className="table-arrow" to={href} aria-label={`Open ${p.name}`}>
@@ -217,7 +217,7 @@ export function ProcurementFlow({ tasks, base }: { tasks: Assignment[]; base: st
   return (
     <Panel
       title="From plan to purchase"
-      subtitle="Procurement progress is separate from reimbursement"
+      subtitle="Buying progress only. This is not claim payment."
     >
       <div className="procurement-flow">
         {['Not Started', 'In Progress', 'Purchased', 'Claim Submitted', 'Completed'].map(
@@ -282,7 +282,7 @@ export function DepartmentActivity({
           </div>
         ))}
         {!events.length && (
-          <Empty title="A fresh page for your team">
+          <Empty title="No activity yet">
             New purchasing tasks, reassignments, and progress changes appear here.
           </Empty>
         )}
@@ -307,9 +307,9 @@ export function UpcomingPurchases({
     .slice(0, 4);
   return (
     <Panel
-      title="On the horizon"
-      subtitle="Purchasing deadlines worth keeping in view"
-      action={<TextLink to={`${base}/tasks?attention=overdue`}>Review overdue</TextLink>}
+      title="Due soon"
+      subtitle="Next tasks to buy"
+      action={<TextLink to={`${base}/tasks?attention=overdue`}>See overdue tasks</TextLink>}
     >
       <div className="deadline-list">
         {due.map((task) => (
@@ -330,8 +330,8 @@ export function UpcomingPurchases({
           </Link>
         ))}
         {!due.length && (
-          <Empty title="No open deadlines">
-            Your team has no unclaimed purchases awaiting action.
+          <Empty title="Nothing due">
+            No tasks are waiting to be bought.
           </Empty>
         )}
       </div>

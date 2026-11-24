@@ -36,19 +36,19 @@ export function HodInsights({ summary, tasks, users }: { summary: DepartmentBudg
   }));
   return (
     <div className="viz-grid">
-      <ChartCard title="Department budget used" hint="Planned purchases against your allocation">
+      <ChartCard title="Budget planned so far" hint="Planned purchases against your budget">
         <Gauge value={summary.budget ? (summary.planned / summary.budget) * 100 : 0} label={`${compact(summary.planned)} planned of ${compact(summary.budget)}`} />
       </ChartCard>
-      <ChartCard title="Allocation split" hint="Your department allocation by stage">
+      <ChartCard title="Where your budget is" hint="Your department budget by stage">
         <Donut
           centre={compact(summary.budget)}
-          caption="allocation"
+          caption="budget"
           format={compact}
           slices={[
             { label: 'Paid', value: summary.paid, tone: tones.paid },
             { label: 'Pending review', value: summary.pending, tone: tones.pending },
-            { label: 'Committed', value: summary.committed, tone: tones.committed },
-            { label: 'Available', value: Math.max(0, summary.available), tone: tones.available },
+            { label: 'Set aside',  value: summary.committed, tone: tones.committed },
+            { label: 'Free to spend',  value: Math.max(0, summary.available), tone: tones.available },
           ]}
         />
       </ChartCard>
@@ -62,7 +62,7 @@ export function HodInsights({ summary, tasks, users }: { summary: DepartmentBudg
           ]}
         />
       </ChartCard>
-      <ChartCard wide title="Team workload" hint="Task budget per member; bar = purchased vs still open">
+      <ChartCard wide title="Team workload" hint="Each member’s task amounts: bought vs not yet bought">
         <Legend items={[{ label: 'Purchased', tone: tones.paid }, { label: 'Open', tone: tones.committed }]} />
         <StackedBars rows={rows} format={compact} empty="No purchasing tasks yet." />
       </ChartCard>
