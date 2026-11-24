@@ -28,19 +28,19 @@ export function ReceiptItemEditor({
     <div className="stack">
       <div className="member-receipt-totals">
         <div>
-          <small>Original receipt total</small>
+          <small>Total we read</small>
           <strong>{money(receipt.originalTotal!)}</strong>
         </div>
         <div>
-          <small>Reviewed receipt total</small>
+          <small>Receipt total (checked)</small>
           <strong>{money(printed)}</strong>
         </div>
         <div>
-          <small>Final claimable amount</small>
+          <small>Club pays you</small>
           <strong className={total <= 0 ? 'danger-text' : 'good-text'}>{money(total)}</strong>
         </div>
         <div>
-          <small>Excluded lines</small>
+          <small>Lines not claimed</small>
           <strong>{lines.filter((l) => l.excluded).length}</strong>
         </div>
       </div>
@@ -72,7 +72,7 @@ export function ReceiptItemEditor({
           <table>
             <thead>
               <tr>
-                {['ITEM', 'SOURCE VALUE', 'FINAL VALUE', 'TREATMENT', 'ACTION'].map((h) => (
+                {['ITEM', 'ON RECEIPT', 'CLAIMED', 'STATUS', 'ACTION'].map((h) => (
                   <th key={h}>{h}</th>
                 ))}
               </tr>
@@ -93,7 +93,7 @@ export function ReceiptItemEditor({
                   <td className="money">{money(lineValue(l.final))}</td>
                   <td>
                     <Badge tone={l.excluded ? 'danger' : l.edited ? 'gold' : 'green'}>
-                      {l.excluded ? 'Excluded' : l.edited ? 'Corrected · included' : 'Included'}
+                      {l.excluded ? 'Excluded' : l.edited ? 'Fixed · claimed' : 'Included'}
                     </Badge>
                   </td>
                   <td>
@@ -119,10 +119,10 @@ export function ReceiptItemEditor({
           </p>
           <div className="row wrap">
             <button className="btn" disabled={saving} onClick={() => setTotalOpen(true)}>
-              Correct reviewed receipt total
+              Fix receipt total
             </button>
             <button className="btn primary" onClick={onReview}>
-              Compare original & annotated claim
+              Next: check claim
             </button>
           </div>
         </div>

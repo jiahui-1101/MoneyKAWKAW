@@ -61,16 +61,16 @@ export function ReceiptLineForm({
           line
             ? receiptEditService.line(draft.id, draft.updatedAt, line.id, after, excluded, reason, type)
             : receiptEditService.add(draft.id, draft.updatedAt, after, reason),
-        'Receipt modification saved with before/after history.',
+        'Change saved.',
       );
       onClose();
     } catch (e) {
-      setError(e instanceof Error ? e.message : 'Unable to save this receipt modification.');
+      setError(e instanceof Error ? e.message : 'Couldn’t save this change.');
     }
   };
   return (
     <Modal
-      title={line ? 'Correct or exclude this item' : 'Add a missing receipt line'}
+      title={line ? 'Correct or exclude this item' : 'Add a missing line'}
       onClose={() => {
         if (!saving) onClose();
       }}
@@ -130,7 +130,7 @@ export function ReceiptLineForm({
             <p className="field-hint">
               Calculated amount:{' '}
               {total === null ? 'Complete valid quantity and unit price' : money(total)} · rounded
-              to nearest minor unit.
+              to the nearest sen.
             </p>
           </>
         ) : (
@@ -150,19 +150,19 @@ export function ReceiptLineForm({
               checked={excluded}
               onChange={(e) => setExcluded(e.target.checked)}
             />
-            <span>Exclude this line from reimbursement</span>
+            <span>Don’t claim this (e.g. personal item)</span>
           </label>
         )}
         {line && excluded === (current?.excluded ?? false) && (
-          <Field id="edit-line-type" label="What kind of correction is this?" required>
+          <Field id="edit-line-type" label="What are you fixing?" required>
             <select id="edit-line-type" value={type} onChange={(e) => setType(e.target.value as typeof type)}>
-              <option value="OCR Correction">OCR correction</option>
-              <option value="Description Correction">Description correction</option>
-              <option value="Amount Adjustment">Amount adjustment</option>
+              <option value="OCR Correction">App misread it</option>
+              <option value="Description Correction">Item name was wrong</option>
+              <option value="Amount Adjustment">Amount changed</option>
             </select>
           </Field>
         )}
-        <Field id="edit-line-reason" label="Reason for this modification" required>
+        <Field id="edit-line-reason" label="Why are you changing this?" required>
           <textarea
             id="edit-line-reason"
             maxLength={500}
@@ -181,7 +181,7 @@ export function ReceiptLineForm({
             Cancel
           </button>
           <button className="btn primary" disabled={saving}>
-            {saving ? 'Saving…' : 'Save modification'}
+            {saving ? 'Saving…' : 'Save change'}
           </button>
         </div>
       </form>
@@ -210,7 +210,7 @@ export function ReceiptTotalForm({
     try {
       await change(
         () => receiptEditService.total(draft.id, draft.updatedAt, parseMoney(amount), reason),
-        'Receipt total correction retained with history.',
+        'Receipt total updated.',
       );
       onClose();
     } catch (e) {
@@ -219,7 +219,7 @@ export function ReceiptTotalForm({
   };
   return (
     <Modal
-      title="Correct the reviewed receipt total"
+      title="Fix the receipt total"
       onClose={() => {
         if (!saving) onClose();
       }}

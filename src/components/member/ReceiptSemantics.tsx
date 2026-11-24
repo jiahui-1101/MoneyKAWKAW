@@ -2,11 +2,11 @@ import type { Understanding } from '../../domain/receipt-understanding';
 import { Badge, Panel } from '../ui';
 export function ReceiptSemantics({ understanding }: { understanding?: Understanding }) {
   if (!understanding) return null;
-  return <Panel title="Receipt line suggestions" subtitle={understanding.message}>
+  return <Panel title="Smart suggestions" subtitle={understanding.message}>
     <div className="member-content stack">
       <div className="row wrap">
         <Badge tone={understanding.status === 'ready' ? 'gold' : 'neutral'}>
-          {understanding.status === 'ready' ? 'Experimental model ran' : 'Using OCR + rules'}
+          {understanding.status === 'ready' ? 'Smart suggestions on' : 'Basic reading only'}
         </Badge>
         <small>{understanding.model} · {(understanding.milliseconds / 1000).toFixed(1)}s</small>
       </div>

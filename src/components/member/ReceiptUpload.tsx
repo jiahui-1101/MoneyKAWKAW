@@ -24,7 +24,7 @@ export function ReceiptUpload({
   const [error, setError] = useState(''),
     [reading, setReading] = useState(false),
     [progress, setProgress] = useState(0),
-    [stage, setStage] = useState('Preparing on-device reader');
+    [stage, setStage] = useState('Getting ready…');
   const [suggestion, setSuggestion] = useState<OcrSuggestion | null>(null),
     [method, setMethod] = useState<'tesseract' | 'manual'>('manual'),
     [pending, setPending] = useState<ProofFile | null | undefined>();
@@ -42,7 +42,7 @@ export function ReceiptUpload({
     try {
       await change(
         () => draftService.receipt(draft.id, draft.updatedAt, file),
-        file ? 'Original receipt image saved unchanged.' : 'Unsubmitted receipt removed.',
+        file ? 'Receipt uploaded.' : 'Receipt removed.',
       );
       setPending(undefined);
       setSuggestion(null);
@@ -77,7 +77,7 @@ export function ReceiptUpload({
         (status, value) => {
           if (!current.signal.aborted) {
             setStage(
-              status === 'recognizing text' ? 'Reading receipt text' : 'Preparing on-device reader',
+              status === 'recognizing text' ? 'Reading receipt text' : 'Getting ready…',
             );
             setProgress(value * 100);
           }
@@ -98,7 +98,7 @@ export function ReceiptUpload({
           'Text was recognized, but no confident amount lines were found. Enter source items manually and compare them with the image.',
         );
     } catch (e) {
-      setError(e instanceof Error ? e.message : 'OCR was unavailable. Continue with manual entry.');
+      setError(e instanceof Error ? e.message : 'Couldn’t read the receipt. Please type it in.');
     } finally {
       if (controller.current === current) setReading(false);
     }
@@ -116,7 +116,7 @@ export function ReceiptUpload({
   return (
     <div className="stack">
       <Panel
-        title="Keep the original. Make the claim clear."
+        title="Upload your receipt"
         subtitle="PNG or JPEG · up to 1 MB / 20 megapixels · no silent image resizing"
       >
         <div className="member-content stack">
@@ -130,7 +130,7 @@ export function ReceiptUpload({
                 onChange={(e) => void select(e.target.files?.[0])}
               />
             </Field>
-            <Field id="receipt-camera" label="Take or choose a camera photo">
+            <Field id="receipt-camera" label="Take a photo">
               <input
                 id="receipt-camera"
                 type="file"
@@ -141,7 +141,7 @@ export function ReceiptUpload({
               />
             </Field>
           </div>
-          {loadingFile && <p role="status">Validating and preserving your image…</p>}
+          {loadingFile && <p role="status">Checking your photo…</p>}
           {draft.receipt ? (
             <>
               <div className="member-source-image">
@@ -158,7 +158,7 @@ export function ReceiptUpload({
                   disabled={saving || reading}
                   onClick={() => setPending(null)}
                 >
-                  Remove unsubmitted receipt
+                  Remove receipt
                 </button>
               </div>
               {draft.receipt.extraction ? (
@@ -169,7 +169,7 @@ export function ReceiptUpload({
                     explicitly replace this unsubmitted receipt to start from a different source.
                   </p>
                   <button className="btn" onClick={onCaptured}>
-                    Continue to item editing
+                    Continue
                   </button>
                 </div>
               ) : (
@@ -190,10 +190,10 @@ export function ReceiptUpload({
                       disabled={reading || saving}
                       onClick={() => void recognize()}
                     >
-                      Read receipt on device
+                      Read my receipt
                     </button>
                     <button className="btn" disabled={saving || reading} onClick={manual}>
-                      Enter receipt manually
+                      Type it in myself
                     </button>
                   </div>
                   {reading && (
@@ -212,8 +212,7 @@ export function ReceiptUpload({
             </>
           ) : (
             <p className="field-hint">
-              Upload your actual purchase receipt to begin. No example items or totals are injected
-              into uploaded images.
+              Upload a photo of your receipt to start.
             </p>
           )}
           {error && (
@@ -256,7 +255,7 @@ export function ReceiptUpload({
             )}
             <div className="form-actions">
               <button className="btn" disabled={saving} onClick={() => setPending(undefined)}>
-                Keep current source
+                Keep this receipt
               </button>
               <button className="btn danger" disabled={saving} onClick={() => void apply(pending)}>
                 {saving ? 'Saving…' : pending ? 'Confirm replacement' : 'Confirm removal'}

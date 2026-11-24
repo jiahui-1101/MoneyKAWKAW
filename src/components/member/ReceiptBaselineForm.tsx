@@ -76,15 +76,15 @@ export function ReceiptBaselineForm({
       );
       onSaved();
     } catch (e) {
-      setError(e instanceof Error ? e.message : 'Unable to capture receipt source values.');
+      setError(e instanceof Error ? e.message : 'Couldn’t save. Please try again.');
     }
   };
   return (
     <Panel
       title={
         method === 'tesseract'
-          ? suggestion.understanding?.status === 'ready' ? 'Review OCR and semantic suggestions' : 'Review the original OCR suggestions'
-          : 'Enter the receipt’s source values'
+          ? 'Check what we read from your receipt'
+          : 'Type in your receipt'
       }
       subtitle={
         method === 'tesseract'
@@ -186,7 +186,7 @@ export function ReceiptBaselineForm({
                   disabled={rows.length === 1}
                   onClick={() => setRows((rows) => rows.filter((row) => row.id !== r.id))}
                 >
-                  Remove source row
+                  Remove line
                 </button>
               </div>
             ))}
@@ -207,14 +207,14 @@ export function ReceiptBaselineForm({
                 ])
               }
             >
-              Add source item
+              Add line
             </button>
           </>
         )}
         {suggestion.rawText && (
           <details>
-            <summary>View actual recognized text</summary>
-            <pre className="receipt-raw" tabIndex={0} aria-label="Recognized receipt source text">
+            <summary>Show the text we read</summary>
+            <pre className="receipt-raw" tabIndex={0} aria-label="Text read from receipt">
               {suggestion.rawText}
             </pre>
           </details>
@@ -225,7 +225,7 @@ export function ReceiptBaselineForm({
           </p>
         )}
         <button className="btn primary" disabled={saving || !rows.length}>
-          {saving ? 'Capturing…' : 'Capture source & edit claimable items'}
+          {saving ? 'Capturing…' : 'Save and choose club items'}
         </button>
       </form>
     </Panel>

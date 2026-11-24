@@ -8,9 +8,9 @@ import { ReceiptEvidenceView } from '../../components/treasurer/ReceiptReview';
 import { receiptTotal } from '../../domain/receipt';
 import { Empty, PageHeader, Skeleton, useFormat } from '../../components/ui';
 const steps = [
-  { id: 'upload', label: 'Receipt & source' },
-  { id: 'items', label: 'Claimable items' },
-  { id: 'review', label: 'Compare & review' },
+  { id: 'upload', label: 'Upload receipt' },
+  { id: 'items', label: 'Choose club items' },
+  { id: 'review', label: 'Check & submit' },
   { id: 'submit', label: 'Submit claim' },
 ];
 export function MemberDraft() {
@@ -35,7 +35,7 @@ export function MemberDraft() {
           </div>
         }
       >
-        {error || 'This draft is outside your current task ownership.'}
+        {error || 'This draft isn’t yours, or it was moved.'}
       </Empty>
     );
   const task = data.assignments.find((t) => t.id === draft.taskId);
@@ -104,10 +104,10 @@ export function MemberDraft() {
           <ReceiptEvidenceView receipt={draft.receipt!} amount={receiptTotal(draft.receipt!)} />
           <div className="row wrap">
             <button className="btn" onClick={() => go('items')}>
-              Return to item corrections
+              Back to items
             </button>
             <button className="btn primary" onClick={() => go('submit')}>
-              Continue to claim submission
+              Next: submit
             </button>
           </div>
         </>
