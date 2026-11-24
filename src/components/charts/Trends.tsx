@@ -2,7 +2,7 @@ import { CountBars } from './Graphs';
 
 /** Area + line trend over ordered buckets (e.g. monthly spend). */
 export function TrendArea({ points, format, label }: { points: { label: string; value: number }[]; format: (n: number) => string; label: string }) {
-  if (points.length < 2) return <p className="viz-empty">Not enough dated records to draw a trend.</p>;
+  if (points.length < 2) return <p className="viz-empty">Needs claims from at least 2 months to show a trend.</p>;
   const w = 300, h = 120, pad = 8;
   const max = Math.max(...points.map((p) => p.value), 1);
   const xy = points.map((p, i) => [pad + (i * (w - 2 * pad)) / (points.length - 1), h - pad - (p.value / max) * (h - 2 * pad)]);

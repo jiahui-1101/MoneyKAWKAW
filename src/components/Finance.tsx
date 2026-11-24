@@ -18,33 +18,33 @@ export function Metrics({ summary, count }: { summary: BudgetSummary; count?: nu
   const { money } = useFormat();
   const items = [
     {
-      label: count === undefined ? 'Overall budget' : 'Total activity budget',
+      label: count === undefined ? 'Activity budget' : 'All activity budgets',
       value: money(summary.budget, true),
       icon: Wallet,
-      note: count === undefined ? 'Activity budget ceiling' : 'Overall budgets across activities',
+      note: count === undefined ? 'Most this activity can spend' : 'All activities added up',
       tone: 'brand',
     },
     {
-      label: demoMode ? 'Recorded expenses' : 'Recorded costs',
+      label: 'Claimed',
       value: money(summary.recorded, true),
       icon: CircleDollarSign,
-      note: demoMode ? 'Pending + approved claims' : 'Paid expenditure + approved unpaid liability',
+      note: demoMode ? 'Waiting for review + approved claims' : 'Paid + approved, not paid yet',
       tone: 'violet',
     },
     {
-      label: demoMode ? 'Remaining budget' : 'Available to plan',
+      label: demoMode ? 'Left after claims' : 'Free to spend',
       value: money(demoMode ? summary.remaining : summary.available, true),
       icon: ArrowDownLeft,
-      note: demoMode ? 'Budget less recorded expenses' : 'After paid costs and all open obligations',
+      note: demoMode ? 'Budget minus claimed' : 'Left after paid and set-aside money',
       tone: (demoMode ? summary.remaining : summary.available) < 0 ? 'danger' : 'green',
     },
     {
-      label: count === undefined ? (demoMode ? 'Budget utilization' : 'Recorded utilization') : 'Total activities',
+      label: count === undefined ? 'Used %' : 'Total activities',
       value:
         count === undefined ? `${summary.utilization.toFixed(1)}%` : String(count).padStart(2, '0'),
       icon: count === undefined ? ArrowUpRight : FolderKanban,
       note:
-        count === undefined ? 'Approved recorded amounts / overall budget' : 'Every idea, in one workspace',
+        count === undefined ? 'Claimed ÷ budget' : 'Every activity in your club',
       tone: 'gold',
     },
   ];
@@ -56,12 +56,12 @@ export function BudgetLifecycle({ summary }: { summary: BudgetSummary }) {
   return (
     <div className="lifecycle">
       {[
-        ['Department allocations', summary.allocated, 'Portion assigned to departments'],
-        ['Committed', summary.committed, 'Open purchase reservations + approved unpaid liabilities'],
-        ['Pending claim exposure', summary.pending, 'Submitted requests · not paid expenditure'],
-        ['Approved unpaid liability', Math.max(0, summary.recorded - summary.paid - (demoMode ? summary.pending : 0)), 'Authorized amounts awaiting a transfer record'],
-        ['Paid reimbursements', summary.paid, 'Recorded external transfers · confirmation is separate'],
-        ['Available to plan', summary.available, 'Budget less paid, pending exposure and outstanding commitments'],
+        ['Given to departments', summary.allocated, 'Part of the budget given to departments'],
+        ['Set aside', summary.committed, 'Kept for open purchases and approved claims'],
+        ['Waiting for review', summary.pending, 'Claims sent in, not decided yet'],
+        ['Approved, not paid yet', Math.max(0, summary.recorded - summary.paid - (demoMode ? summary.pending : 0)), 'Waiting for the Treasurer to pay'],
+        ['Paid', summary.paid, 'Money sent · the member confirms separately'],
+        ['Free to spend', summary.available, 'Budget minus paid, waiting and set-aside money'],
       ].map(([label, amount, note]) => (
         <div key={label}>
           <small>{label}</small>
@@ -104,8 +104,8 @@ export function ActivityTable({
             <th>ACTIVITY</th>
             <th>STATUS</th>
             <th>BUDGET</th>
-            <th>{demoMode ? 'EXPENSES' : 'RECORDED COSTS'}</th>
-            <th>UTILIZATION</th>
+            <th>CLAIMED</th>
+            <th>USED %</th>
             <th aria-label="Activity details">
               <span className="sr-only">Details</span>
             </th>
@@ -146,7 +146,7 @@ export function ActivityTable({
                     <Progress
                       value={utilization}
                       tone={utilization > 100 ? 'danger' : warning ? 'gold' : 'green'}
-                      label={`${a.name} utilization`}
+                      label={`${a.name} budget used`}
                     />
                   </div>
                 </td>
@@ -185,8 +185,8 @@ export function BudgetComparison({
   const max = Math.max(...activities.map((a) => Math.max(a.budget, amountFor(a))), 1);
   return (
     <Panel
-      title={demoMode ? 'Budget & spending' : 'Budget & planned purchases'}
-      subtitle={demoMode ? 'A clear view of where each activity stands' : 'Purchasing commitments compared with activity budgets'}
+      title={demoMode ? 'Budget & spending' : 'Budget vs set aside'}
+      subtitle={demoMode ? 'A clear view of where each activity stands' : 'How much of each budget is set aside'}
       action={
         <div className="chart-legend">
           <span>
@@ -195,13 +195,13 @@ export function BudgetComparison({
           </span>
           <span>
             <i className="swatch expense-swatch" />
-            {demoMode ? 'Expenses' : 'Planned purchases'}
+            {demoMode ? 'Claimed' : 'Set aside'}
           </span>
         </div>
       }
     >
       {!activities.length ? (
-        <Empty title="Your budget story starts here">
+        <Empty title="No activities yet">
           Create an activity to see its spending breakdown.
         </Empty>
       ) : (
@@ -290,7 +290,7 @@ export function Distribution({ activities }: { activities: Activity[] }) {
               <strong>{total ? ((a.budget / total) * 100).toFixed(0) : 0}%</strong>
             </Link>
           ))}
-          {!activities.length && <p className="muted">No budget allocated yet.</p>}
+          {!activities.length && <p className="muted">No activities yet.</p>}
         </div>
       </div>
     </Panel>
@@ -310,8 +310,8 @@ export function RecentActivity({
   const events = store.events.filter((e) => !activityId || e.activityId === activityId);
   return (
     <Panel
-      title={all ? 'Workspace history' : 'Recent activity'}
-      subtitle={demoMode ? 'Setup changes and sample financial history' : 'Persisted setup and purchasing changes'}
+      title={all ? 'History' : 'Recent changes'}
+      subtitle={demoMode ? 'Setup changes and sample financial history' : 'Changes to activities, budgets and purchases'}
       action={!all && <TextLink to="/director/history">View all</TextLink>}
     >
       <div className="timeline">
@@ -336,7 +336,7 @@ export function RecentActivity({
           </div>
         ))}
         {!events.length && (
-          <Empty title="A fresh start">
+          <Empty title="No changes yet">
             Your activity and department changes will appear here.
           </Empty>
         )}
@@ -376,10 +376,10 @@ export function Overspending({ store, activityId }: { store: Store; activityId?:
     });
   return exceeded.length ? (
     <div className="overspending" role="status">
-      <Badge tone="danger">Budget attention</Badge>
+      <Badge tone="danger">Over budget</Badge>
       {exceeded.map((e) => (
         <Link key={e.name} to={`/director/activities/${e.id}/budget`}>
-          {e.name}: recorded expenses exceed budget by <strong>{money(e.over)}</strong>
+          {e.name} is over budget by <strong>{money(e.over)}</strong>
           <ArrowUpRight size={13} />
         </Link>
       ))}

@@ -1,6 +1,6 @@
 import { summarize } from '../../domain/budget';
 import type { Expense, Payment, Store } from '../../domain/models';
-import { useFormat } from '../ui';
+import { statusLabel, useFormat } from '../ui';
 import { ChartCard, Donut, Gauge, Legend, StackedBars, type Slice } from './Charts';
 import { Pipeline, TrendArea } from './Trends';
 
@@ -18,9 +18,9 @@ export function budgetSlices(store: Store, activityId?: string, departmentId?: s
   const s = summarize(store, activityId, departmentId);
   return [
     { label: 'Paid', value: s.paid, tone: tones.paid },
-    { label: 'Pending review', value: s.pending, tone: tones.pending },
-    { label: 'Committed', value: s.committed, tone: tones.committed },
-    { label: 'Available', value: Math.max(0, s.available), tone: tones.available },
+    { label: 'Waiting for review', value: s.pending, tone: tones.pending },
+    { label: 'Set aside', value: s.committed, tone: tones.committed },
+    { label: 'Free to spend', value: Math.max(0, s.available), tone: tones.available },
   ];
 }
 
@@ -60,8 +60,8 @@ export function claimStages(expenses: Expense[], payments: Payment[] = []) {
 
 const stackKeys = [
   { label: 'Paid', tone: tones.paid },
-  { label: 'Pending', tone: tones.pending },
-  { label: 'Committed', tone: tones.committed },
+  { label: 'Waiting for review', tone: tones.pending },
+  { label: 'Set aside', tone: tones.committed },
 ];
 
 /** Director/Treasurer overview: utilisation gauge, budget split, per-activity bars, trend and claim pipeline. */
@@ -79,26 +79,26 @@ export function BudgetInsights({ store, activityIds }: { store: Store; activityI
       total: a.budget,
       parts: [
         { label: 'Paid', value: x.paid, tone: tones.paid },
-        { label: 'Pending', value: x.pending, tone: tones.pending },
-        { label: 'Committed', value: x.committed, tone: tones.committed },
+        { label: 'Waiting for review', value: x.pending, tone: tones.pending },
+        { label: 'Set aside', value: x.committed, tone: tones.committed },
       ],
     };
   });
   const compact = (n: number) => money(n, true);
   return (
     <div className="viz-grid">
-      <ChartCard title="Budget health" hint="Paid, pending and committed against total budget">
+      <ChartCard title="Budget health" hint="Paid, waiting and set aside, out of the budget">
         <Gauge value={s.budget ? ((s.paid + s.pending + s.committed) / s.budget) * 100 : 0} label={`${money(s.budget, true)} total budget`} warnAt={store.settings.warningPercent} />
       </ChartCard>
       <ChartCard title="Where the money is" hint="Every ringgit of budget, by stage">
         <Donut slices={budgetSlices(scoped)} centre={compact(s.budget)} caption="budget" format={compact} />
       </ChartCard>
-      <ChartCard title="Visible claim pipeline" hint="Individual claims available in this workspace">
+      <ChartCard title="Claims by status" hint="Claims you can see">
         {restrictedRecords
-          ? <p className="viz-empty">Individual claim records are restricted here. Refer to the authoritative budget balances.</p>
-          : <Pipeline stages={claimStages(expenses, store.payments)} />}
+          ? <p className="viz-empty">Only the Treasurer sees single claims. The totals above still include them.</p>
+          : <Pipeline stages={claimStages(expenses, store.payments).map((x) => ({ ...x, label: statusLabel(x.label) }))} />}
       </ChartCard>
-      <ChartCard wide title="Claim amount trend" hint="Visible recorded claim amounts per month">
+      <ChartCard wide title="Claims per month" hint="Total claimed each month">
         <TrendArea points={monthlyTrend(expenses)} format={compact} label="Monthly claim amounts" />
       </ChartCard>
       <ChartCard wide title="Budget by activity" hint="Bar = used; grey track = activity budget">

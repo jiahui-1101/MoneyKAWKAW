@@ -18,7 +18,7 @@ const store = { ...seed, activities: [activity], expenses: [], payments: [],
 
 it('explains restricted individual claim counts when authoritative expenditure exists', () => {
   const html = renderToStaticMarkup(createElement(BudgetInsights, { store, activityIds: [activity.id] }));
-  expect(html).toContain('Individual claim records are restricted here');
+  expect(html).toContain('Only the Treasurer sees single claims');
   expect(html).not.toContain('class="viz-pipeline"');
   expect(html).toContain('Paid RM');
 });
@@ -26,10 +26,10 @@ it('explains restricted individual claim counts when authoritative expenditure e
 it('shows recorded RM110 and 1.1 percent after payment, with open commitments at zero', () => {
   const table = renderToStaticMarkup(createElement(MemoryRouter, {},
     createElement(ActivityTable, { activities: store.activities, store })));
-  expect(table).toContain('RECORDED COSTS');
+  expect(table).toContain('CLAIMED');
   expect(table).toContain('1.1%');
   expect(table).toMatch(/RM[^<]*110/);
   const metrics = renderToStaticMarkup(createElement(Metrics, { summary: summarize(store) }));
-  expect(metrics).toContain('Recorded costs');
-  expect(metrics).toContain('Paid expenditure + approved unpaid liability');
+  expect(metrics).toContain('Claimed');
+  expect(metrics).toContain('Paid + approved, not paid yet');
 });

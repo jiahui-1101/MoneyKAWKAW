@@ -3,15 +3,15 @@ import { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { summarize } from '../../domain/budget';
 import type { Store } from '../../domain/models';
-import { useFormat } from '../ui';
+import { statusLabel, useFormat } from '../ui';
 import { ChartCard, Legend } from './Charts';
 import { BarList, ColumnChart, CountBars, Waterfall } from './Graphs';
 import { claimStages, tones } from './Insights';
 
 const stage = [
   { key: 'paid', label: 'Paid', tone: tones.paid },
-  { key: 'pending', label: 'Pending', tone: tones.pending },
-  { key: 'committed', label: 'Committed', tone: tones.committed },
+  { key: 'pending', label: 'Waiting for review', tone: tones.pending },
+  { key: 'committed', label: 'Set aside', tone: tones.committed },
 ] as const;
 
 /** Director aggregate balances can exist without exposing individual claim rows. */
@@ -36,10 +36,10 @@ export function BudgetCard({ store }: { store: Store }) {
   const short = (n: number) => new Intl.NumberFormat('en-MY', { style: 'currency', currency: store.settings.currency, currencyDisplay: 'narrowSymbol', notation: 'compact', maximumFractionDigits: 1 }).format(n / 100);
   return (
     <ChartCard title="Where the budget went">
-      <Waterfall total={s.budget} totalLabel="Budget" endLabel="Left" format={short} steps={[
+      <Waterfall total={s.budget} totalLabel="Budget" endLabel="Free" format={short} steps={[
         { label: 'Paid', value: s.paid, tone: tones.paid },
-        { label: 'Pending', value: s.pending, tone: tones.pending },
-        { label: 'Committed', value: s.committed, tone: tones.committed },
+        { label: 'Waiting', value: s.pending, tone: tones.pending },
+        { label: 'Set aside', value: s.committed, tone: tones.committed },
       ]} />
     </ChartCard>
   );
@@ -50,7 +50,7 @@ export function MonthlyCard({ store }: { store: Store }) {
   return (
     <ChartCard title="Claims per month" hint="Grouped by submission date">
       {claimsAreRestricted(store)
-        ? <p className="viz-empty">Individual claim records are restricted here. Monthly claim details are unavailable.</p>
+        ? <p className="viz-empty">Only the Treasurer sees single claims, so monthly details aren’t shown here.</p>
         : <ColumnChart columns={monthly(store)} format={(n) => money(n, true)} empty="No dated claims yet." />}
     </ChartCard>
   );
@@ -60,8 +60,8 @@ export function ClaimsCard({ store }: { store: Store }) {
   return (
     <ChartCard title="Claims by status">
       {claimsAreRestricted(store)
-        ? <p className="viz-empty">Individual claim records are restricted here. Refer to the authoritative budget balances.</p>
-        : <CountBars rows={claimStages(store.expenses, store.payments).filter((s) => s.label !== 'Payment Pending' || s.count)} />}
+        ? <p className="viz-empty">Only the Treasurer sees single claims. The totals above still include them.</p>
+        : <CountBars rows={claimStages(store.expenses, store.payments).filter((s) => s.label !== 'Payment Pending' || s.count).map((s) => ({ ...s, label: statusLabel(s.label) }))} />}
     </ChartCard>
   );
 }
@@ -76,13 +76,13 @@ export function ActivityBudgetCard({ store }: { store: Store }) {
     ? activity.departments.map((d) => ({ id: d.id, label: d.name, limit: d.allocation, parts: parts(summarize(store, activity.id, d.id)) }))
     : store.activities.map((a) => ({ id: a.id, label: a.name, limit: a.budget, parts: parts(summarize(store, a.id)) }));
   return (
-    <ChartCard wide title={activity ? activity.name : 'Spent vs budget'}>
+    <ChartCard wide title={activity ? activity.name : 'Used vs budget'}>
       <div className="row between wrap">
         <Legend items={[...stage, { label: 'Budget', tone: 'var(--line)' }]} />
         {activity && <button type="button" className="btn" onClick={() => setPicked(null)}><ArrowLeft size={14} /> All activities</button>}
       </div>
       <BarList rows={rows} format={(n) => money(n, true)} onSelect={activity ? undefined : setPicked} empty="No departments yet." />
-      {!activity && rows.length > 0 && <small className="viz-hint">Click an activity to see its departments</small>}
+      {!activity && rows.length > 0 && <small className="viz-hint">Tap an activity to see its departments</small>}
     </ChartCard>
   );
 }
@@ -108,10 +108,10 @@ export function WaitingCard({ store, href }: { store: Store; href: (id: string) 
       {waiting.length ? (
         <ul className="ix-oldest">
           {waiting.slice(0, 3).map(({ e, days }) => (
-            <li key={e.id}><Link to={href(e.id)}>{e.description}</Link><span>{money(e.amount, true)} · {days}d</span></li>
+            <li key={e.id}><Link to={href(e.id)}>{e.description}</Link><span>{money(e.amount, true)} · {days} {days === 1 ? 'day' : 'days'}</span></li>
           ))}
         </ul>
-      ) : <p className="viz-empty">Nothing waiting.</p>}
+      ) : <p className="viz-empty">No claims waiting. All caught up.</p>}
     </ChartCard>
   );
 }
