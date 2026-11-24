@@ -14,7 +14,7 @@ export function DiscrepancyResolution({ payment }: { payment: Payment }) {
     try {
       await run(
         () => reimbursementService.resolveIssue(payment.id, note),
-        'Resolution recorded. Member receipt confirmation is still required.',
+        'Reply saved. The member still needs to confirm they got the money.',
       );
       setNote('');
     } catch (e) {
@@ -23,18 +23,18 @@ export function DiscrepancyResolution({ payment }: { payment: Payment }) {
   };
   return (
     <form className="stack" onSubmit={save} noValidate>
-      <Field id="issue-resolution" label="Resolution / follow-up note" required>
+      <Field id="issue-resolution" label="Your reply to the member" required>
         <textarea
           id="issue-resolution"
           maxLength={1000}
           value={note}
           onChange={(e) => setNote(e.target.value)}
-          placeholder="Describe the action taken or the information the member should check."
+          placeholder="What did you do, or what should the member check?"
         />
       </Field>
       <p className="field-hint">
-        This app does not transfer money. Keep the original payment and issue report; only the
-        claimant can confirm receiving the recorded amount.
+        This app doesn’t send money. The original payment and report stay on record. Only the
+        member can confirm they got the money.
       </p>
       {error && (
         <p className="form-error" role="alert">
@@ -42,7 +42,7 @@ export function DiscrepancyResolution({ payment }: { payment: Payment }) {
         </p>
       )}
       <button className="btn primary" disabled={busy}>
-        {busy ? 'Saving…' : 'Record issue resolution'}
+        {busy ? 'Saving…' : 'Save reply'}
       </button>
     </form>
   );

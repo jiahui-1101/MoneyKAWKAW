@@ -89,11 +89,11 @@ export function TreasuryHistory() {
       <PageHeader
         eyebrow="PAYMENT HISTORY"
         title="Payment history"
-        description="Immutable payment amounts, references, proof, and the member’s separate receipt status."
+        description="All recorded payments, with proof and whether the member confirmed."
       />
       <Panel
-        title="Recorded reimbursements"
-        subtitle="A local record is not independent verification of an external transfer"
+        title="Recorded payments"
+        subtitle="Recorded by the Treasurer. Only the member’s confirmation shows the money arrived."
       >
         <div className="treasury-filters">
           <Field id="history-query" label="Search records">
@@ -149,11 +149,11 @@ export function TreasuryHistory() {
               ))}
             </select>
           </Field>
-          <Field id="history-status" label="Receipt status">
+          <Field id="history-status" label="Member confirmation">
             <select id="history-status" value={status} onChange={(e) => setStatus(e.target.value)}>
-              <option value="">All receipt statuses</option>
-              <option value="awaiting">Awaiting member confirmation</option>
-              <option value="received">Received confirmed</option>
+              <option value="">All</option>
+              <option value="awaiting">Not confirmed yet</option>
+              <option value="received">Member confirmed</option>
             </select>
           </Field>
           <Field id="history-from" label="Paid from">
@@ -197,7 +197,7 @@ export function TreasuryHistory() {
                     'APPROVED / PAID',
                     'METHOD',
                     'PAYMENT DATE',
-                    'RECEIPT STATUS',
+                    'MEMBER CONFIRMED?',
                     'REFERENCE',
                     'PROOF / DETAILS',
                   ].map((h) => (
@@ -222,7 +222,7 @@ export function TreasuryHistory() {
                         {c.department.name}
                         <small className="cell-sub">
                           {data.directory?.users.find((u) => u.id === e.review?.claimantId)?.name ??
-                            'Legacy claimant unavailable'}
+                            'Member unknown'}
                         </small>
                       </td>
                       <td className="money">
@@ -230,7 +230,7 @@ export function TreasuryHistory() {
                         <small className="cell-sub">Paid {money(p.amount)}</small>
                       </td>
                       <td>
-                        {p.manual?.payout.kind ?? 'Legacy · not retained'}
+                        {p.manual?.payout.kind ?? 'Not recorded'}
                         <small className="cell-sub">{p.manual?.payout.masked}</small>
                       </td>
                       <td>{date(p.date)}</td>
@@ -239,10 +239,10 @@ export function TreasuryHistory() {
                           {paymentLabel(paymentState(data, e))}
                         </Badge>
                       </td>
-                      <td>{p.manual?.reference ?? 'Legacy · not retained'}</td>
+                      <td>{p.manual?.reference ?? 'Not recorded'}</td>
                       <td>
                         <button className="btn" onClick={() => setSelected(p.id)}>
-                          {p.manual ? 'View proof & details' : 'View legacy record'}
+                          View details
                         </button>
                       </td>
                     </tr>
@@ -260,18 +260,17 @@ export function TreasuryHistory() {
               </button>
             }
           >
-            Approved claims remain in the reimbursement queue until a manual payment record is
-            saved.
+            No payments match. Approved claims appear here after you record their payment.
           </Empty>
         )}
       </Panel>
       {payment && (
-        <Modal title="Immutable payment record" onClose={() => setSelected('')}>
+        <Modal title="Payment record" onClose={() => setSelected('')}>
           <div className="stack">
             <p>
               <strong>{money(payment.amount)}</strong> · {date(payment.date)}
             </p>
-            <Badge tone="gold">External transfer unverified</Badge>
+            <Badge tone="gold">Paid outside app · not checked with bank</Badge>
             {payment.manual ? (
               <>
                 <p className="settings-copy">
@@ -289,29 +288,29 @@ export function TreasuryHistory() {
                   <p className="form-error" role="alert">
                     {error}
                     <button className="btn" onClick={() => setAttempt((n) => n + 1)}>
-                      Retry proof
+                      Try again
                     </button>
                   </p>
                 ) : proof ? (
                   <ProofPreview proof={proof} />
                 ) : (
-                  <p role="status">Loading preserved proof…</p>
+                  <p role="status">Loading proof…</p>
                 )}
               </>
             ) : (
               <p className="settings-copy">
-                This historical fictional sample predates manual proof capture. Its payment
-                reference, destination, proof, and member receipt confirmation were not retained.
+                Old sample record. No reference, payment details, proof or member confirmation were
+                saved.
               </p>
             )}
             <p className="settings-copy">
               {payment.manual?.receivedConfirmedAt
                 ? `Member confirmed receipt ${time(payment.manual.receivedConfirmedAt)}.`
-                : 'Awaiting member receipt confirmation. Treasurer cannot confirm on the member’s behalf.'}
+                : 'Waiting for the member to confirm they got the money. Only the member can do this.'}
             </p>
             {payment.manual?.receivedConfirmedBy && (
               <p className="settings-copy">
-                Confirmed by claimant{' '}
+                Confirmed by{' '}
                 {data.directory?.users.find((u) => u.id === payment.manual?.receivedConfirmedBy)
                   ?.name ?? payment.manual.receivedConfirmedBy}
                 .
@@ -321,8 +320,8 @@ export function TreasuryHistory() {
               <div className="member-payment-issue">
                 <Badge tone={payment.manual.discrepancy.resolvedAt ? 'green' : 'danger'}>
                   {payment.manual.discrepancy.resolvedAt
-                    ? 'Prior issue resolved by member acknowledgment'
-                    : 'Member-reported payment discrepancy'}
+                    ? 'Problem resolved · member confirmed'
+                    : 'Member reported a payment problem'}
                 </Badge>
                 <p>{payment.manual.discrepancy.reason}</p>
                 {payment.manual.discrepancy.receivedAmount !== undefined && (
@@ -333,7 +332,7 @@ export function TreasuryHistory() {
                 <small>
                   Reported {time(payment.manual.discrepancy.reportedAt)}
                   {payment.manual.discrepancy.resolvedAt
-                    ? ` · acknowledged ${time(payment.manual.discrepancy.resolvedAt)}`
+                    ? ` · resolved ${time(payment.manual.discrepancy.resolvedAt)}`
                     : ''}
                 </small>
                 <PaymentIssueResolutions issue={payment.manual.discrepancy} />

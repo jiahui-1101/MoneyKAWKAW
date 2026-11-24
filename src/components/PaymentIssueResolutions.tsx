@@ -11,14 +11,13 @@ export function PaymentIssueResolutions({
     <>
       {issue.resolutions?.map((r, i) => (
         <article key={`${r.at}-${i}`}>
-          <h3>Treasurer resolution recorded</h3>
+          <h3>Treasurer’s reply</h3>
           <p>{r.note}</p>
           <small>
             {demoProfiles.find((p) => p.userId === r.by)?.name ?? r.by} · {time(r.at)}
           </small>
           <p className="field-hint">
-            This response does not confirm delivery. The Member’s receipt acknowledgment remains
-            separate.
+            This reply doesn’t mean the money arrived. Only the member can confirm that.
           </p>
         </article>
       ))}

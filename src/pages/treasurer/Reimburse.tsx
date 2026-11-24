@@ -73,18 +73,18 @@ export function TreasuryReimburse() {
             className="btn primary"
             to={paid ? `/treasurer/history?claim=${id}` : `/treasurer/claims/${id}`}
           >
-            {paid ? 'View immutable payment record' : 'Return to review'}
+            {paid ? 'View payment record' : 'Back to claim'}
           </Link>
         }
       >
-        Only an approved, unpaid claim can enter this step. Duplicate reimbursements are blocked.
+        You can only record payment for an approved claim that hasn’t been paid yet.
       </Empty>
     );
   const submit = (e: FormEvent) => {
     e.preventDefault();
     setError('');
     if (!date || !reference.trim() || !proof || !confirmed || !payout) {
-      setError('Add a valid date, reference, payment proof, and external-transfer confirmation.');
+      setError('Add the payment date, reference number and proof, then tick the confirmation box.');
       return;
     }
     setConfirm(true);
@@ -102,12 +102,12 @@ export function TreasuryReimburse() {
             proof: proof!,
             confirmed,
           }),
-        'Manual payment record saved. External transfer remains unverified.',
+        'Payment recorded. Waiting for the member to confirm they received it.',
       );
       setConfirm(false);
       navigate(`/treasurer/history?claim=${id}`);
     } catch (e) {
-      setError(e instanceof Error ? e.message : 'Unable to record reimbursement.');
+      setError(e instanceof Error ? e.message : 'Couldn’t record the payment. Try again.');
       setConfirm(false);
     }
   };
@@ -117,49 +117,48 @@ export function TreasuryReimburse() {
         ← Claim detail / Reimbursement
       </Link>
       <PageHeader
-        eyebrow="MANUAL REIMBURSEMENT"
+        eyebrow="REIMBURSEMENT"
         title="Record payment"
         description={`${claim.description} · ${money(claim.amount)} approved`}
       />
       <div className="treasury-justification">
-        <Badge tone="gold">External transfer · locally recorded</Badge>
-        {!demoMode && payout && <Badge tone="neutral">Payment Pending · approved and unpaid</Badge>}
+        <Badge tone="gold">Paid outside this app</Badge>
+        {!demoMode && payout && <Badge tone="neutral">Approved · not paid yet</Badge>}
         <p>
-          This application does not transfer money or verify bank transactions.
-          {dataMode !== 'supabase' && ' Use synthetic destination details and sample proof for local testing.'}
-          {' '}The selected snapshot comes from the submitted claim; recording it does not establish external delivery.
+          This app doesn’t send or check bank transfers. The payment details come from the member’s claim.
+          {dataMode !== 'supabase' && ' Test mode: use sample details and proof only.'}
+          {' '}Recording a payment doesn’t prove the money arrived.
         </p>
       </div>
       <div className="form-layout">
         <form className="panel activity-form" onSubmit={submit} noValidate>
           <div className="form-section">
-            <h2>Selected payout snapshot</h2>
+            <h2>Member’s payment details</h2>
             <p className="field-hint">
-              Read-only instructions selected for this claim. Saved member accounts cannot be
-              changed here.
+              Chosen by the member for this claim. You can’t edit them here.
             </p>
             {payoutError ? (
               <Empty
-                title="Destination unavailable"
+                title="Couldn’t load payment details"
                 action={
                   <button type="button" className="btn" onClick={() => setAttempt((n) => n + 1)}>
-                    Retry destination
+                    Try again
                   </button>
                 }
               >
                 {payoutError}
               </Empty>
             ) : !payout ? (
-              <p role="status">Loading approved payout instructions…</p>
+              <p role="status">Loading payment details…</p>
             ) : (
               <>
                 <dl className="treasury-payout">
                   {[
-                    ['Claimant', payout.holder],
-                    ['Selected method', payout.kind === 'Bank' ? 'Bank account' : 'TNG eWallet'],
-                    ['Destination label', payout.label],
-                    ['Institution', payout.institution],
-                    ['Identifier', reveal ? payout.identifier : payout.masked],
+                    ['Account holder', payout.holder],
+                    ['Method', payout.kind === 'Bank' ? 'Bank account' : 'TNG eWallet'],
+                    ['Saved as', payout.label],
+                    ['Bank', payout.institution],
+                    ['Account / phone no.', reveal ? payout.identifier : payout.masked],
                   ].map(([k, v]) => (
                     <div key={k}>
                       <dt>{k}</dt>
@@ -173,13 +172,13 @@ export function TreasuryReimburse() {
                   aria-pressed={reveal}
                   onClick={() => setReveal((v) => !v)}
                 >
-                  {reveal ? 'Mask destination identifier' : 'Show selected identifier'}
+                  {reveal ? 'Hide account number' : 'Show full account number'}
                 </button>
               </>
             )}
           </div>
           <div className="form-section">
-            <h2>External transfer record</h2>
+            <h2>Payment details</h2>
             <Field id="paid-amount" label={`Amount paid (${currency})`}>
               <input id="paid-amount" readOnly value={(claim.amount / 100).toFixed(2)} />
             </Field>
@@ -193,13 +192,13 @@ export function TreasuryReimburse() {
                 onChange={setDate}
               />
             </Field>
-            <Field id="payment-reference" label="Transaction reference" required>
+            <Field id="payment-reference" label="Reference number" required>
               <input
                 id="payment-reference"
                 maxLength={120}
                 value={reference}
                 onChange={(e) => setReference(e.target.value)}
-                placeholder="External transfer reference or DEMO-…"
+                placeholder="From your bank or TNG receipt"
               />
             </Field>
             <Field id="payment-proof" label="Payment proof" required>
@@ -217,7 +216,7 @@ export function TreasuryReimburse() {
                   try {
                     setProof(await readProof(file));
                   } catch (e) {
-                    setError(e instanceof Error ? e.message : 'Unable to read proof.');
+                    setError(e instanceof Error ? e.message : 'Couldn’t read this file.');
                   } finally {
                     setReading(false);
                   }
@@ -225,9 +224,9 @@ export function TreasuryReimburse() {
               />
             </Field>
             <p className="field-hint">
-              {demoMode ? 'PNG, JPEG, or PDF' : 'PNG or JPEG'} · up to 1 MB · the uploaded file is preserved.
+              {demoMode ? 'PNG, JPEG, or PDF' : 'PNG or JPEG'} · screenshot of the transfer · max 1 MB
             </p>
-            {reading && <p role="status">Reading and validating proof…</p>}
+            {reading && <p role="status">Checking file…</p>}
             {proof && <ProofPreview proof={proof} />}
             <label className="treasury-check">
               <input
@@ -236,8 +235,8 @@ export function TreasuryReimburse() {
                 onChange={(e) => setConfirmed(e.target.checked)}
               />
               <span>
-                {dataMode === 'supabase' ? 'I confirm the transfer was made externally.' :
-                  'I confirm this is a synthetic local test, or the transfer was made externally.'}
+                {dataMode === 'supabase' ? 'I have already sent this money to the member.' :
+                  'This is a test, or I have already sent this money to the member.'}
               </span>
             </label>
             {error && (
@@ -251,25 +250,24 @@ export function TreasuryReimburse() {
               Back to claim
             </Link>
             <button className="btn primary" disabled={busy || reading || !payout}>
-              {busy ? 'Recording…' : 'Record manual reimbursement'}
+              {busy ? 'Recording…' : 'Record payment'}
             </button>
           </div>
         </form>
         <aside className="form-aside">
-          <h2>A record with a clear trail.</h2>
+          <h2>What happens next</h2>
           <p>
-            Approval and payment are separate events. This workflow records one full reimbursement per
-            claim.
+            Record one full payment per claim. Approving a claim doesn’t pay it.
           </p>
           <p>
-            Payment proof, date, amount, reference, and responsible Treasurer are retained. The
-            member’s receipt confirmation remains pending.
+            We save the proof, date, amount, reference and your name. The member then confirms they
+            received the money.
           </p>
         </aside>
       </div>
       {confirm && (
         <Modal
-          title="Record this manual reimbursement?"
+          title="Record this payment?"
           onClose={() => {
             if (!busy) setConfirm(false);
           }}
@@ -279,15 +277,15 @@ export function TreasuryReimburse() {
               {money(claim.amount)} · {reference} · {date}
             </p>
             <p className="settings-copy">
-              This creates an immutable local payment record and preserves the uploaded proof.
-              External transfer verification and member receipt confirmation remain pending.
+              This saves the payment and proof. You can’t edit it later. The member will be asked to
+              confirm they received it.
             </p>
             <div className="form-actions">
               <button className="btn" disabled={busy} onClick={() => setConfirm(false)}>
                 Keep editing
               </button>
               <button className="btn primary" disabled={busy} onClick={() => void save()}>
-                {busy ? 'Saving…' : 'Confirm payment record'}
+                {busy ? 'Saving…' : 'Record payment'}
               </button>
             </div>
           </div>
