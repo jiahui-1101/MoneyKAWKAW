@@ -34,16 +34,16 @@ export function MemberTasks() {
   return (
     <div className="stack">
       <PageHeader
-        eyebrow="PURCHASING RESPONSIBILITIES"
+        eyebrow="MY PURCHASES"
         title="My purchases"
         description="Follow your own assignments and coordinate with your department. Your HOD manages the purchasing plan."
       />
       <Panel
-        title={team ? 'Department coordination' : 'My purchasing tasks'}
+        title={team ? 'Whole department' : 'My purchases'}
         subtitle={
           team
-            ? 'View colleagues’ purchase plans; private reimbursement details stay with their owner.'
-            : 'The same budgets, assignees, and deadlines set by your HOD.'
+            ? 'See what teammates are buying. Their claims stay private.'
+            : 'Budgets and deadlines are set by your HOD.'
         }
       >
         <div className="member-tabs">

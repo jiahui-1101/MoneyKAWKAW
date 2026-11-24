@@ -24,12 +24,12 @@ export function MemberClaims() {
       <PageHeader
         eyebrow="MY REIMBURSEMENT RECORDS"
         title="My claims"
-        description="Track your own evidence, Treasurer decisions, recorded payments, and receipt confirmation."
+        description="See where each claim is, from review to payment."
       />
       {!!data.drafts.length && (
         <Panel
           title="My saved claim drafts"
-          subtitle="Preparation only · draft amounts do not affect financial totals"
+          subtitle="Not sent yet · finish and submit"
         >
           <div className="member-content stack">
             {data.drafts.map((d) => (
@@ -39,7 +39,7 @@ export function MemberClaims() {
                     {data.assignments.find((t) => t.id === d.taskId)?.purchasing?.name}
                   </strong>
                   <small className="cell-sub">
-                    Saved preparation · original receipt remains private
+                    Draft · not submitted
                   </small>
                 </div>
                 <Link className="btn" to={`/member/drafts/${d.id}`}>
@@ -52,7 +52,7 @@ export function MemberClaims() {
       )}
       <Panel
         title="My submitted claims"
-        subtitle="Review and payment statuses come from the shared Treasurer records"
+        subtitle="Your submitted claims"
       >
         <div className="member-tabs">
           {['', ...(data.expenses.some((e) => e.lifecycle) ? ['Pending', 'Under Review', 'Approved', 'Rejected', 'Payment Pending', 'Paid', 'Received'] : reviewStates)].map((s) => (

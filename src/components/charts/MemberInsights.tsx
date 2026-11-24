@@ -14,15 +14,15 @@ export function MemberInsights({ tasks, claims, payments }: { tasks: Assignment[
   const total = sum(claims.filter((e) => e.state !== 'Declined'));
   return (
     <div className="viz-grid">
-      <ChartCard title="My claims by stage" hint="Where your reimbursement money is">
+      <ChartCard title="My claims by stage" hint="How much you’ve claimed, by status">
         <Donut
           centre={compact(total)}
           caption="claimed"
           format={compact}
           slices={[
-            { label: 'Awaiting review', value: sum(claims.filter((e) => ['Pending review', 'In review'].includes(e.state))), tone: tones.pending },
-            { label: 'Approved · unpaid', value: sum(claims.filter((e) => e.state === 'Approved' && !paidIds.has(e.id))), tone: tones.committed },
-            { label: 'Reimbursed', value: payments.reduce((s, p) => s + p.amount, 0), tone: tones.paid },
+            { label: 'Waiting for review', value: sum(claims.filter((e) => ['Pending review', 'In review'].includes(e.state))), tone: tones.pending },
+            { label: 'Approved · not paid yet', value: sum(claims.filter((e) => e.state === 'Approved' && !paidIds.has(e.id))), tone: tones.committed },
+            { label: 'Paid', value: payments.reduce((s, p) => s + p.amount, 0), tone: tones.paid },
             { label: 'Declined', value: sum(claims.filter((e) => e.state === 'Declined')), tone: tones.declined },
           ]}
         />
@@ -31,7 +31,7 @@ export function MemberInsights({ tasks, claims, payments }: { tasks: Assignment[
         <Pipeline
           stages={[
             { label: 'To buy', count: count('Not Started', 'In Progress'), tone: tones.review },
-            { label: 'Purchased', count: count('Purchased'), tone: tones.committed },
+            { label: 'Bought', count: count('Purchased'), tone: tones.committed },
             { label: 'Claimed', count: count('Claim Submitted'), tone: tones.pending },
             { label: 'Done', count: count('Completed'), tone: tones.paid },
           ]}

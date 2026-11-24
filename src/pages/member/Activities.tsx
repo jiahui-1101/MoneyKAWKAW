@@ -20,7 +20,7 @@ export function MemberActivities() {
         title="My activities"
         description="Explore the activities and teams where you hold an explicit Member membership."
       />
-      <Panel title="My department workspaces" subtitle="Only your active memberships appear here">
+      <Panel title="My departments" subtitle="Activities and departments you belong to">
         <div className="filters">
           <div className="search-field">
             <Search size={16} />
@@ -91,7 +91,7 @@ export function MemberDepartment() {
           </Link>
         }
       >
-        This department is outside your active Member membership.
+        You’re not a member of this department.
       </Empty>
     );
   const tasks = data.assignments.filter(
@@ -118,11 +118,11 @@ export function MemberDepartment() {
         <p>
           {tasks.length} shared purchasing tasks · {members.length} active team members
         </p>
-        <Badge tone="neutral">{financialStateLabel(scope.activity.financialState, 'Coordination view')}</Badge>
+        <Badge tone="neutral">{financialStateLabel(scope.activity.financialState, 'View only')}</Badge>
       </div>
       <Panel
         title="The people behind the plan"
-        subtitle="Department roster and public purchasing responsibilities"
+        subtitle="Who is in this department and what they are buying"
       >
         <div className="member-roster">
           {members.map((m) => (

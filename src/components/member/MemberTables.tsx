@@ -13,7 +13,7 @@ export function MemberTaskTable({ tasks, data }: { tasks: Assignment[]; data: Me
   if (!tasks.length)
     return (
       <Empty title="No matching purchases">
-        Your HOD’s assignments appear here. Adjust filters or choose another department.
+        No purchases match. Try clearing filters.
       </Empty>
     );
   return (
@@ -32,8 +32,8 @@ export function MemberTaskTable({ tasks, data }: { tasks: Assignment[]; data: Me
               'ITEM BUDGET',
               'DUE DATE',
               'PRIORITY',
-              'PURCHASING',
-              'ACCESS',
+              'STATUS',
+              'ACTION',
             ].map((h) => (
               <th key={h}>{h}</th>
             ))}
@@ -75,7 +75,7 @@ export function MemberTaskTable({ tasks, data }: { tasks: Assignment[]; data: Me
                 </td>
                 <td>
                   <Link className="text-link" to={`/member/tasks/${task.id}`}>
-                    {own ? 'Manage my purchase' : 'View coordination details'}
+                    {own ? 'Manage my purchase' : 'View details'}
                   </Link>
                 </td>
               </tr>
@@ -98,7 +98,7 @@ export function MemberClaimTable({ claims, data }: { claims: Expense[]; data: Me
           </Link>
         }
       >
-        Submitted claims and their Treasurer updates appear here.
+        No claims yet. Start a claim from a purchase you’ve bought.
       </Empty>
     );
   return (
@@ -111,7 +111,7 @@ export function MemberClaimTable({ claims, data }: { claims: Expense[]; data: Me
               'ACTIVITY / DEPARTMENT',
               'CLAIMED',
               'SUBMITTED',
-              'REVIEW',
+              'CLAIM STATUS',
               'PAYMENT',
             ].map((h) => (
               <th key={h}>{h}</th>

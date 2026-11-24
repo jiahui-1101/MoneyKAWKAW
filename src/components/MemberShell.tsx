@@ -23,7 +23,7 @@ import { useWorkspaceNavigation } from './useWorkspaceNavigation';
 const entries = [
   { to: '/member', title: 'My overview', icon: LayoutDashboard, end: true },
   { to: '/member/activities', title: 'My activities', icon: FolderKanban },
-  { to: '/member/tasks', title: 'My purchasing tasks', icon: ClipboardList },
+  { to: '/member/tasks', title: 'My purchases', icon: ClipboardList },
   { to: '/member/claims', title: 'My claims', icon: Wallet },
   { to: '/member/accounts', title: 'Payment accounts', icon: ShieldCheck },
   { to: '/member/notifications', title: 'Notifications', icon: Bell },
@@ -85,7 +85,7 @@ export function MemberShell() {
           </div>
           <Users size={15} />
         </div>
-        <p className="nav-label">MY RESPONSIBILITIES</p>
+        <p className="nav-label">MENU</p>
         <nav>
           {visibleEntries.map(({ to, title, icon: Icon, end }) => (
             <NavLink
@@ -149,7 +149,7 @@ export function MemberShell() {
             <DemoRoleSwitcher />
             <button
               className="icon-btn"
-              aria-label="Refresh Member data"
+              aria-label="Refresh"
               disabled={loading}
               onClick={() => void reload()}
             >
@@ -166,7 +166,7 @@ export function MemberShell() {
               title="Your workspace couldn’t load"
               action={
                 <button className="btn primary" onClick={() => void reload()}>
-                  Retry loading
+                  Try again
                 </button>
               }
             >
@@ -183,19 +183,18 @@ export function MemberShell() {
       </div>
       <ToastMessage notice={notice} dismiss={dismiss} />
       {help && (
-        <Modal title="Your Member workspace" onClose={() => setHelp(false)}>
+        <Modal title="How the Committee Member workspace works" onClose={() => setHelp(false)}>
           <div className="stack">
             <p>
-              Coordinate with your department and update only your own assigned purchases. Your HOD
-              controls task budgets, ownership, and deadlines.
+              You can update only the purchases given to you. Your HOD sets budgets and deadlines.
             </p>
             <p>
-              Upload the original receipt, read it on device or enter source values manually, and
-              retain corrections and exclusions. The Treasurer decides your submitted claim.
+              Upload your receipt, let the app read it or type it in, then pick what the club pays
+              for. The Treasurer approves or declines your claim.
             </p>
             <p>
-              Save your own bank or eWallet destination. Full identifiers stay masked in ordinary
-              views, and submitted claims keep the selected destination as a fixed snapshot.
+              Save your bank or TNG account. Only the last digits are shown. Each claim keeps the
+              account you chose for it.
             </p>
           </div>
         </Modal>
