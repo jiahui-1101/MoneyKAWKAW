@@ -17,12 +17,12 @@ export function HodMembers() {
       <PageHeader
         eyebrow={`${scope.department.name.toUpperCase()} · PEOPLE & RESPONSIBILITIES`}
         title="Members"
-        description="See your department’s eligible members, responsibilities, and purchasing workload."
+        description="See who is in your department and what they are buying."
       />
       <Panel
         title="Your department members"
-        subtitle="Membership is assigned by the Director. HODs assign purchasing work within this roster."
-        action={<span className="count-label">{members.length} eligible people</span>}
+        subtitle="The Director decides who is in your department. You assign tasks to them."
+        action={<span className="count-label">{members.length} members</span>}
       >
         <div className="filters">
           <div className="search-field">
@@ -87,13 +87,13 @@ export function HodMembers() {
                   tone="green"
                 />
                 <div className="row between member-plan-total">
-                  <span>Assigned item budgets</span>
+                  <span>Total task amount</span>
                   <strong className="money">
                     {money(assigned.reduce((sum, t) => sum + t.budget, 0))}
                   </strong>
                 </div>
                 <Link className="btn" to={`${base}/tasks?member=${member.id}`}>
-                  View purchasing responsibilities <ArrowUpRight size={14} />
+                  View their tasks <ArrowUpRight size={14} />
                 </Link>
               </article>
             );
@@ -101,7 +101,7 @@ export function HodMembers() {
         </div>
         {!members.length && (
           <Empty
-            title={query ? 'No matching members' : 'No eligible members yet'}
+            title={query ? 'No matching members' : 'No members yet'}
             action={
               query ? (
                 <button className="btn" onClick={() => setQuery('')}>
@@ -122,14 +122,14 @@ export function HodMembers() {
             <Users size={21} />
           </span>
           <div>
-            <h2>One department. A fair share of the work.</h2>
+            <h2>Unassigned tasks</h2>
             <p>
               {
                 tasks.filter(
                   (t) => !t.purchasing!.assigneeId && t.purchasing!.status !== 'Cancelled',
                 ).length
               }{' '}
-              purchasing tasks are currently unassigned.
+              purchasing task(s) have no one assigned.
             </p>
           </div>
         </div>

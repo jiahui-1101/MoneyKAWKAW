@@ -15,20 +15,19 @@ export function HodHistory() {
       <PageHeader
         eyebrow={`${scope.department.name.toUpperCase()} · DEPARTMENT HISTORY`}
         title="Department history"
-        description="Creation, reassignment, budget, and progress changes stay linked to their source task."
+        description="Every change to your department’s tasks, newest first."
       />
       <div className="history-filters">
         <input
-          aria-label="Search department activity"
-          placeholder="Search changes, actor, or details…"
+          aria-label="Search department history"
+          placeholder="Search by change, person or detail…"
           value={query}
           onChange={(e) => setQuery(e.target.value)}
         />
       </div>
       <DepartmentActivity data={filtered} scope={scope} all />
       <p className="data-note">
-        Only this department’s events are shown. Local demo history is append-only through HOD
-        controls; durable production audit storage remains a future backend responsibility.
+        Only this department’s changes are shown. Changes can’t be edited or deleted.
       </p>
     </div>
   );

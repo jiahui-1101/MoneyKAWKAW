@@ -50,8 +50,8 @@ export function HodTasks() {
         </Link>}
       </PageHeader>
       <Panel
-        title="Department task board"
-        subtitle="Purchasing progress and claim review are tracked separately"
+        title="All tasks"
+        subtitle="Buying status and claim status are separate"
         action={
           <span className="count-label">
             {filtered.length} of {tasks.length} tasks
@@ -115,11 +115,11 @@ export function HodTasks() {
         </div>
         <div className="attention-filters">
           {[
-            ['', 'All purchases'],
+            ['', 'All tasks'],
             ['overdue', 'Overdue'],
             ['unassigned', 'Unassigned'],
-            ['awaiting-claim', 'Purchased · no claim'],
-            ['pending', 'Awaiting purchase'],
+            ['awaiting-claim', 'Bought, waiting for claim'],
+            ['pending', 'Not yet bought'],
           ].map(([value, label]) => (
             <button
               key={value}
@@ -140,7 +140,7 @@ export function HodTasks() {
           <TaskTable tasks={filtered} data={data} />
         ) : (
           <Empty
-            title={tasks.length ? 'No matching purchases' : 'Your team’s next purchase starts here'}
+            title={tasks.length ? 'No matching purchases' : 'No purchasing tasks yet'}
             action={
               tasks.length ? (
                 <button className="btn" onClick={() => setParams({})}>
@@ -159,7 +159,7 @@ export function HodTasks() {
           </Empty>
         )}
         <div className="table-footer">
-          <span>Department-scoped purchasing plans</span>
+          <span>Only your department’s tasks</span>
           <span>Amounts in {data.settings.currency}</span>
         </div>
       </Panel>

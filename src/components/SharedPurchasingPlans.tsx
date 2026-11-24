@@ -8,7 +8,7 @@ export function SharedPurchasingPlans({ store, activity }: { store: Store; activ
   return (
     <Panel
       title="Shared purchasing plans"
-      subtitle="Read-only department plans · HOD changes use these same records"
+      subtitle="View only · HODs edit these in their workspace"
     >
       {!tasks.length ? (
         <Empty title="No purchasing plans yet">
@@ -30,7 +30,7 @@ export function SharedPurchasingPlans({ store, activity }: { store: Store; activ
                 <th>ITEM ESTIMATE</th>
                 <th>PURCHASING STATUS</th>
                 <th>DUE DATE</th>
-                <th>UNCLAIMED RESERVATION</th>
+                <th>SET ASIDE (NO CLAIM YET)</th>
               </tr>
             </thead>
             <tbody>
@@ -40,7 +40,7 @@ export function SharedPurchasingPlans({ store, activity }: { store: Store; activ
                   <tr key={task.id}>
                     <td>
                       <strong className="expense-title">
-                        {p?.name ?? 'Purchasing allocation'}
+                        {p?.name ?? 'Untitled task'}
                       </strong>
                       <small className="cell-sub">{task.id}</small>
                     </td>

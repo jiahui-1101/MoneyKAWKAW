@@ -22,36 +22,36 @@ export function HodBudget() {
     <div className="stack">
       <PageHeader
         eyebrow={`${scope.department.name.toUpperCase()} · ${financialStateLabel(scope.activity.financialState, 'BUDGET & ALLOCATIONS')}`}
-        title="Budget & allocations"
-        description="Track item estimates alongside actual expenses without counting the same purchase twice."
+        title="Budget"
+        description="Compare planned costs with real claims."
       >
         {canPlanActivity(scope.activity.financialState) && <Link className="btn primary" to={`${base}/tasks/new`}>
           <Plus size={15} />
-          Plan a purchase
+          Create purchasing task
         </Link>}
       </PageHeader>
       <DepartmentMetrics data={data} scope={scope} />
       <DepartmentBalances data={data} scope={scope} />
       <Panel
-        title="Your purchasing capacity"
-        subtitle="The Director controls the department allocation"
+        title="How much more you can plan"
+        subtitle="Only the Director can change your budget"
       >
         <div className="panel-body stack">
           <div className="capacity-row">
             <div>
-              <small>Available after claims & unclaimed plans</small>
+              <small>Left after claims and open tasks</small>
               <strong className={`money ${summary.available < 0 ? 'danger-text' : ''}`}>
                 {money(summary.available)}
               </strong>
             </div>
             <div>
-              <small>Headroom within total item estimates</small>
+              <small>Budget minus all planned tasks</small>
               <strong className={`money ${summary.planned > summary.budget ? 'danger-text' : ''}`}>
                 {money(summary.budget - summary.planned)}
               </strong>
             </div>
             <div>
-              <small>Maximum new item budget</small>
+              <small>Most you can set for a new task</small>
               <strong className="money good-text">
                 {money(Math.max(0, summary.purchasingCapacity))}
               </strong>
@@ -63,12 +63,12 @@ export function HodBudget() {
               <strong>{money(summary.planned)}</strong>
               <Progress
                 value={summary.budget ? (summary.planned / summary.budget) * 100 : 0}
-                label="Planned item allocation"
+                label="Planned tasks as share of budget"
                 tone={summary.planned > summary.budget ? 'danger' : 'brand'}
               />
             </div>
             <div>
-              <span>Recorded claim amounts</span>
+              <span>Claimed so far</span>
               <strong>{money(summary.recorded)}</strong>
               <Progress
                 value={summary.utilization}
@@ -91,8 +91,8 @@ export function HodBudget() {
         </div>
       </Panel>
       <Panel
-        title="Item budgets & recorded variances"
-        subtitle="Positive variance means the claim exceeds its item estimate"
+        title="Planned vs actual cost"
+        subtitle="A + amount means the claim cost more than planned"
         action={
           <button
             className={`filter-chip ${overOnly ? 'selected' : ''}`}
@@ -114,10 +114,10 @@ export function HodBudget() {
               <thead>
                 <tr>
                   <th>PURCHASING ITEM</th>
-                  <th>PLANNED ESTIMATE</th>
-                  <th>SUBMITTED CLAIM</th>
-                  <th>VARIANCE</th>
-                  <th>UNCLAIMED RESERVATION</th>
+                  <th>ESTIMATE</th>
+                  <th>CLAIM</th>
+                  <th>DIFFERENCE</th>
+                  <th>SET ASIDE (NO CLAIM YET)</th>
                   <th>
                     <span className="sr-only">Task details</span>
                   </th>
@@ -172,12 +172,12 @@ export function HodBudget() {
         ) : (
           <Empty
             title={
-              overOnly ? 'No items exceed their estimate' : 'Your purchasing plan is ready to begin'
+              overOnly ? 'No items exceed their estimate' : 'No purchasing tasks yet'
             }
           >
             {overOnly
               ? 'Recorded claims are within their item estimates, or no claim has been recorded yet.'
-              : 'Add a purchasing task to reserve part of your department budget.'}
+              : 'Create a task to plan how to spend your budget.'}
           </Empty>
         )}
       </Panel>
